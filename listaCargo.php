@@ -15,7 +15,7 @@
         $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $dados = $db->dbSelect("SELECT * FROM fornecedor ORDER BY id_fornecedor");
+        $dados = $db->dbSelect("SELECT * FROM cargo ORDER BY id_cargo");
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {
@@ -53,16 +53,13 @@
 
         <!-- Parte de exibição da tabela -->
         <form>
-            <a href="formfornecedor.php?acao=insert" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Inserir">Adicionar Fornecedor</a>&nbsp;
+            <a href="formCargo.php?acao=insert" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Inserir">Adicionar cargo</a>&nbsp;
 
-            <table id="tbListafornecedor" class="table table-striped table-hover table-bordered table-responsive-sm display" style="width:100%">
+            <table id="tbListacargo" class="table table-striped table-hover table-bordered table-responsive-sm display" style="width:100%">
                 <thead class="table-dark">
                     <tr>
                         <th>Id</th>
-                        <th>Fornecedor</th>
-                        <th>CNPJ</th>
-                        <th>Telefone</th>
-                        <th>Status</th>
+                        <th>Cargo</th>
                         <th>Opções</th>
                     </tr>
                 <thead>   
@@ -72,15 +69,12 @@
                         foreach ($dados as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['id_fornecedor'] ?> </td>
-                                    <td> <?= $row['nome_fornecedor'] ?> </td>
-                                    <td> <?= $row['cnpj_fornecedor'] ?> </td>
-                                    <td> <?= $row['telefone_fornecedor'] ?> </td>
-                                    <td><?= getStatusDescricao($row['status_fornecedor']) ?></td>
+                                    <td> <?= $row['id_cargo'] ?> </td>
+                                    <td> <?= $row['nome_cargo'] ?> </td>
                                     <td>
-                                        <a href="formFornecedor.php?acao=update&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                        <a href="formFornecedor.php?acao=delete&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
-                                        <a href="formFornecedor.php?acao=view&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                        <a href="formCargo.php?acao=update&id_cargo=<?= $row['id_cargo'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                        <a href="formCargo.php?acao=delete&id_cargo=<?= $row['id_cargo'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                        <a href="formCargo.php?acao=view&id_cargo=<?= $row['id_cargo'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                     </td>
                                 </tr>
                             <?php
@@ -93,7 +87,7 @@
 
     <?php
 
-        echo datatables('tbListafornecedor');   
+        echo datatables('tbListacargo');   
         require_once "comuns/rodape.php";
 
     ?>

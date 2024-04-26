@@ -14,8 +14,7 @@
             // Criando o objeto Db para classe de base de dados
             $db = new Database();
 
-            // preparação da query que será executada no banco de dados
-            $dados = $db->dbSelect("SELECT itens.*, setor.nome_setor AS nome_do_setor FROM itens JOIN setor ON itens.setor_item = setor.id_setor WHERE statusRegistro = 1");
+            $dados = $db->dbSelect("SELECT itens.*, setor.nome_setor AS nome_do_setor FROM itens JOIN setor ON itens.setor_itens = setor.id_setor WHERE statusRegistro_itens = 1");
 
         // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
         } catch (Exception $ex) {
@@ -77,22 +76,22 @@
                         foreach ($dados as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['id'] ?> </td>
-                                    <td> <?= $row['nomeItem'] ?> </td>
+                                    <td> <?= $row['id_itens'] ?> </td>
+                                    <td> <?= $row['nome_itens'] ?> </td>
                                     <td> 
                                         <div class="relative text-gray-500">
-                                            <input type="number" min="0" max="1000" class="text-center align-items-center" name="quantidade[<?= $row['id'] ?>]" value="<?= $row['quantidade'] ?>">
+                                            <input type="number" min="0" max="1000" class="text-center align-items-center" name="quantidade[<?= $row['id_itens'] ?>]" value="<?= $row['quantidade_itens'] ?>">
                                             <div class="btn-group">
-                                                <button type="submit" class="btn btn-secondary btn-sm " title="Alteração" value="<?= $row['id'] ?>"> Atualizar quantidade</button>
+                                                <button type="submit" class="btn btn-secondary btn-sm " title="Alteração" value="<?= $row['id_itens'] ?>"> Atualizar quantidade</button>
                                             </div>
                                         </div>
                                     </td>
-                                    <td><?= getStatusItem($row['statusItem']) ?></td>
+                                    <td><?= getStatusItem($row['statusItem_itens']) ?></td>
                                     <td> <?= $row['nome_do_setor'] ?> </td>
                                     <td>
-                                        <a href="formItens.php?acao=update&id=<?= $row['id'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                        <a href="formItens.php?acao=delete&id=<?= $row['id'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
-                                        <a href="formItens.php?acao=view&id=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                        <a href="formItens.php?acao=update&id_itens=<?= $row['id_itens'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                        <a href="formItens.php?acao=delete&id_itens=<?= $row['id_itens'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                        <a href="formItens.php?acao=view&id_itens=<?= $row['id_itens'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                     </td>
                                 </tr>
                                 

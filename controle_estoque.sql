@@ -1,35 +1,36 @@
--- phpMyAdmin SQL Dump
--- version 5.2.1
--- https://www.phpmyadmin.net/
---
--- Host: 127.0.0.1:3306
--- Tempo de geração: 26/03/2024 às 19:09
--- Versão do servidor: 8.2.0
--- Versão do PHP: 8.2.13
-
-SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
-START TRANSACTION;
-SET time_zone = "+00:00";
-
-
-/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
-/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
-/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
-/*!40101 SET NAMES utf8mb4 */;
-
---
--- Banco de dados: `controle_estoque`
---
-CREATE DATABASE IF NOT EXISTS `controle_estoque` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `controle_estoque`;
-
+-- --------------------------------------------------------
+-- Servidor:                     127.0.0.1
+-- Versão do servidor:           8.0.31 - MySQL Community Server - GPL
+-- OS do Servidor:               Win64
+-- HeidiSQL Versão:              12.6.0.6765
 -- --------------------------------------------------------
 
---
--- Estrutura para tabela `fornecedor`
---
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET NAMES utf8 */;
+/*!50503 SET NAMES utf8mb4 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
-DROP TABLE IF EXISTS `fornecedor`;
+
+-- Copiando estrutura do banco de dados para controle_estoque
+CREATE DATABASE IF NOT EXISTS `controle_estoque` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `controle_estoque`;
+
+-- Copiando estrutura para tabela controle_estoque.cargo
+CREATE TABLE IF NOT EXISTS `cargo` (
+  `id_cargo` int NOT NULL AUTO_INCREMENT,
+  `nome_cargo` varchar(200) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id_cargo`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- Copiando dados para a tabela controle_estoque.cargo: 0 rows
+/*!40000 ALTER TABLE `cargo` DISABLE KEYS */;
+/*!40000 ALTER TABLE `cargo` ENABLE KEYS */;
+
+-- Copiando estrutura para tabela controle_estoque.fornecedor
 CREATE TABLE IF NOT EXISTS `fornecedor` (
   `id_fornecedor` int NOT NULL AUTO_INCREMENT,
   `nome_fornecedor` varchar(144) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
@@ -38,23 +39,11 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
   `telefone_fornecedor` varchar(20) DEFAULT NULL,
   `status_fornecedor` int NOT NULL DEFAULT '1' COMMENT '1 - ativo     2 - inativo',
   PRIMARY KEY (`id_fornecedor`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Despejando dados para a tabela `fornecedor`
---
+-- Copiando dados para a tabela controle_estoque.fornecedor: ~0 rows (aproximadamente)
 
-INSERT INTO `fornecedor` (`id_fornecedor`, `nome_fornecedor`, `cnpj_fornecedor`, `endereco_fornecedor`, `telefone_fornecedor`, `status_fornecedor`) VALUES
-(1, 'MD COPIADORA LTDA', '44556350000104', ' JUIZ DE FORA, MG, CEP: 36032010, SANTA EFIGENIA, 855 ', '32999197525 ', 1),
-(2, 'New Time', '1651561', 'Muriae safira', '14561656', 1);
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `funcionarios`
---
-
-DROP TABLE IF EXISTS `funcionarios`;
+-- Copiando estrutura para tabela controle_estoque.funcionarios
 CREATE TABLE IF NOT EXISTS `funcionarios` (
   `id_funcionarios` int NOT NULL AUTO_INCREMENT,
   `nome_funcionarios` varchar(80) NOT NULL DEFAULT '0',
@@ -65,22 +54,11 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   `status_funcionarios` int NOT NULL DEFAULT '1' COMMENT '1 - ativo     2 - inativo',
   PRIMARY KEY (`id_funcionarios`),
   KEY `setor_funcionarios` (`setor_funcionarios`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Despejando dados para a tabela `funcionarios`
---
+-- Copiando dados para a tabela controle_estoque.funcionarios: ~0 rows (aproximadamente)
 
-INSERT INTO `funcionarios` (`id_funcionarios`, `nome_funcionarios`, `cpf_funcionarios`, `telefone_funcionarios`, `setor_funcionarios`, `salario_funcionario`, `status_funcionarios`) VALUES
-(1, 'Maycon Bruno Gomes Luz de Morais', '123.456.789.01', '32999197525', 1, 1000.000000, 1);
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `historico_itens`
---
-
-DROP TABLE IF EXISTS `historico_itens`;
+-- Copiando estrutura para tabela controle_estoque.historico_itens
 CREATE TABLE IF NOT EXISTS `historico_itens` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_item` int NOT NULL,
@@ -94,55 +72,33 @@ CREATE TABLE IF NOT EXISTS `historico_itens` (
   `dataMod` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `fk_historico_itens_itens` (`id_item`),
-  KEY `fk_setor_id` (`setor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=45 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+  KEY `fk_setor_id` (`setor_id`),
+  CONSTRAINT `fk_setor_id` FOREIGN KEY (`setor_id`) REFERENCES `setor` (`id_setor`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Despejando dados para a tabela `historico_itens`
---
+-- Copiando dados para a tabela controle_estoque.historico_itens: ~0 rows (aproximadamente)
 
-INSERT INTO `historico_itens` (`id`, `id_item`, `fornecedor_id`, `setor_id`, `nome_item`, `descricao_anterior`, `quantidade_anterior`, `statusRegistro_anterior`, `statusItem_anterior`, `dataMod`) VALUES
-(42, 2, 1, 1, 'Ultimo teste', '<p>Ultimo teste de historico</p>', 20, 1, 2, '2024-03-26 18:45:38'),
-(43, 2, 2, 1, 'Ultimo teste', '<p>Ultimo teste de historico</p>', 20, 1, 2, '2024-03-26 18:48:07'),
-(44, 2, 2, 2, 'Ultimo teste', '<p>Ultimo teste de historico</p>', 20, 1, 2, '2024-03-26 19:05:12');
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `itens`
---
-
-DROP TABLE IF EXISTS `itens`;
+-- Copiando estrutura para tabela controle_estoque.itens
 CREATE TABLE IF NOT EXISTS `itens` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(50) NOT NULL,
-  `quantidade` int NOT NULL,
-  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
-  `statusItem` int DEFAULT '1' COMMENT '1=Novo; 2=Usado',
-  `dataMod` timestamp NULL DEFAULT NULL,
-  `nomeItem` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `setor_item` int DEFAULT NULL,
+  `id_itens` int NOT NULL AUTO_INCREMENT,
+  `descricao_itens` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `quantidade_itens` int NOT NULL,
+  `statusRegistro_itens` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
+  `statusItem_itens` int DEFAULT '1' COMMENT '1=Novo; 2=Usado',
+  `dataMod_itens` timestamp NULL DEFAULT NULL,
+  `nome_itens` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `setor_itens` int DEFAULT NULL,
   `fornecedor_id` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `fk_itens_setor` (`setor_item`),
-  KEY `fk_itens_fornecedor` (`fornecedor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
+  PRIMARY KEY (`id_itens`) USING BTREE,
+  KEY `fk_itens_fornecedor` (`fornecedor_id`),
+  KEY `fk_itens_setor` (`setor_itens`) USING BTREE,
+  CONSTRAINT `fk_itens_fornecedor` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedor` (`id_fornecedor`),
+  CONSTRAINT `fk_itens_setor` FOREIGN KEY (`setor_itens`) REFERENCES `setor` (`id_setor`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
 
---
--- Despejando dados para a tabela `itens`
---
+-- Copiando dados para a tabela controle_estoque.itens: ~0 rows (aproximadamente)
 
-INSERT INTO `itens` (`id`, `descricao`, `quantidade`, `statusRegistro`, `statusItem`, `dataMod`, `nomeItem`, `setor_item`, `fornecedor_id`) VALUES
-(1, '<p>Cartucho de toner da impressora pantum</p>', 14, 1, 1, '2024-03-26 17:32:45', 'Cartucho de toner Pantum P2500W - Compatíveldsas', 2, 1),
-(2, '<p>Ultimo teste de historico</p>', 20, 1, 2, '2024-03-26 19:05:12', 'Ultimo teste', 2, 2);
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `setor`
---
-
-DROP TABLE IF EXISTS `setor`;
+-- Copiando estrutura para tabela controle_estoque.setor
 CREATE TABLE IF NOT EXISTS `setor` (
   `id_setor` int NOT NULL AUTO_INCREMENT,
   `nome_setor` varchar(100) NOT NULL,
@@ -150,23 +106,11 @@ CREATE TABLE IF NOT EXISTS `setor` (
   `status_setor` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
   PRIMARY KEY (`id_setor`),
   KEY `responsavel_setor` (`responsavel_setor`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Despejando dados para a tabela `setor`
---
+-- Copiando dados para a tabela controle_estoque.setor: ~0 rows (aproximadamente)
 
-INSERT INTO `setor` (`id_setor`, `nome_setor`, `responsavel_setor`, `status_setor`) VALUES
-(1, 'Administração ', 'Thamiris', 1),
-(2, 'Saúde', 'Isonel', 1);
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `usuario`
---
-
-DROP TABLE IF EXISTS `usuario`;
+-- Copiando estrutura para tabela controle_estoque.usuario
 CREATE TABLE IF NOT EXISTS `usuario` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nivel` varchar(150) NOT NULL,
@@ -176,33 +120,12 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   `email` varchar(150) NOT NULL,
   `primeiroLogin` int DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
---
--- Despejando dados para a tabela `usuario`
---
+-- Copiando dados para a tabela controle_estoque.usuario: ~0 rows (aproximadamente)
 
-INSERT INTO `usuario` (`id`, `nivel`, `statusRegistro`, `nome`, `senha`, `email`, `primeiroLogin`) VALUES
-(1, '1', 1, 'Administrador', '$2y$10$nLGzXIjwVIqmR1Tos2iWke4AqKHEQj.5uCCFo1WgPMDxezOKmAcMC', 'administrador@gmail.com', 1);
-
---
--- Restrições para tabelas despejadas
---
-
---
--- Restrições para tabelas `historico_itens`
---
-ALTER TABLE `historico_itens`
-  ADD CONSTRAINT `fk_setor_id` FOREIGN KEY (`setor_id`) REFERENCES `setor` (`id_setor`);
-
---
--- Restrições para tabelas `itens`
---
-ALTER TABLE `itens`
-  ADD CONSTRAINT `fk_itens_fornecedor` FOREIGN KEY (`fornecedor_id`) REFERENCES `fornecedor` (`id_fornecedor`),
-  ADD CONSTRAINT `fk_itens_setor` FOREIGN KEY (`setor_item`) REFERENCES `setor` (`id_setor`) ON DELETE CASCADE ON UPDATE CASCADE;
-COMMIT;
-
+/*!40103 SET TIME_ZONE=IFNULL(@OLD_TIME_ZONE, 'system') */;
+/*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
+/*!40014 SET FOREIGN_KEY_CHECKS=IFNULL(@OLD_FOREIGN_KEY_CHECKS, 1) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=IFNULL(@OLD_SQL_NOTES, 1) */;

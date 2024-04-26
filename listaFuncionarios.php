@@ -72,7 +72,7 @@
                             ?>
                                 <tr>
                                     <td> <?= $row['nome_funcionarios'] ?> </td>
-                                    <td> <?= Funcoes::valorBr($row['salario_funcionario']) ?> </td>
+                                    <td> <?= $row['salario_funcionario'] ?> </td>
                                     <td> <?= $row['nome_do_setor'] ? : "Nenhum setor encontrado" ?> </td>
 
                                     <td><?= getStatusDescricao($row['status_funcionarios']) ?></td>

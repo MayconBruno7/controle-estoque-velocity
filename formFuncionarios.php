@@ -38,7 +38,6 @@ require_once "helpers/Formulario.php";
 // recupera o cabeçalho para a página
 require_once "comuns/cabecalho.php";
 require_once "library/protectUser.php";
-require_once "library/Funcoes.php";
 
 ?>
 
@@ -59,19 +58,19 @@ require_once "library/Funcoes.php";
 
             <div class="row">
 
-                <div class="col-6">
+                <div class="col-4">
                     <label for="nome_funcionarios" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
                     <input type="text" class="form-control" name="nome_funcionarios" id="nome_funcionarios" placeholder="Nome do funcionario" required autofocus value="<?= isset($dados->nome_funcionarios) ? $dados->nome_funcionarios : "" ?>">
                 </div>
 
-                <div class="col-6">
+                <div class="col-4">
                     <label for="cpf_funcionarios" class="form-label mt-3">CPF</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cpf_funcionarios" id="cpf_funcionarios" placeholder="Cpf do funcionario" required autofocus value="<?= isset($dados->cpf_funcionarios) ? Funcoes::formatarCPF($dados->cpf_funcionarios) : "" ?>">
+                    <input type="text" class="form-control" name="cpf_funcionarios" id="cpf_funcionarios" placeholder="Cpf do funcionario" required autofocus value="<?= isset($dados->cpf_funcionarios) ? $dados->cpf_funcionarios : "" ?>">
                 </div>
 
-                <div class="col-6">
+                <div class="col-4">
                     <label for="status_funcionarios" class="form-label mt-3">Status</label>
                     <select name="status_funcionarios" id="status_funcionarios" class="form-control" required>
                         <!--  verifica se o status_funcionarios está no banco de dados e retorna esse status_funcionarios -->
@@ -81,10 +80,10 @@ require_once "library/Funcoes.php";
                     </select>
                 </div>
 
-                <div class="col-6">
+                <div class="col-4">
                     <label for="telefone_funcionarios" class="form-label mt-3">Telefone</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="telefone_funcionarios" id="telefone_funcionarios" placeholder="Telefone" required autofocus value="<?= isset($dados->telefone_funcionarios) ? Funcoes::formataTelefone($dados->telefone_funcionarios) : "" ?>">
+                    <input type="text" class="form-control" name="telefone_funcionarios" id="telefone_funcionarios" placeholder="Endereço completo" required autofocus value="<?= isset($dados->telefone_funcionarios) ? $dados->telefone_funcionarios : "" ?>">
                 </div>
 
                 <div class="col-4 mt-3">
@@ -99,15 +98,10 @@ require_once "library/Funcoes.php";
                     </select>
                 </div>
 
-                <div class="col-4 mt-3">
-                    <label for="cargo_funcionario">Cargo</label> 
-                    <input type="text" class="form-control mt-2" name="cargo_funcionario" id="cargo_funcionario"  placeholder="Cargo do funcionário">
-                </div>
-
                 <div class="col-4">
                     <label for="salario_funcionario" class="form-label mt-3">Salário</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="salario_funcionario" id="salario_funcionario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario_funcionario) ? Funcoes::valorBr($dados->salario_funcionario) : "" ?>">
+                    <input type="text" class="form-control" name="salario_funcionario" id="salario_funcionario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario_funcionario) ? $dados->salario_funcionario : "" ?>">
                 </div>
 
             </div>

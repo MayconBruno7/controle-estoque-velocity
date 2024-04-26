@@ -150,6 +150,10 @@
                         </li>
 
                         <li class="nav-item">
+                            <a class="nav-link" href="listaCargo">Cargo</a>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link text-danger" aria-current="page" href="logoff.php">Sair</a>
                         </li>
                         <?php endif; ?>

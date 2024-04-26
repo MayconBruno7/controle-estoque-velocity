@@ -11,22 +11,20 @@
 
         // Atualiza as informações do item na tabela principal
         $atualizacaoQuery = "UPDATE itens 
-                                SET nomeItem = ?, setor_item = ?, descricao = ?, quantidade = ?, fornecedor_id = ?, statusRegistro = ?, statusItem = ?, dataMod = NOW() 
-                                WHERE id = ?";
+                                SET nome_itens = ?, descricao_itens = ?, quantidade_itens = ?, statusRegistro_itens = ?, statusItem_itens = ?, dataMod_itens = NOW() 
+                                WHERE id_itens = ?";
         $atualizacaoData = $db->dbUpdate($atualizacaoQuery,
         [
             $_POST['nome'],
-            $_POST['setor_id'],
             $_POST['descricao'],
             $_POST['quantidade'],
-            $_POST['fornecedor_id'],
             $_POST['statusRegistro'],
             $_POST['statusItem'],
             $_POST['id']
         ]);
 
         // Obtém os dados antigos do item antes da atualização
-        $dadosAntigos = $db->dbSelect("SELECT * FROM itens WHERE id = ?", 'first',[$_POST['id']]);
+        $dadosAntigos = $db->dbSelect("SELECT * FROM itens WHERE id_itens = ?", 'first',[$_POST['id']]);
 
         // Insere os dados antigos no histórico
         $historicoQuery = "INSERT INTO historico_itens 
@@ -35,14 +33,14 @@
         $historicoData = $db->dbInsert($historicoQuery, 
         [
             $_POST['id'],
-            $dadosAntigos->nomeItem,
-            $dadosAntigos->setor_item,
-            $dadosAntigos->descricao,
-            $dadosAntigos->quantidade,
+            $dadosAntigos->nome_itens,
+            $dadosAntigos->setor_itens,
+            $dadosAntigos->descricao_itens,
+            $dadosAntigos->quantidade_itens,
             $dadosAntigos->fornecedor_id,
-            $dadosAntigos->statusRegistro,
-            $dadosAntigos->statusItem,
-            $dadosAntigos->dataMod
+            $dadosAntigos->statusRegistro_itens,
+            $dadosAntigos->statusItem_itens,
+            $dadosAntigos->dataMod_itens
         ]);
 
         // Verifica se a atualização foi bem sucedida
