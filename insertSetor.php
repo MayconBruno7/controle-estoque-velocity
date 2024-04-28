@@ -10,10 +10,10 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO setor(nome_setor, responsavel_setor, status_setor) VALUES (?, ?, ?)", [
-            $_POST['nome_setor'],
-            $_POST['responsavel_setor'],
-            $_POST['status_setor']
+        $data = $db->dbInsert("INSERT INTO setor(nome, responsavel, statusRegistro) VALUES (?, ?, ?)", [
+            $_POST['nome'],
+            $_POST['funcionarios'],
+            $_POST['statusRegistro'],
         ]);
 
     

@@ -1,8 +1,5 @@
 <?php
 
-    // recupera o cabeçalho para a página
-    require_once "comuns/cabecalho.php";
-
     require_once "library/Database.php";
     // Criando o objeto Db para classe de base de dados
     $db = new Database();
@@ -11,7 +8,6 @@
 
     $setor_item_id = "";
     $fornecedor_id = "";
-    $fornecedor_nome = "";
 
     /*
     *   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
@@ -49,38 +45,12 @@
         $fornecedor_id = isset($dados->fornecedor_id) ? $dados->fornecedor_id : "";
     }
 
-    function obterNomeSetor($setor_id, $db) {
-        $query = "SELECT nome_setor FROM setor WHERE id_setor = ?";
-        $result = $db->dbSelect($query, 'first', [$setor_id]);
-        return $result ? $result->nome_setor : '';
-    }
-    
-    function obterNomeFornecedor($fornecedor_id, $db) {
-        $query = "SELECT nome_fornecedor FROM fornecedor WHERE id_fornecedor = ?";
-        $result = $db->dbSelect($query, 'first', [$fornecedor_id]);
-        return $result ? $result->nome_fornecedor : '';
-    }
-    
-    $nome_setor = isset($setor_item_id) ? obterNomeSetor($setor_item_id, $db) : '';
-    $nome_fornecedor = isset($fornecedor_id) ? obterNomeFornecedor($fornecedor_id, $db) : '';
-   
-    // var_dump($nome_setor = isset($setor_item_id) ? obterNomeSetor($setor_item_id, $db) : '');
-    // var_dump($nome_fornecedor = isset($fornecedor_id) ? obterNomeFornecedor($fornecedor_id, $db) : '');
-    // exit;
-
-    // var_dump($dadosSetor);
-    // var_dump($dadosFornecedor);
-
-    // var_dump($setor_item_id);
-    // var_dump($fornecedor_id);
-
-
-
 
     // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
     require_once "helpers/Formulario.php";
 
-
+    // recupera o cabeçalho para a página
+    require_once "comuns/cabecalho.php";
     require_once "library/protectUser.php";
 
     // var_dump($dadosFornecedor); 
@@ -118,8 +88,8 @@
                 </div>
 
                 <div class="col-3 mt-3">
-                    <label for="setor_id" class="form-label">Setor</label>
-                    <select name="setor_id" id="setor_id" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <label for="setor_item" class="form-label">Setor</label>
+                    <select name="setor_item" id="setor_item" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
                         <option value="">...</option> 
                         <?php foreach ($dadosSetor as $setor): ?>
                             <option value="<?= $setor['id_setor'] ?>" <?= $setor['id_setor'] == $setor_item_id ? 'selected' : '' ?>>
@@ -157,8 +127,6 @@
                             <option value="<?= $fornecedor['id_fornecedor'] ?>" <?= $fornecedor['id_fornecedor'] == $fornecedor_id ? 'selected' : '' ?>>
                                 <?= $fornecedor['nome_fornecedor'] ?>
                             </option>
-
-                            
                         <?php endforeach; ?>
                     </select>
                 </div>
@@ -188,20 +156,9 @@
                         $historicoQuery = "SELECT * FROM historico_itens WHERE id_item = ?";
                         $historicoData = $db->dbSelect($historicoQuery, 'all', [$_GET['id']]);
 
+                        // Itera sobre cada entrada no histórico e as exibe como opções no select
                         foreach ($historicoData as $historicoItem): ?>
-                            <?php
-                            // Encontrar o fornecedor correto com base no fornecedor_id do histórico
-                            $fornecedorNome = '';
-                            foreach ($dadosFornecedor as $fornecedor) {
-                                if ($fornecedor['id_fornecedor'] == $historicoItem['fornecedor_id']) {
-                                    $fornecedorNome = $fornecedor['nome_fornecedor'];
-                                    
-                                }
-                            }
-                            ?>
-                            <!-- Usar o nome do fornecedor encontrado -->
-                            <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_item'] ?>" data-fornecedor="<?= $historicoItem['fornecedor_id']; ?>" data-setor="<?= $historicoItem['setor_id'] ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-statusregistro="<?= $historicoItem['statusRegistro_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
-                                
+                            <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_item'] ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-statusregistro="<?= $historicoItem['statusRegistro_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
                                 <?= $historicoItem['dataMod'] ?>
                             </option>
                         <?php endforeach; ?>
@@ -232,35 +189,27 @@
     <script src="assets/ckeditor5-build-classic/ckeditor.js"></script>
     
     <script>
-       document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function() {
             ClassicEditor
                 .create(document.querySelector('#descricao'), {})
                 .then(editor => { // Definindo o editor CKEditor aqui
                     document.getElementById('historico').addEventListener('change', function() {
                         var option = this.options[this.selectedIndex];
-                        
-                        // Definindo o texto do setor e fornecedor nos elementos
-                        document.getElementById('setor_id').selectedIndex = option.getAttribute('data-setor'); 
-                        document.getElementById('fornecedor_id').value = option.getAttribute('data-fornecedor');
-                        
-                        // Definindo os outros valores conforme necessário
                         document.getElementById('nome').value = option.getAttribute('data-nome');
-                        editor.setData(option.getAttribute('data-descricao')); 
+                        editor.setData(option.getAttribute('data-descricao')); // Usando o editor CKEditor aqui
                         document.getElementById('quantidade').value = option.getAttribute('data-quantidade');
                         document.getElementById('statusRegistro').value = option.getAttribute('data-statusregistro');
                         document.getElementById('statusItem').value = option.getAttribute('data-statusitem');
-                        console.log(option);
                     });
                 })
                 .catch(error => {
                     console.error(error);
                 });
         });
-
     </script>
 
-    <?php
+<?php
 
-        require_once "comuns/rodape.php";
+  require_once "comuns/rodape.php";
 
-    ?>
+?>

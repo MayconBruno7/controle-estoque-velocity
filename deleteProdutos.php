@@ -7,15 +7,15 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM fornecedor 
+            $result = $db->dbDelete("DELETE FROM produtos 
                                     WHERE id = ?",
                                     [$_POST['id']]
                                 );
 
             if ($result) {
-                return header("Location: listaFornecedor.php?msgSucesso=Registro excluído com sucesso.");
+                return header("Location: listaProdutos.php?msgSucesso=Registro excluído com sucesso.");
             } else {
-                return header("Location: listaFornecedor.php?msgError=Falha ao tentar excluír o registro.");
+                return header("Location: listaProdutos.php?msgError=Falha ao tentar excluír o registro.");
             }
             
         } catch (Exception $ex) {
@@ -23,5 +23,5 @@
         }
 
     } else {
-        return header("Location: listaFornecedor.php");
+        return header("Location: listaProdutos.php");
     }

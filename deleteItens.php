@@ -8,7 +8,7 @@
 
         try {
             $result = $db->dbDelete("DELETE FROM itens 
-                                    WHERE id_itens = ?",
+                                    WHERE id = ?",
                                     [$_POST['id']]
                                 );
 

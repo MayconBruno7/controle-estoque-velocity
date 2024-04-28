@@ -55,7 +55,7 @@
     <!-- Inicio do rodapé da página -->
     <footer class="form">
         <p>Departamento de Informática Rosário da Limeira - MG</p>
-        <span>© 2023 Company, Inc</span>
+        <span>© 2024 Company, Inc</span>
     </footer>
 </body>
 </html>

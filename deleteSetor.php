@@ -2,14 +2,14 @@
 
     require_once "library/Database.php";
 
-    if (isset($_POST['id_setor'])) {
+    if (isset($_POST['id'])) {
 
         $db = new Database();
 
         try {
             $result = $db->dbDelete("DELETE FROM setor 
-                                    WHERE id_setor = ?",
-                                    [$_POST['id_setor']]
+                                    WHERE id = ?",
+                                    [$_POST['id']]
                                 );
 
             if ($result) {

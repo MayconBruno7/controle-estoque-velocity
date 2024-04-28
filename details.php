@@ -8,7 +8,7 @@
         $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $data = $db->dbSelect("SELECT * FROM itens ORDER BY id");
+        $data = $db->dbSelect("SELECT * FROM produtos ORDER BY id");
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {

@@ -10,16 +10,14 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO itens(nome_itens, descricao_itens, quantidade_itens, setor_itens, statusRegistro_itens, statusItem_itens, fornecedor_id) VALUES (?, ?, ?, ?, ?, ?, ?)", 
+        $data = $db->dbInsert("INSERT INTO itens(nomeItem, descricao, quantidade, setor_item, statusRegistro, statusItem) VALUES (?, ?, ?, ?, ?, ?)", 
         [
             $_POST['nome'],
             $_POST['descricao'],
             $_POST['quantidade'],
-            $_POST['setor_id'],
+            $_POST['setor_item'],
             $_POST['statusRegistro'],
-            $_POST['statusItem'],
-            $_POST['fornecedor_id'],
-            
+            $_POST['statusItem']
         ]);
 
         // verifica se o ultimo item adicionado no banco de dados é mais que zero

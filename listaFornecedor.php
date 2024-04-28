@@ -15,7 +15,7 @@
         $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $dados = $db->dbSelect("SELECT * FROM fornecedor ORDER BY id_fornecedor");
+        $dados = $db->dbSelect("SELECT * FROM fornecedor ORDER BY id");
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {
@@ -72,15 +72,15 @@
                         foreach ($dados as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['id_fornecedor'] ?> </td>
-                                    <td> <?= $row['nome_fornecedor'] ?> </td>
-                                    <td> <?= $row['cnpj_fornecedor'] ?> </td>
-                                    <td> <?= $row['telefone_fornecedor'] ?> </td>
-                                    <td><?= getStatusDescricao($row['status_fornecedor']) ?></td>
+                                    <td> <?= $row['id'] ?> </td>
+                                    <td> <?= $row['nome'] ?> </td>
+                                    <td> <?= $row['cnpj'] ?> </td>
+                                    <td> <?= $row['telefone'] ?> </td>
+                                    <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
                                     <td>
-                                        <a href="formFornecedor.php?acao=update&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                        <a href="formFornecedor.php?acao=delete&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
-                                        <a href="formFornecedor.php?acao=view&id_fornecedor=<?= $row['id_fornecedor'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                        <a href="formFornecedor.php?acao=update&id=<?= $row['id'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                        <a href="formFornecedor.php?acao=delete&id=<?= $row['id'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                        <a href="formFornecedor.php?acao=view&id=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                     </td>
                                 </tr>
                             <?php

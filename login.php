@@ -56,7 +56,7 @@
             $_SESSION["userSenha"]      = $data->senha;
             
             // Direcionar o usuário para página home
-            return header("Location: listaItens.php");
+            return header("Location: listaProdutos.php");
         }
 
     } else {

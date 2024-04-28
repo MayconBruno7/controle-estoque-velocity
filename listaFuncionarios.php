@@ -14,7 +14,7 @@
     
     try {
         // preparação da query que será executada no banco de dados
-        $dados = $db->dbSelect("SELECT funcionarios.*, setor.nome_setor AS nome_do_setor FROM funcionarios JOIN setor ON funcionarios.setor_funcionarios = setor.id_setor ORDER BY id_funcionarios");
+        $dados = $db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM funcionarios JOIN setor ON funcionarios.setor = setor.id ORDER BY id");
     } catch (Exception $ex) {
         echo json_encode(['status' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
     }
@@ -71,15 +71,15 @@
                         foreach ($dados as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['nome_funcionarios'] ?> </td>
-                                    <td> <?= $row['salario_funcionario'] ?> </td>
+                                    <td> <?= $row['nome'] ?> </td>
+                                    <td> R$ <?= number_format($row['salario'], 2, ',', '.') ?></td>
                                     <td> <?= $row['nome_do_setor'] ? : "Nenhum setor encontrado" ?> </td>
 
-                                    <td><?= getStatusDescricao($row['status_funcionarios']) ?></td>
+                                    <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
                                     <td>
-                                        <a href="formfuncionarios.php?acao=update&id_funcionarios=<?= $row['id_funcionarios'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                        <a href="formfuncionarios.php?acao=delete&id_funcionarios=<?= $row['id_funcionarios'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
-                                        <a href="formfuncionarios.php?acao=view&id_funcionarios=<?= $row['id_funcionarios'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                        <a href="formfuncionarios.php?acao=update&id=<?= $row['id'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                        <a href="formfuncionarios.php?acao=delete&id=<?= $row['id'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                        <a href="formfuncionarios.php?acao=view&id=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                     </td>
                                 </tr>
                                 

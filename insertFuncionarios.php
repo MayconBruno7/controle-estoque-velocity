@@ -10,15 +10,15 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO funcionarios(nome_funcionarios, cpf_funcionarios, telefone_funcionarios, setor_funcionarios, salario_funcionario, status_funcionarios) 
+        $data = $db->dbInsert("INSERT INTO funcionarios(nome, cpf, telefone, setor, salario, statusRegistro) 
             VALUES (?, ?, ?, ?, ?, ?)", 
         [
-            $_POST['nome_funcionarios'],
-            $_POST['cpf_funcionarios'],
-            $_POST['telefone_funcionarios'],
-            $_POST['setor_funcionarios'],
-            $_POST['salario_funcionario'],
-            $_POST['status_funcionarios']
+            $_POST['nome'],
+            $_POST['cpf'],
+            $_POST['telefone'],
+            $_POST['setor'],
+            $_POST['salario'],
+            $_POST['statusRegistro']
         ]);
 
     
