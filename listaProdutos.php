@@ -41,32 +41,16 @@
                         WHERE 
                             produtos.statusRegistro = 1"
                     );
-                } 
-                // else if ($_GET['acao'] == 'delete') {
-                //     // Remover item da comanda: listar apenas os produtos na comanda
-                //    $produtoss = $db->dbSelect(
-        
-                //         "SELECT 
-                //             p.*, 
-                //             pc.descricao_categoria AS categoriaDescricao,
-                //             COALESCE(SUM(ic.QUANTIDADE), 0) as totalQuantidade
-                //         FROM 
-                //             produto AS p
-                //         INNER JOIN 
-                //             produto_categoria as pc ON pc.ID_CATEGORIA = p.ID_PRODUTO_CATEGORIA
-                //         LEFT JOIN 
-                //             itens_comanda ic ON ic.PRODUTOS_ID_PRODUTOS = p.ID_PRODUTOS AND ic.COMANDA_ID_COMANDA = ?
-                //         WHERE 
-                //             ic.COMANDA_ID_COMANDA IS NOT NULL
-                //         GROUP BY 
-                //             p.ID_PRODUTOS
-                //         ORDER BY 
-                //             p.descricao",
-                //         'all',
-                //         [$_GET['idComanda']]
-        
-                //     );
-                // }
+                } else if ($_GET['acao'] == 'delete') {
+                    // Remover item da comanda: listar apenas os produtos na comanda
+                   $produtos = $db->dbSelect(
+                    "SELECT *
+                    FROM 
+                        produtos 
+                    WHERE 
+                        id = ? AND produtos.statusRegistro = 1", 'all', [isset($_GET['id']) ? (int)$_GET['id'] : '']
+                    );
+                }
             }
         // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
         } catch (Exception $ex) {
@@ -115,81 +99,91 @@
         
         <!-- Parte de exibição da tabela -->
         <!-- <form action="updateQuantidade.php" method="POST"> -->
+        <table id="tbListaprodutos" class="table table-striped table-hover table-bordered table-responsive-sm display align-items-center" style="width:100%">
+            <thead class="table-dark">
+                <tr>
+                    <th>Id</th>
+                    <th>Nome Produto</th>
+                    <th>Quantidade</th>
+                    <?php if (!isset($_GET["acao"])) : ?>
+                        <th>Valor</th>
+                    <?php endif; ?>
+                    <th>Estado do Produto</th>
+                    <th>Opções</th>
+                </tr>
+            <thead>   
 
-        <form method="POST">
-            <table id="tbListaprodutos" class="table table-striped table-hover table-bordered table-responsive-sm display align-items-center" style="width:100%">
-                <thead class="table-dark">
-                    <tr>
-                        <th>Id</th>
-                        <th>Nome Produto</th>
-                        <th>Quantidade</th>
-                        <?php if (!isset($_GET["acao"])) : ?>
-                            <th>Valor</th>
-                        <?php endif; ?>
-                        <th>Estado do Produto</th>
-                        <th>Opções</th>
-                    </tr>
-                <thead>   
+            <tbody>
+                <?php
+                    foreach ($produtos as $row) {
+                        ?>
+                            <tr>
+                                <td> <?= $row['id'] ?> </td>
+                                <td> <?= $row['nome'] ?> </td>
+                                <td> <?= $row['quantidade'] ?>
+                                <?php if (!isset($_GET["acao"])) : ?>
+                                <td>
+                                    <?= $row['valor'] ?>
+                                </td>
+                                <?php endif; ?>
 
-                <tbody>
-                    <?php
-                        foreach ($produtos as $row) {
-                            ?>
-                                <tr>
-                                    <td> <?= $row['id'] ?> </td>
-                                    <td> <?= $row['nome'] ?> </td>
-                                    <td> <?= $row['quantidade'] ?>
-                                    <?php if (!isset($_GET["acao"])) : ?>
-                                    <td>
-                                        <?= $row['valor'] ?>
-                                    </td>
-                                    <?php endif; ?>
+                                <td><?= getCondicao($row['condicao']) ?></td>
 
-                                    <td><?= getCondicao($row['condicao']) ?></td>
-
-                                    <td>
-                                        <?php if (isset($_GET["acao"]) && $_GET['acao'] == 'insert') : ?>
-                                            <form class="g-3" action="inserirProdutoMovimentacao.php" method="post">
-                                                <label for="valor" class="form-label">Valor</label>
-                                                <input type="text" name="valor" id="valor" class="form-control" required>
-                                                
-                                                <label for="quantidade" class="form-label mt-2">Quantidade Adicionada</label>
-                                                <input type="number" name="quantidade" id="quantidade" class="form-control" required>
-
-                                                <input type="hidden" name="id_produto" value="<?=$row['id'] ?>">
+                                <td>
+                                <?php if (isset($_GET["acao"]) && $_GET['acao'] == 'insert') : ?>
+                                    <form id="form<?= $row['id'] ?>" action="inserirProdutoMovimentacao.php" method="POST">
+                                        <div class="row mt-3">
+                                            <div class="col">
+                                                <label for="valor_<?= $row['id'] ?>" class="form-label">Valor</label>
+                                                <input type="text" name="valor" id="valor_<?= $row['id'] ?>" class="form-control" disabled required>
+                                            </div>
+                                            <div class="col">
+                                                <label for="quantidade_<?= $row['id'] ?>" class="form-label">Adicionar quantidade</label>
+                                                <input type="number" name="quantidade" id="quantidade_<?= $row['id'] ?>" class="form-control" disabled required>
+                                            </div>
+                                            <div class="col">
                                                 <input type="hidden" name="id_movimentacoes" value="<?= $_GET['id_movimentacoes'] ?>">
                                                 <input type="hidden" name="tipo_movimentacoes" value="<?= $_GET['tipo'] ?>">
+                                                <input type="hidden" name="id_produto" value="<?= $row['id'] ?>">
+                                                <button type="submit" class="btn btn-primary mt-4" onclick="enableInputs(<?= $row['id'] ?>)">Adicionar</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                <?php endif; ?>
 
-                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Adicionar</button>
-                                            </form>
-                                        <?php endif; ?>
+                                <?php if (isset($_GET["acao"]) && $_GET['acao'] == 'delete') : ?>
+                                    <form class="g-3" action="deleteProdutoMovimentacao.php" method="post">
+                                        <p>Quantidade atual: <?= $_GET['qtd_produto'] ?> </p>
+                                        <label for="quantidadeRemover" class="form-label">Remover quantidade</label>
+                                        <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
+                                        <input type="hidden" name="id_produto" value="<?= $row['id'] ?>">
+                                        <input type="hidden" name="id_movimentacao" value="<?= $_GET['id_movimentacoes'] ?>">
+                                        <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
+                                    </form>
+                                <?php endif; ?>
 
-                                        <?php if (isset($_GET["acao"]) && $_GET['acao'] == 'delete') : ?>
-                                            <form class="g-3" action="deleteProdutoMovimentacao.php" method="post" enctype="multipart/form-data">
-                                                <p>Quantidade atual: <?= $_GET['quantidade'] ?> </p>
-                                                <label for="quantidadeRemover" class="form-label">Remover quantidade</label>
-                                                <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
-                                                <input type="hidden" name="id_produtos" value="<?=$row['id'] ?>">
-                                                <input type="hidden" name="id_movimentacao" value="<?= $_GET['id_movimentacoes'] ?>">
-                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
-                                            </form>
-                                        <?php endif; ?>
-
-                                        <?php if (!isset($_GET["acao"])) : ?>
-                                            <a href="formProdutos.php?acao=update&id=<?=$row['id'] ?>" class="btn btn-outline-primary btn-sm" title="Alteração">Alterar</a>&nbsp;
-                                            <a href="formProdutos.php?acao=delete&id=<?=$row['id'] ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
-                                            <a href="formProdutos.php?acao=view&id=<?=$row['id'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
-                                        <?php endif; ?>
-                                    </td>
-                                </tr>
-                                
-                            <?php
-                        }
-                    ?>
-                </tbody>
-            </table>
-        </form>
+                                <?php if (!isset($_GET["acao"])) : ?>
+                                    <a href="formProdutos.php?acao=update&id=<?=$row['id'] ?>" class="btn btn-outline-primary btn-sm" title="Alteração">Alterar</a>&nbsp;
+                                    <a href="formProdutos.php?acao=delete&id=<?=$row['id'] ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="formProdutos.php?acao=view&id=<?=$row['id'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                <?php endif; ?>
+                            </td>
+                        </tr>
+                        <?php
+                    }
+                ?>
+            </tbody>
+        </table>
     </main>
+
+    <script>
+    // Função para habilitar campos de entrada quando o botão de adicionar é clicado
+    function enableInputs(idProduto) {
+        document.getElementById('valor_' + idProduto).removeAttribute('disabled');
+        document.getElementById('quantidade_' + idProduto).removeAttribute('disabled');
+    }
+</script>
+
     
     <?php
 

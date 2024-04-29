@@ -15,12 +15,23 @@ try {
     $db = new Database();
 
     $dados = $db->dbSelect(
-        "SELECT m.id AS id_movimentacao, f.nome AS nome_fornecedor, m.tipo AS tipo_movimentacao, m.data_pedido, m.data_chegada
-        FROM movimentacoes m 
-        JOIN fornecedor f ON (f.id = m.id_fornecedor) 
-        JOIN movimentacoes_itens mi ON (mi.id_movimentacoes = m.id)
-        JOIN produtos p ON (p.id = mi.id_produtos) 
-        WHERE m.statusRegistro = 1;"
+        "SELECT 
+        m.id AS id_movimentacao, 
+        f.nome AS nome_fornecedor, 
+        m.tipo AS tipo_movimentacao, 
+        m.data_pedido, 
+        m.data_chegada
+    FROM 
+        movimentacoes m 
+    LEFT JOIN 
+        fornecedor f ON f.id = m.id_fornecedor 
+    LEFT JOIN 
+        movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+    LEFT JOIN 
+        produtos p ON p.id = mi.id_produtos 
+    WHERE 
+        m.statusRegistro = 1;
+    "
     );
 
     // $id_movimentacao;

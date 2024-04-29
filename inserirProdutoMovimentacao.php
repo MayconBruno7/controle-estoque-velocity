@@ -55,7 +55,6 @@
             
         } else {
             
-
             $db->dbInsert(
                 "INSERT INTO movimentacoes_itens(quantidade, valor, id_movimentacoes, id_produtos) VALUES (?, ?, ?, ?)",
                 [$quantidade, $valor_produto, $id_movimentacoes, $id_produtos]
