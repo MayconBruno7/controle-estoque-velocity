@@ -10,10 +10,11 @@
        $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $data = $db->dbUpdate("UPDATE cargo SET nome_cargo = ? WHERE id_cargo = ?", 
+        $data = $db->dbUpdate("UPDATE cargo SET nome = ?, statusRegistro = ? WHERE id = ?", 
         [
-            $_POST['nome_cargo'],
-            $_POST['id_cargo']
+            $_POST['nome'],
+            $_POST['statusRegistro'],
+            $_POST['id']
         ]);
 
 

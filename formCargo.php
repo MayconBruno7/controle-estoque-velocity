@@ -13,7 +13,7 @@
             $db = new Database();
         
             // prepara comando SQL
-            $dados = $db->dbSelect("SELECT * FROM cargo WHERE id_cargo = ?", 'first',[$_GET['id_cargo']]);
+            $dados = $db->dbSelect("SELECT * FROM cargo WHERE id = ?", 'first',[$_GET['id']]);
         
         // se houver erro na conexão com o banco de dados o catch retorna
         } catch (Exception $ex) {
@@ -43,15 +43,27 @@
         <form class="g-3" action="<?= $_GET['acao'] ?>Cargo.php" method="POST" id="form">
 
             <!--  verifica se o id está no banco de dados e retorna esse id -->
-            <input type="hidden" name="id_cargo" id="id_cargo" value="<?= isset($dados->id_cargo) ? $dados->id_cargo : "" ?>">
+            <input type="hidden" name="id" id="id" value="<?= isset($dados->id) ? $dados->id : "" ?>">
 
             <div class="row">
 
-                <div class="col-12">
-                    <label for="nome_cargo" class="form-label mt-3">Nome</label>
+                <div class="col-9">
+                    <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome_cargo" id="nome_cargo" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome_cargo) ? $dados->nome_cargo : "" ?>">
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
                 </div>
+
+
+                <div class="col-3 mt-3">
+                    <label for="statusRegistro" class="form-label">Estado de registro</label>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                        <!--  verifica se o status está no banco de dados e retorna esse status -->
+                        <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
+                        <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
+                        <option value="2" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 2  ? "selected" : "" : "" ?>>Inativo</option>
+                    </select>
+                </div>
+
 
 
             <div class="col-auto mt-4 mb-4">

@@ -24,7 +24,7 @@
    
         <footer>
             <p>Departamento de Informática Rosário da Limeira - MG</p>
-            <span>© 2023 Company, Inc</span>
+            <span>© 2024 Company, Inc</span>
             
             <div class="container">
                 <a class="mt-2" href="details.php">Detalhes do projeto</a>

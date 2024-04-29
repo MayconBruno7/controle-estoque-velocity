@@ -53,7 +53,18 @@
         }
     }
 
-    function getStatusItem($status)
+    function getTipoMovimentacao($tipo)
+    {
+        if ($tipo == 1) {
+            return "Entrada";
+        } elseif ($tipo == 2) {
+            return "Saída";
+        } else {
+            return "...";
+        }
+    }
+
+    function getCondicao($status)
     {
         if ($status == 1) {
             return "Novo";
@@ -142,3 +153,5 @@
                     </div>';
         }
     }
+
+   

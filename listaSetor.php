@@ -15,7 +15,7 @@
         $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $data = $db->dbSelect("SELECT * FROM setor ORDER BY id_setor");
+        $data = $db->dbSelect("SELECT * FROM setor ORDER BY id");
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {
@@ -51,29 +51,6 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12">
-                <?php if (isset($_GET['msgSucessoEmail'])): ?>
-
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong><?= $_GET['msgSucessoEmail'] ?></strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                <?php endif; ?>
-
-                <?php if (isset($_GET['msgErrorEmail'])): ?>
-
-                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong><?= $_GET['msgErrorEmail'] ?></strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-
-                <?php endif; ?>
-            </div>
-            
-        </div>
-
         <!-- Parte de exibição da tabela -->
         <form>
             
@@ -95,15 +72,15 @@
                         foreach ($data as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['id_setor'] ?> </td>
-                                    <td> <?= $row['nome_setor'] ?> </td>
-                                    <td> <?= $row['responsavel_setor'] ?> </td>
+                                    <td> <?= $row['id'] ?> </td>
+                                    <td> <?= $row['nome'] ?> </td>
+                                    <td> <?= $row['responsavel'] ?> </td>
 
-                                    <td><?= getStatusDescricao($row['status_setor']) ?></td>
+                                    <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
                                     <td>
-                                        <a href="formSetor.php?acao=update&id_setor=<?= $row['id_setor'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                        <a href="formSetor.php?acao=delete&id_setor=<?= $row['id_setor'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
-                                        <a href="formSetor.php?acao=view&id_setor=<?= $row['id_setor'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                        <a href="formSetor.php?acao=update&id=<?= $row['id'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                        <a href="formSetor.php?acao=delete&id=<?= $row['id'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                        <a href="formSetor.php?acao=view&id=<?= $row['id'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                     </td>
                                 </tr>
                             <?php

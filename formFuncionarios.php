@@ -14,10 +14,10 @@ if ($_GET['acao'] != "insert") {
 
     try {
 
-        $dados = $db->dbSelect("SELECT * FROM funcionarios WHERE id_funcionarios = ?", 'first', [$_GET['id_funcionarios']]);
+        $dados = $db->dbSelect("SELECT * FROM funcionarios WHERE id = ?", 'first', [$_GET['id']]);
 
         if ($dados) {
-            $setor_funcionario_id = $dados->setor_funcionarios;
+            $setor_funcionario_id = $dados->setor;
         }
 
     } catch (Exception $ex) {
@@ -30,7 +30,7 @@ if (!isset($setor_funcionario_id)) {
     $setor_funcionario_id = "";
 }
 
-$dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id_setor");
+$dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id");
 
 // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
 require_once "helpers/Formulario.php";
@@ -54,54 +54,54 @@ require_once "library/protectUser.php";
         <form class="g-3" action="<?= $_GET['acao'] ?>Funcionarios.php" method="POST" id="form">
 
             <!--  verifica se o id está no banco de dados e retorna esse id -->
-            <input type="hidden" name="id_funcionarios" id="id_funcionarios" value="<?= isset($dados->id_funcionarios) ? $dados->id_funcionarios : "" ?>">
+            <input type="hidden" name="id" id="id" value="<?= isset($dados->id) ? $dados->id : "" ?>">
 
             <div class="row">
 
                 <div class="col-4">
-                    <label for="nome_funcionarios" class="form-label mt-3">Nome</label>
+                    <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome_funcionarios" id="nome_funcionarios" placeholder="Nome do funcionario" required autofocus value="<?= isset($dados->nome_funcionarios) ? $dados->nome_funcionarios : "" ?>">
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do funcionario" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
                 </div>
 
                 <div class="col-4">
-                    <label for="cpf_funcionarios" class="form-label mt-3">CPF</label>
+                    <label for="cpf" class="form-label mt-3">CPF</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cpf_funcionarios" id="cpf_funcionarios" placeholder="Cpf do funcionario" required autofocus value="<?= isset($dados->cpf_funcionarios) ? $dados->cpf_funcionarios : "" ?>">
+                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" required autofocus value="<?= isset($dados->cpf) ? $dados->cpf : "" ?>">
                 </div>
 
                 <div class="col-4">
-                    <label for="status_funcionarios" class="form-label mt-3">Status</label>
-                    <select name="status_funcionarios" id="status_funcionarios" class="form-control" required>
-                        <!--  verifica se o status_funcionarios está no banco de dados e retorna esse status_funcionarios -->
-                        <option value=""  <?= isset($dados->status_funcionarios) ? $dados->status_funcionarios == "" ? "selected" : "" : "" ?>>...</option>
-                        <option value="1" <?= isset($dados->status_funcionarios) ? $dados->status_funcionarios == 1  ? "selected" : "" : "" ?>>Ativo</option>
-                        <option value="2" <?= isset($dados->status_funcionarios) ? $dados->status_funcionarios == 2  ? "selected" : "" : "" ?>>Inativo</option>
+                    <label for="statusRegistro" class="form-label mt-3">statusRegistro</label>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required>
+                        <!--  verifica se o statusRegistro está no banco de dados e retorna esse statusRegistro -->
+                        <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
+                        <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
+                        <option value="2" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 2  ? "selected" : "" : "" ?>>Inativo</option>
                     </select>
                 </div>
 
                 <div class="col-4">
-                    <label for="telefone_funcionarios" class="form-label mt-3">Telefone</label>
+                    <label for="telefone" class="form-label mt-3">Telefone</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="telefone_funcionarios" id="telefone_funcionarios" placeholder="Endereço completo" required autofocus value="<?= isset($dados->telefone_funcionarios) ? $dados->telefone_funcionarios : "" ?>">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Endereço completo" required autofocus value="<?= isset($dados->telefone) ? $dados->telefone : "" ?>">
                 </div>
 
                 <div class="col-4 mt-3">
-                    <label for="setor_funcionarios" class="form-label">Setor</label>
-                    <select name="setor_funcionarios" id="setor_funcionarios" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <label for="setor" class="form-label">Setor</label>
+                    <select name="setor" id="setor" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
                         <option value="">...</option> <!-- Opção padrão -->
                         <?php foreach ($dadosSetor as $setor): ?>
-                            <option value="<?= $setor['id_setor'] ?>" <?= $setor['id_setor'] == $setor_funcionario_id ? 'selected' : '' ?>>
-                                <?= $setor['nome_setor'] ?>
+                            <option value="<?= $setor['id'] ?>" <?= $setor['id'] == $setor_funcionario_id ? 'selected' : '' ?>>
+                                <?= $setor['nome'] ?>
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div class="col-4">
-                    <label for="salario_funcionario" class="form-label mt-3">Salário</label>
+                    <label for="salario" class="form-label mt-3">Salário</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="salario_funcionario" id="salario_funcionario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario_funcionario) ? $dados->salario_funcionario : "" ?>">
+                    <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? $dados->salario : "" ?>">
                 </div>
 
             </div>

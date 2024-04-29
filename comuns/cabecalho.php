@@ -134,23 +134,27 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="listaItens.php">Estoque</a>
+                            <a class="nav-link" href="listaProdutos.php">Estoque</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="listaFornecedor">Fornecedores</a>
+                            <a class="nav-link" href="listaFornecedor.php">Fornecedores</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" href="listaMovimentacoes.php">Movimentações</a>
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link" href="listaFuncionarios">Funcionários</a>
+                            <a class="nav-link" href="listaFuncionarios.php">Funcionários</a>
                         </li>
                         
                         <li class="nav-item">
-                            <a class="nav-link" href="listaSetor">Setores</a>
+                            <a class="nav-link" href="listaSetor.php">Setores</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="listaCargo">Cargo</a>
+                            <a class="nav-link" href="listaCargo.php">Cargo</a>
                         </li>
 
                         <li class="nav-item">

@@ -10,15 +10,15 @@
        $db = new Database();
 
         // preparação da query que será executada no banco de dados
-        $data = $db->dbUpdate("UPDATE funcionarios SET nome_funcionarios = ?, cpf_funcionarios = ?, status_funcionarios = ?, telefone_funcionarios = ?, setor_funcionarios = ?, salario_funcionario = ?  WHERE id_funcionarios = ?", 
+        $data = $db->dbUpdate("UPDATE funcionarios SET nome = ?, cpf = ?, statusRegistro = ?, telefone = ?, setor = ?, salario = ? WHERE id = ?", 
         [
-            $_POST['nome_funcionarios'],
-            $_POST['cpf_funcionarios'],
-            $_POST['status_funcionarios'],
-            $_POST['telefone_funcionarios'],
-            $_POST['setor_funcionarios'],
-            $_POST['salario_funcionario'],
-            $_POST['id_funcionarios']
+            $_POST['nome'],
+            $_POST['cpf'],
+            $_POST['statusRegistro'],
+            $_POST['telefone'],
+            $_POST['setor'],
+            $_POST['salario'],
+            $_POST['id']
         ]);
 
 

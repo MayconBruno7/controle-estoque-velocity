@@ -10,12 +10,12 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO fornecedor(nome_fornecedor, cnpj_fornecedor, endereco_fornecedor, telefone_fornecedor, status_fornecedor) VALUES (?, ?, ?, ?, ?)", [
-            $_POST['nome_fornecedor'],
-            $_POST['cnpj_fornecedor'],
-            $_POST['endereco_fornecedor'],
-            $_POST['telefone_fornecedor'],
-            $_POST['status_fornecedor']
+        $data = $db->dbInsert("INSERT INTO fornecedor(nome, cnpj, endereco, telefone, statusRegistro) VALUES (?, ?, ?, ?, ?)", [
+            $_POST['nome'],
+            $_POST['cnpj'],
+            $_POST['endereco'],
+            $_POST['telefone'],
+            $_POST['statusRegistro']
         ]);
 
     
