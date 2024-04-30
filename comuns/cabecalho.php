@@ -18,7 +18,6 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="../assets/js/jquery-3.3.1.js"></script>
     <script src="../assets/bootstrap/js/bootstrap.min.js"></script>
-    <script src="../assets/js/customEstoque.js"></script>
     
     <style>
 
@@ -127,9 +126,6 @@
                             <?php endif; ?>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="listaUsuario.php">Lista de usuários</a></li>
-                                <!-- <li><a class="dropdown-item" href="#">Another action</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#">Something else here</a></li> -->
                             </ul>
                         </li>
 

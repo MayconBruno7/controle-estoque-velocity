@@ -11,34 +11,33 @@
 
         // Atualiza as informações do item na tabela principal
         $atualizacaoQuery = "UPDATE produtos 
-                                SET nome = ?, descricao = ?, quantidade = ?, statusRegistro = ?, condicao = ?, setor = ?, fornecedor = ?, dataMod = NOW() 
+                                SET nome = ?, descricao = ?, statusRegistro = ?, condicao = ?, fornecedor = ?, dataMod = NOW() 
                                 WHERE id = ?";
         $atualizacaoData = $db->dbUpdate($atualizacaoQuery,
         [
             $_POST['nome'],
             $_POST['descricao'],
-            $_POST['quantidade'],
             $_POST['statusRegistro'],
             $_POST['condicao'],
-            $_POST['setor_id'],
             $_POST['fornecedor_id'],
 
             $_POST['id']
         ]);
+
+        
 
         // Obtém os dados antigos do item antes da atualização
         $dadosAntigos = $db->dbSelect("SELECT * FROM produtos WHERE id = ?", 'first',[$_POST['id']]);
 
         // Insere os dados antigos no histórico
         $historicoQuery = "INSERT INTO historico_produtos
-                            (id_produtos, nome_produtos, setor_id, descricao_anterior, quantidade_anterior, fornecedor_id, status_anterior, statusItem_anterior, dataMod) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                            (id_produtos, nome_produtos, descricao_anterior, quantidade_anterior, fornecedor_id, status_anterior, statusItem_anterior, dataMod) 
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
         $historicoData = $db->dbInsert($historicoQuery, 
         [
             $_POST['id'],
             $dadosAntigos->nome,
-            $dadosAntigos->setor,
-            $dadosAntigos->descricao,
+            $_POST['quantidade'],
             $dadosAntigos->quantidade,
             $dadosAntigos->fornecedor,
             $dadosAntigos->statusRegistro,

@@ -23,15 +23,14 @@
 
     // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
     require_once "helpers/Formulario.php";
-
     // recupera o cabeçalho para a página
     require_once "comuns/cabecalho.php";
+    // bloqueia o acesso se o usuário não estiver logado
     require_once "library/protectUser.php";
 
 ?>
 
     <main class="container mt-5">
-
         <div class="row">
             <div class="col-10">
                 <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
@@ -46,7 +45,6 @@
             <input type="hidden" name="id" id="id" value="<?= isset($dados->id) ? $dados->id : "" ?>">
 
             <div class="row">
-
                 <div class="col-4">
                     <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
@@ -56,7 +54,7 @@
                 <div class="col-4">
                     <label for="cnpj" class="form-label mt-3">CNPJ</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? $dados->cnpj : "" ?>">
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? $dados->cnpj : "" ?>">
                 </div>
 
                 <div class="col-4">
@@ -101,6 +99,39 @@
         </form>
     </main>
 
+    <script>
+        function formatarCNPJ(campo) {
+            // Remove qualquer caracter especial, exceto números
+            campo.value = campo.value.replace(/[^\d]/g, '');
+            
+            // Formata o CNPJ (XX.XXX.XXX/XXXX-XX)
+            if (campo.value.length > 2 && campo.value.length <= 5) {
+                campo.value = campo.value.replace(/(\d{2})(\d)/, "$1.$2");
+            } else if (campo.value.length > 5 && campo.value.length <= 8) {
+                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d)/, "$1.$2.$3");
+            } else if (campo.value.length > 8 && campo.value.length <= 12) {
+                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d{3})(\d)/, "$1.$2.$3/$4");
+            } else if (campo.value.length > 12 && campo.value.length <= 14) {
+                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, "$1.$2.$3/$4-$5");
+            } else if (campo.value.length > 14) {
+                campo.value = campo.value.substring(0, 14);
+            }
+        }
+
+        function formatarCNPJ(cnpjInput) {
+            // Remove tudo o que não é dígito
+            let cnpj = cnpjInput.value.replace(/\D/g, '');
+
+            // Insere os caracteres especiais
+            cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
+            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
+
+            // Atualiza o valor do input
+            cnpjInput.value = cnpj;
+        }
+    </script>
 
 <?php
 

@@ -21,7 +21,7 @@
                 text-align: center;
             }
         </style>
-   
+
         <footer>
             <p>Departamento de Informática Rosário da Limeira - MG</p>
             <span>© 2024 Company, Inc</span>
@@ -30,5 +30,7 @@
                 <a class="mt-2" href="details.php">Detalhes do projeto</a>
             </div>
         </footer>
+        
+        <script src="../assets/js/customEstoque.js"></script>
     </body>   
 </html>
