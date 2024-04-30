@@ -23,10 +23,6 @@
 
     // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
     require_once "helpers/Formulario.php";
-<<<<<<< HEAD
-=======
-
->>>>>>> 9a448a63fdf09bd8880301d602cbae2625e49e0b
     // recupera o cabeçalho para a página
     require_once "comuns/cabecalho.php";
     // bloqueia o acesso se o usuário não estiver logado
@@ -58,11 +54,7 @@
                 <div class="col-4">
                     <label for="cnpj" class="form-label mt-3">CNPJ</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-<<<<<<< HEAD
                     <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? $dados->cnpj : "" ?>">
-=======
-                    <input type="text" class="form-control" name="cnpj" id="cnpj" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? $dados->cnpj : "" ?>">
->>>>>>> 9a448a63fdf09bd8880301d602cbae2625e49e0b
                 </div>
 
                 <div class="col-4">

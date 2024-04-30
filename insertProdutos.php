@@ -10,19 +10,10 @@
         $db = new Database();
 
         // prepara a query
-<<<<<<< HEAD
         $data = $db->dbInsert("INSERT INTO produtos(nome, descricao, statusRegistro, condicao, fornecedor) VALUES (?, ?, ?, ?, ?)", 
         [
             $_POST['nome'],
             $_POST['descricao'],
-=======
-        $data = $db->dbInsert("INSERT INTO produtos(nome, descricao, quantidade, setor, statusRegistro, condicao, fornecedor) VALUES (?, ?, ?, ?, ?, ?, ?)", 
-        [
-            $_POST['nome'],
-            $_POST['descricao'],
-            $_POST['quantidade'],
-            $_POST['setor_id'],
->>>>>>> 9a448a63fdf09bd8880301d602cbae2625e49e0b
             $_POST['statusRegistro'],
             $_POST['condicao'],
             $_POST['fornecedor_id'],

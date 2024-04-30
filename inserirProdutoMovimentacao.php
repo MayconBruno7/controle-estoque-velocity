@@ -40,14 +40,8 @@
         }
 
         $db->dbUpdate("UPDATE produtos SET quantidade = ? WHERE id = ?", [$quantidadeEstoque, $id_produtos]);
-<<<<<<< HEAD
         
         // Se o item existir na movimentação, atualiza a quantidade
-=======
-        // Obtém o item da comanda relacionado ao produto
-        
-        // Se o item não existir na movimentação, atualiza a quantidade
->>>>>>> 9a448a63fdf09bd8880301d602cbae2625e49e0b
         if (!empty($itemMovimentacao)) {
             
             $db->dbUpdate(
@@ -60,10 +54,7 @@
             
         } else {
             
-<<<<<<< HEAD
             // Se o item não existir na movimentação adiciona o item e quantidade
-=======
->>>>>>> 9a448a63fdf09bd8880301d602cbae2625e49e0b
             $db->dbInsert(
                 "INSERT INTO movimentacoes_itens(quantidade, valor, id_movimentacoes, id_produtos) VALUES (?, ?, ?, ?)",
                 [$quantidade, $valor_produto, $id_movimentacoes, $id_produtos]
