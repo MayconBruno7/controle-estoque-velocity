@@ -39,13 +39,11 @@
                 [$id_produto]
             );
 
-            // Adiciona a quantidade removida de volta ao estoque
-            $novaQuantidadeEstoque = ($produto->quantidade) + ($quantidadeRemover);
-
             // Verifica se o produto existe
             if ($produto) {
+               
                 // Adiciona a quantidade removida de volta ao estoque
-                $novaQuantidadeEstoque = $produto->quantidade + $quantidadeRemover;
+                $novaQuantidadeEstoque = ($produto->quantidade) + ($quantidadeRemover);
     
                 // atualiza a quantidade em estoque
                 $db->dbUpdate(
