@@ -7,10 +7,11 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM fornecedor 
-                                    WHERE id = ?",
-                                    [$_POST['id']]
-                                );
+            $result = $db->dbDelete(
+                "DELETE FROM fornecedor 
+                    WHERE id = ?",
+                    [$_POST['id']]
+                );
 
             if ($result) {
                 return header("Location: listaFornecedor.php?msgSucesso=Registro excluído com sucesso.");

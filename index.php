@@ -2,6 +2,7 @@
 
         require_once "comuns/cabecalho.php";
         require_once "library/Database.php";
+        require_once "helpers/Formulario.php";
 
     ?>
 
@@ -24,27 +25,7 @@
                                 <input type="password" class="form-control" id="senha" name="senha" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required>
                             </div>
 
-                            <?php if (isset($_GET['msgError'])): ?>
-
-                                <div class="col-12 mt-3">
-                                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                        <strong><?= $_GET['msgError'] ?></strong>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                </div>
-
-                            <?php endif; ?>
-
-                            <?php if (isset($_GET['msgSucesso'])): ?>
-
-                                <div class="col-12 mt-3">
-                                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                                        <strong><?= $_GET['msgSucesso'] ?></strong>
-                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                    </div>
-                                </div>
-
-                            <?php endif; ?>
+                            <?= getMensagem(); ?>
 
                             <div class="col-12 form-group mt-3">
                                 <div class="row">

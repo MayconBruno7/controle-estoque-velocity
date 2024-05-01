@@ -16,9 +16,6 @@
             $_POST['statusRegistro'],
         ]);
 
-    
-       
-
         // verifica se o ultimo item adicionado no banco de dados é mais que zero
         if ($data) {
             return header("Location: listaSetor.php?msgSucesso=Registro inserido com sucesso.");

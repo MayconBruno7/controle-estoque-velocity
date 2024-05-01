@@ -7,10 +7,11 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM setor 
-                                    WHERE id = ?",
-                                    [$_POST['id']]
-                                );
+            $result = $db->dbDelete(
+                "DELETE FROM setor 
+                    WHERE id = ?",
+                    [$_POST['id']]
+                );
 
             if ($result) {
                 return header("Location: listaSetor.php?msgSucesso=Registro excluído com sucesso.");

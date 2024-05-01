@@ -63,8 +63,7 @@
                         <option value="2" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 2  ? "selected" : "" : "" ?>>Inativo</option>
                     </select>
                 </div>
-
-
+            </div>
 
             <div class="col-auto mt-4 mb-4">
                 <a href="listaCargo.php" class="btn btn-outline-secondary btn-sm">Voltar</a>
@@ -84,7 +83,6 @@
             </div>
         </form>
     </main>
-
 
 <?php
 

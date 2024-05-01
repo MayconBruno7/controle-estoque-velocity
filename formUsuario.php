@@ -15,8 +15,11 @@
     $dados = [];
 
     if ($_GET['acao'] != "insert") {
-
-        $dados = $db->dbSelect("SELECT * FROM usuario WHERE id = ?", 'first', [$_GET['id']]);
+        $dados = $db->dbSelect(
+            "SELECT * FROM usuario WHERE id = ?",
+             'first', 
+             [$_GET['id']]
+        );
 
     };
 ?>
@@ -77,7 +80,6 @@
                         <option value="2" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 2  ? "selected" : "" : "" ?>>Inativo</option>
                     </select>
                 </div>
-
             </div>
 
             <div class="row mt-3">
@@ -107,6 +109,6 @@
 
     </main>
 
-    <?php
+<?php
 
     require_once "comuns/rodape.php";

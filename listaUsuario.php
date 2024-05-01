@@ -1,4 +1,5 @@
 <?php
+
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
 

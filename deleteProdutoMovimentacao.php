@@ -27,7 +27,6 @@
             // Subtrai a quantidade a ser removida da quantidade atual na comanda
             $novaQuantidadeMovimentacao = $quantidadeAtual - $quantidadeRemover;
 
-
             // Atualiza a tabela movimetacao_itens com a nova quantidade
             $db->dbUpdate(
                 "UPDATE movimentacoes_itens SET quantidade = ? WHERE id_movimentacoes = ? AND id_produtos = ?",
@@ -48,10 +47,8 @@
 
                 if ($tipo_movimentacao == '1') {
                     $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
-                    // exit('Movimentação 1   ');
                 } else if ($tipo_movimentacao == '2') {
                     $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
-                    // exit('opa   ');
                 } else {
                     exit;
                 }

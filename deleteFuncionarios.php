@@ -7,10 +7,11 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM funcionarios 
-                                    WHERE id = ?",
-                                    [$_POST['id']]
-                                );
+            $result = $db->dbDelete(
+                "DELETE FROM funcionarios 
+                    WHERE id = ?",
+                    [$_POST['id']]
+                );
 
             if ($result) {
                 return header("Location: listaFuncionarios.php?msgSucesso=Registro excluído com sucesso.");

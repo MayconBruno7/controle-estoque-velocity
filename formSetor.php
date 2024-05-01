@@ -14,7 +14,11 @@
 
         try {
 
-            $dados = $db->dbSelect("SELECT * FROM setor WHERE id = ?", 'first', [$_GET['id']]);
+            $dados = $db->dbSelect(
+                "SELECT * FROM setor WHERE id = ?", 
+                'first', 
+                [$_GET['id']]
+            );
             
             if ($dados) {
                 $funcionario_id = $dados->responsavel;

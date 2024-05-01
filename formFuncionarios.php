@@ -106,7 +106,6 @@
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
                     <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? $dados->salario : "" ?>">
                 </div>
-
             </div>
 
             <div class="col-auto mt-4 mb-4">

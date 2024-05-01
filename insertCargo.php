@@ -10,10 +10,9 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO cargo(nome) VALUES (?)", [
-            $_POST['nome'],
-
-        ]);
+        $data = $db->dbInsert("INSERT INTO cargo(nome) VALUES (?)", 
+            [$_POST['nome'],]
+        );
 
         // verifica se o ultimo item adicionado no banco de dados é mais que zero
         if ($data) {

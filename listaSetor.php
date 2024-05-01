@@ -77,10 +77,10 @@
         </form>
     </main>
 
-    <?php
+<?php
 
     echo datatables('tbListasetor');
 
     require_once "comuns/rodape.php";
 
-    ?>
+?>

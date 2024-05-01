@@ -7,10 +7,11 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM produtos 
-                                    WHERE id = ?",
-                                    [$_POST['id']]
-                                );
+            $result = $db->dbDelete(
+                "DELETE FROM produtos 
+                    WHERE id = ?",
+                    [$_POST['id']]
+                );
 
             if ($result) {
                 return header("Location: listaProdutos.php?msgSucesso=Registro excluído com sucesso.");

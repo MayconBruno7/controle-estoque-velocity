@@ -11,13 +11,6 @@
         $valor_produto = (float)$_POST['valor'];
         $tipo_movimentacao = (int)$_POST['tipo_movimentacoes'];
 
-        // var_dump($quantidade);
-        // var_dump($id_movimentacoes);
-        // var_dump($id_produtos);
-        // var_dump($valor_produto);
-        // var_dump($tipo_movimentacao);
-        // exit('To no update');
-
         // Subtrai ou adiciona a quantidade do estoque
         $produto = $db->dbSelect("SELECT * FROM produtos WHERE id = ?", 'first', [$id_produtos]);
 

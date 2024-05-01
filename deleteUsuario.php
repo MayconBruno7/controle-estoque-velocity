@@ -8,10 +8,11 @@
         $db = new Database();
 
         try {
-            $result = $db->dbDelete("DELETE FROM usuario 
-                                    WHERE id = ?",
-                                    [$_POST['id']]
-                                );
+            $result = $db->dbDelete(
+                "DELETE FROM usuario 
+                    WHERE id = ?",
+                    [$_POST['id']]
+                );
 
             if ($result) {
                 return header("Location: listaUsuario.php?msgSucesso=Registro excluído com sucesso.");
