@@ -1,8 +1,8 @@
-    <?php 
+<?php 
 
-        // carrega o cabecalho
-        require_once "comuns/cabecalho.php";
-    ?>
+    // carrega o cabecalho
+    require_once "comuns/cabecalho.php";
+?>
 
     <title> Cadastro </title>
 

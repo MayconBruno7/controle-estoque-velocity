@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 30/04/2024 às 18:21
+-- Tempo de geração: 01/05/2024 às 16:01
 -- Versão do servidor: 8.2.0
 -- Versão do PHP: 8.2.13
 
@@ -63,8 +63,8 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
   `cpf` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
-  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
-  `setor` int NOT NULL DEFAULT '0',
+  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `setor` int DEFAULT '0',
   `salario` decimal(20,6) NOT NULL,
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - ativo     2 - inativo',
   PRIMARY KEY (`id`) USING BTREE,
@@ -161,7 +161,7 @@ DROP TABLE IF EXISTS `setor`;
 CREATE TABLE IF NOT EXISTS `setor` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `responsavel` int NOT NULL DEFAULT (0),
+  `responsavel` int DEFAULT NULL,
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `responsavel_setor` (`responsavel`) USING BTREE

@@ -1,43 +1,46 @@
 <?php 
 
-$dados = [];
+    $dados = [];
 
-require_once "library/Database.php";
-// Criando o objeto Db para classe de base de dados
-$db = new Database();
+    require_once "library/Database.php";
+    // Criando o objeto Db para classe de base de dados
+    $db = new Database();
 
-/*
-*   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
-*/
+    /*
+    *   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
+    */
 
-if ($_GET['acao'] != "insert") {
+    if ($_GET['acao'] != "insert") {
 
-    try {
+        try {
 
-        $dados = $db->dbSelect("SELECT * FROM funcionarios WHERE id = ?", 'first', [$_GET['id']]);
+            $dados = $db->dbSelect("SELECT * FROM funcionarios WHERE id = ?", 'first', [$_GET['id']]);
 
-        if ($dados) {
-            $setor_funcionario_id = $dados->setor;
+            if ($dados) {
+                $setor_funcionario_id = $dados->setor;
+            }
+
+        } catch (Exception $ex) {
+            echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
         }
-
-    } catch (Exception $ex) {
-        echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
     }
-}
 
-// Se o setor do funcionário não foi encontrado, inicializa $setor_funcionario_id como vazio
-if (!isset($setor_funcionario_id)) {
-    $setor_funcionario_id = "";
-}
+    // Se o setor do funcionário não foi encontrado, inicializa $setor_funcionario_id como vazio
+    if (!isset($setor_funcionario_id)) {
+        $setor_funcionario_id = "";
+    }
 
-$dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id");
+    $dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id");
 
-// muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
-require_once "helpers/Formulario.php";
+    // Verifica se $dadosFuncionarios contém elementos
+    $setoresCadastrados = !empty($dadosSetor);
 
-// recupera o cabeçalho para a página
-require_once "comuns/cabecalho.php";
-require_once "library/protectUser.php";
+    // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
+    require_once "helpers/Formulario.php";
+
+    // recupera o cabeçalho para a página
+    require_once "comuns/cabecalho.php";
+    require_once "library/protectUser.php";
 
 ?>
 
@@ -71,7 +74,7 @@ require_once "library/protectUser.php";
                 </div>
 
                 <div class="col-4">
-                    <label for="statusRegistro" class="form-label mt-3">statusRegistro</label>
+                    <label for="statusRegistro" class="form-label mt-3">Estado do registro</label>
                     <select name="statusRegistro" id="statusRegistro" class="form-control" required>
                         <!--  verifica se o statusRegistro está no banco de dados e retorna esse statusRegistro -->
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
@@ -88,9 +91,9 @@ require_once "library/protectUser.php";
 
                 <div class="col-4 mt-3">
                     <label for="setor" class="form-label">Setor</label>
-                    <select name="setor" id="setor" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <select name="setor" id="setor" class="form-control" <?= !$setoresCadastrados ? '' : 'required' ?> <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <?php foreach ($dadosSetor as $setor): ?>
                         <option value="">...</option> <!-- Opção padrão -->
-                        <?php foreach ($dadosSetor as $setor): ?>
                             <option value="<?= $setor['id'] ?>" <?= $setor['id'] == $setor_funcionario_id ? 'selected' : '' ?>>
                                 <?= $setor['nome'] ?>
                             </option>

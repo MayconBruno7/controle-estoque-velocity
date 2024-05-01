@@ -14,7 +14,7 @@
     
     try {
         // preparação da query que será executada no banco de dados
-        $dados = $db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM funcionarios JOIN setor ON funcionarios.setor = setor.id ORDER BY id");
+        $dados = $db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM funcionarios LEFT JOIN setor ON funcionarios.setor = setor.id ORDER BY id");
     } catch (Exception $ex) {
         echo json_encode(['status' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
     }
@@ -73,7 +73,7 @@
                                 <tr>
                                     <td> <?= $row['nome'] ?> </td>
                                     <td> R$ <?= number_format($row['salario'], 2, ',', '.') ?></td>
-                                    <td> <?= $row['nome_do_setor'] ? : "Nenhum setor encontrado" ?> </td>
+                                    <td> <?= $row['nome_do_setor'] ? : "Nenhum setor selecionado" ?> </td>
 
                                     <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
                                     <td>

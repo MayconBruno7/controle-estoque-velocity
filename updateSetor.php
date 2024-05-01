@@ -13,7 +13,7 @@
         $data = $db->dbUpdate("UPDATE setor SET nome = ?, responsavel = ?, statusRegistro = ?  WHERE id = ?", 
         [
             $_POST['nome'],
-            $_POST['responsavel'],
+            $_POST['funcionarios'],
             $_POST['statusRegistro'], 
             $_POST['id']
         ]);

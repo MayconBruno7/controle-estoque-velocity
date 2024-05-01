@@ -67,6 +67,13 @@
             </div>
         </div>
 
+        <div class="row">
+            <div class="col-12 d-flex justify-content-start">
+                <!-- Passando o ID do produto corretamente na URL -->
+                <a href="HistoricoMovimentacoes.php?id_produtos=<?= isset($_GET['id']) ? $_GET['id'] : '' ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
+            </div>
+        </div>
+
         <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
         <form class="g-3" action="<?= $_GET['acao'] ?>produtos.php" method="POST" id="form">
 
@@ -87,18 +94,6 @@
                     <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100"value="<?= isset($dados->quantidade) ? $dados->quantidade : "" ?>" disabled>
                     <input type="hidden" name="quantidade" id="hidden" value="<?= isset($dados->quantidade) ? $dados->quantidade : "" ?>" >
                 </div>
-<!-- 
-                <div class="col-3 mt-3">
-                    <label for="setor_id" class="form-label">Setor</label>
-                    <select name="setor_id" id="setor_id" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
-                        <option value="">...</option> 
-                        <?php foreach ($dadosSetor as $setor): ?>
-                            <option value="<?= $setor['id'] ?>" <?= $setor['id'] == $setor_item_id ? 'selected' : '' ?>>
-                                <?= $setor['nome'] ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div> -->
 
                 <div class="col-6 mt-3">
                     <label for="fornecedor_id" class="form-label">Fornecedor</label>
@@ -230,8 +225,8 @@
 
     </script>
 
-    <?php
+<?php
 
-        require_once "comuns/rodape.php";
+    require_once "comuns/rodape.php";
 
-    ?>
+?>

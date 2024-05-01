@@ -1,45 +1,46 @@
 <?php 
 
-$dados = [];
+    $dados = null;
 
-require_once "library/Database.php";
-// Criando o objeto Db para classe de base de dados
-$db = new Database();
+    require_once "library/Database.php";
+    // Criando o objeto Db para classe de base de dados
+    $db = new Database();
 
-/*
-*   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
-*/
+    /*
+    *   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
+    */
 
-if ($_GET['acao'] != "insert") {
+    if ($_GET['acao'] != "insert") {
 
-    try {
+        try {
 
-        $dados = $db->dbSelect("SELECT * FROM setor WHERE id = ?", 'first', [$_GET['id']]);
-        
-        if ($dados) {
-            $funcionario_id = $dados->responsavel;
-        } 
+            $dados = $db->dbSelect("SELECT * FROM setor WHERE id = ?", 'first', [$_GET['id']]);
+            
+            if ($dados) {
+                $funcionario_id = $dados->responsavel;
+            } 
 
 
-    } catch (Exception $ex) {
-        echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
+        } catch (Exception $ex) {
+            echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
+        }
     }
-}
 
-// Se o setor do funcionário não foi encontrado, inicializa $setor_funcionario_id como vazio
-if (!isset($funcionario_id)) {
-    $funcionario_id = "";
-}
+    // Se o setor do funcionário não foi encontrado, inicializa $setor_funcionario_id como vazio
+    $funcionario_id = isset($dados->responsavel) ? $dados->responsavel : "";
 
-$dadosFuncionarios = $db->dbSelect("SELECT * FROM funcionarios ORDER BY id");
+    $dadosFuncionarios = $db->dbSelect("SELECT * FROM funcionarios");
 
+    // Verifica se $dadosFuncionarios contém elementos
+    $funcionariosCadastrados = !empty($dadosFuncionarios);
 
-// muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
-require_once "helpers/Formulario.php";
+    // var_dump(count($dados->responsavel)) > 0;
+    // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
+    require_once "helpers/Formulario.php";
 
-// recupera o cabeçalho para a página
-require_once "comuns/cabecalho.php";
-require_once "library/protectUser.php";
+    // recupera o cabeçalho para a página
+    require_once "comuns/cabecalho.php";
+    require_once "library/protectUser.php";
 
 ?>
     <main class="container mt-5">
@@ -75,10 +76,9 @@ require_once "library/protectUser.php";
                     </select>
                 </div>
 
-
                 <div class="col-4 mt-3">
                     <label for="funcionarios" class="form-label">Responsavel pelo setor</label>
-                    <select name="funcionarios" id="funcionarios" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <select name="funcionarios" id="funcionarios" class="form-control" <?= !$funcionariosCadastrados ? '' : 'required' ?> <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : '' ?>>
                         <option value="">...</option> <!-- Opção padrão -->
                         <?php foreach ($dadosFuncionarios as $responsavel): ?>
                             <option value="<?= $responsavel['id'] ?>" <?= $responsavel['id'] == $funcionario_id ? 'selected' : '' ?>>
@@ -87,15 +87,7 @@ require_once "library/protectUser.php";
                         <?php endforeach; ?>
                     </select>
                 </div>
-
-
-                <!-- se a ação for view não aparece a hora formatada no formsetor -->
-                <?php  if ($_GET['acao'] == 'view' || $_GET['acao'] == 'delete') { ?>
-        
-
-            <?php 
-            } 
-            ?>
+            </div>
 
             <div class="col-6 mt-4 mb-4">
                 <a href="listaSetor.php" class="btn btn-outline-secondary btn-sm">Voltar</a>

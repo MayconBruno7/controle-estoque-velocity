@@ -9,6 +9,7 @@
     $id_movimentacao    = (int)$_POST['id_movimentacao'];
     $quantidadeRemover  = (int)$_POST['quantidadeRemover'];
     $id_produto         = (int)$_POST['id_produto'];
+    $tipo_movimentacao  = (int)$_POST['tipo_movimentacoes'];
 
     // Obtém o item da movimentacao relacionado ao produto
     $item_movimentacao = $db->dbSelect(
@@ -26,6 +27,7 @@
             // Subtrai a quantidade a ser removida da quantidade atual na comanda
             $novaQuantidadeMovimentacao = $quantidadeAtual - $quantidadeRemover;
 
+
             // Atualiza a tabela movimetacao_itens com a nova quantidade
             $db->dbUpdate(
                 "UPDATE movimentacoes_itens SET quantidade = ? WHERE id_movimentacoes = ? AND id_produtos = ?",
@@ -41,10 +43,19 @@
 
             // Verifica se o produto existe
             if ($produto) {
-               
-                // Adiciona a quantidade removida de volta ao estoque
-                $novaQuantidadeEstoque = ($produto->quantidade) + ($quantidadeRemover);
-    
+
+                $quantidadeProduto = $produto->quantidade;
+
+                if ($tipo_movimentacao == '1') {
+                    $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
+                    // exit('Movimentação 1   ');
+                } else if ($tipo_movimentacao == '2') {
+                    $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
+                    // exit('opa   ');
+                } else {
+                    exit;
+                }
+
                 // atualiza a quantidade em estoque
                 $db->dbUpdate(
                     "UPDATE produtos SET quantidade = ? WHERE id = ?",
