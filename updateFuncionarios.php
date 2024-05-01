@@ -13,9 +13,9 @@
         $data = $db->dbUpdate("UPDATE funcionarios SET nome = ?, cpf = ?, statusRegistro = ?, telefone = ?, setor = ?, salario = ? WHERE id = ?", 
         [
             $_POST['nome'],
-            $_POST['cpf'],
+            preg_replace("/[^0-9]/", "", $_POST['cpf']),
             $_POST['statusRegistro'],
-            $_POST['telefone'],
+            preg_replace("/[^0-9]/", "", $_POST['telefone']),
             $_POST['setor'],
             $_POST['salario'],
             $_POST['id']

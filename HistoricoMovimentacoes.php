@@ -55,11 +55,11 @@
                 foreach ($dados as $row) {
                     ?>
                         <tr>
-                            <td> <?= $row['id_mov'] ?> </td>
-                            <td> <?= $row['nome_fornecedor'] ?> </td>
-                            <td><?= getTipoMovimentacao($row['tipo']) ?></td>
-                            <td> <?= date('d/m/Y', strtotime($row['data_pedido'])) ?> </td>
-                            <td> <?= date('d/m/Y', strtotime($row['data_chegada'])) ?> </td>
+                            <td> <?= isset($row['id_mov']) ? $row['id_mov'] : 'Nenhuma movimentação encontrada' ?> </td>
+                            <td> <?= isset($row['nome_fornecedor']) ? $row['nome_fornecedor'] : 'Nenhum fornecedor encontrado' ?> </td>
+                            <td><?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
+                            <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
+                            <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
                             <td>
                                 <a href="formMovimentacoes.php?acao=view&id=<?= $row['id_mov'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                 <a href="formMovimentacoes.php?acao=update&id=<?= $row['id_mov'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;

@@ -12,9 +12,9 @@
         // prepara a query
         $data = $db->dbInsert("INSERT INTO fornecedor(nome, cnpj, endereco, telefone, statusRegistro) VALUES (?, ?, ?, ?, ?)", [
             $_POST['nome'],
-            $_POST['cnpj'],
+            preg_replace("/[^0-9]/", "", $_POST['cnpj']),
             $_POST['endereco'],
-            $_POST['telefone'],
+            preg_replace("/[^0-9]/", "", $_POST['telefone']),
             $_POST['statusRegistro']
         ]);
 

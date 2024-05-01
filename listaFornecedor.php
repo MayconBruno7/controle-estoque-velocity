@@ -31,7 +31,7 @@
     <main class="container mt-5">
         <div class="row">
             <div class="col-12">
-                <?php getMensagem(); ?>
+                <?= getMensagem(); ?>
             </div>
         </div>
 
@@ -58,8 +58,8 @@
                                 <tr>
                                     <td> <?= $row['id'] ?> </td>
                                     <td> <?= $row['nome'] ?> </td>
-                                    <td> <?= $row['cnpj'] ?> </td>
-                                    <td> <?= $row['telefone'] ?> </td>
+                                    <td> <?= formatarCNPJInput($row['cnpj']) ?> </td>
+                                    <td> <?= formatarTelefone($row['telefone']) ?> </td>
                                     <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
                                     <td>
                                         <a href="formFornecedor.php?acao=update&id=<?= $row['id'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;

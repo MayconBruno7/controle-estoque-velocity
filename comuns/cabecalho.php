@@ -126,11 +126,13 @@
                             <?php endif; ?>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="listaUsuario.php">Lista de usuários</a></li>
+
+                                <li><a class="dropdown-item" href="listaProdutos.php">Cadastrar produtos</a></li>
                             </ul>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="listaProdutos.php">Estoque</a>
+                            <a class="nav-link" href="viewEstoque.php">Estoque</a>
                         </li>
 
                         <li class="nav-item">

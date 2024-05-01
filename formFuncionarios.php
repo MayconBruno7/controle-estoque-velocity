@@ -70,7 +70,7 @@
                 <div class="col-4">
                     <label for="cpf" class="form-label mt-3">CPF</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" required autofocus value="<?= isset($dados->cpf) ? $dados->cpf : "" ?>">
+                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= isset($dados->cpf) ? formatarCPF($dados->cpf) : "" ?>" oninput="formatarCPF(this)">
                 </div>
 
                 <div class="col-4">
@@ -85,8 +85,7 @@
 
                 <div class="col-4">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
-                    <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Endereço completo" required autofocus value="<?= isset($dados->telefone) ? $dados->telefone : "" ?>">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" required autofocus value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
                 </div>
 
                 <div class="col-4 mt-3">
@@ -104,9 +103,10 @@
                 <div class="col-4">
                     <label for="salario" class="form-label mt-3">Salário</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? $dados->salario : "" ?>">
+                    <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? number_format($dados->salario, 2, ",", ".") : "" ?>" oninput="formatarSalario(this)">
                 </div>
             </div>
+       
 
             <div class="col-auto mt-4 mb-4">
                 <a href="listafuncionarios.php" class="btn btn-outline-secondary btn-sm">Voltar</a>
@@ -127,6 +127,70 @@
         </form>
     </main>
 
+    <script>
+        function formatarCPF(campo) {
+            // Remove todos os caracteres que não são números
+            var cpf = campo.value.replace(/\D/g, '');
+
+            // Adiciona pontos e traços conforme o padrão do CPF
+            if (cpf.length > 3) {
+                cpf = cpf.substring(0, 3) + "." + cpf.substring(3);
+            }
+            if (cpf.length > 7) {
+                cpf = cpf.substring(0, 7) + "." + cpf.substring(7);
+            }
+            if (cpf.length > 11) {
+                cpf = cpf.substring(0, 11) + "-" + cpf.substring(11);
+            }
+
+            // Atualiza o valor do input
+            campo.value = cpf;
+        }
+
+        function formatarTelefone(input) {
+            // Remove todos os caracteres não numéricos
+            var telefone = input.value.replace(/\D/g, '');
+
+            // Verifica o tamanho máximo do número de telefone
+            var maxLength = 11; // Se quiser permitir mais dígitos, ajuste o valor aqui
+
+            // Formatação do número de telefone
+            if (telefone.length <= maxLength) {
+                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+            } else {
+                // Caso o número de telefone tenha mais dígitos do que o permitido
+                telefone = telefone.slice(0, maxLength);
+                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+            }
+
+            // Atualiza o valor do input com o telefone formatado
+            input.value = telefone;
+        }
+
+        function formatarSalario(input) {
+            // Remove todos os caracteres não numéricos
+            var valor = input.value.replace(/\D/g, '');
+
+            // Verifica se o valor não está vazio
+            if (valor !== '') {
+                // Divide o valor em parte inteira e parte decimal
+                var parteInteira = valor.substring(0, valor.length - 2);
+                var parteDecimal = valor.substring(valor.length - 2);
+
+                // Adiciona o separador de milhares (ponto)
+                parteInteira = parteInteira.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+
+                // Formata o valor como moeda (R$)
+                valor = parteInteira + ',' + parteDecimal;
+
+                // Atualiza o valor do input
+                input.value = 'R$ ' + valor;
+            } else {
+                // Se o valor estiver vazio, define o valor como vazio
+                input.value = '';
+            }
+        }
+    </script>
 
 <?php
 

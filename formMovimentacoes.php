@@ -178,8 +178,8 @@
 
                 <div class="col  mt-4">
                     <div class="col-auto text-end ml-2">
-                        <a href="listaProdutos.php?acao=insert&id_movimentacoes=<?= isset($dados->id) ? $dados->id : "" ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""  ?>" 
-                        class="btn btn-outline-primary btn-sm styleButton " type="submit" title="Inserir">
+                        <a href="viewEstoque.php?acao=insert&id_movimentacoes=<?= isset($dados->id) ? $dados->id : "" ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""  ?>" 
+                        class="btn btn-outline-primary btn-sm styleButton" title="Inserir">
                             Adicionar Produtos
                          </a>
                     </div>
@@ -209,7 +209,7 @@
                             <td><?= $row['mov_itens_quantidade'] ?></td>
                             <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                             <td>
-                                <a href="listaProdutos.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
                             

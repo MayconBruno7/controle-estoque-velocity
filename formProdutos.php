@@ -165,7 +165,6 @@
                             ?>
                             <!-- Usar o nome do fornecedor encontrado -->
                             <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_produtos'] ?>" data-fornecedor="<?= $historicoItem['fornecedor_id']; ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-status="<?= $historicoItem['status_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
-                                
                                 <?= $historicoItem['dataMod'] ?>
                             </option>
                         <?php endforeach; ?>
@@ -175,8 +174,6 @@
             </div>
 
             <div class="col-auto mt-5 mb-4">
-                <button onclick="goBack()" class="btn btn-outline-secondary btn-sm">Voltar</button>
-                
                 <!-- define o texto de cada botão de acordo com a sua ação -->
                 <?php if ($_GET['acao'] == "delete") : ?>
                     <button type="submit" class="btn btn-primary btn-sm">Excluir</button>
@@ -191,15 +188,22 @@
                 <?php endif; ?>
             </div>
         </form>
+
+        <div class="col-auto mb-4">
+            <button onclick="goBack()" class="btn btn-outline-secondary btn-sm">Voltar</button>
+        </div>
+       
+        
     </main>
-    
+
     <script src="assets/ckeditor5-build-classic/ckeditor.js"></script>
     
     <script>
 
         function goBack() {
-        window.history.back();
+            window.history.back();
         }
+
        document.addEventListener("DOMContentLoaded", function() {
             ClassicEditor
                 .create(document.querySelector('#descricao'), {})

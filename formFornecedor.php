@@ -54,7 +54,7 @@
                 <div class="col-4">
                     <label for="cnpj" class="form-label mt-3">CNPJ</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? $dados->cnpj : "" ?>">
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? formatarCNPJinput($dados->cnpj) : "" ?>">
                 </div>
 
                 <div class="col-4">
@@ -76,7 +76,7 @@
                 <div class="col-4">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone do fornecedor" required value="<?= isset($dados->telefone) ? $dados->telefone : "" ?>">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone do fornecedor" required value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
                 </div>
             </div>
 
@@ -118,7 +118,7 @@
             }
         }
 
-        function formatarCNPJ(cnpjInput) {
+        function formatarCNPJinput(cnpjInput) {
             // Remove tudo o que não é dígito
             let cnpj = cnpjInput.value.replace(/\D/g, '');
 
@@ -130,6 +130,26 @@
 
             // Atualiza o valor do input
             cnpjInput.value = cnpj;
+        }
+
+        function formatarTelefone(input) {
+            // Remove todos os caracteres não numéricos
+            var telefone = input.value.replace(/\D/g, '');
+
+            // Verifica o tamanho máximo do número de telefone
+            var maxLength = 11; // Se quiser permitir mais dígitos, ajuste o valor aqui
+
+            // Formatação do número de telefone
+            if (telefone.length <= maxLength) {
+                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+            } else {
+                // Caso o número de telefone tenha mais dígitos do que o permitido
+                telefone = telefone.slice(0, maxLength);
+                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+            }
+
+            // Atualiza o valor do input com o telefone formatado
+            input.value = telefone;
         }
     </script>
 

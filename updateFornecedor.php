@@ -13,13 +13,12 @@
         $data = $db->dbUpdate("UPDATE fornecedor SET nome = ?, cnpj = ?, endereco = ?, telefone = ?, statusRegistro = ? WHERE id = ?", 
         [
             $_POST['nome'],
-            $_POST['cnpj'],
+            preg_replace("/[^0-9]/", "", $_POST['cnpj']),
             $_POST['endereco'],
-            $_POST['telefone'],
+            preg_replace("/[^0-9]/", "", $_POST['telefone']),
             $_POST['statusRegistro'],
             $_POST['id']
         ]);
-
 
         // verifica se o item foi adicionado atráves do rowCount
         if ($data) {

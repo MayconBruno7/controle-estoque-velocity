@@ -14,7 +14,7 @@
             VALUES (?, ?, ?, ?, ?, ?)", 
         [
             $_POST['nome'],
-            $_POST['cpf'],
+            preg_replace("/[^0-9]/", "", $_POST['cpf']),
             $_POST['telefone'],
             $_POST['setor'],
             $_POST['salario'],
