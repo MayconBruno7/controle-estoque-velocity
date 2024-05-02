@@ -80,8 +80,8 @@
                             <td> <?= $row['id_movimentacao'] ?> </td>
                             <td> <?= $row['nome_fornecedor'] ?> </td>
                             <td> <?= getTipo($row['tipo_movimentacao']) ?></td>
-                            <td> <?= $row['data_pedido'] ?> </td>
-                            <td> <?= $row['data_chegada'] != '0000-00-00' ? $row['data_chegada'] : 'Nenhuma data encontrada' ?> </td>
+                            <td> <?= formatarDataBrasileira($row['data_pedido']) ?> </td>
+                            <td> <?= $row['data_chegada'] != '0000-00-00' ? formatarDataBrasileira($row['data_chegada']) : 'Nenhuma data encontrada' ?> </td>
                             <td>
                                 <a href="formMovimentacoes.php?acao=update&id_movimentacoes=<?= $row['id_movimentacao'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Alterar">Alterar</a>&nbsp;
                                 <a href="formMovimentacoes.php?acao=delete&id_movimentacoes=<?= $row['id_movimentacao'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;

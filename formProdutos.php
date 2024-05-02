@@ -193,7 +193,6 @@
             <button onclick="goBack()" class="btn btn-outline-secondary btn-sm">Voltar</button>
         </div>
        
-        
     </main>
 
     <script src="assets/ckeditor5-build-classic/ckeditor.js"></script>

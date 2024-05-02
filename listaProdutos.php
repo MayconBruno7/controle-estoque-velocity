@@ -75,7 +75,7 @@
                                 <td> <?= !empty($row['quantidade']) ? $row['quantidade'] : 'Nenhuma quantidade encontrada' ?>
                                 <?php if (!isset($_GET["acao"])) : ?>
                                 <td>
-                                    <?= !empty($row['valor']) ? $row['valor'] : 'Nenhum valor encontrado' ?>
+                                    <?= !empty($row['valor']) ? number_format($row['valor'], 2, ",", ".") : "Nenhum valor encontrado" ?>
                                 </td>
                                 <?php endif; ?>
                                 <td><?= getCondicao($row['condicao']) ?></td>
