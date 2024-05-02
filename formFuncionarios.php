@@ -85,7 +85,7 @@
 
                 <div class="col-4">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" required autofocus value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
                 </div>
 
                 <div class="col-4 mt-3">
@@ -184,7 +184,7 @@
                 valor = parteInteira + ',' + parteDecimal;
 
                 // Atualiza o valor do input
-                input.value = 'R$ ' + valor;
+                input.value = valor;
             } else {
                 // Se o valor estiver vazio, define o valor como vazio
                 input.value = '';
