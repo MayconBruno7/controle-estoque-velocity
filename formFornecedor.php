@@ -67,13 +67,37 @@
                     </select>
                 </div>
 
-                <div class="col-8">
-                    <label for="endereco" class="form-label mt-3">Endereço</label>
+                <div class="col-6">
+                    <label for="estado" class="form-label mt-3">Estado</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Endereço completo" required value="<?= isset($dados->endereco) ? $dados->endereco : "" ?>">
+                    <input type="text" class="form-control" name="estado" id="estado" placeholder="Estado" required value="<?= isset($dados->estado) ? $dados->estado : "" ?>">
                 </div>
 
-                <div class="col-4">
+                <div class="col-6">
+                    <label for="cidade" class="form-label mt-3">Cidade</label>
+                    <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                    <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade" required value="<?= isset($dados->cidade) ? $dados->cidade : "" ?>">
+                </div>
+
+                <div class="col-5">
+                    <label for="bairro" class="form-label mt-3">Bairro</label>
+                    <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                    <input type="text" class="form-control" name="bairro" id="bairro" placeholder="Bairro" required value="<?= isset($dados->bairro) ? $dados->bairro : "" ?>">
+                </div>
+
+                <div class="col-3">
+                    <label for="endereco" class="form-label mt-3">Endereço</label>
+                    <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Endereco" required value="<?= isset($dados->endereco) ? $dados->endereco : "" ?>">
+                </div>
+
+                <div class="col-2">
+                    <label for="numero" class="form-label mt-3">Número</label>
+                    <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                    <input type="text" class="form-control" name="numero" id="numero" placeholder="Numero" required value="<?= isset($dados->numero) ? $dados->numero : "" ?>">
+                </div>
+
+                <div class="col-2">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
                     <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone do fornecedor" required value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">

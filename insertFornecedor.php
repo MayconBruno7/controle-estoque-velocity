@@ -10,10 +10,14 @@
         $db = new Database();
 
         // prepara a query
-        $data = $db->dbInsert("INSERT INTO fornecedor(nome, cnpj, endereco, telefone, statusRegistro) VALUES (?, ?, ?, ?, ?)", [
+        $data = $db->dbInsert("INSERT INTO fornecedor(nome, cnpj, estado, cidade, bairro, endereco, numero, telefone, statusRegistro) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)", [
             $_POST['nome'],
             preg_replace("/[^0-9]/", "", $_POST['cnpj']),
+            $_POST['estado'],
+            $_POST['cidade'],
+            $_POST['bairro'],
             $_POST['endereco'],
+            $_POST['numero'],
             preg_replace("/[^0-9]/", "", $_POST['telefone']),
             $_POST['statusRegistro']
         ]);
