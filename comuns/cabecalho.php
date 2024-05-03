@@ -126,7 +126,7 @@
                             <?php endif; ?>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="listaUsuario.php">Lista de usuários</a></li>
-                                <li><a class="dropdown-item" href="listaProdutos.php">Cadastrar produtos</a></li>
+                                <li><a class="dropdown-item" href="viewEstoque.php">Cadastrar produtos</a></li>
                             </ul>
                         </li>
 
