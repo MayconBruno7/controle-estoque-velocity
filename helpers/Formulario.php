@@ -127,6 +127,16 @@
         return $telefoneFormatado;
     }
 
+    function formatarDataBrasileira($data) {
+        // Converte a data para o formato timestamp
+        $timestamp = strtotime($data);
+        
+        // Formata a data no padrão brasileiro
+        $dataFormatada = date('d/m/Y', $timestamp);
+        
+        return $dataFormatada;
+    }
+
     /**
      * getMensagem
      *
