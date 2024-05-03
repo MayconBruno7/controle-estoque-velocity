@@ -215,8 +215,8 @@
                         document.getElementById('quantidade').value = option.getAttribute('data-quantidade');
                         // Definindo o texto do setor e fornecedor nos elementos
                         document.getElementById('fornecedor_id').value = option.getAttribute('data-fornecedor');
-                        document.getElementById('status').value = option.getAttribute('data-status');
-                        document.getElementById('statusItem').value = option.getAttribute('data-statusitem');
+                        document.getElementById('statusRegistro').value = option.getAttribute('data-status');
+                        document.getElementById('condicao').value = option.getAttribute('data-statusitem');
                         editor.setData(option.getAttribute('data-descricao')); 
                         console.log(option);
                     });
