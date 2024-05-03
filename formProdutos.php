@@ -36,7 +36,6 @@
         }
     }
     
-
     $dadosHistorico = $db->dbSelect("SELECT * FROM historico_produtos");
 
     $dadosFornecedor = $db->dbSelect("SELECT * FROM fornecedor");
