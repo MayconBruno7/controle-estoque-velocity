@@ -35,6 +35,7 @@
             echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
         }
     }
+    
 
     $dadosHistorico = $db->dbSelect("SELECT * FROM historico_produtos");
 
