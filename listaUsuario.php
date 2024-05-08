@@ -3,6 +3,7 @@
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
 
+    require_once "library/protectNivel.php";
     // Carrega cabeçalho HTML (header, nav, etc...)
     require_once "comuns/cabecalho.php";
 
@@ -19,10 +20,8 @@
     // Buscar a lista de Rotas na base de dados
 
     $data = $db->dbSelect("SELECT * FROM usuario ORDER BY nome");
-
-    require_once "library/protectNivel.php";
     
-    ?>
+?>
 
     <main class="container mt-5">
 

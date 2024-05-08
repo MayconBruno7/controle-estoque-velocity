@@ -2,9 +2,8 @@
 
     $login = 1;
     
-    // carrega o cabecalho
-    require_once "comuns/cabecalho.php";
     require_once "library/protectUser.php";
+    require_once "comuns/cabecalho.php";
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
     require_once "helpers/Formulario.php";
@@ -13,16 +12,30 @@
         
         // Criando o objeto Db para classe de base de dados
         $db = new Database();
-     
-        // Adicionar item à comanda: listar todos os produtos disponíveis
-        $produtos = $db->dbSelect(
-            "SELECT 
-                produtos.*, 
-                (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
-            FROM 
-                produtos"
-        );
+
+        if (isset($_SESSION["userNivel"]) && $_SESSION["userNivel"] == 1) {
+            // Adicionar item à comanda: listar todos os produtos disponíveis
+            $produtos = $db->dbSelect(
+                "SELECT 
+                    produtos.*, 
+                    (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                FROM 
+                    produtos"
+            );
+
             
+        } else {
+            // Adicionar item à comanda: listar todos os produtos disponíveis
+            $produtos = $db->dbSelect(
+                "SELECT 
+                    produtos.*, 
+                    (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                FROM 
+                    produtos
+                WHERE statusRegistro = 1 AND quantidade > 0"
+            );
+        }
+
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {
         echo json_encode(['produtos.statusRegistro' => false, 'msgErro' => 'Erro interno ao processar a requisição']);

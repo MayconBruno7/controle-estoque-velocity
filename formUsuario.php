@@ -50,12 +50,12 @@
                     <label for="nome" class="form-label">Nome</label>
                     <input type="text" class="form-control" name="nome" id="nome" 
                         placeholder="Nome do usuário" required autofocus
-                        value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
+                        value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
                     <label for="nivel" class="form-label">Nível</label>
-                    <select name="nivel" id="nivel" class="form-control" required>
+                    <select name="nivel" id="nivel" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                         <option value=""  <?= isset($dados->nivel) ? $dados->nivel == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->nivel) ? $dados->nivel == 1  ? "selected" : "" : "" ?>>Administrador</option>
                         <option value="2" <?= isset($dados->nivel) ? $dados->nivel == 2  ? "selected" : "" : "" ?>>Usuário</option>
@@ -69,12 +69,12 @@
                     <label for="email" class="form-label">E-mail/Login</label>
                     <input type="email" class="form-control" name="email" 
                         id="email" placeholder="email" required
-                        value="<?= isset($dados->email) ? $dados->email : "" ?>">
+                        value="<?= isset($dados->email) ? $dados->email : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
                     <label for="statusRegistro" class="form-label">Status</label>
-                    <select name="statusRegistro" id="statusRegistro" class="form-control" required>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
                         <option value="2" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 2  ? "selected" : "" : "" ?>>Inativo</option>
@@ -87,15 +87,14 @@
                 <div class="col-6">
                     <label for="senha" class="form-label">Senha</label>
                     <input type="password" class="form-control" name="senha" id="senha"  maxlength="250"
-                        placeholder="Senha">
+                        placeholder="Senha" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-6">
                     <label for="confSenha" class="form-label">Confere Nova Senha</label>
                     <input type="password" class="form-control" name="confSenha" id="confSenha"  maxlength="250"
-                        placeholder="Confere senha">
+                        placeholder="Confere senha" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
-
             </div>
 
             <div class="col-auto mt-5">

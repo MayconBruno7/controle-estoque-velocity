@@ -2,9 +2,8 @@
 
     $login = 1;
     
-    // carrega o cabecalho
+    require_once "library/protectNivel.php";
     require_once "comuns/cabecalho.php";
-    require_once "library/protectUser.php";
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
     require_once "helpers/Formulario.php";

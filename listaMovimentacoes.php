@@ -14,25 +14,44 @@
         // Criando o objeto Db para classe de base de dados
         $db = new Database();
 
-        $dados = $db->dbSelect(
-            "SELECT 
-            m.id AS id_movimentacao, 
-            f.nome AS nome_fornecedor, 
-            m.tipo AS tipo_movimentacao, 
-            m.data_pedido, 
-            m.data_chegada
-        FROM 
-            movimentacoes m 
-        LEFT JOIN 
-            fornecedor f ON f.id = m.id_fornecedor 
-        LEFT JOIN 
-            movimentacoes_itens mi ON mi.id_movimentacoes = m.id
-        LEFT JOIN 
-            produtos p ON p.id = mi.id_produtos 
-        WHERE 
-            m.statusRegistro = 1;
-        "
-        );
+        if (isset($_SESSION["userNivel"]) && $_SESSION["userNivel"] == 1) {
+            $dados = $db->dbSelect(
+                "SELECT DISTINCT
+                m.id AS id_movimentacao, 
+                f.nome AS nome_fornecedor, 
+                m.tipo AS tipo_movimentacao, 
+                m.data_pedido, 
+                m.data_chegada
+            FROM 
+                movimentacoes m 
+            LEFT JOIN 
+                fornecedor f ON f.id = m.id_fornecedor 
+            LEFT JOIN 
+                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+            LEFT JOIN 
+                produtos p ON p.id = mi.id_produtos "
+            );
+           
+       } else {
+            $dados = $db->dbSelect(
+                "SELECT DISTINCT
+                m.id AS id_movimentacao, 
+                f.nome AS nome_fornecedor, 
+                m.tipo AS tipo_movimentacao, 
+                m.data_pedido, 
+                m.data_chegada
+            FROM 
+                movimentacoes m 
+            LEFT JOIN 
+                fornecedor f ON f.id = m.id_fornecedor 
+            LEFT JOIN 
+                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+            LEFT JOIN 
+                produtos p ON p.id = mi.id_produtos 
+            WHERE 
+                m.statusRegistro = 1;"
+            );
+       }
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {

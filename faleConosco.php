@@ -1,4 +1,6 @@
 <?php
+
+    require_once "library/protectUser.php";
     require_once "comuns/cabecalho.php";
     require_once "helpers/Formulario.php";
     require_once "helpers/Formulario.php";

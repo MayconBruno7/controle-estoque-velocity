@@ -1,5 +1,7 @@
 <?php 
 
+    require_once "library/protectUser.php";
+
     $dados = [];
 
     /*
@@ -48,18 +50,18 @@
                 <div class="col-4">
                     <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?> >
                 </div>
 
                 <div class="col-4">
                     <label for="cnpj" class="form-label mt-3">CNPJ</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? formatarCNPJinput($dados->cnpj) : "" ?>">
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? formatarCNPJinput($dados->cnpj) : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
                     <label for="statusRegistro" class="form-label mt-3">Status Fornecedor</label>
-                    <select name="statusRegistro" id="statusRegistro" class="form-control" required>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                         <!--  verifica se o statusRegistro está no banco de dados e retorna esse statusRegistro -->
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
@@ -70,37 +72,37 @@
                 <div class="col-6">
                     <label for="estado" class="form-label mt-3">Estado</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="estado" id="estado" placeholder="Estado" required value="<?= isset($dados->estado) ? $dados->estado : "" ?>">
+                    <input type="text" class="form-control" name="estado" id="estado" placeholder="Estado" required value="<?= isset($dados->estado) ? $dados->estado : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-6">
                     <label for="cidade" class="form-label mt-3">Cidade</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade" required value="<?= isset($dados->cidade) ? $dados->cidade : "" ?>">
+                    <input type="text" class="form-control" name="cidade" id="cidade" placeholder="Cidade" required value="<?= isset($dados->cidade) ? $dados->cidade : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-5">
                     <label for="bairro" class="form-label mt-3">Bairro</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="bairro" id="bairro" placeholder="Bairro" required value="<?= isset($dados->bairro) ? $dados->bairro : "" ?>">
+                    <input type="text" class="form-control" name="bairro" id="bairro" placeholder="Bairro" required value="<?= isset($dados->bairro) ? $dados->bairro : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-3">
                     <label for="endereco" class="form-label mt-3">Endereço</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Endereco" required value="<?= isset($dados->endereco) ? $dados->endereco : "" ?>">
+                    <input type="text" class="form-control" name="endereco" id="endereco" placeholder="Endereco" required value="<?= isset($dados->endereco) ? $dados->endereco : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-2">
                     <label for="numero" class="form-label mt-3">Número</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="numero" id="numero" placeholder="Numero" required value="<?= isset($dados->numero) ? $dados->numero : "" ?>">
+                    <input type="text" class="form-control" name="numero" id="numero" placeholder="Numero" required value="<?= isset($dados->numero) ? $dados->numero : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-2">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone do fornecedor" required value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone do fornecedor" required value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
             </div>
 

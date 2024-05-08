@@ -11,46 +11,43 @@
 
     $db = new Database();
 
-    if (isset($_GET['acao']) && $_GET['acao'] == "insert" || $_GET['acao'] == "update") {
+    $dados = $db->dbSelect(
+        "SELECT * FROM 
+            movimentacoes WHERE id = ?",
+            'first', 
+        [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
+    );
 
-        $dados = $db->dbSelect(
-            "SELECT * FROM 
-                movimentacoes WHERE id = ?",
-                'first', 
-            [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
-        );
+    $produtos = $db->dbSelect(
+        "SELECT * FROM 
+            produtos ORDER BY nome"
+    );
 
-        $produtos = $db->dbSelect(
-            "SELECT * FROM 
-                produtos ORDER BY nome"
-        );
+    $produtosMov = $db->dbSelect(
+        "SELECT mi.id_movimentacoes, 
+            mi.id_produtos AS id_prod_mov_itens, 
+            mi.quantidade AS mov_itens_quantidade, 
+            mi.valor, 
+            p.*
+        FROM movimentacoes_itens mi
+        INNER JOIN produtos p ON p.id = mi.id_produtos
+        WHERE mi.id_movimentacoes = ?
+            OR mi.id_movimentacoes IS NULL 
+        ORDER BY p.descricao;
+        ", 
+        'all', 
+        [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
+    );
 
-        $produtosMov = $db->dbSelect(
-            "SELECT mi.id_movimentacoes, 
-                mi.id_produtos AS id_prod_mov_itens, 
-                mi.quantidade AS mov_itens_quantidade, 
-                mi.valor, 
-                p.*
-            FROM movimentacoes_itens mi
-            INNER JOIN produtos p ON p.id = mi.id_produtos
-            WHERE mi.id_movimentacoes = ?
-                OR mi.id_movimentacoes IS NULL 
-            ORDER BY p.descricao;
-            ", 
-            'all', 
-            [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
-        );
-    
-        try {
-            if ($dados) {
-                $fornecedor_id = $dados->id_fornecedor;
-            } 
+    try {
+        if ($dados) {
+            $fornecedor_id = $dados->id_fornecedor;
+        } 
 
-        } catch (Exception $ex) {
-            echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
-        }
+    } catch (Exception $ex) {
+        echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
     }
-
+    
     $dadosProdutos = $db->dbSelect("SELECT * FROM produtos ORDER BY id");
 
     // <-------------- Informações do Fornecedor -----------------> 
@@ -156,13 +153,13 @@
                 <div class="col-2 mt-3">
                     <label for="data_pedido" class="form-label">Data do Pedido</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dados->data_pedido) ? $dados->data_pedido : "" ?>">
+                    <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dados->data_pedido) ? $dados->data_pedido : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-2 mt-3">
                     <label for="data_chegada" class="form-label">Data de Chegada</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item"  value="<?= isset($dados->data_chegada) ? $dados->data_chegada : "" ?>">
+                    <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item"  value="<?= isset($dados->data_chegada) ? $dados->data_chegada : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-12 mt-3">
@@ -176,6 +173,7 @@
                     </div>
                 </div>
 
+                <?php if(isset($_GET['acao']) && $_GET['acao'] != 'delete' && $_GET['acao'] != 'view') : ?>
                 <div class="col  mt-4">
                     <div class="col-auto text-end ml-2">
                         <a href="viewEstoque.php?acao=insert&id_movimentacoes=<?= isset($dados->id) ? $dados->id : "" ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""  ?>" 
@@ -184,6 +182,7 @@
                          </a>
                     </div>
                 </div>
+                <?php endif; ?>
 
                 <table id="tbListaProduto" class="table table-striped table-hover table-bordered table-responsive-sm mt-3">
                     <thead class="table-dark">
@@ -209,7 +208,9 @@
                             <td><?= $row['mov_itens_quantidade'] ?></td>
                             <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                             <td>
-                                <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                            <?php if(isset($_GET['acao']) && $_GET['acao'] != 'delete' && $_GET['acao'] != 'view') : ?>
+                                <a href="listaProdutos.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                            <?php endif; ?>
                                 <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
                             

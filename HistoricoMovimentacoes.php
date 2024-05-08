@@ -57,13 +57,13 @@
                         <tr>
                             <td> <?= isset($row['id_mov']) ? $row['id_mov'] : 'Nenhuma movimentação encontrada' ?> </td>
                             <td> <?= isset($row['nome_fornecedor']) ? $row['nome_fornecedor'] : 'Nenhum fornecedor encontrado' ?> </td>
-                            <td><?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
+                            <td> <?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
                             <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
                             <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
                             <td>
-                                <a href="formMovimentacoes.php?acao=view&id=<?= $row['id_mov'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
-                                <a href="formMovimentacoes.php?acao=update&id=<?= $row['id_mov'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
-                                <a href="formMovimentacoes.php?acao=delete&id=<?= $row['id_mov'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
+                                <a href="formMovimentacoes.php?acao=view&id_movimentacoes=<?= $row['id_mov'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
+                                <a href="formMovimentacoes.php?acao=update&id_movimentacoes=<?= $row['id_mov'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
+                                <a href="formMovimentacoes.php?acao=delete&id_movimentacoes=<?= $row['id_mov'] ?>" class="btn btn-outline-danger btn-sm styleButton" title="Exclusão">Excluir</a>&nbsp;
                             </td>
                         </tr>
                     <?php
