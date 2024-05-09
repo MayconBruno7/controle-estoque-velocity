@@ -1,5 +1,7 @@
 <?php 
 
+    require_once "library/protectNivel.php";
+
     $dados = [];
 
     /*
@@ -50,13 +52,13 @@
                 <div class="col-9">
                     <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
 
                 <div class="col-3 mt-3">
                     <label for="statusRegistro" class="form-label">Estado de registro</label>
-                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                         <!--  verifica se o status está no banco de dados e retorna esse status -->
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>

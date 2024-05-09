@@ -1,6 +1,6 @@
 <?php
 
-    require_once "library/protectUser.php";
+    require_once "library/protectNivel.php";
     require_once "library/Database.php";
 
     // faz a conexão com o banco de dados

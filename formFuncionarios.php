@@ -1,5 +1,7 @@
 <?php 
 
+    require_once "library/protectNivel.php";
+
     $dados = [];
 
     require_once "library/Database.php";
@@ -64,18 +66,18 @@
                 <div class="col-4">
                     <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do funcionario" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>">
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do funcionario" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
                     <label for="cpf" class="form-label mt-3">CPF</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= isset($dados->cpf) ? formatarCPF($dados->cpf) : "" ?>" oninput="formatarCPF(this)">
+                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= isset($dados->cpf) ? formatarCPF($dados->cpf) : "" ?>" oninput="formatarCPF(this)" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
                     <label for="statusRegistro" class="form-label mt-3">Estado do registro</label>
-                    <select name="statusRegistro" id="statusRegistro" class="form-control" required>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                         <!--  verifica se o statusRegistro está no banco de dados e retorna esse statusRegistro -->
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
@@ -85,12 +87,12 @@
 
                 <div class="col-4">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)">
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= isset($dados->telefone) ? formatarTelefone($dados->telefone) : "" ?>" oninput="formatarTelefone(this)" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4 mt-3">
                     <label for="setor" class="form-label">Setor</label>
-                    <select name="setor" id="setor" class="form-control" <?= !$setoresCadastrados ? '' : 'required' ?> <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?>>
+                    <select name="setor" id="setor" class="form-control" <?= !$setoresCadastrados ? '' : 'required' ?> <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                     <?php foreach ($dadosSetor as $setor): ?>
                         <option value="">...</option> <!-- Opção padrão -->
                             <option value="<?= $setor['id'] ?>" <?= $setor['id'] == $setor_funcionario_id ? 'selected' : '' ?>>
@@ -103,7 +105,7 @@
                 <div class="col-4">
                     <label for="salario" class="form-label mt-3">Salário</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? number_format($dados->salario, 2, ",", ".") : "" ?>" oninput="formatarSalario(this)">
+                    <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= isset($dados->salario) ? number_format($dados->salario, 2, ",", ".") : "" ?>" oninput="formatarSalario(this)" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
             </div>
        

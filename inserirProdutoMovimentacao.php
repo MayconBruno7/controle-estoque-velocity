@@ -1,5 +1,6 @@
 <?php
 
+    require_once "library/protectUser.php";
     require_once "library/Database.php";
 
     $db = new Database();

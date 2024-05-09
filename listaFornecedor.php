@@ -14,8 +14,13 @@
         // Criando o objeto Db para classe de base de dados
         $db = new Database();
 
-        // preparação da query que será executada no banco de dados
-        $dados = $db->dbSelect("SELECT * FROM fornecedor ORDER BY id");
+        if (isset($_SESSION["userNivel"]) && $_SESSION["userNivel"] == 1) {
+             // preparação da query que será executada no banco de dados
+            $dados = $db->dbSelect("SELECT * FROM fornecedor ORDER BY id");
+            
+        } else {
+            $dados = $db->dbSelect("SELECT * FROM fornecedor WHERE statusRegistro = 1 ORDER BY id");
+        }
 
     // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
     } catch (Exception $ex) {

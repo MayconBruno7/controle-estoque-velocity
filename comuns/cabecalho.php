@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/styleEstoque.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <link rel="icon" href="brasao-pmrl-icon.jpg" type="image/jpeg">
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="../assets/js/jquery-3.3.1.js"></script>
@@ -126,7 +127,9 @@
                             <?php endif; ?>
                             <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="listaUsuario.php">Lista de usuários</a></li>
-                                <li><a class="dropdown-item" href="viewEstoque.php">Cadastrar produtos</a></li>
+                                <li><a class="dropdown-item" href="listaFuncionarios.php">Lista funcionários</a></li>
+                                <li ><a class="dropdown-item"" href="listaCargo.php">Lista cargos</a></li>
+                                <li><a class="dropdown-item" href="listaProdutos.php">Cadastrar produtos</a></li>
                             </ul>
                         </li>
 
@@ -143,15 +146,7 @@
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link" href="listaFuncionarios.php">Funcionários</a>
-                        </li>
-                        
-                        <li class="nav-item">
                             <a class="nav-link" href="listaSetor.php">Setores</a>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="listaCargo.php">Cargo</a>
                         </li>
 
                         <li class="nav-item">
