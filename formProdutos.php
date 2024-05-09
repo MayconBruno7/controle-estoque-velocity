@@ -85,7 +85,7 @@
                 <div class="col-8">
                     <label for="nome" class="form-label">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'readonly' : ''?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>
                 </div>
 
                 <div class="col-4">
@@ -97,7 +97,7 @@
 
                 <div class="col-6 mt-3">
                     <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                    <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?> <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'readonly' : ''?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>> 
+                    <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?> <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>> 
                         <option value="">...</option>
                         <?php foreach($dadosFornecedor as $fornecedor) : ?>
                             <option value="<?= $fornecedor['id'] ?>" <?= $fornecedor['id'] == $fornecedor_id ? 'selected' : '' ?>>
@@ -109,7 +109,7 @@
 
                 <div class="col-3 mt-3">
                     <label for="statusRegistro" class="form-label">Estado de registro</label>
-                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?> <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'readonly' : ''?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
+                    <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'disabled' : ''?> <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
                         <!--  verifica se o status está no banco de dados e retorna esse status -->
                         <option value=""  <?= isset($dados->statusRegistro) ? $dados->statusRegistro == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->statusRegistro) ? $dados->statusRegistro == 1  ? "selected" : "" : "" ?>>Ativo</option>
@@ -119,7 +119,7 @@
 
                 <div class="col-3 mt-3">
                     <label for="condicao" class="form-label">Estado do item</label>
-                    <select name="condicao" id="condicao" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'readonly' : ''?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
+                    <select name="condicao" id="condicao" class="form-control" required <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
                         <!--  verifica se o statusItem está no banco de dados e retorna esse status -->
                         <option value=""  <?= isset($dados->condicao) ? $dados->condicao == "" ? "selected" : "" : "" ?>>...</option>
                         <option value="1" <?= isset($dados->condicao) ? $dados->condicao == 1  ? "selected" : "" : "" ?>>Novo</option>
@@ -129,7 +129,7 @@
 
                 <div class="col-12 mt-3">
                     <label for="descricao" class="form-label">Descrição</label>
-                    <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= isset($_GET['acao']) && $_GET['acao'] != 'insert' && $_GET['acao'] != 'update' ? 'readonly' : ''?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>><?= isset($dados->descricao) ? $dados->descricao : "" ?></textarea>
+                    <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?><?= isset($dados->motivo) ? $dados->motivo : "" ?>><?= isset($dados->descricao) ? $dados->descricao : "" ?></textarea>
                 </div>
 
                 <!-- se a ação for view não aparece a hora formatada no formprodutos -->
