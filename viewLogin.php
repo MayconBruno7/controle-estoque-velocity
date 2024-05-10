@@ -2,8 +2,9 @@
 
     require_once "comuns/cabecalho.php";
     require_once "library/Database.php";
+    require_once "helpers/Formulario.php";
 
-    ?>
+?>
 
     <section class="about section-margin">
 

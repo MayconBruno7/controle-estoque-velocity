@@ -5,7 +5,7 @@ class Database
     /**
      * dbConect
      *
-     * @return object
+     * @return PDO
      */
     function dbConect()
     {
@@ -131,3 +131,4 @@ class Database
         }
     }
 }
+

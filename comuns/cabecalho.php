@@ -14,7 +14,7 @@
     <link rel="stylesheet" href="assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="../css/styleEstoque.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
-    <link rel="icon" href="brasao-pmrl-icon.jpg" type="image/jpeg">
+    <link rel="icon" href="../img/brasao-pmrl-icon.jpeg" type="image/jpeg">
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="../assets/js/jquery-3.3.1.js"></script>
@@ -115,7 +115,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
         
             <div class="container-fluid">
-                <a href="listaItens.php"><img src="img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
+                <a href="listaProdutos.php"><img src="img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
                 <div>
                     <ul class="navbar-nav">
                         <?php if(isset($_SESSION["userId"])) : ?>

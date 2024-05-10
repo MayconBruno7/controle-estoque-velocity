@@ -8,6 +8,12 @@
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
     require_once "helpers/Formulario.php";
+
+    
+        // var_dump($_SESSION['movimentacao']);
+        
+        // var_dump($_SESSION['produtos']);
+        // exit;
     
     try {
         
@@ -54,6 +60,13 @@
     } catch (Exception $ex) {
         echo json_encode(['produtos.statusRegistro' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
     }
+
+    // var_dump($_SESSION['movimentacao']);
+        // var_dump(isset($_SESSION['movimentacao'][0]['setor_id']));
+        
+        // var_dump($_SESSION['produtos']);
+        //  echo "Chegou até aqui.";
+    // exit;
 
 ?>
 

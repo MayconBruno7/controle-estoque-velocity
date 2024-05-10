@@ -76,5 +76,5 @@
             header("Location: formMovimentacoes.php?acao=update&msgError=Quantidade maior que a da movimentação&id_movimentacoes=$id_movimentacao");
         }
     } else {
-        header("Location: formMovimentacoes.php?acao=update&msgError=Produto não encontrado na movimentaçãom&id_movimentacoes=$id_movimentacao");
+        header("Location: formMovimentacoes.php?acao=update&msgError=Produto não encontrado na movimentação&id_movimentacoes=$id_movimentacao");
     }
