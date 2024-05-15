@@ -2,8 +2,10 @@
 
     // Verifica se o parâmetro 'cnpj' foi enviado na requisição GET
     if(isset($_GET['cnpj'])) {
+
+        $cnpj = preg_replace("/[^0-9]/", "", $_GET['cnpj']);
         // URL da API que você deseja acessar
-        $url = "https://www.receitaws.com.br/v1/cnpj/{$_GET['cnpj']}";
+        $url = "https://www.receitaws.com.br/v1/cnpj/{$cnpj}";
 
         // Configuração do contexto SSL para ignorar a verificação do certificado
         $options = [

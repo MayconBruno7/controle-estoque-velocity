@@ -48,15 +48,15 @@
 
             <div class="row">
                 <div class="col-4">
-                    <label for="nome" class="form-label mt-3">Nome</label>
+                    <label for="cnpj" class="form-label mt-3">CNPJ</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?> >
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor"  autofocus required value="<?= isset($dados->cnpj) ? formatarCNPJinput($dados->cnpj) : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
-                    <label for="cnpj" class="form-label mt-3">CNPJ</label>
+                    <label for="nome" class="form-label mt-3">Nome</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cnpj" id="cnpj" maxlength="18" oninput="formatarCNPJ(this)" placeholder="CNPJ do fornecedor" required value="<?= isset($dados->cnpj) ? formatarCNPJinput($dados->cnpj) : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
+                    <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do fornecedor" required value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= isset($_GET['acao']) && $_GET['acao'] == 'delete' || $_GET['acao'] == 'view' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
@@ -177,6 +177,52 @@
             // Atualiza o valor do input com o telefone formatado
             input.value = telefone;
         }
+
+        const campoCNPJ = document.getElementById('cnpj');
+
+        campoCNPJ.addEventListener('input', function() {
+            if (campoCNPJ.value.length === 18) {
+                // Quando o CNPJ tiver 14 dígitos, faça a solicitação para o servidor intermediário
+                fetch('requireAPI.php?cnpj=' + campoCNPJ.value)
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log(data);
+                        // Verifica se os campos retornados são undefined
+                        if (data.nome === undefined || data.uf === undefined || data.municipio === undefined || data.bairro === undefined || data.logradouro === undefined || data.numero === undefined || data.telefone === undefined) {
+                            // Limpa os campos do formulário
+                            document.getElementById('nome').value = '';
+                            document.getElementById('estado').value = '';
+                            document.getElementById('cidade').value = '';
+                            document.getElementById('bairro').value = '';
+                            document.getElementById('endereco').value = '';
+                            document.getElementById('numero').value = '';
+                            document.getElementById('telefone').value = '';
+                        } else {
+                            // Atualize os campos com os dados da API
+                            document.getElementById('nome').value = (data['fantasia'] === '') ? data['nome'] : data['fantasia'];
+                            document.getElementById('estado').value = data['uf'];
+                            document.getElementById('cidade').value = data['municipio'];
+                            document.getElementById('bairro').value = data['bairro'];
+                            document.getElementById('endereco').value = data['logradouro'];
+                            document.getElementById('numero').value = data['numero'];
+                            document.getElementById('telefone').value = data['telefone'];
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro ao consultar API:', error);
+                    });
+            } else if (campoCNPJ.value === "") {
+                // Limpa os campos do formulário se o CNPJ estiver vazio
+                document.getElementById('nome').value = '';
+                document.getElementById('estado').value = '';
+                document.getElementById('cidade').value = '';
+                document.getElementById('bairro').value = '';
+                document.getElementById('endereco').value = '';
+                document.getElementById('numero').value = '';
+                document.getElementById('telefone').value = '';
+            }
+        });
+
     </script>
 
 <?php

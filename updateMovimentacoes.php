@@ -9,11 +9,10 @@
         // Criando o objeto Db para classe de base de dados
         $db = new Database();
 
-        // Atualiza as informações do item na tabela principal
-        $atualizacaoQuery = "UPDATE movimentacoes 
-                                SET id_setor = ?, id_fornecedor = ?, statusRegistro = ?, tipo = ?, motivo = ?, data_pedido = ?, data_chegada = ?
-                                WHERE id = ?";
-        $atualizacaoData = $db->dbUpdate($atualizacaoQuery,
+        $atualizacaoData = $db->dbUpdate("UPDATE movimentacoes 
+            SET id_setor = ?, id_fornecedor = ?, statusRegistro = ?, tipo = ?, motivo = ?, data_pedido = ?, data_chegada = ? 
+            WHERE id = ?"
+        ,
         [
             $_POST['setor_id'],
             $_POST['fornecedor_id'],
@@ -25,6 +24,17 @@
 
             $_POST['id']
         ]);
+
+        // var_dump($_POST['setor_id'],
+        // $_POST['fornecedor_id'],
+        // $_POST['statusRegistro'],
+        // $_POST['tipo'],
+        // isset($_POST['motivo']) ? $_POST['motivo'] : "1",
+        // $_POST['data_pedido'],
+        // $_POST['data_chegada'],
+
+        // $_POST['id']);
+        // exit;
 
         // Verifica se a atualização foi bem sucedida
         if ($atualizacaoData) {

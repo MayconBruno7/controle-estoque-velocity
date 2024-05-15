@@ -93,20 +93,23 @@
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Decodifica os dados recebidos do JavaScript
             $movimentacao = json_decode(file_get_contents("php://input"), true);
-
+    
+            // Verificar se há produtos a serem adicionados
+            if (isset($_SESSION['produtos']) && count($_SESSION['produtos']) > 0) {
+                // Adicionar os produtos à sessão de movimentação
+                $movimentacao['produtos'] = $_SESSION['produtos'];
+            }
+    
             // Adiciona os dados à sessão
             if (isset($movimentacao)) {
                 $_SESSION['movimentacao'][] = $movimentacao;
             }
-        }
-
-        // Verificar se há produtos a serem adicionados
-        if (isset($_SESSION['produtos']) && count($_SESSION['produtos']) > 0) {
-            // Adicionar os produtos à sessão de movimentação
-            $_SESSION['movimentacao'][0]['produtos'] = $_SESSION['produtos'];
+    
+            // Limpar a sessão de produtos
+            unset($_SESSION['produtos']);
         }
     }
-
+    
     $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
     $total = 0;
 
@@ -119,19 +122,11 @@
 
     $idUltimaMovimentacao = $db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacoes");
     $idMovimentacaoAtual = $idUltimaMovimentacao[0]['ultimo_id'];
-
     
-    // // var_dump($motivo);
-    // var_dump( $_SESSION['movimentacao']);
-
-    // var_dump( $_SESSION['produtos']);
-
-    //     // // // Limpa a sessão movimentacao
-    //     // unset($_SESSION['movimentacao']);
-    //     // // // limpa a sessão de produtos
-    //     // unset($_SESSION['produtos']);
+    // unset($_SESSION['movimentacao']);
+    // // limpa a sessão de produtos
+    // unset($_SESSION['produtos']);
     // exit;
-
 ?>
 
 <main class="container mt-5">
@@ -149,7 +144,7 @@
     </div>
 
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
-    <form class="g-3" action="<?= isset($_GET['acao']) ? $_GET['acao'] : ""  ?>Movimentacoes.php" method="POST" id="form">
+    <form class="g-3" action="<?= isset($_GET['acao']) ? $_GET['acao'] : ""  ?>Movimentacoes.php?acao=<?= $_GET['acao'] ?>" method="POST" id="form">
 
         <!--  verifica se o id está no banco de dados e retorna esse id -->
         <input type="hidden" name="id" id="id" value="<?= isset($dados->id) ? $dados->id : "" ?>">
@@ -290,8 +285,12 @@
             <?php if(isset($_GET['acao']) && $_GET['acao'] != 'delete' && $_GET['acao'] != 'view') : ?>
                 <div class="col mt-4">
                     <div class="col-auto text-end ml-2">
-                        <a
-                            class="btn btn-outline-primary btn-sm styleButton" id="btnSalvar" title="Inserir">
+                        <a href="<?= (isset($_GET['acao']) && $_GET['acao'] == 'update') ? 
+                                    ('viewEstoque.php?acao=update&id_movimentacoes=' . (isset($dados->id) ? $dados->id : '') . 
+                                    '&tipo=' . (isset($dados->tipo) ? $dados->tipo : '')) : '' ?>" 
+                        class="btn btn-outline-primary btn-sm styleButton" 
+                        id="<?= (isset($_GET['acao']) && $_GET['acao'] == 'insert') ? 'btnSalvar' : '' ?>" 
+                        title="Adicionar">
                             Adicionar Produtos
                         </a>
                     </div>
@@ -310,8 +309,8 @@
                 </tr>
             </thead>
             <tbody>
-                <?php if(isset($_GET['acao']) && $_GET['acao'] == 'insert') : ?>
-                    <?php foreach ($_SESSION['produtos'] as $produto) : ?>
+                <?php if(isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos'])) : ?>
+                    <?php foreach ($_SESSION['movimentacao'][0]['produtos'] as $produto) : ?>
                         <tr>
                             <td><?= $produto['id_produto'] ?></td>
                             <td><?= $produto['nome_produto'] ?></td>
@@ -320,9 +319,9 @@
                             <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                             <td>
                                 <?php if(isset($_GET['acao']) && $_GET['acao'] != 'delete' && $_GET['acao'] != 'view') : ?>
-                                    <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= $idMovimentacaoAtual ?>&qtd_produto=<?=  $produto['quantidade'] ?>&tipo=<?= $dadosMovimentacao['tipo_movimentacao'] ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <?php endif; ?>
-                                    <a href="formProdutos.php?acao=view&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= $idMovimentacaoAtual ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                    <a href="formProdutos.php?acao=view&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
                         </tr>
 
@@ -391,8 +390,6 @@
             <?php endif; ?>
         </div>
     </form>
-
-    <!-- <button onclick="capturarValores()">Salvar na Sessão</button> -->
 </main>
 
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
@@ -415,7 +412,8 @@
             })
             .catch(error => {
                 console.error(error);
-            });
+            }
+        );
 
         // Chama a função capturarValores quando o link for clicado
         document.getElementById('btnSalvar').addEventListener('click', function(event) {
@@ -459,7 +457,7 @@
                 'setor_id': setor_id,
                 'data_pedido': data_pedido,
                 'data_chegada': data_chegada,
-                // 'motivo': motivo,
+                'motivo': motivo,
                 'produtos': produtos // Adiciona produtos ao objeto movimentacao
             };
 
@@ -471,7 +469,7 @@
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var idMovimentacoes = ''; // Defina o valor corretamente
                     var tipo = tipo_movimentacao;
-                    window.location.href = "viewEstoque.php?acao=insert&id_movimentacoes=" + idMovimentacoes + "&tipo=" + encodeURIComponent(tipo);
+                    window.location.href = "viewEstoque.php?acao=insert";
                 } else {
                     console.log('Erro ao salvar informações');
                 }
