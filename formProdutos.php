@@ -12,6 +12,7 @@
     $setor_item_id = "";
     $fornecedor_id = "";
     $fornecedor_nome = "";
+    $ConfereHistorico = "";
 
     /*
     *   Se for alteração, exclusão ou visualização busca a UF pelo ID que foi recebido via método GET
@@ -51,7 +52,13 @@
         return $result ? $result->nome : '';
     }
     $nome_fornecedor = isset($fornecedor_id) ? obterNomeFornecedor($fornecedor_id, $db) : '';
- 
+
+
+    if ($_GET['acao'] != 'insert'){
+        $ConfereHistorico = $db->dbSelect("SELECT mi.id_produtos FROM movimentacoes_itens mi WHERE id_produtos = ?", "first", [$_GET['id']]);
+    }
+    
+
     // muda as ações para os nomes das página e muda o estado do item colocando 1 para novo e 2 para usado
     require_once "helpers/Formulario.php";
     require_once "library/protectUser.php";
@@ -67,13 +74,20 @@
             </div>
         </div>
 
-        <div class="row">
-            <div class="col-12 d-flex justify-content-start">
-                <!-- Passando o ID do produto corretamente na URL -->
-                <a href="HistoricoMovimentacoes.php?id_produtos=<?= isset($_GET['id']) ? $_GET['id'] : '' ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
-            </div>
-        </div>
 
+        <?php
+
+        if ($ConfereHistorico && $_GET['acao'] != 'insert') {
+            ?>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-start">
+                    <a href="HistoricoMovimentacoes.php?id_produtos=<?= isset($_GET['id']) ? $_GET['id'] : '' ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
+                </div>
+            </div>
+        <?php
+        }
+        ?>
+    
         <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
         <form class="g-3" action="<?= $_GET['acao'] ?>produtos.php" method="POST" id="form">
 
