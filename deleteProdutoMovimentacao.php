@@ -11,6 +11,43 @@
     $id_produto         = (int)$_POST['id_produto'];
     $tipo_movimentacao  = (int)$_POST['tipo_movimentacoes'];
 
+    // Verifica se a sessão 'movimentacao' existe e se contém produtos
+    if (isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos'])) {
+        // Loop sobre os produtos na sessão 'movimentacao'
+        foreach ($_SESSION['movimentacao'][0]['produtos'] as $key => &$produto) {
+            // Se encontrar o produto com o ID fornecido
+            if ($produto['id_produto'] == $id_produto) {
+                // Verifica se a quantidade a ser removida é menor ou igual à quantidade do produto na sessão
+                if ($quantidadeRemover <= $produto['quantidade']) {
+                    // Remove a quantidade do produto da sessão
+                    $produto['quantidade'] -= $quantidadeRemover;
+
+                    if ($produto['quantidade'] === 0) {
+                        // Se encontrar o produto com o ID fornecido
+                        if ($produto['id_produto'] == $id_produto) {
+                            // Remove o produto da sessão
+                            unset($_SESSION['movimentacao'][0]['produtos'][$key]);
+
+                            header("Location: formMovimentacoes.php?acao=insert&msgSucesso=Quantidade do produto removida da movimentação com sucesso");
+
+                            exit;
+                        }
+                    }
+                    // Redireciona de volta para a página de movimentações
+                    header("Location: formMovimentacoes.php?acao=insert&msgSucesso=Quantidade do produto removida da movimentação com sucesso");
+                    exit;
+                } else {
+                    // Se a quantidade a ser removida for maior do que a quantidade disponível, redireciona com uma mensagem de erro
+                    header("Location: formMovimentacoes.php?acao=insert&msgError=Quantidade a ser removida é maior do que a quantidade disponível na movimentação");
+                    exit;
+                }
+            }
+        }
+        // Se o produto com o ID fornecido não foi encontrado na sessão
+        header("Location: formMovimentacoes.php?acao=insert&msgError=Produto não encontrado na movimentação");
+        exit;
+    }
+
     // Obtém o item da movimentacao relacionado ao produto
     $item_movimentacao = $db->dbSelect(
         "SELECT * FROM movimentacoes_itens WHERE id_movimentacoes = ? AND id_produtos = ?",

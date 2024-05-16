@@ -110,6 +110,7 @@
         }
     }
     
+
     $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
     $total = 0;
 
@@ -122,11 +123,36 @@
 
     $idUltimaMovimentacao = $db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacoes");
     $idMovimentacaoAtual = $idUltimaMovimentacao[0]['ultimo_id'];
+
     
     // unset($_SESSION['movimentacao']);
     // // limpa a sessão de produtos
     // unset($_SESSION['produtos']);
     // exit;
+
+    // // Verifica se a sessão de movimentação existe e se há produtos nela
+    // if (isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos'])) {
+    //     // Loop através de todas as movimentações
+    //     foreach ($_SESSION['movimentacao'] as $movimentacao) {
+    //         // Verifica se há produtos na movimentação
+    //         if(isset($movimentacao['produtos'])) {
+    //             // Loop através de todos os produtos na movimentação atual
+    //             foreach ($movimentacao['produtos'] as $produto) {
+    //                 // Acessa os dados do produto
+    //                 echo "Nome do Produto: " . $produto['nome_produto'] . "<br>";
+    //                 echo "ID do Produto: " . $produto['id_produto'] . "<br>";
+    //                 echo "Quantidade: " . $produto['quantidade'] . "<br>";
+    //                 echo "Valor: " . $produto['valor'] . "<br>";
+    //                 echo "<br>";
+    //             }
+    //         }
+    //     }
+    // } 
+
+    // // var_dump($_SESSION['produtos']);
+    // var_dump( $_SESSION['movimentacao'][0]['produtos']);
+    // exit;
+
 ?>
 
 <main class="container mt-5">
@@ -390,30 +416,31 @@
             <?php endif; ?>
         </div>
     </form>
+
+    <!-- <button onclick="capturarValores()">Salvar na Sessão</button> -->
 </main>
 
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
 <script>
     document.addEventListener("DOMContentLoaded", function() {
-        ClassicEditor
-            .create(document.querySelector('#motivo'), {})
-            .then(editor => {
-                document.getElementById('historico').addEventListener('change', function() {
-                    var option = this.options[this.selectedIndex];
-                    document.getElementById('setor_id').value = option.getAttribute('data-setor');
-                    document.getElementById('fornecedor_id').value = option.getAttribute('data-fornecedor');
-                    document.getElementById('nome').value = option.getAttribute('data-nome');
-                    editor.setData(option.getAttribute('data-motivo'));
-                    document.getElementById('quantidade').value = option.getAttribute('data-quantidade');
-                    document.getElementById('status').value = option.getAttribute('data-status');
-                    document.getElementById('statusItem').value = option.getAttribute('data-statusitem');
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            }
-        );
+        // ClassicEditor
+        //     .create(document.querySelector('#motivo'), {})
+        //     .then(editor => {
+        //         document.getElementById('historico').addEventListener('change', function() {
+        //             var option = this.options[this.selectedIndex];
+        //             document.getElementById('setor_id').value = option.getAttribute('data-setor');
+        //             document.getElementById('fornecedor_id').value = option.getAttribute('data-fornecedor');
+        //             document.getElementById('nome').value = option.getAttribute('data-nome');
+        //             editor.setData(option.getAttribute('data-motivo'));
+        //             document.getElementById('quantidade').value = option.getAttribute('data-quantidade');
+        //             document.getElementById('status').value = option.getAttribute('data-status');
+        //             document.getElementById('statusItem').value = option.getAttribute('data-statusitem');
+        //         });
+        //     })
+        //     .catch(error => {
+        //         console.error(error);
+        //     });
 
         // Chama a função capturarValores quando o link for clicado
         document.getElementById('btnSalvar').addEventListener('click', function(event) {

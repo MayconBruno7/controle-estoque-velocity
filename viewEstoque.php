@@ -1,26 +1,18 @@
 <?php
 
-    session_start();
-
     require_once "library/protectUser.php";
     require_once "library/Database.php";
     require_once "library/Funcoes.php";
     require_once "helpers/Formulario.php";
 
-    // Se a ação for 'delete', redireciona para a página anterior
-    if (isset($_GET['acao']) && $_GET['acao'] == 'delete') {
-        if (!isset($_GET['id']) || !isset($_GET['id_movimentacoes']) || !isset($_GET['tipo']) || !isset($_GET['qtd_produto'])) {
-            header("Location: formMovimentacoes.php?msgError=Dados inválidos para exclusão.&acao=insert");
-            exit;
-        }
-    }
-
+    
     $db = new Database();
 
     // Variável para armazenar os produtos disponíveis
     $produtos = [];
 
-    try {
+    // Se a ação for 'delete', redireciona para a página anterior
+    if (isset($_GET['acao']) && $_GET['acao'] == 'delete') {
         // Listar todos os produtos disponíveis
         $produtos = $db->dbSelect(
             "SELECT 
@@ -29,12 +21,28 @@
             FROM 
                 produtos 
             WHERE 
-                produtos.statusRegistro = 1 AND statusRegistro = 1"
+                produtos.statusRegistro = 1 AND produtos.id = ?", 'all', [$_GET['id']]
         );
-    } catch (Exception $ex) {
-        echo json_encode(['produtos.statusRegistro' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
-    }
 
+        // var_dump($_GET['id']);
+        // var_dump($produtos);
+        // exit; 
+        if (!isset($_GET['id']) || !isset($_GET['id_movimentacoes']) || !isset($_GET['tipo']) || !isset($_GET['qtd_produto'])) {
+            header("Location: formMovimentacoes.php?msgError=Dados inválidos para exclusão.&acao=insert");
+            exit;
+        }
+    } else { 
+        // Listar todos os produtos disponíveis
+        $produtos = $db->dbSelect(
+            "SELECT 
+                produtos.*, 
+                (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+            FROM 
+                produtos 
+            WHERE 
+                produtos.statusRegistro = 1"
+        );
+    }
 ?>
 
 <?php require_once "comuns/cabecalho.php"; ?>
@@ -72,7 +80,7 @@
                     <td><?= getCondicao($row['condicao']) ?></td>
                     <td>
                         <?php if (isset($_GET["acao"]) && ($_GET['acao'] == 'insert' || $_GET['acao'] == 'update')) : ?>
-                            <form id="form<?= $row['id'] ?>" action="inserirProdutoMovimentacao.php?acao=<?= $_GET['acao'] ?>&id_movimentacoes=<?= isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] : ""  ?>" method="POST">
+                            <form id="form<?= $row['id'] ?>" action="inserirProdutoMovimentacao.php?acao=<?= $_GET['acao'] ?>" method="POST">
                                 <div class="row mt-3">
                                     <div class="col">
                                         <label for="valor_<?= $row['id'] ?>" class="form-label">Valor</label>
@@ -97,7 +105,7 @@
                                 <p>Quantidade atual: <?= $_GET['qtd_produto'] ?></p>
                                 <label for="quantidadeRemover" class="form-label">Quantidade</label>
                                 <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
-                                <input type="hidden" name="id_produto" value="<?= $row['id'] ?>">
+                                <input type="hidden" name="id_produto" value="<?= $_GET['id'] ? $_GET['id'] : "" ?>">
                                 <input type="hidden" name="id_movimentacao" value="<?= $_GET['id_movimentacoes'] ?>">
                                 <input type="hidden" name="tipo_movimentacoes" value="<?= $_GET['tipo'] ?>">
                                 <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
