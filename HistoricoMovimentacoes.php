@@ -15,9 +15,14 @@
         $id_produto = $_GET['id_produtos'];
 
         $dados = $db->dbSelect(
-            "SELECT m.id as id_mov, f.nome as nome_fornecedor, m.tipo, m.data_pedido, m.data_chegada 
-                FROM movimentacoes m JOIN fornecedor f ON (f.id = m.id_fornecedor) 
-                WHERE m.id IN (SELECT id_movimentacoes FROM movimentacoes_itens WHERE id_produtos = ?)", 
+            "SELECT m.id as id_mov, 
+                f.nome as nome_fornecedor, 
+                m.tipo, m.data_pedido, 
+                m.data_chegada, 
+                (SELECT SUM(movi.quantidade) FROM movimentacoes_itens movi WHERE movi.id_movimentacoes = m.id) AS Quantidade, 
+                (SELECT SUM(movi.valor) FROM movimentacoes_itens movi WHERE movi.id_movimentacoes = m.id) AS Valor 
+            FROM movimentacoes m JOIN fornecedor f ON (f.id = m.id_fornecedor) 
+            WHERE m.id IN (SELECT id_movimentacoes FROM movimentacoes_itens WHERE id_produtos = ?)", 
                 'all', 
                 [$id_produto]
             );
@@ -25,11 +30,22 @@
     } catch (Exception $ex) {
         echo json_encode(['movimentacoes.statusRegistro' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
     }
+
+    $nome_produto = $db->dbSelect(
+        "SELECT nome FROM produtos WHERE id = ?", 'first', [$id_produto]
+    );
+
 ?>
 
 <title>Movimentações</title>
 
 <main class="container mt-5">
+
+        <div class="row">
+            <div class="col-10">
+                <h2>Histórico de Movimentações: <?= $nome_produto->nome ?></h2>
+            </div>
+        </div>
 
     <div class="row">
         <div class="col-12">
@@ -45,6 +61,8 @@
                 <th>Tipo</th>
                 <th>Data do Pedido</th>
                 <th>Data da Chegada</th>
+                <th>Quantidade</th>
+                <th>R$ Total</th>
                 <th>Opções</th>
             </tr>
         </thead>   
@@ -60,6 +78,8 @@
                             <td> <?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
                             <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
                             <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
+                            <td> <?= isset($row['Quantidade']) ? number_format($row['Quantidade'], 2, ",", "."): 'Nenhuma '?> </td>
+                            <td> <?= isset($row['Valor']) ? number_format($row['Valor'], 2, ",", "."): 'Nenhuma '?> </td>
                             <td>
                                 <a href="formMovimentacoes.php?acao=view&id_movimentacoes=<?= $row['id_mov'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;
                                 <a href="formMovimentacoes.php?acao=update&id_movimentacoes=<?= $row['id_mov'] ?>" class="btn btn-outline-primary btn-sm styleButton" title="Alteração">Alterar</a>&nbsp;
@@ -69,7 +89,7 @@
                     <?php
                 }
             } else {
-                echo "<tr><td colspan='6'>Nenhum registro encontrado.</td></tr>";
+                // echo "<tr><td colspan='6'>Nenhum registro encontrado.</td></tr>";
             }
         ?>
         </tbody>
