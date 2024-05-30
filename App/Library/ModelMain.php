@@ -49,6 +49,12 @@ class ModelMain
         return $this->db->select($this->table, "all", ['orderby' => $orderBy]);
     }
 
+    // public function form($orderBy = ['descricao'])
+    // {
+    //     return $this->db->select($this->table, "all", ['orderby' => $orderBy]);
+    // }
+
+
     /**
      * insert
      *

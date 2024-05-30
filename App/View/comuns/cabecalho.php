@@ -1,6 +1,7 @@
 <?php 
 
     use App\Library\Session;
+
 ?>
 
 <!DOCTYPE html>
@@ -117,38 +118,38 @@
                 <div>
                     <ul class="navbar-nav">
                         <?php if (Session::get('usuarioId') != false): ?>
-                        <li class="nav-item dropdown">
+                        <li class="dropdown">
                             <?php if (Session::get('usuarioNivel') == 1): ?>
                             <a class="nav-link dropdown-toggle" href="<?= baseUrl() ?>#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                 <?= $_SESSION["usuarioLogin"] ?>
                             </a>
                             <?php endif; ?>
-                            <ul class="dropdown-menu">
-                                <li><a class="dropdown-item" href="<?= baseUrl() ?>listaUsuario.php">Lista de usuários</a></li>
+                            <ul class="dropdown-menu text-danger">
+                                <li><a class="dropdown-item" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>listaFuncionarios.php">Lista funcionários</a></li>
-                                <li ><a class="dropdown-item"" href="<?= baseUrl() ?>listaCargo.php">Lista cargos</a></li>
-                                <li><a class="dropdown-item" href="<?= baseUrl() ?>listaProdutos.php">Cadastrar produtos</a></li>
+                                <li ><a class="dropdown-item" href="<?= baseUrl() ?>listaCargo.php">Lista cargos</a></li>
+                                <li><a class="dropdown-item" href="<?= baseUrl() ?>Produto">Cadastrar produtos</a></li>
                             </ul>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= baseUrl() ?>listaProdutos.php">Estoque</a>
+                            <li><a class="nav-link text-secondary" href="<?= baseUrl() ?>Produto">Estoque</a></li>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= baseUrl() ?>listaFornecedor.php">Fornecedores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaFornecedor.php">Fornecedores</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= baseUrl() ?>listaMovimentacoes.php">Movimentações</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaMovimentacoes.php">Movimentações</a>
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= baseUrl() ?>listaSetor.php">Setores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaSetor.php">Setores</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link" href="<?= baseUrl() ?>Login/signOut">Sair</a>
+                            <a class="nav-link text-danger" href="<?= baseUrl() ?>Login/signOut">Sair</a>
                         </li>
                         <?php endif; ?>
                     </ul>

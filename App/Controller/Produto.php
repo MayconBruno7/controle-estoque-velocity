@@ -40,15 +40,15 @@ class Produto extends ControllerMain
      */
     public function form()
     {
-        $CategoriaModel = $this->loadModel("Categoria");
+        // $CategoriaModel = $this->loadModel("Categoria");
 
         $DbDados = [];
 
-        if ($this->getAcao() != 'new') {
-            $DbDados = $this->model->getById($this->getId());
-        }
+        // if ($this->getAcao() != 'new') {
+        //     $DbDados = $this->model->getById($this->getId());
+        // }
 
-        $DbDados['aCategoria'] = $CategoriaModel->lista('descricao');
+        // $DbDados['aCategoria'] = $CategoriaModel->lista('descricao');
 
         return $this->loadView(
             "restrita/formProduto",

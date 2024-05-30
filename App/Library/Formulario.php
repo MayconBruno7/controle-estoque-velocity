@@ -21,27 +21,18 @@ class Formulario
             $titulo .= " - Visualização";
         }
 
-        $html = '<div class="container-fluid">';
-            $html .= '<div class="row">';
+        $html .= '<div class="text-center mt-4"><h2>' . $titulo . '</h2></div>';
 
-                $html .= '<div class="col-10"><h2>' . $titulo . '</h2></div>';
+            if ($btNew) {
+                $html .= Formulario::botao('insert');
+            }
 
-                $html .= '<div class="col-2 text-end">';
+            if ($btVoltar) {
+                $html .= Formulario::botao('voltar');
+            }
 
-                    if ($btNew) {
-                        $html .= Formulario::botao('insert');
-                    }
 
-                    if ($btVoltar) {
-                        $html .= Formulario::botao('voltar');
-                    }
-
-                $html .= '</div>';
-
-                $html .= Formulario::mensagem();
-
-            $html .= '</div>';
-        $html .= '</div>';
+        $html .= Formulario::mensagem();
 
         return $html;
     }
@@ -63,11 +54,11 @@ class Formulario
         if ($tipo == 'insert') {
             $htmlBt = '<a href="' . $url . '/form/insert/0" title="Inclusão"><i class="fa fa-plus" area-hidden="true"></i></a>';
         } elseif ($tipo == 'update') {
-            $htmlBt = '<a href="' . $url . '/form/update/' . $id . '" title="Alteração"><i class="fa fa-file" area-hidden="true"></i></a>&nbsp;&nbsp;';
+            $htmlBt = '<a href="' . $url . '/form/update/' . $id . '" class="btn btn-outline-primary btn-sm" title="Alteração">Alterar</a>&nbsp;';
         } elseif ($tipo == 'delete') {
-            $htmlBt = '<a href="' . $url . '/form/delete/' . $id . '" title="Exclusão"><i class="fa fa-trash" area-hidden="true"></i></a>&nbsp;&nbsp;';
+            $htmlBt = '<a href="' . $url . '/form/delete/' . $id . '" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;';
         } elseif ($tipo == 'view') {
-            $htmlBt = '<a href="' . $url . '/form/view/' . $id . '" title="Visualização"><i class="fa fa-eye" area-hidden="true"></i></a>&nbsp;&nbsp;';
+            $htmlBt = '<a href="' . $url . '/form/view/' . $id . '" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>';
         } elseif ($tipo == 'voltar') {
             $htmlBt = '<a href="' . $url . '" class="btn btn-outline-secondary" title="Voltar">Voltar</a>';
         }
@@ -111,6 +102,28 @@ class Formulario
         }
 
         return $html;
+    }
+
+    static public function getCondicao($status)
+    {
+        if ($status == 1) {
+            return "Novo";
+        } elseif ($status == 2) {
+            return "Usado";
+        } else {
+            return "...";
+        }
+    }
+
+    static public function getStatusDescricao($status)
+    {
+        if ($status == 1) {
+            return "Ativo";
+        } elseif ($status == 2) {
+            return "Inativo";
+        } else {
+            return "...";
+        }
     }
 
     /**

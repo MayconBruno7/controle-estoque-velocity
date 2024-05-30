@@ -38,7 +38,7 @@
 <script type="text/javascript">
 
     $(function(){
-        $('#categoria_id').change(function(){
+        $('#').change(function(){
 
             if ($(this).val()){
                 $('#produto_id').hide();
