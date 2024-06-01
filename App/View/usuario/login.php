@@ -4,28 +4,6 @@ use App\Library\Formulario;
 
 ?>
 
-<!-- <section>
-    <div class="container">
-        <div class="blog-banner">
-            <div class="mt-5 mb-5 text-left">
-                <h1 style="color: #384aeb;">Login / Criar nova conta</h1>
-            </div>
-        </div>
-    </div>
-</section> -->
-
-<!-- <div class="col-lg-6">
-                <div class="login_box_img">
-                    <div class="hover">
-                        <h4>Novo em nosso site?</h4>
-                        <p>
-                            Crie uma conta para poder curtir, comentar, marcar como lido nossos conteúdos criados para você.
-                        </p>
-                        <a class="button button-account" href="<?= baseUrl() ?>Home/criarConta">Crie sua conta aqui</a>
-                    </div>
-                </div>
-            </div> -->
-
 <section class="about section-margin">
 
     <div class="container mt-5">
@@ -61,8 +39,10 @@ use App\Library\Formulario;
                             <?= Formulario::exibeMsgSucesso() ?>
                         </div>
                         
-                        <div class="col-12 form-group mt-1 mb-3">
-                            <button type="submit" value="submit" class="btn btn-outline-secondary">Entrar</button>
+                        <div class="container col-12 mt-1 mb-3">
+                            <button type="submit" value="submit" class="btn btn-primary">Entrar</button>
+                            <a class="btn btn-outline-secondary" href="<?= baseUrl() ?>Home/criarConta">Crie sua conta aqui</a>
+
                             <a href="<?= baseUrl() ?>Login/solicitaRecuperacaoSenha">Esqueceu a senha?</a>
                         </div>
                     </form>

@@ -5,9 +5,12 @@ use App\Library\Redirect;
 use App\Library\UploadImages;
 use App\Library\Validator;
 use App\Library\Session;
+use App\Library\ModelMain;
+
 
 class Produto extends ControllerMain
 {
+
     /**
      * construct
      *
@@ -15,6 +18,12 @@ class Produto extends ControllerMain
      */
     public function __construct($dados)
     {
+        $this->auxiliarConstruct($dados);
+
+        parent::__construct($dados); // Chama o construtor da classe pai
+
+        // Inicializa o modelo
+        $this->model = new ProdutoModel();
         $this->auxiliarConstruct($dados);
 
         // Somente pode ser acessado por usuários adminsitradores
@@ -33,28 +42,83 @@ class Produto extends ControllerMain
         $this->loadView("restrita/listaProduto", $this->model->lista("descricao"));
     }
 
-    /**
+     /**
      * form
      *
      * @return void
      */
-    public function form()
-    {
-        // $CategoriaModel = $this->loadModel("Categoria");
+    public function form() {
 
-        $DbDados = [];
+        // $ProdutoModel = $this->model;
+        // $dataModFormatada = '';
+
+        // if ($this->getAcao() != "insert") {
+        //     $dataMod = null;
+        //     if (isset($_GET['id'])) {
+        //         try {
+        //             $dataMod = $this->model->getById($_GET['id']);
+        //             $dataModFormatada = isset($dataMod['dataModFormatada']) ? $dataMod['dataModFormatada'] : '';
+        //             $dados = $dataMod;
+        //         } catch (Exception $ex) {
+        //             echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
+        //         }
+        //     }
+        // }
+
+        // $dadosHistorico = $this->model->lista();
+        // $dadosFornecedor = $this->model->lista();
+
+        // if ($dadosFornecedor) {
+        //     $fornecedor_id = isset($dados['fornecedor']) ? $dados['fornecedor'] : "";
+        // }
+
+        // $nome_fornecedor = isset($fornecedor_id) ? $this->obterNomeFornecedor($fornecedor_id) : '';
+
+        // if ($this->getAcao() != 'insert') {
+        //     $ConfereHistorico = $this->model->getById(isset($_GET['id']) ? $_GET['id'] : '');
+        // }
+
 
         // if ($this->getAcao() != 'new') {
         //     $DbDados = $this->model->getById($this->getId());
         // }
 
-        // $DbDados['aCategoria'] = $CategoriaModel->lista('descricao');
+        // $DbDados['aProduto'] = $ProdutoModel->lista('descricao');
+        // $DbDados['dataModFormatada'] = $dataModFormatada;
+        // $DbDados['dadosHistorico'] = $dadosHistorico;
+        // $DbDados['dadosFornecedor'] = $dadosFornecedor;
+        // $DbDados['fornecedor_id'] = $fornecedor_id;
+
+        // $DbDados = [];
+
+
+        // $DbDados['aProduto'] = $ProdutoModel->lista('descricao');
+
+
+        // return $this->loadView("restrita/formProduto", $DbDados);
+
+        // public $table = "fornecedor";
+
+        $FornecedorModel = $this->loadModel("Fornecedor");
+
+        $DbDados = [];
+
+        if ($this->getAcao() != 'new') {
+            $DbDados = $this->model->getById($this->getId());
+        }
+
+        $DbDados['aFornecedor'] = $FornecedorModel->lista('nome');
 
         return $this->loadView(
             "restrita/formProduto",
             $DbDados
         );
     }
+
+    // private function obterNomeFornecedor($fornecedor_id) {
+    //     $result = $this->model->getById($fornecedor_id);
+    //     return $result ? $result['nome'] : '';
+    // }
 
     /**
      * insert

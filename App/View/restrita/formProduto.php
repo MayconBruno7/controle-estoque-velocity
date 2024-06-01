@@ -1,9 +1,6 @@
 <?php
 
     use App\Library\Formulario;
-    use App\Model\ProdutoModel;
-
-    $acao->form($this->getAcao());
 
     $dataModFormatada = "";
 
@@ -13,7 +10,7 @@
 
 <div class="container">
     
-    <?= Formulario::titulo('Produto', false, true) ?>
+    <?= Formulario::titulo('Produto', false, false) ?>
 
     <form method="POST" action="<?= baseUrl() ?>Produto/<?= $this->getAcao() ?>">
 
@@ -22,31 +19,29 @@
             <div class="col-8">
                 <label for="nome" class="form-label">Nome</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= isset($dados->nome) ? $dados->nome : "" ?>" <?= $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome') ?>" <?= $this->getAcao() == 'view' ? 'disabled' : '' ?>>
             </div>
 
             <div class="col-4">
                 <label for="quantidade" class="form-label">Quantidade</label>
                 <!--  verifica se a quantidade está no banco de dados e retorna essa quantidade -->
-                <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100"value="<?= isset($dados->quantidade) ? $dados->quantidade : "" ?>" disabled >
-                <input type="hidden" name="quantidade" id="hidden" value="<?= isset($dados->quantidade) ? $dados->quantidade : "" ?>" >
+                <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade') ?>" disabled >
+                <input type="hidden" name="quantidade" id="hidden" value="<?= setValor('quantidade') ?>" >
             </div>
 
-            <div class="col-6 mt-3">
+            <div class="mt-3 mb-3 col-6">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'disabled' : ''?> <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>> 
-                    <option value="">...</option>
-                    <?php foreach($dadosFornecedor as $fornecedor) : ?>
-                        <option value="<?= $fornecedor['id'] ?>" <?= $fornecedor['id'] == $fornecedor_id ? 'selected' : '' ?>>
-                            <?= $fornecedor['nome'] ?>
-                        </option>
+                <select class="form-control" name="fornecedor_id" id="fornecedor_id" required>
+                    <option value=""  <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
+                    <?php foreach ($aDados['aFornecedor'] as $value): ?>
+                        <option value="<?= $value['id'] ?>" <?= setValor('fornecedor') == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
 
             <div class="col-3 mt-3">
                 <label for="statusRegistro" class="form-label">Status</label>
-                <select class="form-control" name="statusRegistro" id="statusRegistro" required>
+                <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $this->getAcao() == 'view' ? 'disabled' : '' ?>>
                     <option value=""  <?= setValor('statusRegistro') == ""  ? "SELECTED": "" ?>>...</option>
                     <option value="1" <?= setValor('statusRegistro') == "1" ? "SELECTED": "" ?>>Ativo</option>
                     <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
@@ -55,24 +50,24 @@
 
             <div class="col-3 mt-3">
                 <label for="condicao" class="form-label">Estado do item</label>
-                <select name="condicao" id="condicao" class="form-control" required <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= isset($dados->motivo) ? $dados->motivo : "" ?>>
+                <select name="condicao" id="condicao" class="form-control" required <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= setValor('condicao') ?>>
                     <!--  verifica se o statusItem está no banco de dados e retorna esse status -->
-                    <option value=""  <?= isset($dados->condicao) ? $dados->condicao == "" ? "selected" : "" : "" ?>>...</option>
-                    <option value="1" <?= isset($dados->condicao) ? $dados->condicao == 1  ? "selected" : "" : "" ?>>Novo</option>
-                    <option value="2" <?= isset($dados->condicao) ? $dados->condicao == 2  ? "selected" : "" : "" ?>>Usado</option>
+                    <option value=""  <?= setValor('condicao') == "" ? "selected" : ""  ?>>...</option>
+                    <option value="1" <?= setValor('condicao') == 1  ? "selected" : ""  ?>>Novo</option>
+                    <option value="2" <?= setValor('condicao') == 2  ? "selected" : ""  ?>>Usado</option>
                 </select>
             </div>
 
             <div class="col-12 mt-3">
                 <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?><?= isset($dados->motivo) ? $dados->motivo : "" ?>><?= isset($dados->descricao) ? $dados->descricao : "" ?></textarea>
+                <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= setValor('descricao') ?></textarea>
             </div>
 
             <!-- se a ação for view não aparece a hora formatada no formprodutos -->
             <?php  if ($this->getAcao() == 'view' || $this->getAcao() == 'delete' || $this->getAcao() == 'update') { ?>
             <div class="col-6 mt-3">
                 <label for="dataMod" class="form-label">Data da ultima modificação</label>
-                <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= $dataModFormatada ?>" disabled>
+                <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod') ?>" disabled>
             </div>
             <?php 
             } 

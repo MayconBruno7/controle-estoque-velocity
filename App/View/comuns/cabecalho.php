@@ -137,7 +137,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaFornecedor.php">Fornecedores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a>
                         </li>
 
                         <li class="nav-item">

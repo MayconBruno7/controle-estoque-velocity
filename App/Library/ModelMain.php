@@ -2,6 +2,8 @@
 
 namespace App\Library;
 
+use App\Library\ControllerMain;
+
 class ModelMain
 {
     protected $db;
@@ -49,10 +51,10 @@ class ModelMain
         return $this->db->select($this->table, "all", ['orderby' => $orderBy]);
     }
 
-    // public function form($orderBy = ['descricao'])
-    // {
-    //     return $this->db->select($this->table, "all", ['orderby' => $orderBy]);
-    // }
+    public function form($orderBy = ['descricao'])
+    {
+        return $this->db->select($this->table, "all", ['orderby' => $orderBy]);
+    }
 
 
     /**

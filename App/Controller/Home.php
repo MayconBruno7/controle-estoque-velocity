@@ -11,8 +11,8 @@ class Home extends ControllerMain
      */
     public function index()
     {
-        // $categoria = $this->loadModel("Categoria");
-        // $this->dados['aCategoria'] = $categoria->lista();
+        $Produto = $this->loadModel("Produto");
+        $this->dados['aProduto'] = $Produto->lista();
     
         // $this->loadView("home", $this->dados);
 
@@ -27,11 +27,11 @@ class Home extends ControllerMain
      */
     public function produto()
     {
-        $CategoriaModel = $this->loadModel("categoria");
+        $ProdutoModel = $this->loadModel("Produto");
 
-        $aCategoria = $CategoriaModel->lista();
+        $aProduto = $ProdutoModel->lista();
 
-        return $this->loadView("produto", $aCategoria);
+        return $this->loadView("produto", $aProduto);
     }
 
     /**

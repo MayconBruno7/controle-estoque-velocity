@@ -52,7 +52,7 @@ class Formulario
         $url = baseUrl() . $service->getController();
 
         if ($tipo == 'insert') {
-            $htmlBt = '<a href="' . $url . '/form/insert/0" title="Inclusão"><i class="fa fa-plus" area-hidden="true"></i></a>';
+            $htmlBt = '<a href="' . $url . '/form/insert/0" class="btn btn-outline-primary btn-sm" title="Inserção">Inserir</a>&nbsp;';
         } elseif ($tipo == 'update') {
             $htmlBt = '<a href="' . $url . '/form/update/' . $id . '" class="btn btn-outline-primary btn-sm" title="Alteração">Alterar</a>&nbsp;';
         } elseif ($tipo == 'delete') {

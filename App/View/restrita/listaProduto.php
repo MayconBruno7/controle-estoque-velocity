@@ -2,20 +2,20 @@
 
     use App\Library\Formulario;
 
-    echo Formulario::titulo('Estoque');
+    echo Formulario::titulo('Estoque', true, false);
 
 ?>
 
     <!-- Verifica e retorna mensagem de erro ou sucesso -->
     <main class="container mt-5">
 
-        <div class="row">
+        <!-- <div class="row">
             <?php if (!isset($_GET["id_movimentacoes"])) : ?>
                 <div class="col-12 d-flex justify-content-start">
                     <a href="formprodutos.php?acao=insert" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Inserir">Adicionar Produto</a>
                 </div>
             <?php endif; ?>
-        </div>
+        </div> -->
 
         <div class="row">
             <div class="col-12">

@@ -6,6 +6,7 @@ class ControllerMain
 {
 	public $dados;
 	public $model;
+	// protected $db;
 
 	/**
 	 * construct
