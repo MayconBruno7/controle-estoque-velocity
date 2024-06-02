@@ -1,7 +1,6 @@
 <?php 
 
     use App\Library\Session;
-
 ?>
 
 <!DOCTYPE html>
@@ -145,7 +144,7 @@
                         </li>
                     
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaSetor.php">Setores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Setor">Setores</a>
                         </li>
 
                         <li class="nav-item">

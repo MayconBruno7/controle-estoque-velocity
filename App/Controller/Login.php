@@ -109,15 +109,15 @@ class Login extends ControllerMain
                 Você solicitou a recuperação de sua senha? <br><br>
                 Caso tenha solicitação clique no link a seguir para prosseguir <a href="'. $cLink . '" title="Recuperar a senha">Recuperar a senha</a> <br><br>
                 Att: <br><br>
-                Equipe VelocityPHP
+                Equipe Controle estoque
             ';
 
             $lRetMail = Email::enviaEmail(
-                'contatofoody@gmail.com',                                   /* Email do Remetente*/
-                'VelocityPHP Contato',                                      /* Nome do Remetente */
-                'VelocityPHP - Solicitação de recuperação de senha.',       /* Assunto do e-mail */
-                $corpoEmail,                                                /* Corpo do E-mail */
-                $user['email']                                              /* Destinatário do E-mail */
+                'maycon7ads@gmail.com',                                             /* Email do Remetente*/
+                'Controle estoque - Contato',                                       /* Nome do Remetente */
+                'Controle estoque - Solicitação de recuperação de senha.',          /* Assunto do e-mail */
+                $corpoEmail,                                                        /* Corpo do E-mail */
+                $user['email']                                                      /* Destinatário do E-mail */
             );
 
             if ($lRetMail) {

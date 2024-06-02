@@ -5,7 +5,7 @@ use App\Library\Redirect;
 use App\Library\UploadImages;
 use App\Library\Validator;
 use App\Library\Session;
-use App\Library\ModelMain;
+// use App\Library\ModelMain;
 
 
 class Produto extends ControllerMain
@@ -18,12 +18,10 @@ class Produto extends ControllerMain
      */
     public function __construct($dados)
     {
-        $this->auxiliarConstruct($dados);
+        // $this->auxiliarConstruct($dados);
 
-        parent::__construct($dados); // Chama o construtor da classe pai
-
-        // Inicializa o modelo
-        $this->model = new ProdutoModel();
+        // // Inicializa o modelo
+        // $this->model = new ProdutoModel();
         $this->auxiliarConstruct($dados);
 
         // Somente pode ser acessado por usuários adminsitradores
@@ -49,56 +47,7 @@ class Produto extends ControllerMain
      */
     public function form() {
 
-        // $ProdutoModel = $this->model;
-        // $dataModFormatada = '';
-
-        // if ($this->getAcao() != "insert") {
-        //     $dataMod = null;
-        //     if (isset($_GET['id'])) {
-        //         try {
-        //             $dataMod = $this->model->getById($_GET['id']);
-        //             $dataModFormatada = isset($dataMod['dataModFormatada']) ? $dataMod['dataModFormatada'] : '';
-        //             $dados = $dataMod;
-        //         } catch (Exception $ex) {
-        //             echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
-        //         }
-        //     }
-        // }
-
-        // $dadosHistorico = $this->model->lista();
-        // $dadosFornecedor = $this->model->lista();
-
-        // if ($dadosFornecedor) {
-        //     $fornecedor_id = isset($dados['fornecedor']) ? $dados['fornecedor'] : "";
-        // }
-
-        // $nome_fornecedor = isset($fornecedor_id) ? $this->obterNomeFornecedor($fornecedor_id) : '';
-
-        // if ($this->getAcao() != 'insert') {
-        //     $ConfereHistorico = $this->model->getById(isset($_GET['id']) ? $_GET['id'] : '');
-        // }
-
-
-        // if ($this->getAcao() != 'new') {
-        //     $DbDados = $this->model->getById($this->getId());
-        // }
-
-        // $DbDados['aProduto'] = $ProdutoModel->lista('descricao');
-        // $DbDados['dataModFormatada'] = $dataModFormatada;
-        // $DbDados['dadosHistorico'] = $dadosHistorico;
-        // $DbDados['dadosFornecedor'] = $dadosFornecedor;
-        // $DbDados['fornecedor_id'] = $fornecedor_id;
-
-        // $DbDados = [];
-
-
-        // $DbDados['aProduto'] = $ProdutoModel->lista('descricao');
-
-
-        // return $this->loadView("restrita/formProduto", $DbDados);
-
-        // public $table = "fornecedor";
-
+        $HistoricoProdutoModel = $this->loadModel('HistoricoProduto');
         $FornecedorModel = $this->loadModel("Fornecedor");
 
         $DbDados = [];
@@ -107,18 +56,15 @@ class Produto extends ControllerMain
             $DbDados = $this->model->getById($this->getId());
         }
 
-        $DbDados['aFornecedor'] = $FornecedorModel->lista('nome');
+        $DbDados['aFornecedor'] = $FornecedorModel->lista('id');
+        $idProduto = $this->getId();
+        $DbDados['aHistoricoProduto'] = $HistoricoProdutoModel->historicoProduto('id', $idProduto);
 
         return $this->loadView(
             "restrita/formProduto",
             $DbDados
         );
     }
-
-    // private function obterNomeFornecedor($fornecedor_id) {
-    //     $result = $this->model->getById($fornecedor_id);
-    //     return $result ? $result['nome'] : '';
-    // }
 
     /**
      * insert
@@ -134,31 +80,28 @@ class Produto extends ControllerMain
             return Redirect::page("Produto/form/insert");
         } else {
 
-            if (!empty($_FILES['imagem']['name'])) {
+            // if (!empty($_FILES['imagem']['name'])) {
 
-                // Faz uploado da imagem
-                $nomeRetornado = UploadImages::upload($_FILES, 'produto');
+            //     // Faz uploado da imagem
+            //     $nomeRetornado = UploadImages::upload($_FILES, 'produto');
 
-                // se for boolean, significa que o upload falhou
-                if (is_bool($nomeRetornado)) {
-                    Session::set( 'inputs' , $post );
-                    return Redirect::page("Produto/form/update/" . $post['id']);
-                }
+            //     // se for boolean, significa que o upload falhou
+            //     if (is_bool($nomeRetornado)) {
+            //         Session::set( 'inputs' , $post );
+            //         return Redirect::page("Produto/form/update/" . $post['id']);
+            //     }
 
-            } else {
-                $nomeRetornado = $post['nomeImagem'];
-            }
+            // } else {
+            //     // $nomeRetornado = $post['nomeImagem'];
+            // }
 
             if ($this->model->insert([
-                "descricao"         => $post['descricao'],
-                "caracteristicas"   => $post['caracteristicas'],
-                "statusRegistro"    => $post['statusRegistro'],
-                "categoria_id"      => $post['categoria_id'],
-                "saldoEmEstoque"    => strNumber($post['saldoEmEstoque']),
-                "precoVenda"        => strNumber($post['precoVenda']),
-                "precoPromocao"     => strNumber($post['precoPromocao']),
-                "custoTotal"        => strNumber($post['custoTotal']),
-                'imagem'            => $nomeRetornado
+                "nome"                  => $post['nome'],
+                "quantidade"            => $post['quantidade'],
+                "fornecedor"            => $post['fornecedor_id'],
+                "statusRegistro"        => $post['statusRegistro'],
+                "condicao"              => $post['condicao'],
+                "descricao"             => $post['descricao']
             ])) {
                 Session::set("msgSuccess", "Produto adicionada com sucesso.");
             } else {
@@ -182,37 +125,48 @@ class Produto extends ControllerMain
             return Redirect::page("Produto/form/update/" . $post['id']);    // error
         } else {
 
-            if (!empty($_FILES['imagem']['name'])) {
+            // if (!empty($_FILES['imagem']['name'])) {
 
-                // Faz uploado da imagem
-                $nomeRetornado = UploadImages::upload($_FILES, 'produto');
+            //     // Faz uploado da imagem
+            //     $nomeRetornado = UploadImages::upload($_FILES, 'produto');
 
-                // se for boolean, significa que o upload falhou
-                if (is_bool($nomeRetornado)) {
-                    Session::set( 'inputs' , $post );
-                    return Redirect::page("Produto/form/update/" . $post['id']);
-                }
+            //     // se for boolean, significa que o upload falhou
+            //     if (is_bool($nomeRetornado)) {
+            //         Session::set( 'inputs' , $post );
+            //         return Redirect::page("Produto/form/update/" . $post['id']);
+            //     }
 
-                UploadImages::delete($post['nomeImagem'], 'produto');
+            //     UploadImages::delete($post['nomeImagem'], 'produto');
 
-            } else {
-                $nomeRetornado = $post['nomeImagem'];
-            }
+            // } else {
+            //     $nomeRetornado = $post['nomeImagem'];
+            // }
 
             if ($this->model->update(
                 [
                     "id" => $post['id']
                 ], 
                 [
-                    "descricao"         => $post['descricao'],
-                    "caracteristicas"   => $post['caracteristicas'],
-                    "statusRegistro"    => $post['statusRegistro'],
-                    "categoria_id"      => $post['categoria_id'],
-                    "saldoEmEstoque"    => strNumber($post['saldoEmEstoque']),
-                    "precoVenda"        => strNumber($post['precoVenda']),
-                    "precoPromocao"     => strNumber($post['precoPromocao']),
-                    "custoTotal"        => strNumber($post['custoTotal']),
-                    'imagem'            => $nomeRetornado
+                    "nome"                  => $post['nome'],
+                    "quantidade"            => $post['quantidade'],
+                    "fornecedor"            => $post['fornecedor_id'],
+                    "statusRegistro"        => $post['statusRegistro'],
+                    "condicao"              => $post['condicao'],
+                    "descricao"             => $post['descricao'],
+                    "dataMod"               => $post['dataMod'] = 'NOW()'
+                ],
+
+                [
+                    "id_produtos"           => $post['id'],
+                    "nome_produtos"         => setValor('nome'),
+                    "descricao_anterior"    => setValor('descricao'),
+                    "quantidade_anterior"   => setValor('quantidade'),
+                    "fornecedor_id"         => setValor('fornecedor'),
+                    "status_anterior"       => setValor('statusRegistro'),
+                    "statusItem_anterior"   => setValor('condicao'),
+                    "dataMod"               => setValor('dataMod'),
+
+
                 ]
             )) {
                 Session::set("msgSuccess", "Produto alterada com sucesso.");

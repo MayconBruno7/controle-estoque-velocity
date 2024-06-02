@@ -11,15 +11,10 @@ Class ProdutoModel extends ModelMain
     public $table = "produtos";
 
     public $validationRules = [
-        'descricao' => [
-            'label' => 'Descrição',
-            'rules' => 'required|min:3|max:50'
-        ],
-        'caracteristicas' => [
-            'label' => 'Características',
-            'rules' => 'required|min:5'
-        ],
-
+        // 'descricao' => [
+        //     'label' => 'Descrição',
+        //     'rules' => 'required|min:3|max:50'
+        // ],
         'statusRegistro' => [
             'label' => 'Status',
             'rules' => 'required|int'

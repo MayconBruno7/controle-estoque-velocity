@@ -172,7 +172,14 @@ class Database
             $condWhere      = $this->getCampos($conditions);
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
 
-            $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . " WHERE " . $condWhere['sql'] . "; ";
+             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
+            if ($table == 'produtos') {
+                $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . ", dataMod = NOW() WHERE " . $condWhere['sql'] . ";";
+
+                
+            } else {
+                $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . " WHERE " . $condWhere['sql'] . ";";
+            }
         
             $query = $this->connect()->prepare($sql);
             $query->execute($save['save']);
