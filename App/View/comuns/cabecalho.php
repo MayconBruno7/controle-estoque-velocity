@@ -125,7 +125,7 @@
                             <?php endif; ?>
                             <ul class="dropdown-menu text-danger">
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
-                                <li><a class="dropdown-item" href="<?= baseUrl() ?>listaFuncionarios.php">Lista funcionários</a></li>
+                                <li><a class="dropdown-item" href="<?= baseUrl() ?>Funcionario">Lista funcionários</a></li>
                                 <li ><a class="dropdown-item" href="<?= baseUrl() ?>listaCargo.php">Lista cargos</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Produto">Cadastrar produtos</a></li>
                             </ul>

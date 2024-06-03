@@ -37,7 +37,7 @@ class Produto extends ControllerMain
      */
     public function index()
     {
-        $this->loadView("restrita/listaProduto", $this->model->lista("descricao"));
+        $this->loadView("restrita/listaProduto", $this->model->lista("id"));
     }
 
      /**

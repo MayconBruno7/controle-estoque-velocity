@@ -105,11 +105,11 @@
             <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
             <div class="form-group col-12 mt-5">
-                    <?= Formulario::botao('voltar') ?>
-                    <?php if ($this->getAcao() != "view"): ?>
-                        <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
-                    <?php endif; ?>
-                </div>
+                <?= Formulario::botao('voltar') ?>
+                <?php if ($this->getAcao() != "view"): ?>
+                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <?php endif; ?>
+            </div>
             
         </div>
 
