@@ -2,7 +2,6 @@
 
     use App\Library\Formulario;
 
-
 ?>
 
 <div class="container">
@@ -29,8 +28,8 @@
             <div class="mt-3 mb-3 col-6">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select class="form-control" name="fornecedor_id" id="fornecedor_id" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value=""  <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
-                    <?php foreach ($aDados['aFornecedor'] as $value): ?>
+                    <option value="" <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
+                    <?php foreach ($aDados['aFornecedor'] as $value) : ?>
                         <option value="<?= $value['id'] ?>" <?= setValor('fornecedor') == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>

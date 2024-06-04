@@ -1,12 +1,23 @@
 <?php
 
-use App\Library\Formulario;
+    use App\Library\Formulario;
 
-echo Formulario::titulo('Fornecedores', true, false);
+    echo Formulario::titulo('Fornecedores', true, false);
 
 ?>
 
 <main class="container mt-5">
+
+    <div class="row">
+        <div class="col-12">
+                <?= Formulario::exibeMsgError() ?>
+            </div>
+
+            <div class="col-12 mt-3">
+                <?= Formulario::exibeMsgSucesso() ?>
+            </div>
+        </div>
+    </div>
 
     <table id="listaFornecedor" class="table table-bordered table-striped table-hover table-sm">
         <thead>

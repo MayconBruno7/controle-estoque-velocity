@@ -3,9 +3,9 @@
 use App\Library\ModelMain;
 use App\Library\Session;
 
-Class SetorModel extends ModelMain
+Class MovimentacaoModel extends ModelMain
 {
-    public $table = "setor";
+    public $table = "cargo";
 
     public $validationRules = [
     //     'descricao' => [
@@ -35,11 +35,38 @@ Class SetorModel extends ModelMain
     public function lista($orderBy = 'id')
     {
         if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionarios as f ON s.responsavel = f.id ORDER BY {$orderBy}");
+            $rsc = $this->db->dbSelect("SELECT DISTINCT
+                m.id AS id_movimentacao, 
+                f.nome AS nome_fornecedor, 
+                m.tipo AS tipo_movimentacao, 
+                m.data_pedido, 
+                m.data_chegada
+            FROM 
+                movimentacoes m 
+            LEFT JOIN 
+                fornecedor f ON f.id = m.id_fornecedor 
+            LEFT JOIN 
+                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+            LEFT JOIN 
+                produtos p ON p.id = mi.id_produtos");
             
         } else {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionarios as f ON s.responsavel = f.id ORDER BY {$orderBy} WHERE statusRegistro = 1");
-            
+            $rsc = $this->db->dbSelect("SELECT DISTINCT
+                m.id AS id_movimentacao, 
+                f.nome AS nome_fornecedor, 
+                m.tipo AS tipo_movimentacao, 
+                m.data_pedido, 
+                m.data_chegada
+            FROM 
+                movimentacoes m 
+            LEFT JOIN 
+                fornecedor f ON f.id = m.id_fornecedor 
+            LEFT JOIN 
+                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+            LEFT JOIN 
+                produtos p ON p.id = mi.id_produtos 
+            WHERE 
+                m.statusRegistro = 1;");
         }
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {

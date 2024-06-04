@@ -113,7 +113,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
         
             <div class="container-fluid">
-                <a href="<?= baseUrl() ?>listaProdutos.php"><img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
+                <a href="<?= baseUrl() ?>Produto"><img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
                 <div>
                     <ul class="navbar-nav">
                         <?php if (Session::get('usuarioId') != false): ?>
@@ -126,7 +126,7 @@
                             <ul class="dropdown-menu text-danger">
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Funcionario">Lista funcionários</a></li>
-                                <li ><a class="dropdown-item" href="<?= baseUrl() ?>listaCargo.php">Lista cargos</a></li>
+                                <li ><a class="dropdown-item" href="<?= baseUrl() ?>Cargo">Lista cargos</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Produto">Cadastrar produtos</a></li>
                             </ul>
                         </li>
@@ -140,7 +140,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>listaMovimentacoes.php">Movimentações</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Movimentacao">Movimentações</a>
                         </li>
                     
                         <li class="nav-item">

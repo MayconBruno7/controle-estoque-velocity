@@ -4,7 +4,7 @@
 
     // $dadosFuncionarios = $db->dbSelect("SELECT * FROM funcionarios");
 
-    echo Formulario::titulo('Estoque', true, false);
+    echo Formulario::titulo('Setores', true, false);
 ?>
 
     <!-- Verifica e retorna mensagem de erro ou sucesso -->
@@ -22,8 +22,6 @@
 
         <!-- Parte de exibição da tabela -->
         <form>
-            <a href="formSetor.php?acao=insert" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Inserir">Adicionar setor</a>&nbsp;
-
             <table id="tbListasetor" class="table table-striped table-hover table-bordered table-responsive-sm display" style="width:100%">
                 <thead class="table-dark">
                     <tr>
@@ -38,14 +36,11 @@
                 <tbody>
                     <?php
                     foreach ($aDados as $value) {
-                        // Obtém o responsável deste setor
-                        // $responsavel = $db->dbSelect("SELECT nome FROM funcionarios WHERE id = ?", 'first', [$row['responsavel']]);
                         ?>
                         <tr>
                             <td><?= $value['id'] ?></td>
                             <td><?= $value['nome'] ?></td>
-                            <td>Não encontrado</td>
-                            <!-- <td><?= $responsavel ? $responsavel->nome : "Nenhum responsável selecionado" ?></td> -->
+                            <td><?= !empty($value['nomeResponsavel']) ? $value['nomeResponsavel'] : 'Nenhum responsável encontrado' ?></td>
                             <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
                             <td>
                                 <?= Formulario::botao("view", $value['id']) ?>

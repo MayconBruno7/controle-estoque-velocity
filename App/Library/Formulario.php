@@ -126,6 +126,90 @@ class Formulario
         }
     }
 
+    static public function getNivelDescricao($nivel)
+    {
+        if ($nivel == 1) {
+            return "Administrador";
+        } elseif ($nivel == 2) {
+            return "Usuário";
+        } else {
+            return "...";
+        }
+    }
+
+    static public function getTipoMovimentacao($tipo)
+    {
+        if ($tipo == 1) {
+            return "Entrada";
+        } elseif ($tipo == 2) {
+            return "Saída";
+        } else {
+            return "...";
+        }
+    }
+
+    static public function getTipo($tipo)
+    {
+        if ($tipo == 1) {
+            return "Entrada";
+        } elseif ($tipo == 2) {
+            return "Saida";
+        } else {
+            return "...";
+        }
+    }
+
+    static public function formatarCNPJInput($cnpj) {
+        // Remove caracteres especiais
+        $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
+    
+        // Adiciona pontos e traço
+        $cnpjFormatado = substr($cnpj, 0, 2) . '.';
+        $cnpjFormatado .= substr($cnpj, 2, 3) . '.';
+        $cnpjFormatado .= substr($cnpj, 5, 3) . '/';
+        $cnpjFormatado .= substr($cnpj, 8, 4) . '-';
+        $cnpjFormatado .= substr($cnpj, 12, 2);
+    
+        return $cnpjFormatado;
+    }    
+
+    static public function formatarCPF($cpf) {
+        // Remove caracteres indesejados do CPF
+        $cpf = preg_replace('/[^0-9]/', '', $cpf);
+    
+        // Adiciona pontos e traço ao CPF
+        if(strlen($cpf) == 11) {
+            return substr($cpf, 0, 3) . '.' . substr($cpf, 3, 3) . '.' . substr($cpf, 6, 3) . '-' . substr($cpf, 9);
+        }
+    
+        return $cpf; // Retorna o CPF não formatado se não tiver 11 dígitos
+    }
+
+    static public function formatarTelefone($telefone) {
+        // Remove todos os caracteres não numéricos
+        $telefone = preg_replace('/\D/', '', $telefone);
+    
+        // Verifica se o telefone possui 11 dígitos (incluindo o DDD) e formata de acordo
+        if (strlen($telefone) == 11) {
+            $telefoneFormatado = preg_replace('/(\d{2})(\d{5})(\d{4})/', '($1) $2-$3', $telefone);
+        } else {
+            // Se não tiver 11 dígitos, trata como um telefone comum (DDD sem o 9)
+            $telefoneFormatado = preg_replace('/(\d{2})(\d{4})(\d{4})/', '($1) $2-$3', $telefone);
+        }
+    
+        return $telefoneFormatado;
+    }
+
+    static public function formatarDataBrasileira($data) {
+        // Converte a data para o formato timestamp
+        $timestamp = strtotime($data);
+        
+        // Formata a data no padrão brasileiro
+        $dataFormatada = date('d/m/Y', $timestamp);
+        
+        return $dataFormatada;
+    }
+
     /**
      * mensagem
      *

@@ -1,29 +1,5 @@
 <?php 
 
-    // if ($_GET['acao'] != "insert") {
-
-    //     try {
-
-    //         $dados = $db->dbSelect("SELECT * FROM funcionarios WHERE id = ?", 'first', [$_GET['id']]);
-
-    //         if ($dados) {
-    //             $setor_funcionario_id = $dados->setor;
-    //         }
-
-    //     } catch (Exception $ex) {
-    //         echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
-    //     }
-    // }
-
-    // // Se o setor do funcionário não foi encontrado, inicializa $setor_funcionario_id como vazio
-    // if (!isset($setor_funcionario_id)) {
-    //     $setor_funcionario_id = "";
-    // }
-
-    // $dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id");
-
-    // // Verifica se $dadosFuncionarios contém elementos
-    // $setoresCadastrados = !empty($dadosSetor);
     use App\Library\Formulario;
 
 ?>

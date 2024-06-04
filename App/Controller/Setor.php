@@ -54,6 +54,7 @@ class Setor extends ControllerMain
             "restrita/formSetor",
             $DbDados
         );
+
     }
 
     /**

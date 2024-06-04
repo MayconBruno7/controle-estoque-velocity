@@ -36,7 +36,7 @@ Class FuncionarioModel extends ModelMain
     {
         if (Session::get('usuarioNivel') == 1) {
             // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
-            $rsc = $this->db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionarios.setor = setor.id ORDER BY id");
+            $rsc = $this->db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionarios.setor = setor.id ORDER BY {$orderBy}");
             
         } else {
             $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE statusRegistro = 1 ORDER BY {$orderBy}");

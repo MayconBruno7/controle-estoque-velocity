@@ -65,8 +65,12 @@ class Funcionario extends ControllerMain
         } else {
 
             if ($this->model->insert([
-                "descricao" => $post['descricao'],
-                "statusRegistro" => $post['statusRegistro']
+                "nome"              => $post['nome'],
+                "cpf"               => $post['cpf'],
+                "telefone"          => $post['telefone'],
+                "setor"             => $post['setor'],
+                "salario"           => $post['salario'],
+                "statusRegistro"    => $post['statusRegistro']
             ])) {
                 Session::set("msgSuccess", "Funcionario adicionada com sucesso.");
             } else {
@@ -96,8 +100,12 @@ class Funcionario extends ControllerMain
                     "id" => $post['id']
                 ], 
                 [
-                    "descricao" => $post['descricao'],
-                    "statusRegistro" => $post['statusRegistro']
+                    "nome"              => $post['nome'],
+                    "cpf"               => $post['cpf'],
+                    "telefone"          => $post['telefone'],
+                    "setor"             => $post['setor'],
+                    "salario"           => $post['salario'],
+                    "statusRegistro"    => $post['statusRegistro']
                 ]
             )) {
                 Session::set("msgSuccess", "Funcionario alterada com sucesso.");
