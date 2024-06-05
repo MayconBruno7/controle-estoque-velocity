@@ -160,7 +160,7 @@
     <div class="row">
         <div class="col-10">
             <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
-            <?= Formulario::titulo('Funcionarios', true, false); ?>
+            <?= Formulario::titulo('Movimentação', true, false); ?>
         </div>
     </div>
 
@@ -181,14 +181,14 @@
         <!--  verifica se o id está no banco de dados e retorna esse id -->
         <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
-        <?php if ($this->getAcao() == 'insert') : ?>
+        <?php if ($this->getAcao()) : ?>
         <div class="row">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                     <option value="">...</option>
-                    <?php foreach($dadosFornecedor as $fornecedor) : ?>
-                        <option value="<?= $fornecedor['id'] ?>" <?= isset($dadosMovimentacao['fornecedor_id']) && $dadosMovimentacao['fornecedor_id'] == $fornecedor['id'] ? 'selected' : '' ?>>
+                    <?php foreach($dados['aFornecedorMovimentacao'] as $fornecedor) : ?>
+                        <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor') == $fornecedor['id'] ? 'selected' : '' ?>>
                             <?= $fornecedor['nome'] ?>
                         </option>
                     <?php endforeach; ?>
@@ -199,8 +199,8 @@
                 <label for="tipo" class="form-label">Tipo de Movimentação</label>
                 <select name="tipo" id="tipo" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                     <option value="">...</option>
-                    <option value="1" <?= setValor('tipo_movimentacao') == 1 ? 'selected' : '' ?>>Entrada</option>
-                    <option value="2" <?= setValor('tipo_movimentacao') == 2 ? 'selected' : '' ?>>Saída</option>
+                    <option value="1" <?= setValor('tipo') == 1 ? 'selected' : '' ?>>Entrada</option>
+                    <option value="2" <?= setValor('tipo') == 2 ? 'selected' : '' ?>>Saída</option>
                 </select>
             </div>
 
@@ -217,8 +217,8 @@
                 <label for="setor_id" class="form-label">Setor</label>
                 <select name="setor_id" id="setor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                     <option value="">...</option>
-                    <?php foreach ($dadosSetor as $setor): ?>
-                        <option value="<?= $setor['id'] ?>" <?= (isset($dadosMovimentacao['setor_id']) && $dadosMovimentacao['setor_id'] == $setor['id']) ? 'selected' : '' ?>>
+                    <?php foreach ($dados['aSetorMovimentacao'] as $setor): ?>
+                        <option value="<?= $setor['id'] ?>" <?= setValor('id_setor') ? 'selected' : '' ?>>
                             <?= $setor['nome'] ?>
                         </option>
                     <?php endforeach; ?>
@@ -265,7 +265,7 @@
                 </div>
             <?php endif; ?>
 
-            <!-- <table id="tbListaProduto" class="table table-striped table-hover table-bordered table-responsive-sm mt-3">
+            <table id="tbListaProduto" class="table table-striped table-hover table-bordered table-responsive-sm mt-3">
             <thead class="table-dark">
                 <tr>
                     <th>Id</th>
@@ -302,15 +302,15 @@
                             $total += $produto['quantidade'] * $produto['valor'];
                         ?>
                     <?php endforeach; ?>
-                <?php endif; ?> -->
+                <?php endif; ?>
             
                 <?php if($this->getAcao() != 'insert') : ?>
                     <?php
 
-                            foreach ($dados as $row) {
+                            foreach ($dados['aItemMovimentacao'] as $row) {
                         ?>
                         <tr>
-                            <td><?= $row['id'] ?></td>
+                            <td><?= $row['id_prod_mov_itens'] ?></td>
                             <td><?= $row['nome'] ?></td>
                             <td><?= number_format($row['valor'], 2, ",", ".")  ?> </td>
                             <td><?= $row['mov_itens_quantidade'] ?></td>
@@ -329,11 +329,11 @@
                         <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
 
                         <?php
+                            $total = 0;
 
                             $total = $total + ($row["mov_itens_quantidade"] * $row["valor"]);
 
                             }
-
                         ?>
                 <?php endif; ?>
             </tbody>
@@ -346,20 +346,10 @@
         </p>
         </div>
 
-        <div class="col-6 mt-4 mb-4">
-            <a href="listaMovimentacoes.php" class="btn btn-outline-secondary btn-sm">Voltar</a>
-
-            <!-- define o texto de cada botão de acordo com a sua ação -->
-            <?php if ($this->getAcao() == "delete") : ?>
-                <button type="submit" class="btn btn-primary btn-sm">Excluir</button>
-            <?php endif; ?>
-
-            <?php if ($this->getAcao() == "update") : ?>
-                <button type="submit" class="btn btn-primary btn-sm">Alterar</button>
-            <?php endif; ?>
-
-            <?php if ($this->getAcao() == "insert") : ?>
-                <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+        <div class="form-group col-12 mt-5">
+            <?= Formulario::botao('voltar') ?>
+            <?php if ($this->getAcao() != "view"): ?>
+                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
             <?php endif; ?>
         </div>
     </form>
@@ -370,25 +360,9 @@
 <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function() {
-        ClassicEditor
-            .create(document.querySelector('#motivo'), {})
-            .then(editor => {
-                document.getElementById('historico').addEventListener('change', function() {
-                    var option = this.options[this.selectedIndex];
-                    document.getElementById('setor_id').value = option.getAttribute('data-setor');
-                    document.getElementById('fornecedor_id').value = option.getAttribute('data-fornecedor');
-                    document.getElementById('nome').value = option.getAttribute('data-nome');
-                    editor.setData(option.getAttribute('data-motivo'));
-                    document.getElementById('quantidade').value = option.getAttribute('data-quantidade');
-                    document.getElementById('status').value = option.getAttribute('data-status');
-                    document.getElementById('statusItem').value = option.getAttribute('data-statusitem');
-                });
-            })
-            .catch(error => {
-                console.error(error);
-            });
 
+    document.addEventListener("DOMContentLoaded", function() {
+ 
         // Chama a função capturarValores quando o link for clicado
         document.getElementById('btnSalvar').addEventListener('click', function(event) {
             event.preventDefault(); // Previne o comportamento padrão de redirecionamento do link
@@ -469,9 +443,3 @@
     });
 
 </script>
-
-<?php
-
-    require_once "comuns/rodape.php";
-
-?>

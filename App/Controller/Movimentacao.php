@@ -45,7 +45,14 @@ class Movimentacao extends ControllerMain
             $dados = $this->model->getById($this->getId());
         }
 
-        
+        $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
+        $dados['aItemMovimentacao'] = $MovimentacaoItemModel->listaProdutos($this->getId());
+
+        $SetorModel = $this->loadModel("Setor");
+        $dados['aSetorMovimentacao'] = $SetorModel->lista('id');
+
+        $FornecedorModel = $this->loadModel("Fornecedor");
+        $dados['aFornecedorMovimentacao'] = $FornecedorModel->lista('id');
 
         return $this->loadView("restrita/formMovimentacao", $dados);
     }

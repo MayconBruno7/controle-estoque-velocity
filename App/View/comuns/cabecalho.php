@@ -148,6 +148,10 @@
                         </li>
 
                         <li class="nav-item">
+                            <li><a class="nav-link text-secondary" href="<?= baseUrl() ?>Produto">Suporte técnico</a></li>
+                        </li>
+
+                        <li class="nav-item">
                             <a class="nav-link text-danger" href="<?= baseUrl() ?>Login/signOut">Sair</a>
                         </li>
                         <?php endif; ?>

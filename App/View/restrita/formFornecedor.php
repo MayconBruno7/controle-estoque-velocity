@@ -16,7 +16,7 @@ use App\Library\Formulario;
                 <label for="cnpj" class="form-label">CNPJ</label>
                 <input type="text" class="form-control" name="cnpj" id="cnpj" 
                     maxlength="18" oninput="formatarCNPJ(this)" placeholder="Informe o cnpj"
-                    value="<?= setValor('cnpj') ?>"
+                    value="<?= Formulario::formatarCNPJInput(setValor('cnpj')) ?>"
                     autofocus <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 
@@ -81,7 +81,7 @@ use App\Library\Formulario;
                 <label for="telefone" class="form-label">Telefone</label>
                 <input type="text" class="form-control" name="telefone" id="telefone" 
                     maxlength="50" placeholder="Informe o telefone"
-                    value="<?= setValor('telefone') ?>"
+                    value="<?= Formulario::formatarTelefone(setValor('telefone')) ?>"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 

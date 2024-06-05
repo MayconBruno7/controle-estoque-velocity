@@ -42,7 +42,7 @@ use App\Library\Formulario;
                 <select name="nivel" id="nivel" class="form-control" required>
                     <option value=""   <?= setValor('nivel') == ""    ? "selected" : "" ?>>.....</option>
                     <option value="1"  <?= setValor('nivel') == "1"   ? "selected" : "" ?>>Administrador</option>
-                    <option value="11" <?= setValor('nivel') == "11"  ? "selected" : "" ?>>Visitante</option>
+                    <option value="11" <?= setValor('nivel') == "11"  ? "selected" : "" ?>>Usuário</option>
                 </select>
             </div>
 

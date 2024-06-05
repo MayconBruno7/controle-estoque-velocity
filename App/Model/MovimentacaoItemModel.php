@@ -1,12 +1,9 @@
 <?php
 
 use App\Library\ModelMain;
-use App\Library\Session;
 use App\Library\ControllerMain;
 
-
-
-Class MovimentacaoModel extends ModelMain
+Class MovimentacaoItemModel extends ModelMain
 {
     public $table = "movimentacoes_itens";
 
@@ -29,30 +26,28 @@ Class MovimentacaoModel extends ModelMain
         ]
     ];
 
+
     /**
      * lista
      *
      * @param string $orderBy 
      * @return void
      */
-    public function lista($orderBy = 'id')
+    public function listaProdutos($id)
     {
-       
+
         $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes,
                     mi.id_produtos AS id_prod_mov_itens,
                     mi.quantidade AS mov_itens_quantidade,
                     mi.valor,
                     p.*
-                FROM movimentacoes_itens mi
+                FROM {$this->table} mi
                 INNER JOIN produtos p ON p.id = mi.id_produtos
                 WHERE mi.id_movimentacoes = ?
                     OR mi.id_movimentacoes IS NULL
                 ORDER BY p.descricao;
                 ",
-                'all',
-                [isset($this->model->getById($this->getId()))) ? getId($_GET['id_movimentacoes']) :""];
-        
-                $this->model->getById($this->getId('id_movimentacoes'))
+                $id);
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);

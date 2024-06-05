@@ -5,7 +5,7 @@ use App\Library\Session;
 
 Class MovimentacaoModel extends ModelMain
 {
-    public $table = "cargo";
+    public $table = "movimentacoes";
 
     public $validationRules = [
     //     'descricao' => [
@@ -42,7 +42,7 @@ Class MovimentacaoModel extends ModelMain
                 m.data_pedido, 
                 m.data_chegada
             FROM 
-                movimentacoes m 
+                {$this->table} m 
             LEFT JOIN 
                 fornecedor f ON f.id = m.id_fornecedor 
             LEFT JOIN 
@@ -58,7 +58,7 @@ Class MovimentacaoModel extends ModelMain
                 m.data_pedido, 
                 m.data_chegada
             FROM 
-                movimentacoes m 
+                {$this->table} m 
             LEFT JOIN 
                 fornecedor f ON f.id = m.id_fornecedor 
             LEFT JOIN 

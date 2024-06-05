@@ -60,7 +60,7 @@
 
     use App\Library\Formulario;
 
-    echo Formulario::titulo('Funcionarios', true, false);
+    echo Formulario::titulo('Movimentações', true, false);
 
 ?>
 

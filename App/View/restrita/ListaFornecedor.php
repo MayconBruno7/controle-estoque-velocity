@@ -20,7 +20,7 @@
     </div>
 
     <table id="listaFornecedor" class="table table-bordered table-striped table-hover table-sm">
-        <thead>
+        <thead class="table-dark">
             <tr>
                 <th>Id</th>
                 <th>Nome</th>
@@ -35,8 +35,8 @@
                 <tr>
                     <td><?= $value['id'] ?></td>
                     <td><?= $value['nome'] ?></td>
-                    <td><?= $value['cnpj'] ?></td>
-                    <td><?= $value['telefone'] ?></td>
+                    <td><?= Formulario::formatarCNPJInput($value['cnpj']) ?></td>
+                    <td><?= Formulario::formatarTelefone($value['telefone']) ?></td>
                     <td><?= getStatus($value['statusRegistro']) ?></td>
                     <td>
                         <?= Formulario::botao("view", $value['id']) ?>

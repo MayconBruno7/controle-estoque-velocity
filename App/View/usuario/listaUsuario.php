@@ -23,7 +23,7 @@ use App\Library\Formulario;
             <tr>
                 <td><?= $value['nome'] ?></td>
                 <td><?= $value['email'] ?></td>
-                <td><?= ($value['nivel'] == 1 ? "Administrador" : "Visitante") ?></td>
+                <td><?= ($value['nivel'] == 1 ? "Administrador" : "Usuário") ?></td>
                 <td><?= getStatus($value['statusRegistro']) ?></td>
                 <td>
                     <?= Formulario::botao("view", $value['id']) ?>

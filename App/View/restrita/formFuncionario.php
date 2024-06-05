@@ -31,7 +31,7 @@
                 <div class="col-4">
                     <label for="cpf" class="form-label mt-3">CPF</label>
                     <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= setValor('cpf') ?>" oninput="formatarCPF(this)" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= Formulario::formatarCPF(setValor('cpf')) ?>" oninput="formatarCPF(this)" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4">
@@ -45,7 +45,7 @@
 
                 <div class="col-4">
                     <label for="telefone" class="form-label mt-3">Telefone</label>
-                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= setValor('telefone') ?>" oninput="formatarTelefone(this)" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= Formulario::formatarTelefone(setValor('telefone')) ?>" oninput="formatarTelefone(this)" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                 </div>
 
                 <div class="col-4 mt-3">
