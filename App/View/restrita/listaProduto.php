@@ -52,7 +52,7 @@
                                 <td> <?= $value['id'] ?> </td>
                                 <td> <?= $value['nome'] ?> </td>
                                 <td> <?= !empty($value['quantidade']) ? $value['quantidade'] : 'Nenhuma quantidade encontrada' ?>
-                                <?php if (!isset($_GET["acao"])) : ?>
+                                <?php if ($this->getAcao()) : ?>
                                 <td>
                                     <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Nenhum valor encontrado" ?>
                                 </td>
@@ -60,10 +60,46 @@
                                 <td><?= Formulario::getCondicao($value['condicao']) ?></td>
                                 <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
                                 <td>
-                                    <?= Formulario::botao("view", $value['id']) ?>
-                                    <?= Formulario::botao("update", $value['id']) ?>
-                                    <?= Formulario::botao("delete", $value['id']) ?>
+                                    <?php if ($this->getAcao() == 'insert' || $this->getAcao() == 'update') : ?>
+                                        <form id="form<?= $value['id'] ?>" action="inserirProdutoMovimentacao.php?acao=<?= $this->getAcao() ?>" method="POST">
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <label for="valor_<?= $value['id'] ?>" class="form-label">Valor</label>
+                                                    <input type="text" name="valor" id="valor_<?= $value['id'] ?>" class="form-control" disabled required>
+                                                </div>
+                                                <div class="col">
+                                                    <label for="quantidade_<?= $value['id'] ?>" class="form-label">Quantidade</label>
+                                                    <input type="number" name="quantidade" id="quantidade_<?= $value['id'] ?>" class="form-control" disabled required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="hidden" name="id_movimentacoes" value="<?= isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] : '' ?>">
+                                                    <input type="hidden" name="tipo_movimentacoes" value="<?= isset($_GET['tipo']) ? $_GET['tipo'] : '' ?>">
+                                                    <input type="hidden" name="id_produto" value="<?= $value['id'] ?>">
+                                                    <button type="submit" class="btn btn-primary mt-4" onclick="enableInputs(<?= $value['id'] ?>)">Adicionar</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <?php if ($this->getAcao() == 'delete') : ?>
+                                        <form class="g-3" action="deleteProdutoMovimentacao.php" method="post">
+                                            <p>Quantidade atual: <?= $_GET['qtd_produto'] ?></p>
+                                            <label for="quantidadeRemover" class="form-label">Quantidade</label>
+                                            <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
+                                            <input type="hidden" name="id_produto" value="<?= $_GET['id'] ? $_GET['id'] : "" ?>">
+                                            <input type="hidden" name="id_movimentacao" value="<?= $_GET['id_movimentacoes'] ?>">
+                                            <input type="hidden" name="tipo_movimentacoes" value="<?= $_GET['tipo'] ?>">
+                                            <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
+                                        </form>
+                                    <?php endif; ?>
+
+                                    <?php if (!$this->getAcao()) : ?>
+                                        <?= Formulario::botao("view", $value['id']) ?>
+                                        <?= Formulario::botao("update", $value['id']) ?>
+                                        <?= Formulario::botao("delete", $value['id']) ?>
+                                    <?php endif; ?>
                                 </td>
+                            
                             </tr>
                         <?php
                     }

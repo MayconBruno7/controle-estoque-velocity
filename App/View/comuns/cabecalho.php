@@ -148,7 +148,7 @@
                         </li>
 
                         <li class="nav-item">
-                            <li><a class="nav-link text-secondary" href="<?= baseUrl() ?>Produto">Suporte técnico</a></li>
+                            <li><a class="nav-link text-secondary" href="<?= baseUrl() ?>FaleConosco/formularioEmail">Suporte técnico</a></li>
                         </li>
 
                         <li class="nav-item">

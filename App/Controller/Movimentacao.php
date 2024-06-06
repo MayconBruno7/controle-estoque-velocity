@@ -57,6 +57,13 @@ class Movimentacao extends ControllerMain
         return $this->loadView("restrita/formMovimentacao", $dados);
     }
 
+    public function insertProdutoMovimentacao()
+    {
+        $post = $this->getPost();
+
+        
+    }
+
     /**
      * insert
      *

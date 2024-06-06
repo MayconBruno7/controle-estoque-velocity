@@ -77,7 +77,7 @@
     // $nome_setor = isset($setor_item_id) ? obterNomeSetor($setor_item_id, $db) : '';
     // // <---------------------------------------------------------->
 
-    // session_start();
+   
 
     // // Verificar se há uma sessão de movimentação
     // if (!isset($_SESSION['movimentacao'])) {
@@ -148,11 +148,16 @@
     //     }
     // } 
 
-    // // var_dump($_SESSION['produtos']);
+    //  session_start();
+
+    // var_dump($_SESSION['movimentacao']);
     // var_dump( $_SESSION['movimentacao'][0]['produtos']);
     // exit;
 
     use App\Library\Formulario;
+
+    $total = 0;
+
 
 ?>
 
@@ -253,7 +258,7 @@
             <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
                 <div class="col mt-4">
                     <div class="col-auto text-end ml-2">
-                        <a href="<?= ($this->getAcao() == 'update') ? 
+                    <a href="<?= ($this->getAcao() == 'update') ? 
                                     ('viewEstoque.php?acao=update&id_movimentacoes=' . (isset($dados->id) ? $dados->id : '') . 
                                     '&tipo=' . (isset($dados->tipo) ? $dados->tipo : '')) : '' ?>" 
                         class="btn btn-outline-primary btn-sm styleButton" 
@@ -329,7 +334,6 @@
                         <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
 
                         <?php
-                            $total = 0;
 
                             $total = $total + ($row["mov_itens_quantidade"] * $row["valor"]);
 
@@ -417,7 +421,7 @@
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var idMovimentacoes = ''; // Defina o valor corretamente
                     var tipo = tipo_movimentacao;
-                    window.location.href = "viewEstoque.php?acao=insert";
+                    window.location.href = "<?= baseUrl() ?>Produto/index/insert/movimentacao";
                 } else {
                     console.log('Erro ao salvar informações');
                 }
