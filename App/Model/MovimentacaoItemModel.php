@@ -1,7 +1,6 @@
 <?php
 
 use App\Library\ModelMain;
-use App\Library\ControllerMain;
 
 Class MovimentacaoItemModel extends ModelMain
 {

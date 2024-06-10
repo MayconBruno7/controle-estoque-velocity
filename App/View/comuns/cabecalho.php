@@ -113,7 +113,7 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
         
             <div class="container-fluid">
-                <a href="<?= baseUrl() ?>Produto"><img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
+                <a href="<?= baseUrl() ?><?= Session::get('usuarioNivel') == 1 ? 'Home/homeAdmin' : 'Home/home'?>"><img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
                 <div>
                     <ul class="navbar-nav">
                         <?php if (Session::get('usuarioId') != false): ?>

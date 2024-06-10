@@ -37,7 +37,11 @@ class Produto extends ControllerMain
      */
     public function index()
     {
-        $this->loadView("restrita/listaProduto", $this->model->lista("id"));
+        if($this->getAcao() != 'delete') {
+            $this->loadView("restrita/listaProduto", $this->model->lista("id", $this->getAcao()));
+        } else if($this->getAcao() == 'delete') {
+            $this->loadView("restrita/listaProduto", $this->model->listaDeleteProduto($this->getOutrosParametros(4)));
+        }
     }
 
      /**

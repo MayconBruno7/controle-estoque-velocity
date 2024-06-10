@@ -77,41 +77,6 @@
     // $nome_setor = isset($setor_item_id) ? obterNomeSetor($setor_item_id, $db) : '';
     // // <---------------------------------------------------------->
 
-   
-
-    // // Verificar se há uma sessão de movimentação
-    // if (!isset($_SESSION['movimentacao'])) {
-    //     $_SESSION['movimentacao'] = array();
-    // }
-
-    // // Verificar se há uma sessão de produtos
-    // if (!isset($_SESSION['produtos'])) {
-    //     $_SESSION['produtos'] = array();
-    // }
-
-    // if ($this->getAcao() == 'insert') {
-    //     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    //         // Decodifica os dados recebidos do JavaScript
-    //         $movimentacao = json_decode(file_get_contents("php://input"), true);
-    
-    //         // Verificar se há produtos a serem adicionados
-    //         if (isset($_SESSION['produtos']) && count($_SESSION['produtos']) > 0) {
-    //             // Adicionar os produtos à sessão de movimentação
-    //             $movimentacao['produtos'] = $_SESSION['produtos'];
-    //         }
-    
-    //         // Adiciona os dados à sessão
-    //         if (isset($movimentacao)) {
-    //             $_SESSION['movimentacao'][] = $movimentacao;
-    //         }
-    
-    //         // Limpar a sessão de produtos
-    //         unset($_SESSION['produtos']);
-    //     }
-    // }
-    
-    // $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
-    // $total = 0;
 
     // // Funções dos formulários
     // require_once "helpers/Formulario.php";
@@ -155,9 +120,47 @@
     // exit;
 
     use App\Library\Formulario;
+    use App\Library\Session;
 
+    // Verificar se há uma sessão de movimentação
+    if (!Session::get('movimentacao')) {
+        Session::get('movimentacao');
+    }
+
+    // Verificar se há uma sessão de produtos
+    if (!Session::get('produtos')) {
+        Session::get('produtos');
+    }
+
+    if ($this->getAcao() == 'insert') {
+        if ($_SERVER["REQUEST_METHOD"] == "POST") {
+            // Decodifica os dados recebidos do JavaScript
+            $movimentacao = json_decode(file_get_contents("php://input"), true);
+    
+            // Verificar se há produtos a serem adicionados
+            if (Session::get('produtos') && count(Session::get('produtos')) > 0) {
+                // Adicionar os produtos à sessão de movimentação
+                $movimentacao['produtos'] = Session::get('produtos');
+            }
+    
+            // Adiciona os dados à sessão
+            if (isset($movimentacao)) {
+                $_SESSION['movimentacao'][] = $movimentacao;
+            }
+    
+            // Limpar a sessão de produtos
+            Session::destroy('produtos');
+        }
+    }
+    
+    $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
     $total = 0;
 
+    // unset($_SESSION['movimentacao']);
+    // var_dump(Session::get('movimentacao'));
+    // var_dump($dadosMovimentacao['motivo']);
+    // var_dump($_SESSION['movimentacao'][0]['produtos']);
+    // exit;
 
 ?>
 
@@ -181,12 +184,76 @@
     </div>
 
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
-    <form class="g-3" action="<?= $this->getAcao() ?>Movimentacoes.php?acao=<?= $this->getAcao() ?>" method="POST" id="form">
+    <form class="g-3" action="<?= baseUrl() ?>Movimentacao/<?= $this->getAcao() ?>" method="POST" id="form">
 
         <!--  verifica se o id está no banco de dados e retorna esse id -->
         <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
-        <?php if ($this->getAcao()) : ?>
+        <?php if ( $this->getAcao() == 'insert') : ?>
+        <div class="row">
+            <div class="col-6 mt-3">
+                <label for="fornecedor_id" class="form-label">Fornecedor</label>
+                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
+                    <option value="">...</option>
+                    <?php foreach($dados['aFornecedorMovimentacao'] as $fornecedor) : ?>
+                        <option value="<?= $fornecedor['id'] ?>" <?= isset($dadosMovimentacao['fornecedor_id']) && $dadosMovimentacao['fornecedor_id'] == $fornecedor['id'] ? 'selected' : '' ?>>
+                            <?= $fornecedor['nome'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-3 mt-3">
+                <label for="tipo" class="form-label">Tipo de Movimentação</label>
+                <select name="tipo" id="tipo" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
+                    <option value="">...</option>
+                    <option value="1" <?= isset($dadosMovimentacao['tipo_movimentacao']) && $dadosMovimentacao['tipo_movimentacao'] == 1 ? 'selected' : '' ?>>Entrada</option>
+                    <option value="2" <?= isset($dadosMovimentacao['tipo_movimentacao']) && $dadosMovimentacao['tipo_movimentacao'] == 2 ? 'selected' : '' ?>>Saída</option>
+                </select>
+            </div>
+
+            <div class="col-3 mt-3">
+                <label for="statusRegistro" class="form-label">Status da Movimentação</label>
+                <select name="statusRegistro" id="statusRegistro" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
+                    <option value="">...</option>
+                    <option value="1" <?= isset($dadosMovimentacao['statusRegistro']) && $dadosMovimentacao['statusRegistro'] == 1 ? 'selected' : '' ?>>Ativo</option>
+                    <option value="2" <?= isset($dadosMovimentacao['statusRegistro']) && $dadosMovimentacao['statusRegistro'] == 2 ? 'selected' : '' ?>>Inativo</option>
+                </select>
+            </div>
+
+            <div class="col-8 mt-3">
+                <label for="setor_id" class="form-label">Setor</label>
+                <select name="setor_id" id="setor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : '' ?>>
+                    <option value="">...</option>
+                    <?php foreach ($dados['aSetorMovimentacao'] as $setor): ?>
+                        <option value="<?= $setor['id'] ?>" <?= (isset($dadosMovimentacao['setor_id']) && $dadosMovimentacao['setor_id'] == $setor['id']) ? 'selected' : '' ?>>
+                            <?= $setor['nome'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+
+            <div class="col-2 mt-3">
+                <label for="data_pedido" class="form-label">Data do Pedido</label>
+                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" <?=  $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+            </div>
+
+            <div class="col-2 mt-3">
+                <label for="data_chegada" class="form-label">Data de Chegada</label>
+                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
+                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+            </div>
+
+
+            <div class="col-12 mt-3">
+                <label for="motivo" class="form-label">Motivo</label>
+                <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'readonly' : ''?>><?= isset($dadosMovimentacao['motivo']) ? htmlspecialchars($dadosMovimentacao['motivo']) : '' ?></textarea>
+            </div>
+        </div>
+        <?php endif; ?>
+            
+        <?php if ($this->getAcao() != 'insert') : ?>
         <div class="row">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
@@ -301,7 +368,7 @@
                         <input type="hidden" name="quantidade" id="quantidade" value="<?= $produto['quantidade'] ?>">
                         <input type="hidden" name="id_produto" id="id_produto" value="<?= $produto['id_produto'] ?>">
                         <input type="hidden" name="valor" id="valor" value="<?= $produto['valor'] ?>">
-                        <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
+                        <!-- <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>"> -->
 
                         <?php
                             $total += $produto['quantidade'] * $produto['valor'];
@@ -322,14 +389,16 @@
                             <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                             <td>
                             <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                             <?php endif; ?>
-                                <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                <a href="<?= baseUrl() ?>Produto/index/update/movimentacao" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                <!-- <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a> -->
                             </td>
                         </tr>
 
                         <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['quantidade'] ?>">
-                        <input type="hidden" name="id_produto" id="id_produto" value="<?= $row['id'] ?>">
+                        <input type="hidden" name="id_produto" id="id_produto" value="<?= $row['id_prod_mov_itens'] ?>">
                         <input type="hidden" name="valor" id="valor" value="<?= $row['valor'] ?>">
                         <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
 

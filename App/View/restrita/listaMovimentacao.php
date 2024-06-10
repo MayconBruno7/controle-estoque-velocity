@@ -117,3 +117,4 @@
     </table>
 </main>
 
+<?= Formulario::getDataTables('tbListaprodutos'); ?>

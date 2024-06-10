@@ -55,3 +55,5 @@
             </table>
         </form>
     </main>
+
+    <?= Formulario::getDataTables('tbListasetor'); ?>

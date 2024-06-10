@@ -151,6 +151,21 @@ class ControllerMain
         }
     }
 
+	/**
+     * getId
+     *
+     * @return int
+     */
+    public function getOutrosParametros($get)
+    {  
+        if (isset($this->dados['get']['parametros'])) {
+            $parametros = explode('/', $this->dados['get']['parametros']);
+            return (isset($parametros[$get]) ?  $parametros[$get] : null);
+        } else {
+            return null;
+        }
+    }
+
     /**
      * getPost
      *
@@ -175,15 +190,15 @@ class ControllerMain
         return $this->dados['get'];
     }
 
-    /**
-     * getOutrosParametros
-     *
-     * @return array
-     */
-    public function getOutrosParametros()
-    {
-        return $this->dados['outrosParametros'];
-    }
+    // /**
+    //  * getOutrosParametros
+    //  *
+    //  * @return array
+    //  */
+    // public function getOutrosParametros()
+    // {
+    //     return $this->dados['outrosParametros'];
+    // }
 
 	/**
      * getAdministrador
