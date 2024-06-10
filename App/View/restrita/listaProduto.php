@@ -4,18 +4,12 @@
 
     echo Formulario::titulo('Estoque', true, false);
 
+    // var_dump($this->getId());
+
 ?>
 
     <!-- Verifica e retorna mensagem de erro ou sucesso -->
     <main class="container mt-5">
-
-        <!-- <div class="row">
-            <?php if (!isset($_GET["id_movimentacoes"])) : ?>
-                <div class="col-12 d-flex justify-content-start">
-                    <a href="formprodutos.php?acao=insert" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Inserir">Adicionar Produto</a>
-                </div>
-            <?php endif; ?>
-        </div> -->
 
         <div class="row">
             <div class="col-12">
@@ -61,7 +55,7 @@
                                 <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
                                 <td>
                                     <?php if ($this->getAcao() == 'insert' || $this->getAcao() == 'update') : ?>
-                                        <form id="form<?= $value['id'] ?>" action="<?= baseUrl() ?>Movimentacao/insertProdutoMovimentacao/<?= $this->getAcao() ?>" method="POST">
+                                        <form id="form<?= $value['id'] ?>" action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" method="POST">
                                             <div class="row mt-3">
                                                 <div class="col">
                                                     <label for="valor_<?= $value['id'] ?>" class="form-label">Valor</label>
@@ -72,9 +66,9 @@
                                                     <input type="number" name="quantidade" id="quantidade_<?= $value['id'] ?>" class="form-control" disabled required>
                                                 </div>
                                                 <div class="col">
-                                                    <input type="hidden" name="id_produto" value="<?= $this->getOutrosParametros(4) ?>">
+                                                    <input type="hidden" name="id_produto" value="<?= $value['id'] ?>">
                                                     <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
-                                                    <input type="hidden" name="tipo_movimentacao" value="<?= $this->getOutrosParametros(6) ?>">
+                                                    <input type="hidden" name="tipo_movimentacao" value="<?= $this->getAcao() == 'insert' ? $this->getOutrosParametros(6) : $this->getOutrosParametros(4) ?>">
                                                     <button type="submit" class="btn btn-primary mt-4" onclick="enableInputs(<?= $value['id'] ?>)">Adicionar</button>
                                                 </div>
                                             </div>

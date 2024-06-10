@@ -157,7 +157,7 @@
     $total = 0;
 
     // unset($_SESSION['movimentacao']);
-    // var_dump(Session::get('movimentacao'));
+    // var_dump(Session::get('movimentacao')['0']);
     // var_dump($dadosMovimentacao['motivo']);
     // var_dump($_SESSION['movimentacao'][0]['produtos']);
     // exit;
@@ -325,9 +325,7 @@
             <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
                 <div class="col mt-4">
                     <div class="col-auto text-end ml-2">
-                    <a href="<?= ($this->getAcao() == 'update') ? 
-                                    ('viewEstoque.php?acao=update&id_movimentacoes=' . (isset($dados->id) ? $dados->id : '') . 
-                                    '&tipo=' . (isset($dados->tipo) ? $dados->tipo : '')) : '' ?>" 
+                    <a href="<?= $this->getAcao() == 'update' ? baseUrl() . "Produto/index/update/" . $this->getId() . "/" . setValor('tipo') : "" ?>"
                         class="btn btn-outline-primary btn-sm styleButton" 
                         id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" 
                         title="Adicionar">
@@ -359,7 +357,8 @@
                             <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                             <td>
                                 <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                    <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $produto['id_produto'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <!-- <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                                 <?php endif; ?>
                                     <a href="formProdutos.php?acao=view&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
@@ -392,7 +391,7 @@
                                 <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                             <?php endif; ?>
-                                <a href="<?= baseUrl() ?>Produto/index/update/movimentacao" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                <a href="<?= baseUrl() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                                 <!-- <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a> -->
                             </td>
                         </tr>

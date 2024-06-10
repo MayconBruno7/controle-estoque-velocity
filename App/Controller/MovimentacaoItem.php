@@ -33,64 +33,64 @@ class MovimentacaoItem extends ControllerMain
         return $this->loadView("restrita/formMovimentacao", $dados);
     }
 
-    /**
-     * insert
-     *
-     * @return void
-     */
-    public function insert($data)
-    {
+    // /**
+    //  * insert
+    //  *
+    //  * @return void
+    //  */
+    // public function insert($data)
+    // {
 
-        // if (Validator::make($post, $this->model->validationRules)) {
-        //     return Redirect::page("Movimentacao/form/insert");     // error
-        // } else {
-            // Insere os itens da movimentação
+    //     // if (Validator::make($post, $this->model->validationRules)) {
+    //     //     return Redirect::page("Movimentacao/form/insert");     // error
+    //     // } else {
+    //         // Insere os itens da movimentação
            
-            // if (isset($_SESSION['movimentacao'])) {
-            //     $MovimentacaoModel      = $this->loadModel("Movimentacao");
-            //                 $idUltimaMovimentacao  = $MovimentacaoModel->idUltimaMovimentacao('id');
-            //     foreach ($_SESSION['movimentacao'] as $movimentacao) {
-            //         if (isset($movimentacao['produtos'])) {
-            //             foreach ($movimentacao['produtos'] as $produto) {
-            //                 $id_produto = $produto['id_produto'];
-            //                 $quantidade = (int)$produto['quantidade'];
-            //                 $valor_produto = (float)$produto['valor'];
+    //         // if (isset($_SESSION['movimentacao'])) {
+    //         //     $MovimentacaoModel      = $this->loadModel("Movimentacao");
+    //         //                 $idUltimaMovimentacao  = $MovimentacaoModel->idUltimaMovimentacao('id');
+    //         //     foreach ($_SESSION['movimentacao'] as $movimentacao) {
+    //         //         if (isset($movimentacao['produtos'])) {
+    //         //             foreach ($movimentacao['produtos'] as $produto) {
+    //         //                 $id_produto = $produto['id_produto'];
+    //         //                 $quantidade = (int)$produto['quantidade'];
+    //         //                 $valor_produto = (float)$produto['valor'];
             
-            //                 // Carregar o modelo MovimentacaoItem
-            //                 $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
+    //         //                 // Carregar o modelo MovimentacaoItem
+    //         //                 $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
 
                             
             
-            //                 // Inserir o item da movimentação no banco de dados
-            //                 $this->model->insert([
-            //                     "id_movimentacao" => $idUltimaMovimentacao[0]['ultimo_id'],
-            //                     "id_produtos" => $id_produto,
-            //                     "quantidade" => $quantidade,
-            //                     "valor" => $valor_produto
-            //                 ]);
-            //             }
-            //         }
-            //     }
-            // }
-            // // unset($_SESSION['movimentacao']);
-            var_dump($data);
-            exit("opa");
-            if ($this->model->insert([
-                "id_movimentacoes"  => $post['id_movimentacao'],
-                "id_produtos"       => $post['id_produtos'],
-                "quantidade"        => $post['quantidade'],
-                "valor"             => $post['valor']
-            ])) {
+    //         //                 // Inserir o item da movimentação no banco de dados
+    //         //                 $this->model->insert([
+    //         //                     "id_movimentacao" => $idUltimaMovimentacao[0]['ultimo_id'],
+    //         //                     "id_produtos" => $id_produto,
+    //         //                     "quantidade" => $quantidade,
+    //         //                     "valor" => $valor_produto
+    //         //                 ]);
+    //         //             }
+    //         //         }
+    //         //     }
+    //         // }
+    //         // // unset($_SESSION['movimentacao']);
+    //         var_dump($data);
+    //         exit("opa");
+    //         if ($this->model->insert([
+    //             "id_movimentacoes"  => $post['id_movimentacao'],
+    //             "id_produtos"       => $post['id_produtos'],
+    //             "quantidade"        => $post['quantidade'],
+    //             "valor"             => $post['valor']
+    //         ])) {
 
-                unset($_SESSION['movimentacao']);
-                Session::set("msgSuccess", "Item adicionado com sucesso.");
-            } else {
-                Session::set("msgError", "Falha tentar inserir um novo item.");
-            }
+    //             unset($_SESSION['movimentacao']);
+    //             Session::set("msgSuccess", "Item adicionado com sucesso.");
+    //         } else {
+    //             Session::set("msgError", "Falha tentar inserir um novo item.");
+    //         }
     
-            Redirect::page("Movimentacao");
-        // }
-    }
+    //         Redirect::page("Movimentacao");
+    //     // }
+    // }
 
     // /**
     //  * insert

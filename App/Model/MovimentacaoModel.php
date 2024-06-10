@@ -136,6 +136,9 @@ Class MovimentacaoModel extends ModelMain
                 $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere], $item);
             }
 
+            var_dump($atualizaInformacoesMovimentacao, $atualizaProdutosMovimentacao);
+            exit;
+
             if($atualizaInformacoesMovimentacao || $atualizaProdutosMovimentacao) {
                 return true;
             }
@@ -145,27 +148,110 @@ Class MovimentacaoModel extends ModelMain
         }
     }
 
-    // public function updateInformacoesProdutoMovimentacao($idMovimentacao, $movimentacao, $aProdutos)
-    // {
+    public function updateInformacoesProdutoMovimentacao($idMovimentacao, $aProdutos, $acao)
+    {   
 
-    //     if($idMovimentacao) {
+        if($idMovimentacao) {
 
-    //         $condWhere = $idMovimentacao['id_movimentacao'];
+            $condWhere = $idMovimentacao['id_movimentacao'];
+    
+            foreach ($aProdutos as $item) {
+                if($acao['acaoProduto'] == 'update') {
+                  
+                    $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere, 'id_produtos' => $aProdutos[0]['id_produtos']], $item);
 
-    //         $atualizaInformacoesMovimentacao = $this->db->update($this->table, ['id' => $condWhere], $movimentacao);
+                    var_dump($aProdutos[0]['id_produtos']);
+                    var_dump($acao['acaoProduto']);
+                    var_dump($condWhere);
+                    exit('opa');         
+                } 
 
-    //         foreach ($aProdutos as $item) {
-    //             $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere], $item);
+                // else if($acao['acaoProduto'] == 'insert'){
+                //     $item['id_movimentacoes'] = $idMovimentacao['id_movimentacao'];
+
+                //     $insereProdutosMovimentacao = $this->db->insert("movimentacoes_itens", $item);
+                // } else {
+                //     echo "erro";
+                // }
+            }
+
+            if ((isset($atualizaProdutosMovimentacao) && $atualizaProdutosMovimentacao) || (isset($insereProdutosMovimentacao) && $insereProdutosMovimentacao)) {
+                return true;
+            } else {
+                return false;
+            }
+
+        } else {
+            return false;
+        }
+    }
+
+    // public function deleteProdutoMovimentacao($idMovimentacao, $aProdutos, $acao)
+    // {   
+
+    //     $ProdutoModel = $this->loadModel("Produto");
+    //     $dadosProduto['aProduto'] = $ProdutoModel->recuperaProduto($id_produto);
+
+    //     $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
+    //     $dadosItensMovimentacao = $MovimentacaoItemModel->listaProdutos($id_movimentacao);
+
+    //     var_dump($dadosProduto);
+    //     exit;
+
+    //     if ($dadosItensMovimentacao) {
+    //         // recupera a quantidade atual do item na movimentação
+    //         $quantidadeAtual = $dadosItensMovimentacao[0]['mov_itens_quantidade'];
+    
+    //         // Verifica se a quantidade a ser removida não ultrapassa a quantidade atual na comanda
+    //         if ($quantidadeRemover <= $quantidadeAtual) {
+    //             // Subtrai a quantidade a ser removida da quantidade atual na comanda
+    //             $novaQuantidadeMovimentacao = $quantidadeAtual - $quantidadeRemover;
+    
+    //             // Atualiza a tabela movimetacao_itens com a nova quantidade
+    //             $db->dbUpdate(
+    //                 "UPDATE movimentacoes_itens SET quantidade = ? WHERE id_movimentacoes = ? AND id_produtos = ?",
+    //                 [$novaQuantidadeMovimentacao, $id_movimentacao, $id_produto]
+    //             );
+    
+    //             // Verifica se o produto existe
+    //             if ($dadosProduto['aProduto']) {
+    
+    //                 $quantidadeProduto = $produto->quantidade;
+    
+    //                 if ($tipo_movimentacao == '1') {
+    //                     $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
+    //                 } else if ($tipo_movimentacao == '2') {
+    //                     $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
+    //                 } else {
+    //                     exit;
+    //                 }
+    
+    //                 // atualiza a quantidade em estoque
+    //                 $db->dbUpdate(
+    //                     "UPDATE produtos SET quantidade = ? WHERE id = ?",
+    //                     [$novaQuantidadeEstoque, $id_produto]
+    //                 );
+    
+    //                 // Remove os produtos com quantidade igual a zero da movimentação
+    //                 $qtdZero = $db->dbDelete(
+    //                     "DELETE FROM movimentacoes_itens
+    //                     WHERE id_produtos = ? AND id_movimentacoes = ? AND QUANTIDADE = 0",
+    //                     [$id_produto, $id_movimentacao]
+    //                 );
+    
+    //                 header("Location: formMovimentacoes.php?acao=update&msgError=Erro ao deletar item&id_movimentacoes=$id_movimentacao");
+    //             } else {
+    //                 header("Location: formMovimentacoes.php?acao=update&msgError=Erro ao deletar item&id_movimentacoes=$id_movimentacao");
+    //             }
+    
+    //             header("Location: formMovimentacoes.php?acao=update&msgSucesso=Quantidade do item deletado com sucesso&id_movimentacoes=$id_movimentacao");
+    //         } else {
+    //             header("Location: formMovimentacoes.php?acao=update&msgError=Quantidade maior que a da movimentação&id_movimentacoes=$id_movimentacao");
     //         }
-
-    //         if($atualizaInformacoesMovimentacao || $atualizaProdutosMovimentacao) {
-    //             return true;
-    //         }
-
     //     } else {
-    //         return false;
+    //         header("Location: formMovimentacoes.php?acao=update&msgError=Produto não encontrado na movimentação&id_movimentacoes=$id_movimentacao");
     //     }
-    // }
-
+    //     var_dump($post);
+    //     exit;
 
 }

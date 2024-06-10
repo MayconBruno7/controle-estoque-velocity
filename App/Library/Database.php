@@ -144,6 +144,8 @@ class Database
     {
         try {
 
+       
+
             $save = $this->getCampos($campos);
             $fields = implode("` , `", array_keys($campos));
             $values = implode(" , ", array_keys($save['dados']));
@@ -156,6 +158,10 @@ class Database
             $query->execute($save['dados']);
 
             $rs = $conexao->lastInsertId();
+
+            // var_dump($query);
+            // var_dump($rs);
+            // exit;
 
             self::__destruct();
 
@@ -172,31 +178,28 @@ class Database
         try {
 
             $save           = $this->getCampos($campos);
-            $condWhere      = $this->getCampos($conditions);
+            $condWhere      = $this->getCampos($conditions, "AND");
 
-            var_dump($condWhere);
-            var_dump($save);
-            var_dump($conditions);
             var_dump($campos);
-            var_dump($query);
-            exit;
+            var_dump($conditions);
+
 
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
 
             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
             if ($table == 'produtos') {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . ", dataMod = NOW() WHERE " . $condWhere['sql'] . ";";
-                
+
             } else {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . " WHERE " . $condWhere['sql'] . ";";
             }
 
             $query = $this->connect()->prepare($sql);
 
-
+            
+            var_dump($query);
+            exit;
             $query->execute($save['save']);
-
-
             $rs = $query->rowCount();
 
             self::__destruct();
