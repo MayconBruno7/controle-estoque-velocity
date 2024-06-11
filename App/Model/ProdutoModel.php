@@ -137,7 +137,7 @@ Class ProdutoModel extends ModelMain
                 $attquantidade = ($quantidadeAtual - $infoProduto['quantidade']);
             }
 
-            // $atualizaInformacoesProduto = $this->db->update($this->table, ['id' => $condWhere], ["quantidade" => $attquantidade]);
+            $atualizaInformacoesProduto = $this->db->update($this->table, ['id' => $condWhere], ["quantidade" => $attquantidade]);
 
             foreach ($infoProduto as $item) {
                 

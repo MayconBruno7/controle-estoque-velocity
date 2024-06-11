@@ -144,8 +144,6 @@ class Database
     {
         try {
 
-       
-
             $save = $this->getCampos($campos);
             $fields = implode("` , `", array_keys($campos));
             $values = implode(" , ", array_keys($save['dados']));
@@ -180,10 +178,6 @@ class Database
             $save           = $this->getCampos($campos);
             $condWhere      = $this->getCampos($conditions, "AND");
 
-            var_dump($campos);
-            var_dump($conditions);
-
-
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
 
             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
@@ -195,10 +189,6 @@ class Database
             }
 
             $query = $this->connect()->prepare($sql);
-
-            
-            var_dump($query);
-            exit;
             $query->execute($save['save']);
             $rs = $query->rowCount();
 
@@ -223,14 +213,15 @@ class Database
     {
         try {
 
-            $save = $this->getCampos($conditions);
+  
+            $save = $this->getCampos($conditions, "AND");
             $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . "; ";
-
+  
             $query = $this->connect()->prepare($sql);
             $query->execute($save['dados']);
-
+    
             $rs = $query->rowCount();
-
+            
             self::__destruct();
 
             if ($rs == []) {

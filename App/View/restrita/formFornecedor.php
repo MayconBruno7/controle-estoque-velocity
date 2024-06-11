@@ -8,6 +8,10 @@ use App\Library\Formulario;
     
     <?= Formulario::titulo('Fornecedor', false, false) ?>
 
+    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/84429695000111">
+        <button>Enviar</button>
+    </a>
+
     <form method="POST" action="<?= baseUrl() ?>Fornecedor/<?= $this->getAcao() ?>">
 
         <div class="row">
@@ -151,49 +155,39 @@ use App\Library\Formulario;
             input.value = telefone;
         }
 
-        const campoCNPJ = document.getElementById('cnpj');
+        document.getElementById('cnpj').addEventListener('input', function() {
+        const campoCNPJ = document.getElementById('cnpj').value;
 
-        campoCNPJ.addEventListener('input', function() {
-            if (campoCNPJ.value.length === 18) {
-                // Quando o CNPJ tiver 14 dígitos, faça a solicitação para o servidor intermediário
-                fetch('requireAPI.php?cnpj=' + campoCNPJ.value)
-                    .then(response => response.json())
-                    .then(data => {
-                        console.log(data);
-                        // Verifica se os campos retornados são undefined
-                        if (data.nome === undefined || data.uf === undefined || data.municipio === undefined || data.bairro === undefined || data.logradouro === undefined || data.numero === undefined || data.telefone === undefined) {
-                            // Limpa os campos do formulário
-                            document.getElementById('nome').value = '';
-                            document.getElementById('estado').value = '';
-                            document.getElementById('cidade').value = '';
-                            document.getElementById('bairro').value = '';
-                            document.getElementById('endereco').value = '';
-                            document.getElementById('numero').value = '';
-                            document.getElementById('telefone').value = '';
-                        } else {
-                            // Atualize os campos com os dados da API
-                            document.getElementById('nome').value = (data['fantasia'] === '') ? data['nome'] : data['fantasia'];
-                            document.getElementById('estado').value = data['uf'];
-                            document.getElementById('cidade').value = data['municipio'];
-                            document.getElementById('bairro').value = data['bairro'];
-                            document.getElementById('endereco').value = data['logradouro'];
-                            document.getElementById('numero').value = data['numero'];
-                            document.getElementById('telefone').value = data['telefone'];
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Erro ao consultar API:', error);
-                    });
-            } else if (campoCNPJ.value === "") {
-                // Limpa os campos do formulário se o CNPJ estiver vazio
-                document.getElementById('nome').value = '';
-                document.getElementById('estado').value = '';
-                document.getElementById('cidade').value = '';
-                document.getElementById('bairro').value = '';
-                document.getElementById('endereco').value = '';
-                document.getElementById('numero').value = '';
-                document.getElementById('telefone').value = '';
-            }
-        });
+        // console.log(campoCNPJ);
+
+        if (campoCNPJ.length === 18) {
+            fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Erro:', data.error);
+                    } else {
+                        document.getElementById('nome').value = data.fantasia || data.nome || '';
+                        document.getElementById('estado').value = data.uf || '';
+                        document.getElementById('cidade').value = data.municipio || '';
+                        document.getElementById('bairro').value = data.bairro || '';
+                        document.getElementById('endereco').value = data.logradouro || '';
+                        document.getElementById('numero').value = data.numero || '';
+                        document.getElementById('telefone').value = data.telefone || '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na solicitação:', error);
+                });
+        } else if (campoCNPJ === "") {
+            document.getElementById('nome').value = '';
+            document.getElementById('estado').value = '';
+            document.getElementById('cidade').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('endereco').value = '';
+            document.getElementById('numero').value = '';
+            document.getElementById('telefone').value = '';
+        }
+    });
 
     </script>

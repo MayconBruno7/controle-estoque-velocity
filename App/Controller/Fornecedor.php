@@ -120,4 +120,24 @@ class Fornecedor extends ControllerMain
 
         Redirect::page("Fornecedor");
     }
+
+    /**
+     * requireAPI
+     *
+     * @return void
+     */
+    public function requireAPI()
+    {
+        $cnpj = $this->getOutrosParametros(2);
+
+        if ($cnpj) {
+            $result = $this->model->requireAPI($cnpj);
+            header('Content-Type: application/json');
+            echo json_encode($result);
+        } else {
+            echo json_encode(['error' => 'Parâmetro CNPJ não fornecido na requisição.']);
+        }
+    }
+
+    
 }
