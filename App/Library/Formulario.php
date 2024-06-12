@@ -24,7 +24,13 @@ class Formulario
         $html .= '<div class="text-center mt-4"><h2>' . $titulo . '</h2></div>';
 
             if ($btNew) {
-                $html .= Formulario::botao('insert');
+                $html .= '  <div class="row">
+                                    <div class="col-12 d-flex justify-content-start">
+                                    '
+                                         . Formulario::botao('insert') .
+                                    '
+                                    </div>
+                            </div>';
             }
 
             if ($btVoltar) {

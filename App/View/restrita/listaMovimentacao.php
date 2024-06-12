@@ -1,73 +1,12 @@
 <?php
 
-    // $login = 1;
-
-    // // carrega o cabecalho
-    // require_once "comuns/cabecalho.php";
-    // require_once "library/protectUser.php";
-    // require_once "library/Database.php";
-    // require_once "library/Funcoes.php";
-    // require_once "helpers/Formulario.php";
-
-    // try {
-        
-    //     // Criando o objeto Db para classe de base de dados
-    //     $db = new Database();
-
-    //     if (isset($_SESSION["userNivel"]) && $_SESSION["userNivel"] == 1) {
-    //         $dados = $db->dbSelect(
-    //             "SELECT DISTINCT
-    //             m.id AS id_movimentacao, 
-    //             f.nome AS nome_fornecedor, 
-    //             m.tipo AS tipo_movimentacao, 
-    //             m.data_pedido, 
-    //             m.data_chegada
-    //         FROM 
-    //             movimentacoes m 
-    //         LEFT JOIN 
-    //             fornecedor f ON f.id = m.id_fornecedor 
-    //         LEFT JOIN 
-    //             movimentacoes_itens mi ON mi.id_movimentacoes = m.id
-    //         LEFT JOIN 
-    //             produtos p ON p.id = mi.id_produtos "
-    //         );
-           
-    //    } else {
-    //         $dados = $db->dbSelect(
-    //             "SELECT DISTINCT
-    //             m.id AS id_movimentacao, 
-    //             f.nome AS nome_fornecedor, 
-    //             m.tipo AS tipo_movimentacao, 
-    //             m.data_pedido, 
-    //             m.data_chegada
-    //         FROM 
-    //             movimentacoes m 
-    //         LEFT JOIN 
-    //             fornecedor f ON f.id = m.id_fornecedor 
-    //         LEFT JOIN 
-    //             movimentacoes_itens mi ON mi.id_movimentacoes = m.id
-    //         LEFT JOIN 
-    //             produtos p ON p.id = mi.id_produtos 
-    //         WHERE 
-    //             m.statusRegistro = 1;"
-    //         );
-    //    }
-
-    // // Se houver algum erro de conexão com o banco de dados será disparado pelo bloco catch
-    // } catch (Exception $ex) {
-    //     echo json_encode(['movimentacoes.statusRegistro' => false, 'msgErro' => 'Erro interno ao processar a requisição']);
-    // }
-
     use App\Library\Formulario;
-
-    echo Formulario::titulo('Movimentações', true, false);
 
 ?>
 
-
 <!-- Verifica e retorna mensagem de erro ou sucesso -->
-<main class="container mt-5">
-
+<main class="container">
+    <?= Formulario::titulo('Movimentações', true, false); ?>
     <div class="row">
         <div class="col-12">
                 <?= Formulario::exibeMsgError() ?>

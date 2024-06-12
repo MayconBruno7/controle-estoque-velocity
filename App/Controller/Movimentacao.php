@@ -81,9 +81,9 @@ class Movimentacao extends ControllerMain
             $tipo_movimentacao = (int)$post['tipo'];
 
             // Dados do produto
-            $quantidade = (int)$post['quantidade'];
-            $id_produto = (int)$post['id_produto'];
-            $valor_produto = (float)$post['valor'];
+            $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
+            $id_produto = isset($post['id_produto']) ? (int)$post['id_produto'] : '';
+            $valor_produto = isset($post['valor']) ? (float)$post['valor'] : '';
             $ProdutoModel = $this->loadModel("Produto");
             $dadosProduto['aProduto'] = $ProdutoModel->recuperaProduto($id_produto);
 
@@ -279,15 +279,16 @@ class Movimentacao extends ControllerMain
             isset($post['data_chegada']) || 
             isset($post['motivo'])
         ) {
+
             // Dados da movimentação
             $id_movimentacao = isset($post['id']) ? $post['id'] : (isset($post['id_movimentacao']) ? $post['id_movimentacao'] : "");
-            $fornecedor_id = isset($post['fornecedor_id']) ? (int)$post['fornecedor_id'] : 0;
-            $setor_id = isset($post['setor_id']) ? (int)$post['setor_id'] : 0;
+            $fornecedor_id = isset($post['fornecedor_id']) ? (int)$post['fornecedor_id'] : '';
+            $setor_id = isset($post['setor_id']) ? (int)$post['setor_id'] : '';
             $data_pedido = isset($post['data_pedido']) ? $post['data_pedido'] : "";
             $data_chegada = isset($post['data_chegada']) ? $post['data_chegada'] : "";
             $motivo = isset($post['motivo']) ? $post['motivo'] : "";
-            $statusRegistro = isset($post['statusRegistro']) ? (int)$post['statusRegistro'] : 0;
-            $tipo_movimentacao = isset($post['tipo_movimentacao']) ? (int)$post['tipo_movimentacao'] : 0;
+            $statusRegistro = isset($post['statusRegistro']) ? (int)$post['statusRegistro'] : '';
+            $tipo_movimentacao = isset($post['tipo_movimentacao']) ? (int)$post['tipo_movimentacao'] : '';
     
             // Dados do produto
             $id_produto = isset($post['id_produto']) ? $post['id_produto'] : '';
@@ -316,7 +317,7 @@ class Movimentacao extends ControllerMain
                             "quantidade"        => $quantidades,
                             "valor"             => $valores_produtos
                         ]
-                    ]
+                    ],
                 );
     
                 if ($AtualizandoMovimentacaoEProdutos) {

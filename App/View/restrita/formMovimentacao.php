@@ -1,124 +1,5 @@
 <?php
 
-    // $dados = [];
-
-    // $fornecedor_id = "";
-    // $fornecedor_nome = "";
-    // $setor_item_id = "";
-    // $total = 0;
-
-    // require_once "library/Database.php";
-
-    // $db = new Database();
-
-    // $dados = $db->dbSelect(
-    //     "SELECT * FROM
-    //         movimentacoes WHERE id = ?",
-    //         'first',
-    //     [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
-    // );
-
-    // $produtos = $db->dbSelect(
-    //     "SELECT * FROM
-    //         produtos ORDER BY nome"
-    // );
-
-    // $produtosMov = $db->dbSelect(
-    //     "SELECT mi.id_movimentacoes,
-    //         mi.id_produtos AS id_prod_mov_itens,
-    //         mi.quantidade AS mov_itens_quantidade,
-    //         mi.valor,
-    //         p.*
-    //     FROM movimentacoes_itens mi
-    //     INNER JOIN produtos p ON p.id = mi.id_produtos
-    //     WHERE mi.id_movimentacoes = ?
-    //         OR mi.id_movimentacoes IS NULL
-    //     ORDER BY p.descricao;
-    //     ",
-    //     'all',
-    //     [isset($_GET['id_movimentacoes']) ? $_GET['id_movimentacoes'] :""]
-    // );
-
-    // try {
-    //     if ($dados) {
-    //         $fornecedor_id = $dados->id_fornecedor;
-    //     }
-
-    // } catch (Exception $ex) {
-    //     echo '<p style="color: red;">ERROR: '. $ex->getMessage(). "</p>";
-    // }
-
-    // $dadosProdutos = $db->dbSelect("SELECT * FROM produtos ORDER BY id");
-
-    // // <-------------- Informações do Fornecedor ----------------->
-    // $dadosFornecedor = $db->dbSelect("SELECT * FROM fornecedor");
-
-    // function obterNomeFornecedor($fornecedor_id, $db) {
-    //     $query = "SELECT nome FROM fornecedor WHERE id = ?";
-    //     $result = $db->dbSelect($query, 'first', [$fornecedor_id]);
-    //     return $result ? $result->nome : '';
-    // }
-
-    // $nome_fornecedor = isset($fornecedor_id) ? obterNomeFornecedor($fornecedor_id, $db) : '';
-
-    // // <-------------- Informações do Setor ----------------->
-    // $dadosSetor = $db->dbSelect("SELECT * FROM setor ORDER BY id");
-
-    // if ($dados) {
-    //     $setor_item_id = $dados->id_setor;
-    // }
-
-    // function obterNomeSetor($setor_id, $db) {
-    //     $query = "SELECT nome FROM setor WHERE id = ?";
-    //     $result = $db->dbSelect($query, 'first', [$setor_id]);
-    //     return $result ? $result->nome : '';
-    // }
-
-    // $nome_setor = isset($setor_item_id) ? obterNomeSetor($setor_item_id, $db) : '';
-    // // <---------------------------------------------------------->
-
-
-    // // Funções dos formulários
-    // require_once "helpers/Formulario.php";
-    // // Recupera o cabeçalho para a página
-    // require_once "comuns/cabecalho.php";
-    // // Não permite que um usuário não logado acesse a página
-    // require_once "library/protectUser.php";
-
-    // $idUltimaMovimentacao = $db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacoes");
-    // $idMovimentacaoAtual = $idUltimaMovimentacao[0]['ultimo_id'];
-
-    
-    // unset($_SESSION['movimentacao']);
-    // // limpa a sessão de produtos
-    // unset($_SESSION['produtos']);
-    // exit;
-
-    // // Verifica se a sessão de movimentação existe e se há produtos nela
-    // if (isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos'])) {
-    //     // Loop através de todas as movimentações
-    //     foreach ($_SESSION['movimentacao'] as $movimentacao) {
-    //         // Verifica se há produtos na movimentação
-    //         if(isset($movimentacao['produtos'])) {
-    //             // Loop através de todos os produtos na movimentação atual
-    //             foreach ($movimentacao['produtos'] as $produto) {
-    //                 // Acessa os dados do produto
-    //                 echo "Nome do Produto: " . $produto['nome_produto'] . "<br>";
-    //                 echo "ID do Produto: " . $produto['id_produto'] . "<br>";
-    //                 echo "Quantidade: " . $produto['quantidade'] . "<br>";
-    //                 echo "Valor: " . $produto['valor'] . "<br>";
-    //                 echo "<br>";
-    //             }
-    //         }
-    //     }
-    // } 
-
-    //  session_start();
-
-    // var_dump($_SESSION['movimentacao']);
-    // var_dump( $_SESSION['movimentacao'][0]['produtos']);
-    // exit;
-
     use App\Library\Formulario;
     use App\Library\Session;
 
@@ -160,6 +41,10 @@
     // var_dump(Session::get('movimentacao')['0']);
     // var_dump($dadosMovimentacao['motivo']);
     // var_dump($_SESSION['movimentacao'][0]['produtos']);
+    // var_dump($_SESSION['movimentacao']);
+    // var_dump( $_SESSION['movimentacao'][0]['produtos']);
+    // unset($_SESSION['movimentacao']);
+    // unset($_SESSION['produtos']);
     // exit;
 
 ?>

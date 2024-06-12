@@ -2,13 +2,11 @@
 
     use App\Library\Formulario;
 
-    // $dadosFuncionarios = $db->dbSelect("SELECT * FROM funcionarios");
-
-    echo Formulario::titulo('Setores', true, false);
 ?>
 
     <!-- Verifica e retorna mensagem de erro ou sucesso -->
-    <main class="container mt-5">
+    <main class="container">
+        <?= Formulario::titulo('Setores', true, false); ?>
         <div class="row">
             <div class="col-12">
                     <?= Formulario::exibeMsgError() ?>

@@ -2,12 +2,11 @@
 
     use App\Library\Formulario;
 
-    echo Formulario::titulo('Funcionarios', true, false);
-
 ?>
 
 
-    <main class="container mt-5">
+    <main class="container">
+        <?= Formulario::titulo('Funcionários', true, false); ?>
         <div class="row">
             <div class="col-12">
                     <?= Formulario::exibeMsgError() ?>
@@ -58,3 +57,4 @@
         </form>
     </main>
     
+    <?= Formulario::getDataTables("tbListafuncionarios"); ?>

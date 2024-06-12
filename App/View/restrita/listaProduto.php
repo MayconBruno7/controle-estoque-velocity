@@ -2,15 +2,13 @@
 
     use App\Library\Formulario;
 
-    echo Formulario::titulo('Estoque', true, false);
-
-    // var_dump($this->getId());
-
 ?>
 
     <!-- Verifica e retorna mensagem de erro ou sucesso -->
-    <main class="container mt-5">
+    <main class="container">
 
+        <?= Formulario::titulo('Estoque', true, false); ?>
+        
         <div class="row">
             <div class="col-12">
                     <?= Formulario::exibeMsgError() ?>
@@ -45,10 +43,10 @@
                             <tr>
                                 <td> <?= $value['id'] ?> </td>
                                 <td> <?= $value['nome'] ?> </td>
-                                <td> <?= !empty($value['quantidade']) ? $value['quantidade'] : 'Nenhuma quantidade encontrada' ?>
+                                <td> <?= !empty($value['quantidade']) ? $value['quantidade'] : 'Não encontrado' ?>
                                 <?php if (!$this->getAcao()) : ?>
                                 <td>
-                                    <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Nenhum valor encontrado" ?>
+                                    <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Não encontrado" ?>
                                 </td>
                                 <?php endif; ?>
                                 <td><?= Formulario::getCondicao($value['condicao']) ?></td>
@@ -102,7 +100,7 @@
         </table>
     </main>
 
-    <!-- <?= Formulario::getDataTables('tbListaprodutos'); ?> -->
+    <?= Formulario::getDataTables('tbListaprodutos'); ?>
 
     <script>
         // Função para habilitar campos de entrada quando o botão de adicionar é clicado

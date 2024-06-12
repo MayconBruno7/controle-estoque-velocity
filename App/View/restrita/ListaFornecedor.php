@@ -2,11 +2,11 @@
 
     use App\Library\Formulario;
 
-    echo Formulario::titulo('Fornecedores', true, false);
-
 ?>
 
-<main class="container mt-5">
+<main class="container">
+
+    <?= Formulario::titulo('Fornecedores', true, false); ?>
 
     <div class="row">
         <div class="col-12">

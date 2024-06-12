@@ -28,7 +28,7 @@ use App\Library\Session;
                 <br />
                 <br />
                 <p>
-                    <strong><?= Session::get('usuarioLogin') ?></strong>, seja bem vindo(a) a área adminsitrativa do VelocityPHP.
+                    <strong><?= Session::get('usuarioLogin') ?></strong>, seja bem vindo(a) a área adminsitrativa do projeto de controle de estoque.
                 </p>
                 <br />
                 <br />
