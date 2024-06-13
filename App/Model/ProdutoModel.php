@@ -156,6 +156,14 @@ Class ProdutoModel extends ModelMain
         }
     }
 
+    public function pesquisaProduto($dados) {
+
+        // // atribui o valor de search a $dados
+        // $dados = $_GET['search'];
+
+        // // select de produtos de acordo com o id daquela categoria de produtos
+        // $data = $db->dbSelect("SELECT * FROM produto WHERE (VALOR_UNITARIO LIKE '%$dados%' OR descricao LIKE '%$dados%') ORDER BY descricao");
+    }
 
 
 

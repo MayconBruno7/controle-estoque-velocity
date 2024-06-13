@@ -281,7 +281,7 @@
                             </td>
                         </tr>
 
-                        <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['quantidade'] ?>">
+                        <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['mov_itens_quantidade'] ?>">
                         <input type="hidden" name="id_produto" id="id_produto" value="<?= $row['id_prod_mov_itens'] ?>">
                         <input type="hidden" name="valor" id="valor" value="<?= $row['valor'] ?>">
                         <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">

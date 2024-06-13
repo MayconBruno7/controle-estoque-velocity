@@ -158,7 +158,7 @@ class Database
             $rs = $conexao->lastInsertId();
 
             // var_dump($query);
-            // var_dump($rs);
+            // var_dump($conexao->lastInsertId());
             // exit;
 
             self::__destruct();
@@ -192,6 +192,7 @@ class Database
             $query->execute($save['save']);
             $rs = $query->rowCount();
 
+            // var_dump($query);
             // var_dump($rs);
             // exit;
 
