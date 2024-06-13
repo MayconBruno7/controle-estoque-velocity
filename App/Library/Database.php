@@ -189,10 +189,11 @@ class Database
             }
 
             $query = $this->connect()->prepare($sql);
-            var_dump($query);
-            exit;
             $query->execute($save['save']);
             $rs = $query->rowCount();
+
+            // var_dump($rs);
+            // exit;
 
             self::__destruct();
 

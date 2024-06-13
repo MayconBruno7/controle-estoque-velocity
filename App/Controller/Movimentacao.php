@@ -219,10 +219,8 @@ class Movimentacao extends ControllerMain
         $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
         $quantidadeRemover = (int)$post['quantidadeRemover'];
         $id_produto = (int)$post['id_produto'];
-        $tipo_movimentacao = (int)$post['tipo_movimentacao'];
+        $tipo_movimentacao = (int)$post['tipo'];
 
-           
-  
         if(isset($_SESSION['movimentacao'][0]['produtos']) && $this->getAcao() == 'delete') {
             // Verificar se o produto já está na sessão de movimentação
             $produtoEncontrado = false;
@@ -288,12 +286,15 @@ class Movimentacao extends ControllerMain
             $data_chegada = isset($post['data_chegada']) ? $post['data_chegada'] : "";
             $motivo = isset($post['motivo']) ? $post['motivo'] : "";
             $statusRegistro = isset($post['statusRegistro']) ? (int)$post['statusRegistro'] : '';
-            $tipo_movimentacao = isset($post['tipo_movimentacao']) ? (int)$post['tipo_movimentacao'] : '';
+            $tipo_movimentacao = isset($post['tipo']) ? (int)$post['tipo'] : '';
     
             // Dados do produto
             $id_produto = isset($post['id_produto']) ? $post['id_produto'] : '';
             $quantidades = isset($post['quantidade']) ? $post['quantidade'] : '';
             $valores_produtos = isset($post['valor']) ? $post['valor'] : "";
+
+            // var_dump($post);
+            // exit;
     
             $attQuantidade = 0; 
     
@@ -359,7 +360,7 @@ class Movimentacao extends ControllerMain
                     $attQuantidade = $quantidades;
                     $acaoProduto = 'insert';
                 }
-    
+
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
                         "id_movimentacao" => $id_movimentacao
@@ -377,6 +378,7 @@ class Movimentacao extends ControllerMain
                     $tipo_movimentacao
                     
                 );
+                // exit("opa");
     
                 if ($AtualizandoInfoProdutoMovimentacao) {
                     Session::destroy('movimentacao');

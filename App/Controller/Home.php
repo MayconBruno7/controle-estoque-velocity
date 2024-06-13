@@ -11,27 +11,11 @@ class Home extends ControllerMain
      */
     public function index()
     {
-        $Produto = $this->loadModel("Produto");
-        $this->dados['aProduto'] = $Produto->lista();
     
         // $this->loadView("home", $this->dados);
 
         $this->loadView("usuario/login", $this->dados);
 
-    }
-
-    /**
-     * produto
-     *
-     * @return void
-     */
-    public function produto()
-    {
-        $ProdutoModel = $this->loadModel("Produto");
-
-        $aProduto = $ProdutoModel->lista();
-
-        return $this->loadView("produto", $aProduto);
     }
 
     /**

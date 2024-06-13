@@ -66,7 +66,7 @@
                                                 <div class="col">
                                                     <input type="hidden" name="id_produto" value="<?= $value['id'] ?>">
                                                     <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
-                                                    <input type="hidden" name="tipo_movimentacao" value="<?= $this->getAcao() == 'insert' ? $this->getOutrosParametros(6) : $this->getOutrosParametros(4) ?>">
+                                                    <input type="hidden" name="tipo" value="<?= $this->getAcao() == 'insert' ? $this->getOutrosParametros(6) : $this->getOutrosParametros(4) ?>">
                                                     <button type="submit" class="btn btn-primary mt-4" onclick="enableInputs(<?= $value['id'] ?>)">Adicionar</button>
                                                 </div>
                                             </div>
@@ -80,7 +80,7 @@
                                             <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
                                             <input type="hidden" name="id_produto" value="<?= $this->getOutrosParametros(4) ?>">
                                             <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
-                                            <input type="hidden" name="tipo_movimentacao" value="<?= $this->getOutrosParametros(6) ?>">
+                                            <input type="hidden" name="tipo" value="<?= $this->getOutrosParametros(6) ?>">
                                             <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
                                         </form>
                                     <?php endif; ?>

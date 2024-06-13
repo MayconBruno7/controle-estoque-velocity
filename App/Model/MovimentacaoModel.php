@@ -169,6 +169,7 @@ Class MovimentacaoModel extends ModelMain
                 $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere], $item);
             }
 
+         
             $produto = $this->db->select(
                 "produtos", 
                 "all", 
@@ -187,7 +188,7 @@ Class MovimentacaoModel extends ModelMain
             } else {
                 exit;
             }
-  
+
             //atualiza a quantidade em estoque
             $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]); 
 
@@ -203,14 +204,13 @@ Class MovimentacaoModel extends ModelMain
     public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $tipo_movimentacao)
     {   
 
-     
         if($id_movimentacao) {
-         
+
             $condWhere = $id_movimentacao['id_movimentacao'];
            
             foreach ($aProdutos as $item) {
                 if($acao['acaoProduto'] == 'update') {
-                    // $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere, 'id_produtos' => $aProdutos[0]['id_produtos']], $item); 
+                    $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere, 'id_produtos' => $aProdutos[0]['id_produtos']], $item); 
                
                 } 
             
@@ -221,7 +221,7 @@ Class MovimentacaoModel extends ModelMain
                 } else {
                     echo "erro";
                 }
-            }  
+            } 
 
             if ((isset($atualizaProdutosMovimentacao) && $atualizaProdutosMovimentacao) || (isset($insereProdutosMovimentacao) && $insereProdutosMovimentacao)) {
             
@@ -235,23 +235,26 @@ Class MovimentacaoModel extends ModelMain
                 
                 $quantidadeProduto = $produto[0]['quantidade'];
               
-                if ($tipo_movimentacao == '1') {
-                    $novaQuantidadeEstoque = ($quantidadeProduto - $aProdutos[0]['quantidade']);
+                // if ($tipo_movimentacao == '1') {
+                //     $novaQuantidadeEstoque = ($quantidadeProduto + $aProdutos[0]['quantidade']);
                     
-                } else if ($tipo_movimentacao == '2') {
-                    $novaQuantidadeEstoque = ($quantidadeProduto + $aProdutos[0]['quantidade']);
-                } else {
-                    exit;
-                }
+                // } else if ($tipo_movimentacao == '2') {
+                //     $novaQuantidadeEstoque = ($quantidadeProduto - $aProdutos[0]['quantidade']);
+                // } else {
+                //     exit;
+                // }
 
-                //atualiza a quantidade em estoque
-                $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]); 
-  
-
+                var_dump($produto);
+                var_dump($quantidadeProduto);
+                var_dump($atualizaEstoqueProduto);
                 var_dump($produto);
                 var_dump($tipo_movimentacao);
                 var_dump($novaQuantidadeEstoque);
                 exit('Ospras');
+
+                //atualiza a quantidade em estoque
+                $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $quantidadeProduto]); 
+
                 if($atualizaEstoqueProduto) {
                     return true;
                 }
@@ -302,16 +305,16 @@ Class MovimentacaoModel extends ModelMain
 
                     $quantidadeProduto = $produto_movimentacao['quantidade'];
 
-                    if ($tipo_movimentacao == '1') {
-                        $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
-                    } else if ($tipo_movimentacao == '2') {
-                        $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
-                    } else {
-                        exit;
-                    }
+                    // if ($tipo_movimentacao == '1') {
+                    //     $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
+                    // } else if ($tipo_movimentacao == '2') {
+                    //     $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
+                    // } else {
+                    //     exit;
+                    // }
 
                     //atualiza a quantidade em estoque
-                    $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $produto_movimentacao['id']], ['quantidade' => $novaQuantidadeEstoque]); 
+                    $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $produto_movimentacao['id']], ['quantidade' => $quantidadeRemover]); 
 
                     // Remove os produtos com quantidade igual a zero da movimentação
                     $qtdZero = $this->db->delete('movimentacoes_itens', ['id_movimentacoes' => $id_movimentacao, 'id_produtos' =>  $item_movimentacao[0]['id_produtos'], 'quantidade' => 0]);
