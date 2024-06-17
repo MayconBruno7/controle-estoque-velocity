@@ -62,6 +62,7 @@ class Produto extends ControllerMain
 
         $DbDados['aFornecedor'] = $FornecedorModel->lista('id');
         $idProduto = $this->getId();
+        
         $DbDados['aHistoricoProduto'] = $HistoricoProdutoModel->historicoProduto('id', $idProduto);
 
         return $this->loadView(

@@ -237,11 +237,18 @@ class Movimentacao extends ControllerMain
         }
    
         if(!isset($_SESSION['movimentacao']) && $this->getAcao() == 'delete') {
+            $ProdutoModel = $this->loadModel("Produto");
+            $dadosProduto = $ProdutoModel->recuperaProduto($id_produto);
+
+            // $quantidadeProduto = $dadosProduto[0]['quantidade'];
+
+            // $quantidadeRemover = ($quantidadeProduto - $quantidadeRemover);
+
             // var_dump($post);
             // var_dump($quantidadeRemover, $quantidadeProduto);
             // exit;
            
-            $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $id_produto, $tipo_movimentacao, $quantidadeRemover);
+            $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
 
             if($deletaProduto) {
                 Session::set("msgSuccess", "Item deletado da movimentação.");
@@ -283,41 +290,24 @@ class Movimentacao extends ControllerMain
             $statusRegistro = isset($post['statusRegistro']) ? (int)$post['statusRegistro'] : '';
             $tipo_movimentacao = isset($post['tipo']) ? (int)$post['tipo'] : '';
     
-            // recupera informações do produto na movimentação
-            $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
-            $dadosItensMovimentacao = $MovimentacaoItemModel->listaProdutos($id_movimentacao);
-
-            // $quantidadeProdutoAnterior = $dadosItensMovimentacao[0]['mov_itens_quantidade'];
-            // $valorProdutoAnterior = $dadosItensMovimentacao[0]['valor'];
-
-            // var_dump($dadosItensMovimentacao);
-            // var_dump($quantidadeProdutoAnterior);
-            // var_dump($valorProdutoAnterior);
-
             // Dados do produto
             $id_produto = isset($post['id_produto']) ? $post['id_produto'] : '';
             $quantidades = isset($post['quantidade']) ? $post['quantidade'] : '';
             $valores_produtos = isset($post['valor']) ? $post['valor'] : "";
 
-            // // verifica se houve alteração no produto
-            // if(isset($id_produto) && ($valores_produtos == $valorProdutoAnterior) && ($quantidades == $quantidadeProdutoAnterior)) {
-            //     echo 'sem alteração';
-            // }
-
-
-            // var_dump($id_produto);
-            // var_dump($quantidades);
-            // var_dump($valores_produtos);
-            // exit;
+            $produtoMovAtualizado = isset($_SESSION['produto_mov_atualizado']) ? $_SESSION['produto_mov_atualizado'] : [];
 
             $found = false;
 
-            $attQuantidade = 0; 
+            $quantidade_produto = 0; 
 
+            $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
+            $dadosItensMovimentacao = $MovimentacaoItemModel->listaProdutos($id_movimentacao);
+       
             $ItemModel = $this->loadModel("Produto");
             $dadosProduto = $ItemModel->recuperaProduto($id_produto);
 
-            $attQuantidade = $dadosProduto[0]['quantidade'];
+            $quantidade_produto = (int)$dadosProduto[0]['quantidade'];
 
             if (!empty($dadosItensMovimentacao)) {
            
@@ -325,9 +315,9 @@ class Movimentacao extends ControllerMain
 
                     if ($id_produto == $item['id_prod_mov_itens'] && $id_movimentacao == $item['id_movimentacoes']) {
                         if ($tipo_movimentacao == 1) {
-                            $attQuantidade = $item['mov_itens_quantidade'] + $quantidades;
+                            $quantidade_produto = $item['mov_itens_quantidade'] + $quantidades;
                         } else if ($tipo_movimentacao == 2) {
-                            $attQuantidade = $item['mov_itens_quantidade'] - $quantidades;
+                            $quantidade_produto = $item['mov_itens_quantidade'] - $quantidades;
                        
                         }
                         $acaoProduto = 'update';
@@ -338,19 +328,21 @@ class Movimentacao extends ControllerMain
                 }     
 
                 if (!$found) {
-                    $attQuantidade = $quantidades;
+                    $quantidade_produto = $quantidades;
                     $acaoProduto = 'insert';
                 }
-
+         
             } else {
 
-                if ($tipo_movimentacao == 1) {
-                    $attQuantidade = $quantidades;
-                } else if ($tipo_movimentacao == 2) {
-                    $attQuantidade = $quantidades;
+                if ($id_produto == $post['id_produto'] && $id_movimentacao == $post['id_movimentacao']) {
+                 
+                    if ($tipo_movimentacao == 1) {
+                        $quantidade_produto = $quantidade_produto + $quantidades;
+                    } else if ($tipo_movimentacao == 2) {
+                        $quantidade_produto = $quantidade_produto - $quantidades;
+                    }
+                    $acaoProduto = 'insert';
                 }
-                
-                $acaoProduto = 'insert';
             }
     
             if ($this->getAcao() != 'updateProdutoMovimentacao') {
@@ -370,10 +362,13 @@ class Movimentacao extends ControllerMain
                     ],
                     [
                         [
-                            "id_produtos"       => $id_produto,
-                            "quantidade"        => $attQuantidade, 
-                            "valor"             => $valores_produtos
+                            "id_produtos"           => $id_produto,
+                            "quantidade"            => $quantidade_produto, 
+                            "valor"                 => $valores_produtos
                         ]
+                    ],
+                    [
+                        $produtoMovAtualizado
                     ],
                 );
 
@@ -387,29 +382,29 @@ class Movimentacao extends ControllerMain
                 }
             } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
 
-                // var_dump($attQuantidade);
-                // exit;
-
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
                         "id_movimentacao" => $id_movimentacao
                     ],
                     [
                         [
-                            "id_produtos" => $id_produto,
-                            "quantidade" => $attQuantidade,
-                            "valor" => $valores_produtos
+                            "id_produtos"           => $id_produto,
+                            "quantidade"            => $quantidades,
+                            "valor"                 => $valores_produtos
                         ]
                     ],
                     [
                         'acaoProduto' => $acaoProduto
                     ],
-                    $tipo_movimentacao
+                    $quantidade_produto
                     
                 );
-                // exit("opa");
     
                 if ($AtualizandoInfoProdutoMovimentacao) {
+                    if (!isset($_SESSION['produto_mov_atualizado'])) {
+                        $_SESSION['produto_mov_atualizado'] = true;
+                    }
+                    
                     Session::destroy('movimentacao');
                     Session::destroy('produtos');
                     Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
@@ -433,8 +428,60 @@ class Movimentacao extends ControllerMain
      */
     public function delete()
     {
+
+        $post = $this->getPost();
+
+        // Dados do produto
+        $id_produto = isset($post['id_produto']) ? $post['id_produto'] : '';
+        $quantidades = isset($post['quantidade']) ? $post['quantidade'] : '';
+        $valor_produto = isset($post['valor']) ? $post['valor'] : "";
+
+        $dadosMovimentacao = $this->model->lista('id');
+
+        $ItemModel = $this->loadModel("Produto");
+        $dadosProduto = $ItemModel->recuperaProduto($id_produto);
+
+        $quantidadeProduto = $dadosProduto[0]['quantidade'];
+
+        // var_dump($dadosProduto[0]['quantidade']);
+        // var_dump($tipo_movimentacao);
+        // var_dump($dadosMovimentacao);
+        // var_dump($post);
+        // exit;
+
+        // Loop através de cada movimentação
+        foreach ($dadosMovimentacao as $movimentacao) {
+            if ($this->getPost('id') == $movimentacao['id_movimentacao']) {}
+                $tipo_movimentacao = $movimentacao['tipo_movimentacao'];
+        }
+
+        if ($tipo_movimentacao == 1) {
+            $quantidade_produto = $quantidadeProduto - $quantidades;
+        } else if ($tipo_movimentacao == 2) {
+            $quantidade_produto = $quantidadeProduto + $quantidades;
+       
+        }
+
         if ($this->model->delete(["id" => $this->getPost('id')])) {
+            $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
+                [
+                    "id_movimentacao" => $this->getPost('id')
+                ],
+                [
+                    [
+                        "id_produtos"           => $id_produto,
+                        "valor"                 => $valor_produto
+                    ]
+                ],
+                [
+                    'acaoProduto' => 'update'
+                ],
+                $quantidade_produto
+                
+            );
+
             Session::set("msgSuccess", "Movimentacao excluída com sucesso.");
+
         } else {
             Session::set("msgError", "Falha tentar excluir a Movimentacao.");
         }

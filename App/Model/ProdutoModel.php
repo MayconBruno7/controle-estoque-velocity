@@ -129,8 +129,6 @@ Class ProdutoModel extends ModelMain
             $produto = $this->recuperaProduto($id_produto);
             $quantidadeAtual = $produto[0]['quantidade'];
 
-         
-      
             if($tipo_movimentacao == 1) {
                 $attquantidade = ($quantidadeAtual + $infoProduto['quantidade']);
             } else if ($tipo_movimentacao == 2) {

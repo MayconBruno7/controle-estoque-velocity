@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 31/05/2024 às 15:02
--- Versão do servidor: 8.2.0
--- Versão do PHP: 8.2.13
+-- Tempo de geração: 17/06/2024 às 13:58
+-- Versão do servidor: 8.3.0
+-- Versão do PHP: 8.2.18
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,6 +20,8 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `controle_estoque`
 --
+CREATE DATABASE IF NOT EXISTS `controle_estoque` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `controle_estoque`;
 
 -- --------------------------------------------------------
 
@@ -33,6 +35,37 @@ CREATE TABLE IF NOT EXISTS `cargo` (
   `nome` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
   `statusRegistro` int DEFAULT '1' COMMENT '1 - Ativo    2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `cidade`
+--
+
+DROP TABLE IF EXISTS `cidade`;
+CREATE TABLE IF NOT EXISTS `cidade` (
+  `id` varchar(150) NOT NULL,
+  `nome` varchar(150) NOT NULL,
+  `codigo_municipio` varchar(10) NOT NULL,
+  `estado` int NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `estado` (`estado`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `estado`
+--
+
+DROP TABLE IF EXISTS `estado`;
+CREATE TABLE IF NOT EXISTS `estado` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(50) NOT NULL,
+  `sigla` varchar(2) NOT NULL,
+  `regiao` varchar(50) NOT NULL,
+  PRIMARY KEY (`id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
@@ -189,23 +222,6 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `usuariorecuperasenha`
---
-
-DROP TABLE IF EXISTS `usuariorecuperasenha`;
-CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `usuario_id` int NOT NULL,
-  `chave` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
-  `created_at` datetime NOT NULL DEFAULT (concat(curdate(),_utf8mb4' ',curtime())),
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `FK1_usuariorecuperacaosenha` (`usuario_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
 --
 -- Restrições para tabelas despejadas
 --
@@ -215,12 +231,6 @@ CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
 --
 ALTER TABLE `historico_produtos`
   ADD CONSTRAINT `fk_setor_id` FOREIGN KEY (`setor_id`) REFERENCES `setor` (`id`);
-
---
--- Restrições para tabelas `usuariorecuperasenha`
---
-ALTER TABLE `usuariorecuperasenha`
-  ADD CONSTRAINT `FK1_usuariorecuperacaosenha` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
