@@ -16,10 +16,6 @@ class Fornecedor extends ControllerMain
     {
         $this->auxiliarConstruct($dados);
 
-        // Somente pode ser acessado por usuários adminsitradores
-        if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
-        }
     }
 
     /**
@@ -45,6 +41,12 @@ class Fornecedor extends ControllerMain
             $dados = $this->model->getById($this->getId());
         }
 
+        $EstadoModel = $this->loadModel("Estado");
+        $dados['aEstado'] = $EstadoModel->lista('id');
+
+        $CidadeModel = $this->loadModel("Cidade");
+        $dados['aCidade'] = $CidadeModel->lista('id');
+
         return $this->loadView("restrita/formFornecedor", $dados);
     }
 
@@ -60,9 +62,16 @@ class Fornecedor extends ControllerMain
         if (Validator::make($post, $this->model->validationRules)) {
             return Redirect::page("Fornecedor/form/insert");     // error
         } else {
-
+           
             if ($this->model->insert([
-                "descricao" => $post['descricao'],
+                "nome" => $post['nome'],
+                "cnpj" => preg_replace("/[^0-9]/", "", $post['cnpj']),
+                "endereco" => $post['endereco'],
+                "cidade" => $post['cidade'],
+                "estado" => $post['estado'],
+                "bairro" => $post['bairro'],
+                "numero" => $post['numero'],
+                "telefone" => preg_replace("/[^0-9]/", "", $post['telefone']),
                 "statusRegistro" => $post['statusRegistro']
             ])) {
                 Session::set("msgSuccess", "Fornecedor adicionada com sucesso.");
@@ -93,7 +102,14 @@ class Fornecedor extends ControllerMain
                     "id" => $post['id']
                 ], 
                 [
-                    "descricao" => $post['descricao'],
+                    "nome" => $post['nome'],
+                    "cnpj" => preg_replace("/[^0-9]/", "", $post['cnpj']),
+                    "endereco" => $post['endereco'],
+                    "cidade" => $post['cidade'],
+                    "estado" => $post['estado'],
+                    "bairro" => $post['bairro'],
+                    "numero" => $post['numero'],
+                    "telefone" => preg_replace("/[^0-9]/", "", $post['telefone']),
                     "statusRegistro" => $post['statusRegistro']
                 ]
             )) {
@@ -131,13 +147,29 @@ class Fornecedor extends ControllerMain
         $cnpj = $this->getOutrosParametros(2);
 
         if ($cnpj) {
-            $result = $this->model->requireAPI($cnpj);
+            $data = $this->model->requireAPI($cnpj);
             header('Content-Type: application/json');
-            echo json_encode($result);
+            echo json_encode($data);
         } else {
             echo json_encode(['error' => 'Parâmetro CNPJ não fornecido na requisição.']);
         }
     }
 
-    
+    /**
+     * getCidadeCombo
+     *
+     * @return string
+     */
+    public function getCidadeComboBox()
+    {
+        $dados = $this->model->getCidadeComboBox($this->getId());
+
+        if (count($dados) == 0) {
+            $dados[] = [
+                "id" => ""
+            ];
+        }
+
+        echo json_encode($dados);
+    }
 }

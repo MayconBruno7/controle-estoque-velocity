@@ -1,12 +1,48 @@
 <?php
 
 use App\Library\ModelMain;
+use App\Library\Session;
 
 Class FornecedorModel extends ModelMain
 {
     public $table = "fornecedor";
 
-    public function requireAPI($cnpj) {
+    public $validationRules = [
+        'nome' => [
+            'label' => 'nome',
+            'rules' => 'required|min:3|max:144'
+        ],
+        'telefone' => [
+            'label' => 'telefone',
+            'rules' => 'required|min:9|max:16'
+        ],
+
+        'statusRegistro' => [
+            'label' => 'Status',
+            'rules' => 'required|int'
+        ]
+    ];
+
+    public function lista($orderBy = 'id')
+    {
+        if (Session::get('usuarioNivel') == 1) {
+            // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
+            $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
+            
+        } else {
+            $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE statusRegistro = 1 ORDER BY {$orderBy}");
+            
+        }
+
+        if ($this->db->dbNumeroLinhas($rsc) > 0) {
+            return $this->db->dbBuscaArrayAll($rsc);
+        } else {
+            return [];
+        }
+    }
+
+    public function requireAPI($cnpj)
+    {
         $cnpj_limpo = preg_replace("/[^0-9]/", "", $cnpj);
         $url = "https://www.receitaws.com.br/v1/cnpj/{$cnpj_limpo}";
 
@@ -25,6 +61,28 @@ Class FornecedorModel extends ModelMain
             return $data !== null ? $data : ['error' => 'Erro ao decodificar a resposta da API.'];
         } else {
             return ['error' => 'Erro ao consultar a API.'];
+        }
+    }
+
+    /**
+     * getProdutoCombobox
+     *
+     * @param int $estado 
+     * @return array
+     */
+    public function getCidadeCombobox($estado) 
+    {
+        $rsc = $this->db->dbSelect("SELECT c.id, c.nome 
+                                    FROM estado as e
+                                    INNER JOIN cidade as c ON c.estado = e.id
+                                    WHERE c.estado = ?
+                                    ORDER BY c.nome",
+                                    [$estado]);
+
+        if ($this->db->dbNumeroLinhas($rsc) > 0) {
+            return $this->db->dbBuscaArrayAll($rsc);
+        } else {
+            return [];
         }
     }
 }

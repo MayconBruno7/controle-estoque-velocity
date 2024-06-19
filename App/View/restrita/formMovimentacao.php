@@ -37,32 +37,19 @@
     $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
     $total = 0;
 
-    // unset($_SESSION['movimentacao']);
-    // var_dump(Session::get('movimentacao')['0']);
-    // var_dump($dadosMovimentacao['motivo']);
-    // var_dump($_SESSION['movimentacao'][0]['produtos']);
-    // var_dump($_SESSION['movimentacao']);
-    // var_dump( $_SESSION['movimentacao'][0]['produtos']);
-    // unset($_SESSION['movimentacao']);
-    // unset($_SESSION['produtos']);
-    // exit;
-
 ?>
 
 <main class="container mt-5">
-    <div class="row">
-        <div class="col-10">
-            <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
-            <?= Formulario::titulo('Movimentação', true, false); ?>
-        </div>
-    </div>
+
+    <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
+    <?= Formulario::titulo('Movimentação', true, false); ?>
 
     <div class="row">
         <div class="col-12">
                 <?= Formulario::exibeMsgError() ?>
             </div>
 
-            <div class="col-12 mt-3">
+            <div class="col-12">
                 <?= Formulario::exibeMsgSucesso() ?>
             </div>
         </div>
@@ -381,22 +368,6 @@
             };
             xhr.send(JSON.stringify(movimentacao));
         }
-
-        // window.onbeforeunload = function(event) {
-        //     var activeElement = document.activeElement;
-        //     // Verifica se o evento foi acionado pelo botão "Salvar"
-        //     var btnSalvar = document.getElementById('btnSalvar');
-        //     // Verifica se o evento foi acionado pelo link "Voltar"
-        //     var linkVoltar = document.querySelector('a[href="listaMovimentacoes.php"]');
-        //     if ((activeElement !== btnSalvar && activeElement.tagName.toLowerCase() !== 'button') 
-        //         && (activeElement !== linkVoltar && activeElement.tagName.toLowerCase() !== 'a')) {
-        //         // Envia uma requisição AJAX para limpar a sessão
-        //         var xhr = new XMLHttpRequest();
-        //         xhr.open('GET', 'limparSessao.php', true);
-        //         xhr.send();
-        //     }
-        // };
-
     });
 
 </script>

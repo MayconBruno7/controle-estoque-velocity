@@ -8,6 +8,19 @@
     
     <?= Formulario::titulo('Produto', false, false) ?>
 
+    <?php
+
+        if ($this->getAcao() != 'insert') {
+            ?>
+            <div class="row">
+                <div class="col-12 d-flex justify-content-start">
+                    <a href="<?= baseUrl() ?>HistoricoProdutoMovimentacao/index/<?= $this->getAcao() ?>/<?= $this->getId() ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
+                </div>
+            </div>
+        <?php
+        }
+    ?>
+
     <form method="POST" action="<?= baseUrl() ?>Produto/<?= $this->getAcao() ?>">
 
         <div class="row">
@@ -27,7 +40,10 @@
 
             <div class="mt-3 mb-3 col-6">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select class="form-control" name="fornecedor_id" id="fornecedor_id" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <select class="form-control" name="fornecedor_id" id="fornecedor_id"  
+                <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>
+                <?= !empty($aDados['aFornecedor']) ? 'required' : '' ?>                
+                >
                     <option value="" <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
                     <?php foreach ($aDados['aFornecedor'] as $value) : ?>
                         <option value="<?= $value['id'] ?>" <?= setValor('fornecedor') == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
@@ -75,10 +91,6 @@
                 <select name="historico" id="historico" class="form-control" <?= $this->getAcao() != 'delete' && $this->getAcao() != 'insert' && $this->getAcao() != 'view' ? '' : 'disabled'?>>
                     <option value="">Selecione uma alteração</option>
                     <?php 
-
-                    // Recupera o histórico de alterações do item
-                    // $historicoQuery = "SELECT * FROM historico_produtos WHERE id_produtos = ?";
-                    // $historicoData = $db->dbSelect($historicoQuery, 'all', [$_GET['id']]);
 
                     foreach ($aDados['aHistoricoProduto'] as $historicoItem): ?>
                         <?php

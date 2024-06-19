@@ -1,6 +1,9 @@
 <?php
 
-use App\Library\Formulario;
+    use App\Library\Formulario;
+
+    $estadoSelecionado = setValor('estado');
+    $cidadeSelecionada = setValor('cidade');
 
 ?>
 
@@ -41,20 +44,29 @@ use App\Library\Formulario;
                 </select>
             </div>
 
-            <div class="mb-3 col-6">
+            <div class="col-6 mb-3">
                 <label for="estado" class="form-label">Estado</label>
-                <input type="text" class="form-control" name="estado" id="estado" 
-                    maxlength="50" placeholder="Informe estado"
-                    value="<?= setValor('estado') ?>"
-                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <select class="form-control" name="estado" id="estado" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <option value="" selected disabled>...</option>
+                    <?php foreach ($dados['aEstado'] as $value): ?>
+                        <option value="<?= $value['id'] ?>" <?= $estadoSelecionado == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
+                    <?php endforeach; ?>
+                </select>
             </div>
 
-            <div class="mb-3 col-6">
+            <div class="col-6 mb-3">
                 <label for="cidade" class="form-label">Cidade</label>
-                <input type="text" class="form-control" name="cidade" id="cidade" 
-                    maxlength="50" placeholder="Informe a cidade"
-                    value="<?= setValor('cidade') ?>"
-                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <select class="form-control" name="cidade" id="cidade" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?php if (empty($cidadeSelecionada)) : ?>
+                        <option value="" selected disabled>Escolha um estado</option>
+                    <?php endif; ?>
+
+                    <?php if (!empty($cidadeSelecionada)) : ?>
+                        <?php foreach ($dados['aCidade'] as $value): ?>
+                        <option value="<?= $value['id'] ?>" <?= $cidadeSelecionada == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
+                    <?php endforeach; ?>
+                    <?php endif; ?>
+                </select>
             </div>
 
             <div class="mb-3 col-5">
@@ -86,6 +98,7 @@ use App\Library\Formulario;
                 <input type="text" class="form-control" name="telefone" id="telefone" 
                     maxlength="50" placeholder="Informe o telefone"
                     value="<?= Formulario::formatarTelefone(setValor('telefone')) ?>"
+                    oninput="formatarTelefone(this)"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 
@@ -155,39 +168,62 @@ use App\Library\Formulario;
             input.value = telefone;
         }
 
-        document.getElementById('cnpj').addEventListener('input', function() {
-        const campoCNPJ = document.getElementById('cnpj').value;
+        // document.getElementById('cnpj').addEventListener('input', function() {
+        // const campoCNPJ = document.getElementById('cnpj').value;
+        
+        // if (campoCNPJ.length === 18) {
+        //     fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.error) {
+        //                 console.error('Erro:', data.error);
+        //             } else {
+        //                 console.log(data);
+        //                 document.getElementById('nome').value = data.fantasia || data.nome || '';
+        //                 document.getElementById('estado').value = data.uf || '';
+        //                 document.getElementById('cidade').vaslue = data.municipio || '';
+        //                 document.getElementById('bairro').value = data.bairro || '';
+        //                 document.getElementById('endereco').value = data.logradouro || '';
+        //                 document.getElementById('numero').value = data.numero || '';
+        //                 document.getElementById('telefone').value = data.telefone || '';
+        //             }
+        //         })
+        //         .catch(error => {
+        //             console.error('Erro na solicitação:', error);
+        //         });
+        // } else if (campoCNPJ === "") {
+        //     document.getElementById('nome').value = '';
+        //     document.getElementById('estado').value = '';
+        //     document.getElementById('cidade').value = '';
+        //     document.getElementById('bairro').value = '';
+        //     document.getElementById('endereco').value = '';
+        //     document.getElementById('numero').value = '';
+        //     document.getElementById('telefone').value = '';
+        // }
+   
 
-        // console.log(campoCNPJ);
+        $(function() {
+            $('#estado').change(function() {
+                if ($(this).val()) {
+                    $('#cidade').hide();
+                    $('.carregando').show();
 
-        if (campoCNPJ.length === 18) {
-            fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error('Erro:', data.error);
-                    } else {
-                        document.getElementById('nome').value = data.fantasia || data.nome || '';
-                        document.getElementById('estado').value = data.uf || '';
-                        document.getElementById('cidade').value = data.municipio || '';
-                        document.getElementById('bairro').value = data.bairro || '';
-                        document.getElementById('endereco').value = data.logradouro || '';
-                        document.getElementById('numero').value = data.numero || '';
-                        document.getElementById('telefone').value = data.telefone || '';
-                    }
-                })
-                .catch(error => {
-                    console.error('Erro na solicitação:', error);
-                });
-        } else if (campoCNPJ === "") {
-            document.getElementById('nome').value = '';
-            document.getElementById('estado').value = '';
-            document.getElementById('cidade').value = '';
-            document.getElementById('bairro').value = '';
-            document.getElementById('endereco').value = '';
-            document.getElementById('numero').value = '';
-            document.getElementById('telefone').value = '';
-        }
-    });
-
+                    $.getJSON('/Fornecedor/getCidadeComboBox/lista/' + $(this).val(), 
+                        function(data) {
+                            var options = '<option value="" selected disabled>... Escolha uma cidade ...</option>';
+                            for (var i = 0; i < data.length; i++) {
+                                options += '<option value="' + data[i].id + '">' + data[i].nome + '</option>';
+                            }
+                            $('#cidade').html(options);
+                            $('#cidade').show();
+                        }
+                    ).fail(function() {
+                        console.error("Erro ao carregar cidades.");
+                    }).always(function() {
+                        $('.carregando').hide();
+                    });
+                }
+            });
+        });
+    // });
     </script>

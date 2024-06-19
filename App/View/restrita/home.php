@@ -9,7 +9,7 @@ use App\Library\Session;
     <div class="container">
         <div class="blog-banner">
             <div class="mt-5 mb-5 text-left">
-                <h1 style="color: #384aeb;">Home da área Administrativa</h1>
+                <h1 style="color: #384aeb;">Home</h1>
             </div>
         </div>
     </div>
@@ -28,7 +28,7 @@ use App\Library\Session;
                 <br />
                 <br />
                 <p>
-                    <strong><?= Session::get('usuarioLogin') ?></strong>, seja bem vindo(a) a área administrativa do projeto de controle de estoque.
+                    <strong><?= Session::get('usuarioLogin') ?></strong>, seja bem vindo(a) ao sistema controle de estoque.
                 </p>
                 <br />
                 <br />

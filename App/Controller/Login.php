@@ -47,8 +47,13 @@ class Login extends ControllerMain
             Session::set("usuarioSenha", $aUsuario['senha']);
             
             // Direcionar o usuário para página home
-            return Redirect::page("home/homeAdmin");
-            //
+            if (Session::get('usuarioNivel') == 1) {
+                $redirectUrl = 'Home/homeAdmin';
+            } elseif (Session::get('usuarioNivel') == 2) {
+                $redirectUrl = 'Home/home';
+            } 
+            
+            return Redirect::page($redirectUrl);
 
         } else {
             Session::set('msgError', 'Usuário e ou senha inválido.');

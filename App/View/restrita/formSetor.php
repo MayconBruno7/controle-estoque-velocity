@@ -38,7 +38,10 @@
 
                 <div class="col-4 mt-3">
                     <label for="funcionarios" class="form-label">Responsavel pelo setor</label>
-                    <select name="funcionarios" id="funcionarios" class="form-control" <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'disabled' : '' ?>>
+                    <select name="funcionarios" id="funcionarios" class="form-control" 
+                    <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'disabled' : '' ?>
+                    <?= !empty($aDados['aFuncionario']) ? 'required' : '' ?>   
+                    >
                         <option value="">...</option> <!-- Opção padrão -->
                         <?php foreach ($aDados['aFuncionario'] as $value): ?>
                             <option value="<?= $value['id'] ?>" <?= $value['id'] == setValor('id') ? 'selected' : '' ?>>

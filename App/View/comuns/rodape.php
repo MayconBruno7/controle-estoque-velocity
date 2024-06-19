@@ -25,12 +25,12 @@
         <footer>
             <p>Departamento de Informática Rosário da Limeira - MG</p>
             <span>© 2024 Company, Inc</span>
-            
+
+            <?php use App\Library\Session; ?>
+
             <div class="container">
-                <a class="mt-2" href="<?= baseUrl() ?>/details.php">Detalhes do projeto</a>
+                <a class="mt-2" href="<?= baseUrl() ?><?= Session::get('usuarioNivel') == 1 ? 'Home/homeAdmin' : (Session::get('usuarioNivel') == 2 ? 'Home/home' : "") ?>">Home</a>
             </div>
         </footer>
-        
-        <!-- <script src="<?= baseUrl() ?>/assets/js/customEstoque.js"></script> -->
     </body>   
 </html>

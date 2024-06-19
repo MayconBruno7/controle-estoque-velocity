@@ -216,6 +216,23 @@ class Formulario
         return $dataFormatada;
     }
 
+    static public function formatarSalario($salario, $moeda = 'R$', $decimais = 2) {
+        // Substituir vírgulas por ponto para padronizar o separador decimal
+        $salario = str_replace(',', '.', $salario);
+    
+        // Remover caracteres não numéricos exceto ponto
+        $salario = preg_replace("/[^0-9.]/", "", $salario);
+    
+        // Converter para número de ponto flutuante
+        $salario = (float)$salario;
+    
+        // Formatar o número com vírgula como separador de milhar e precisão de casas decimais
+        $salario_formatado = number_format($salario, $decimais, ',', '.');
+    
+        // Retornar o salário formatado com o símbolo da moeda
+        return $moeda . ' ' . $salario_formatado;
+    }
+
     /**
      * mensagem
      *

@@ -48,6 +48,9 @@ class Funcionario extends ControllerMain
         $SetorModel = $this->loadModel("Fornecedor");
         $dados['aSetor'] = $SetorModel->lista('id');
 
+        $CargoModel = $this->loadModel("Cargo");
+        $dados['aCargo'] = $CargoModel->lista('id');
+
         return $this->loadView("restrita/formFuncionario", $dados);
     }
 
@@ -60,16 +63,18 @@ class Funcionario extends ControllerMain
     {
         $post = $this->getPost();
 
+
         if (Validator::make($post, $this->model->validationRules)) {
             return Redirect::page("Funcionario/form/insert");     // error
         } else {
 
             if ($this->model->insert([
                 "nome"              => $post['nome'],
-                "cpf"               => $post['cpf'],
+                "cpf"               => preg_replace("/[^0-9]/", "", $post['cpf']),
                 "telefone"          => $post['telefone'],
                 "setor"             => $post['setor'],
-                "salario"           => $post['salario'],
+                "cargo"             => $post['cargo'],
+                "salario"           => preg_replace("/[^0-9,]/", "", $post['salario']),
                 "statusRegistro"    => $post['statusRegistro']
             ])) {
                 Session::set("msgSuccess", "Funcionario adicionada com sucesso.");
@@ -101,10 +106,11 @@ class Funcionario extends ControllerMain
                 ], 
                 [
                     "nome"              => $post['nome'],
-                    "cpf"               => $post['cpf'],
-                    "telefone"          => $post['telefone'],
+                    "cpf"               => preg_replace("/[^0-9]/", "", $post['cpf']),
+                    "telefone"          => preg_replace("/[^0-9]/", "", $post['telefone']),
                     "setor"             => $post['setor'],
-                    "salario"           => $post['salario'],
+                    "cargo"             => $post['cargo'],
+                    "salario"           => preg_replace("/[^0-9,]/", "", $post['salario']),
                     "statusRegistro"    => $post['statusRegistro']
                 ]
             )) {

@@ -24,6 +24,7 @@
             <table id="tbListafuncionarios" class="table table-striped table-hover table-bordered table-responsive-sm display" style="width:100%">
                 <thead class="table-dark">
                     <tr>
+                        <th>ID</th>
                         <th>Nome</th>
                         <th>Salário</th>
                         <th>Setor</th>
@@ -37,8 +38,9 @@
                         foreach ($dados as $row) {
                             ?>
                                 <tr>
-                                    <td> <?= $row['nome'] ?> </td>
-                                    <td> R$ <?= number_format($row['salario'], 2, ',', '.') ?></td>
+                                <td> <?= $row['id'] ?> </td>
+                                <td> <?= $row['nome'] ?> </td>
+                                <td> R$ <?= number_format($row['salario'], 2, ',', '.') ?></td>
                                     <td> <?= $row['nome_do_setor'] ? : "Nenhum setor selecionado" ?> </td>
 
                                     <td><?= Formulario::getStatusDescricao($row['statusRegistro']) ?></td>

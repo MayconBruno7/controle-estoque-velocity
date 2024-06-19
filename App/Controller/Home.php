@@ -11,22 +11,9 @@ class Home extends ControllerMain
      */
     public function index()
     {
-    
-        // $this->loadView("home", $this->dados);
-
         $this->loadView("usuario/login", $this->dados);
 
     }
-
-    /**
-     * contato
-     *
-     * @return void
-     */
-    // public function contato()
-    // {
-    //     $this->loadView("contato");
-    // }
 
     /**
      * login
@@ -47,6 +34,17 @@ class Home extends ControllerMain
     {
         return $this->loadView("restrita/homeAdmin");
     }
+
+      /**
+     * homeAdmin
+     *
+     * @return void
+     */
+    public function home()
+    {
+        return $this->loadView("restrita/home");
+    }
+
 
     /**
      * criarConta

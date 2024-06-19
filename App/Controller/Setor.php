@@ -15,11 +15,6 @@ class Setor extends ControllerMain
     public function __construct($dados)
     {
         $this->auxiliarConstruct($dados);
-
-        // Somente pode ser acessado por usuários adminsitradores
-        if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
-        }
     }
 
     /**
@@ -112,24 +107,6 @@ class Setor extends ControllerMain
         if (Validator::make($post, $this->model->validationRules)) {
             return Redirect::page("Setor/form/update/" . $post['id']);    // error
         } else {
-
-            // if (!empty($_FILES['imagem']['name'])) {
-
-            //     // Faz uploado da imagem
-            //     $nomeRetornado = UploadImages::upload($_FILES, 'Setor');
-
-            //     // se for boolean, significa que o upload falhou
-            //     if (is_bool($nomeRetornado)) {
-            //         Session::set( 'inputs' , $post );
-            //         return Redirect::page("Setor/form/update/" . $post['id']);
-            //     }
-
-            //     UploadImages::delete($post['nomeImagem'], 'Setor');
-
-            // } else {
-            //     $nomeRetornado = $post['nomeImagem'];
-            // }
-
             if ($this->model->update(
                 [
                     "id" => $post['id']
