@@ -18,9 +18,16 @@ class Produto extends ControllerMain
      */
     public function __construct($dados)
     {
-        
+        // $this->auxiliarConstruct($dados);
+
+        // // Inicializa o modelo
+        // $this->model = new ProdutoModel();
         $this->auxiliarConstruct($dados);
 
+        // Somente pode ser acessado por usuários adminsitradores
+        // if (!$this->getAdministrador()) {
+        //     return Redirect::page("Home");
+        // }
     }
 
     /**
@@ -78,6 +85,21 @@ class Produto extends ControllerMain
             return Redirect::page("Produto/form/insert");
         } else {
 
+            // if (!empty($_FILES['imagem']['name'])) {
+
+            //     // Faz uploado da imagem
+            //     $nomeRetornado = UploadImages::upload($_FILES, 'produto');
+
+            //     // se for boolean, significa que o upload falhou
+            //     if (is_bool($nomeRetornado)) {
+            //         Session::set( 'inputs' , $post );
+            //         return Redirect::page("Produto/form/update/" . $post['id']);
+            //     }
+
+            // } else {
+            //     // $nomeRetornado = $post['nomeImagem'];
+            // }
+
             if ($this->model->insert([
                 "nome"                  => $post['nome'],
                 "quantidade"            => $post['quantidade'],
@@ -107,7 +129,24 @@ class Produto extends ControllerMain
         if (Validator::make($post, $this->model->validationRules)) {
             return Redirect::page("Produto/form/update/" . $post['id']);    // error
         } else {
-            
+
+            // if (!empty($_FILES['imagem']['name'])) {
+
+            //     // Faz uploado da imagem
+            //     $nomeRetornado = UploadImages::upload($_FILES, 'produto');
+
+            //     // se for boolean, significa que o upload falhou
+            //     if (is_bool($nomeRetornado)) {
+            //         Session::set( 'inputs' , $post );
+            //         return Redirect::page("Produto/form/update/" . $post['id']);
+            //     }
+
+            //     UploadImages::delete($post['nomeImagem'], 'produto');
+
+            // } else {
+            //     $nomeRetornado = $post['nomeImagem'];
+            // }
+
             if ($this->model->update(
                 [
                     "id" => $post['id']

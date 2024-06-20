@@ -92,6 +92,10 @@
                     <option value="">Selecione uma alteração</option>
                     <?php 
 
+                    // Recupera o histórico de alterações do item
+                    // $historicoQuery = "SELECT * FROM historico_produtos WHERE id_produtos = ?";
+                    // $historicoData = $db->dbSelect($historicoQuery, 'all', [$_GET['id']]);
+
                     foreach ($aDados['aHistoricoProduto'] as $historicoItem): ?>
                         <?php
 

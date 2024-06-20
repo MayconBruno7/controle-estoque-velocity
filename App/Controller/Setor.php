@@ -7,15 +7,20 @@ use App\Library\Session;
 
 class Setor extends ControllerMain
 {
-    /**
-     * construct
-     *
-     * @param array $dados 
-     */
-    public function __construct($dados)
-    {
-        $this->auxiliarConstruct($dados);
-    }
+    // /**
+    //  * construct
+    //  *
+    //  * @param array $dados 
+    //  */
+    // public function __construct($dados)
+    // {
+    //     $this->auxiliarConstruct($dados);
+
+    //     // Somente pode ser acessado por usuários adminsitradores
+    //     if (!$this->getAdministrador()) {
+    //         return Redirect::page("Home");
+    //     }
+    // }
 
     /**
      * index

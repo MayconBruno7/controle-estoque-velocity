@@ -11,7 +11,7 @@
     
     <?= Formulario::titulo('Fornecedor', false, false) ?>
 
-    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/84429695000111">
+    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/33.592.510/0001-54">
         <button>Enviar</button>
     </a>
 
@@ -43,6 +43,22 @@
                     <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
                 </select>
             </div>
+
+            <!-- <div class="mb-3 col-6">
+                <label for="estado" class="form-label">Estado</label>
+                <input type="text" class="form-control" name="estado" id="estado" 
+                    maxlength="50" placeholder="Informe estado"
+                    value="<?= setValor('estado') ?>"
+                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+            </div>
+
+            <div class="mb-3 col-6">
+                <label for="cidade" class="form-label">Cidade</label>
+                <input type="text" class="form-control" name="cidade" id="cidade" 
+                    maxlength="50" placeholder="Informe a cidade"
+                    value="<?= setValor('cidade') ?>"
+                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+            </div> -->
 
             <div class="col-6 mb-3">
                 <label for="estado" class="form-label">Estado</label>
@@ -168,39 +184,46 @@
             input.value = telefone;
         }
 
-        // document.getElementById('cnpj').addEventListener('input', function() {
-        // const campoCNPJ = document.getElementById('cnpj').value;
-        
-        // if (campoCNPJ.length === 18) {
-        //     fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.error) {
-        //                 console.error('Erro:', data.error);
-        //             } else {
-        //                 console.log(data);
-        //                 document.getElementById('nome').value = data.fantasia || data.nome || '';
-        //                 document.getElementById('estado').value = data.uf || '';
-        //                 document.getElementById('cidade').vaslue = data.municipio || '';
-        //                 document.getElementById('bairro').value = data.bairro || '';
-        //                 document.getElementById('endereco').value = data.logradouro || '';
-        //                 document.getElementById('numero').value = data.numero || '';
-        //                 document.getElementById('telefone').value = data.telefone || '';
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Erro na solicitação:', error);
-        //         });
-        // } else if (campoCNPJ === "") {
-        //     document.getElementById('nome').value = '';
-        //     document.getElementById('estado').value = '';
-        //     document.getElementById('cidade').value = '';
-        //     document.getElementById('bairro').value = '';
-        //     document.getElementById('endereco').value = '';
-        //     document.getElementById('numero').value = '';
-        //     document.getElementById('telefone').value = '';
-        // }
-   
+        document.getElementById('cnpj').addEventListener('input', function() {
+            let campoCNPJ = document.getElementById('cnpj').value;
+
+            // Remover todos os caracteres que não são dígitos
+            campoCNPJ = campoCNPJ.replace(/\D/g, '');
+
+            // Atualizar o valor do campo de CNPJ com o valor limpo
+            document.getElementById('cnpj').value = campoCNPJ;
+
+            if (campoCNPJ.length === 14) {
+                fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.error) {
+                            console.error('Erro:', data.error);
+                        } else {
+                            console.log(data);
+                            document.getElementById('nome').value = data.fantasia || data.nome || '';
+                            document.getElementById('estado').value = data.uf || '';
+                            document.getElementById('cidade').value = data.municipio || '';
+                            document.getElementById('bairro').value = data.bairro || '';
+                            document.getElementById('endereco').value = data.logradouro || '';
+                            document.getElementById('numero').value = data.numero || '';
+                            document.getElementById('telefone').value = data.telefone || '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro na solicitação:', error);
+                    });
+            } else {
+                // Limpar os campos se o CNPJ não estiver completo
+                document.getElementById('nome').value = '';
+                document.getElementById('estado').value = '';
+                document.getElementById('cidade').value = '';
+                document.getElementById('bairro').value = '';
+                document.getElementById('endereco').value = '';
+                document.getElementById('numero').value = '';
+                document.getElementById('telefone').value = '';
+            }
+        });
 
         $(function() {
             $('#estado').change(function() {
@@ -210,7 +233,7 @@
 
                     $.getJSON('/Fornecedor/getCidadeComboBox/lista/' + $(this).val(), 
                         function(data) {
-                            var options = '<option value="" selected disabled>... Escolha uma cidade ...</option>';
+                            var options = '<option value="" selected disabled>Escolha uma cidade</option>';
                             for (var i = 0; i < data.length; i++) {
                                 options += '<option value="' + data[i].id + '">' + data[i].nome + '</option>';
                             }
@@ -225,5 +248,4 @@
                 }
             });
         });
-    // });
     </script>

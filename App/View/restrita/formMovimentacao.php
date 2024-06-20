@@ -37,9 +37,55 @@
     $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
     $total = 0;
 
+    // unset($_SESSION['movimentacao']);
+    // var_dump(Session::get('movimentacao')['0']);
+    // var_dump($dadosMovimentacao['motivo']);
+    // var_dump($_SESSION['movimentacao'][0]['produtos']);
+    // var_dump($_SESSION['movimentacao']);
+    // var_dump( $_SESSION['movimentacao'][0]['produtos']);
+    // unset($_SESSION['movimentacao']);
+    // unset($_SESSION['produtos']);
+    // exit;
+
 ?>
 
 <main class="container mt-5">
+
+    <div class="modal fade" id="modalAdicionarProduto" tabindex="-1" aria-labelledby="modalAdicionarProdutoLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalAdicionarProdutoLabel">Adicionar Produto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="id_produto" class="form-label">Produto</label>
+                                <input type="text" class="form-control" id="search_produto" placeholder="Pesquisar produto">
+                                <select class="form-control" name="id_produto" id="id_produto" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                                    <option value="" selected disabled>Vazio</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="quantidade" class="form-label">Quantidade</label>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="valor" class="form-label">Valor Unitário</label>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+                        </div>
+
+                        <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
+                        <input type="hidden" name="tipo" value="<?= setValor('tipo') ?>">
+                        <button type="submit" class="btn btn-primary">Adicionar</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
     <?= Formulario::titulo('Movimentação', true, false); ?>
@@ -194,18 +240,13 @@
                 </div>
             </div>
 
-            <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                <div class="col mt-4">
-                    <div class="col-auto text-end ml-2">
-                    <a href="<?= $this->getAcao() == 'update' ? baseUrl() . "Produto/index/update/" . $this->getId() . "/" . setValor('tipo') : "" ?>"
-                        class="btn btn-outline-primary btn-sm styleButton" 
-                        id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" 
-                        title="Adicionar">
-                            Adicionar Produtos
-                        </a>
-                    </div>
+            <div class="col mt-4">
+                <div class="col-auto text-end ml-2">
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" <?= ($this->getAcao() != 'insert') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
+                        Adicionar Produtos
+                    </button>
                 </div>
-            <?php endif; ?>
+            </div>
 
             <table id="tbListaProduto" class="table table-striped table-hover table-bordered table-responsive-sm mt-3">
             <thead class="table-dark">
@@ -305,6 +346,40 @@
 
 <script>
 
+    $(function() {
+        $('#search_produto').keyup(function() {
+            var termo = $(this).val().trim();
+
+            if (termo.length > 0) {
+                $('#id_produto').hide();
+                $('.carregando').show();
+
+                $.getJSON('/Movimentacao/getProdutoComboBox/' + termo, 
+                function(data) {
+                    console.log(data);
+                    var options = '<option value="" selected disabled>Escolha o produto</option>';
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
+                        }
+                    } else {
+                        options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
+                    }
+                    $('#id_produto').html(options).show();
+                })
+                .fail(function() {
+                    console.error("Erro ao carregar produtos.");
+                    $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
+                })
+                .always(function() {
+                    $('.carregando').hide();
+                });
+            } else {
+                $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
+            }
+        });
+    });
+
     document.addEventListener("DOMContentLoaded", function() {
  
         // Chama a função capturarValores quando o link for clicado
@@ -353,6 +428,12 @@
                 'produtos': produtos 
             };
 
+            // Função para abrir o modal
+            function abrirModal() {
+                var modal = new bootstrap.Modal(document.getElementById('modalAdicionarProduto'));
+                modal.show();
+            }
+
             // Envia os dados para o PHP usando AJAX
             var xhr = new XMLHttpRequest();
             xhr.open('POST', 'formMovimentacoes.php?acao=insert', true);
@@ -361,13 +442,29 @@
                 if (xhr.readyState === 4 && xhr.status === 200) {
                     var idMovimentacoes = ''; // Defina o valor corretamente
                     var tipo = tipo_movimentacao;
-                    window.location.href = "<?= baseUrl() ?>Produto/index/insert/movimentacao";
+                    abrirModal();
                 } else {
                     console.log('Erro ao salvar informações');
                 }
             };
             xhr.send(JSON.stringify(movimentacao));
         }
+
+        // window.onbeforeunload = function(event) {
+        //     var activeElement = document.activeElement;
+        //     // Verifica se o evento foi acionado pelo botão "Salvar"
+        //     var btnSalvar = document.getElementById('btnSalvar');
+        //     // Verifica se o evento foi acionado pelo link "Voltar"
+        //     var linkVoltar = document.querySelector('a[href="listaMovimentacoes.php"]');
+        //     if ((activeElement !== btnSalvar && activeElement.tagName.toLowerCase() !== 'button') 
+        //         && (activeElement !== linkVoltar && activeElement.tagName.toLowerCase() !== 'a')) {
+        //         // Envia uma requisição AJAX para limpar a sessão
+        //         var xhr = new XMLHttpRequest();
+        //         xhr.open('GET', 'limparSessao.php', true);
+        //         xhr.send();
+        //     }
+        // };
+
     });
 
 </script>

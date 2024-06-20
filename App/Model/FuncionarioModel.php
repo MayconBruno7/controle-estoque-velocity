@@ -15,7 +15,11 @@ Class FuncionarioModel extends ModelMain
         'cpf' => [
             'label' => 'cpf',
             'rules' => 'required|min:14'
-        ], 
+        ],
+        // 'setor' => [
+        //     'label' => 'setor',
+        //     'rules' => 'required|int'
+        // ],   
         'salario' => [
             'label' => 'salario',
             'rules' => 'required|decimal'
@@ -49,4 +53,26 @@ Class FuncionarioModel extends ModelMain
             return [];
         }
     }
+    
+    // /**
+    //  * getProdutoCombobox
+    //  *
+    //  * @param int $categoria_id 
+    //  * @return array
+    //  */
+    // public function getProdutoCombobox($categoria_id) 
+    // {
+    //     $rsc = $this->db->dbSelect("SELECT p.id, p.descricao 
+    //                                 FROM {$this->table} as p
+    //                                 INNER JOIN categoria as c ON c.id = p.categoria_id
+    //                                 WHERE c.id = ?
+    //                                 ORDER BY p.descricao",
+    //                                 [$categoria_id]);
+
+    //     if ($this->db->dbNumeroLinhas($rsc) > 0) {
+    //         return $this->db->dbBuscaArrayAll($rsc);
+    //     } else {
+    //         return [];
+    //     }
+    // }
 }

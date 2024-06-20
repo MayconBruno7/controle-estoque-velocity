@@ -52,7 +52,7 @@
                                 <td><?= Formulario::getCondicao($value['condicao']) ?></td>
                                 <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
                                 <td>
-                                    <?php if ($this->getAcao() == 'insert' || $this->getAcao() == 'update') : ?>
+                                    <!-- <?php if ($this->getAcao() == 'insert' || $this->getAcao() == 'update') : ?>
                                         <form id="form<?= $value['id'] ?>" action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" method="POST">
                                             <div class="row mt-3">
                                                 <div class="col">
@@ -71,7 +71,7 @@
                                                 </div>
                                             </div>
                                         </form>
-                                    <?php endif; ?>
+                                    <?php endif; ?> -->
 
                                     <?php if ($this->getAcao() == 'delete') : ?>
                                         <form class="g-3" action="<?= baseUrl() ?>Movimentacao/deleteProdutoMovimentacao/<?= $this->getAcao() ?>" method="post">

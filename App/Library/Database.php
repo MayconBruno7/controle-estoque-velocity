@@ -107,6 +107,7 @@ class Database
     protected function getCampos(array $campos, $conector = ",")
     {
         $save['sql'] = "";
+        $save['dados'] = [];
         $virgula = false;
 
         foreach ($campos as $key => $value) {
@@ -123,15 +124,21 @@ class Database
                 $key = trim(str_replace('<>' , "", $key));
             }
 
-            $save['sql'] .= ($virgula ? $juncao : "") . "`" . $key . "`" . $sinal . " :" . $key . " ";
-            $save['dados'][":" . $key] = $value;
+            // Verifica se o valor deve ser tratado como um LIKE
+            if (is_array($value) && strtoupper($value[0]) === 'LIKE') {
+                $save['sql'] .= ($virgula ? $juncao : "") . "`" . $key . "` LIKE :" . $key . " ";
+                $save['dados'][":" . $key] = '%' . $value[1] . '%'; // Adiciona o valor com % para o LIKE
+            } else {
+                $save['sql'] .= ($virgula ? $juncao : "") . "`" . $key . "`" . $sinal . " :" . $key . " ";
+                $save['dados'][":" . $key] = $value;
+            }
+
             $virgula = true;
         }
-        // var_dump($save);
-        // exit;
-        return $save;
 
+        return $save;
     }
+
 
     /**
      * insert
@@ -156,10 +163,6 @@ class Database
             $query->execute($save['dados']);
 
             $rs = $conexao->lastInsertId();
-
-            // var_dump($query);
-            // var_dump($conexao->lastInsertId());
-            // exit;
 
             self::__destruct();
 
@@ -252,24 +255,19 @@ class Database
     {
         $where['sql'] = "";
         $where['dados'] = [];
-        $where['save'] = [];
-        $campos = "";
+        $campos = "*";
         $sql = '';
 
         // select
-
-        if (!isset($configs['campos'])) {
-            $campos = "*";
-        } else {
+        if (isset($configs['campos'])) {
             $campos = "`" . implode("`, `" , $configs['campos']) . "`";
         }
 
         // where
-
         if (isset($configs['where'])) {
             $ret = $this->getCampos($configs['where'], "AND");
             $where['sql'] .= " WHERE " . $ret['sql'];
-            $where['save'] = array_merge($ret['dados'], $where['dados']);
+            $where['dados'] = array_merge($where['dados'], $ret['dados']);
         }
 
         // group by
@@ -278,29 +276,23 @@ class Database
         }
 
         // order by
-
         if (isset($configs['orderby'])) {
-
             if (gettype($configs['orderby']) == "string") {
                 $configs['orderby'] = [$configs['orderby']];
             }
-
             $orderby = "`" . implode("`, `" , $configs['orderby']) . "`";
             $orderby = str_replace(" DESC`", "` DESC", $orderby);
         }
 
-        // executar o camando e retornar os dados
-
+        // executar o comando e retornar os dados
         $sql .= "SELECT " . $campos;
         $sql .= " FROM `" . $table . "`";
         $sql .= $where['sql'];
         $sql .= (!empty($groupby) ? " GROUP BY " . $groupby : '');
         $sql .= (!empty($orderby) ? " ORDER BY ". $orderby : '');
 
-        //
-
-        $query = $this->connect()->prepare($sql, [PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL]);
-        $rscDados = $query->execute($where['save']);
+        $query = $this->connect()->prepare($sql);
+        $query->execute($where['dados']);
 
         if ($tipo == "first") {
             return $this->dbBuscaArray($query);
@@ -310,6 +302,7 @@ class Database
             return $this->dbNumeroLinhas($query);
         }
     }
+
 
     /**
      * Método select que retorna um array de objetos
