@@ -15,7 +15,7 @@ Class FuncionarioModel extends ModelMain
         'cpf' => [
             'label' => 'cpf',
             'rules' => 'required|min:14'
-        ], 
+        ],  
         'salario' => [
             'label' => 'salario',
             'rules' => 'required|decimal'

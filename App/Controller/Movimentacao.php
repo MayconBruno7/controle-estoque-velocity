@@ -51,9 +51,18 @@ class Movimentacao extends ControllerMain
         $FornecedorModel = $this->loadModel("Fornecedor");
         $dados['aFornecedorMovimentacao'] = $FornecedorModel->lista('id');
 
+        $ProdutoModel = $this->loadModel("Produto");
+        $dados['aProduto'] = $ProdutoModel->lista('id');
+
         return $this->loadView("restrita/formMovimentacao", $dados);
     }
 
+        
+    /**
+     * insert
+     *
+     * @return void
+     */
     public function insert()
     {
 
@@ -64,7 +73,7 @@ class Movimentacao extends ControllerMain
             isset($post['fornecedor_id'], $post['tipo'], $post['statusRegistro'], $post['setor_id'],
             $post['data_pedido'], $post['motivo'], $post['statusRegistro'])
         ) {
-
+         
             // Dados da movimentação
             $fornecedor_id = (int)$post['fornecedor_id'];
             $setor_id = (int)$post['setor_id'];
@@ -78,11 +87,12 @@ class Movimentacao extends ControllerMain
             $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
             $id_produto = isset($post['id_produto']) ? (int)$post['id_produto'] : '';
             $valor_produto = isset($post['valor']) ? (float)$post['valor'] : '';
+
             $ProdutoModel = $this->loadModel("Produto");
-            $dadosProduto['aProduto'] = $ProdutoModel->recuperaProduto($id_produto);
-
+            $dadosProduto = $ProdutoModel->recuperaProduto($id_produto);
+          
             if ($this->getAcao() == 'update') {
-
+                
                 // Verificar se há uma sessão de movimentação
                 if (!isset($_SESSION['movimentacao'])) {
                     $_SESSION['movimentacao'] = array();
@@ -103,44 +113,59 @@ class Movimentacao extends ControllerMain
                         break;
                     }
                 }
-            
-                // Session::set("msgSuccess", "Produto adicionado a movimentação.");
             } 
+        
+            $verificaQuantidadeEstoqueNegativa = false;
 
-            // parte da inserção de movimentações e produtos
-            $inserindoMovimentacaoEProdutos = $this->model->insertMovimentacao([
-                "id_fornecedor"     => $fornecedor_id,
-                "tipo"              => $tipo_movimentacao,
-                "statusRegistro"    => $statusRegistro,
-                "id_setor"          => $setor_id,
-                "data_pedido"       => $data_pedido,
-                "data_chegada"      => $data_chegada,
-                "motivo"            => $motivo
-
-            ],
-            [
-                [
-                    // "id_movimentacoes"  => '',
-                    "id_produtos"       => $id_produto,
-                    "quantidade"        => $quantidade,
-                    "valor"             => $valor_produto
-                ]
-            ],
-                $tipo_movimentacao
-            );
-
-            if($inserindoMovimentacaoEProdutos) {
-                Session::destroy('movimentacao');
-                Session::destroy('produtos');
-                Session::set("msgSuccess", "Movimentação adicionada com sucesso.");
-                Redirect::page("Movimentacao");
-
+            if ($dadosProduto[0]['quantidade'] >= $quantidade && $tipo_movimentacao == '2') {
+                $verificaQuantidadeEstoqueNegativa = true;
+            } else if ($dadosProduto[0]['quantidade'] <= $quantidade && $tipo_movimentacao == '2') {
+                $verificaQuantidadeEstoqueNegativa = false;
+            } else {
+                $verificaQuantidadeEstoqueNegativa = true;
             }
+
+            
+            if ($verificaQuantidadeEstoqueNegativa) {
+                // parte da inserção de movimentações e produtos
+                $inserindoMovimentacaoEProdutos = $this->model->insertMovimentacao([
+                    "id_fornecedor"     => $fornecedor_id,
+                    "tipo"              => $tipo_movimentacao,
+                    "statusRegistro"    => $statusRegistro,
+                    "id_setor"          => $setor_id,
+                    "data_pedido"       => $data_pedido,
+                    "data_chegada"      => $data_chegada,
+                    "motivo"            => $motivo
+
+                ],
+                [
+                    [
+                        "id_produtos"       => $id_produto,
+                        "quantidade"        => $quantidade,
+                        "valor"             => $valor_produto
+                    ]
+                ],
+                    $tipo_movimentacao
+                );
+
+                if($inserindoMovimentacaoEProdutos) {
+                    Session::destroy('movimentacao');
+                    Session::destroy('produtos');
+                    Session::set("msgSuccess", "Movimentação adicionada com sucesso.");
+                    Redirect::page("Movimentacao");
+                }
+            } else {
+                Session::set("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
+                Redirect::page("Movimentacao/form/insert/0");
+            }
+        } else {
+            Session::set("msgError", "Dados do formulário insuficientes.");
+            Redirect::page("Movimentacao/form/insert/0");
         }
     }
 
-        /**
-     * insert
+    /**
+     * insertProdutoMovimentacao
      *
      * @return void
      */
@@ -189,9 +214,7 @@ class Movimentacao extends ControllerMain
 
         Session::set("msgSuccess", "Produto adicionado a movimentação.");
         Redirect::page("Movimentacao/form/insert/0");
-     
     }
-
 
     /**
      * deleteProdutoMovimentacao
@@ -288,8 +311,21 @@ class Movimentacao extends ControllerMain
             $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
             $dadosItensMovimentacao = $MovimentacaoItemModel->listaProdutos($id_movimentacao);
 
-            $quantidade_movimentacao = (isset($dadosItensMovimentacao[0]['mov_itens_quantidade']) ? (int)$dadosItensMovimentacao[0]['mov_itens_quantidade'] : 0) + (int)$quantidades;
+            $quantidade_movimentacao = 0;
 
+            foreach ($dadosItensMovimentacao as $index => $item) {
+                if ($id_produto == $item['id_prod_mov_itens'] && $id_movimentacao == $item['id_movimentacoes']) {
+                    if ($tipo_movimentacao == 1) {
+                        $quantidade_movimentacao = $item['quantidade'] + (int)$quantidades;
+                    } else if ($tipo_movimentacao == 2) {
+                        $quantidade_movimentacao =  $item['quantidade'] - (int)$quantidades;
+                    }
+                    break;
+                } else {
+                    $quantidade_movimentacao = (int)$quantidades;
+                }
+            }
+            
             $ItemModel = $this->loadModel("Produto");
             $dadosProduto = $ItemModel->recuperaProduto($id_produto);
 
@@ -331,75 +367,80 @@ class Movimentacao extends ControllerMain
                     $acaoProduto = 'insert';
                 }
             }
-    
-            if ($this->getAcao() != 'updateProdutoMovimentacao') {
+            
+            if ($dadosProduto[0]['quantidade'] >= $quantidades && $tipo_movimentacao == '1') {
+                if ($this->getAcao() != 'updateProdutoMovimentacao') {
 
-                $AtualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
-                    [
-                        "id_movimentacao"   => $id_movimentacao
-                    ],
-                    [
-                        "id_fornecedor"     => $fornecedor_id,
-                        "tipo"              => $tipo_movimentacao,
-                        "statusRegistro"    => $statusRegistro,
-                        "id_setor"          => $setor_id,
-                        "data_pedido"       => $data_pedido,
-                        "data_chegada"      => $data_chegada,
-                        "motivo"            => $motivo
-                    ],
-                    [
+                    $AtualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
                         [
-                            "id_produtos"           => $id_produto,
-                            "quantidade"            => $quantidade_produto, 
-                            "valor"                 => $valores_produtos
-                        ]
-                    ],
-                    [
-                        $produtoMovAtualizado
-                    ],
-                    
-                );
+                            "id_movimentacao"   => $id_movimentacao
+                        ],
+                        [
+                            "id_fornecedor"     => $fornecedor_id,
+                            "tipo"              => $tipo_movimentacao,
+                            "statusRegistro"    => $statusRegistro,
+                            "id_setor"          => $setor_id,
+                            "data_pedido"       => $data_pedido,
+                            "data_chegada"      => $data_chegada,
+                            "motivo"            => $motivo
+                        ],
+                        [
+                            [
+                                "id_produtos"           => $id_produto,
+                                "quantidade"            => $quantidade_produto, 
+                                "valor"                 => $valores_produtos
+                            ]
+                        ],
+                        [
+                            $produtoMovAtualizado
+                        ],
+                        
+                    );
 
-                if ($AtualizandoMovimentacaoEProdutos) {
-                    Session::destroy('movimentacao');
-                    Session::destroy('produtos');
-                    Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
-                    return Redirect::page("Movimentacao");
-                } else {
-                    Session::set("msgError", "Falha tentar alterar a Movimentacao.");
-                }
-            } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
-                $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
-                    [
-                        "id_movimentacao" => $id_movimentacao
-                    ],
-                    [
-                        [
-                            "id_produtos"           => $id_produto,
-                            "valor"                 => $valores_produtos
-                        ]
-                    ],
-                    [
-                        'acaoProduto' => $acaoProduto
-                    ],
-                    $quantidade_produto,
-                    $quantidade_movimentacao
-                    
-                );
-    
-                if ($AtualizandoInfoProdutoMovimentacao) {
-                    if (!isset($_SESSION['produto_mov_atualizado'])) {
-                        $_SESSION['produto_mov_atualizado'] = true;
+                    if ($AtualizandoMovimentacaoEProdutos) {
+                        Session::destroy('movimentacao');
+                        Session::destroy('produtos');
+                        Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
+                        return Redirect::page("Movimentacao");
+                    } else {
+                        Session::set("msgError", "Falha tentar alterar a Movimentacao.");
                     }
-                    
-                    Session::destroy('movimentacao');
-                    Session::destroy('produtos');
-                    Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
-                    return Redirect::page("Movimentacao/form/update/" . $id_movimentacao);
-                } else {
-                    Session::set("msgError", "Falha tentar alterar a Movimentacao.");
-                    return Redirect::page("Movimentacao/form/update/" . $id_movimentacao);
+                } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
+                    $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
+                        [
+                            "id_movimentacao" => $id_movimentacao
+                        ],
+                        [
+                            [
+                                "id_produtos"           => $id_produto,
+                                "valor"                 => $valores_produtos
+                            ]
+                        ],
+                        [
+                            'acaoProduto' => $acaoProduto
+                        ],
+                        $quantidade_produto,
+                        $quantidade_movimentacao
+                        
+                    );
+        
+                    if ($AtualizandoInfoProdutoMovimentacao) {
+                        if (!isset($_SESSION['produto_mov_atualizado'])) {
+                            $_SESSION['produto_mov_atualizado'] = true;
+                        }
+                        
+                        Session::destroy('movimentacao');
+                        Session::destroy('produtos');
+                        Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
+                        return Redirect::page("Movimentacao/form/update/" . $id_movimentacao);
+                    } else {
+                        Session::set("msgError", "Falha tentar alterar a Movimentacao.");
+                        return Redirect::page("Movimentacao/form/update/" . $id_movimentacao);
+                    }
                 }
+            } else {
+                Session::set("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
+                return Redirect::page("Movimentacao/form/update/" . $id_movimentacao);
             }
         } else {
             Session::set("msgError", "Falha tentar alterar a Movimentacao.");
@@ -469,4 +510,13 @@ class Movimentacao extends ControllerMain
 
         Redirect::page("Movimentacao");
     }
+
+    public function getProdutoComboBox()
+    {
+
+        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); 
+
+        echo json_encode($dados);
+    }
+
 }

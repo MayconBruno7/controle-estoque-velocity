@@ -91,7 +91,6 @@
                 <select name="historico" id="historico" class="form-control" <?= $this->getAcao() != 'delete' && $this->getAcao() != 'insert' && $this->getAcao() != 'view' ? '' : 'disabled'?>>
                     <option value="">Selecione uma alteração</option>
                     <?php 
-
                     foreach ($aDados['aHistoricoProduto'] as $historicoItem): ?>
                         <?php
 

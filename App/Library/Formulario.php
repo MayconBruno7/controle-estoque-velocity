@@ -109,7 +109,13 @@ class Formulario
 
         return $html;
     }
-
+    
+    /**
+     * getCondicao
+     *
+     * @param  mixed $status
+     * @return void
+     */
     static public function getCondicao($status)
     {
         if ($status == 1) {
@@ -120,7 +126,13 @@ class Formulario
             return "...";
         }
     }
-
+    
+    /**
+     * getStatusDescricao
+     *
+     * @param  mixed $status
+     * @return void
+     */
     static public function getStatusDescricao($status)
     {
         if ($status == 1) {
@@ -131,7 +143,13 @@ class Formulario
             return "...";
         }
     }
-
+    
+    /**
+     * getNivelDescricao
+     *
+     * @param  mixed $nivel
+     * @return void
+     */
     static public function getNivelDescricao($nivel)
     {
         if ($nivel == 1) {
@@ -142,7 +160,13 @@ class Formulario
             return "...";
         }
     }
-
+    
+    /**
+     * getTipoMovimentacao
+     *
+     * @param  mixed $tipo
+     * @return void
+     */
     static public function getTipoMovimentacao($tipo)
     {
         if ($tipo == 1) {
@@ -153,7 +177,13 @@ class Formulario
             return "...";
         }
     }
-
+    
+    /**
+     * getTipo
+     *
+     * @param  mixed $tipo
+     * @return void
+     */
     static public function getTipo($tipo)
     {
         if ($tipo == 1) {
@@ -164,7 +194,13 @@ class Formulario
             return "...";
         }
     }
-
+    
+    /**
+     * formatarCNPJInput
+     *
+     * @param  mixed $cnpj
+     * @return void
+     */
     static public function formatarCNPJInput($cnpj) {
         // Remove caracteres especiais
         $cnpj = preg_replace('/[^0-9]/', '', $cnpj);
@@ -178,7 +214,13 @@ class Formulario
     
         return $cnpjFormatado;
     }    
-
+    
+    /**
+     * formatarCPF
+     *
+     * @param  mixed $cpf
+     * @return void
+     */
     static public function formatarCPF($cpf) {
         // Remove caracteres indesejados do CPF
         $cpf = preg_replace('/[^0-9]/', '', $cpf);
@@ -190,7 +232,13 @@ class Formulario
     
         return $cpf; // Retorna o CPF não formatado se não tiver 11 dígitos
     }
-
+    
+    /**
+     * formatarTelefone
+     *
+     * @param  mixed $telefone
+     * @return void
+     */
     static public function formatarTelefone($telefone) {
         // Remove todos os caracteres não numéricos
         $telefone = preg_replace('/\D/', '', $telefone);
@@ -205,7 +253,13 @@ class Formulario
     
         return $telefoneFormatado;
     }
-
+    
+    /**
+     * formatarDataBrasileira
+     *
+     * @param  mixed $data
+     * @return void
+     */
     static public function formatarDataBrasileira($data) {
         // Converte a data para o formato timestamp
         $timestamp = strtotime($data);
@@ -215,7 +269,15 @@ class Formulario
         
         return $dataFormatada;
     }
-
+    
+    /**
+     * formatarSalario
+     *
+     * @param  mixed $salario
+     * @param  mixed $moeda
+     * @param  mixed $decimais
+     * @return void
+     */
     static public function formatarSalario($salario, $moeda = 'R$', $decimais = 2) {
         // Substituir vírgulas por ponto para padronizar o separador decimal
         $salario = str_replace(',', '.', $salario);

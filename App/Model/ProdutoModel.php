@@ -107,7 +107,13 @@ Class ProdutoModel extends ModelMain
             return [];
         }
     }
-
+    
+    /**
+     * recuperaProduto
+     *
+     * @param  mixed $idProduto
+     * @return void
+     */
     public function recuperaProduto($idProduto)
     {
 
@@ -121,10 +127,12 @@ Class ProdutoModel extends ModelMain
     }
 
     /**
-     * updateMovimentacao
+     * updateProduto
      *
-     * @param array $movimentacao
-     * @param array $aProdutos
+     * @param  mixed $id_produto
+     * @param  mixed $id_movimentacao
+     * @param  mixed $tipo_movimentacao
+     * @param  mixed $infoProduto
      * @return void
      */
     public function updateProduto($id_produto, $id_movimentacao, $tipo_movimentacao, $infoProduto)

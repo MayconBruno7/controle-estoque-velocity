@@ -83,7 +83,12 @@ Class MovimentacaoModel extends ModelMain
             return [];
         }
     }
-
+    
+    /**
+     * idUltimaMovimentacao
+     *
+     * @return void
+     */
     public function idUltimaMovimentacao()
     {
 
@@ -139,7 +144,6 @@ Class MovimentacaoModel extends ModelMain
 
                 //atualiza a quantidade em estoque
                 $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
-
             }
 
             return true;
@@ -176,7 +180,17 @@ Class MovimentacaoModel extends ModelMain
             return false;
         }
     }
-
+    
+    /**
+     * updateInformacoesProdutoMovimentacao
+     *
+     * @param  mixed $id_movimentacao
+     * @param  mixed $aProdutos
+     * @param  mixed $acao
+     * @param  mixed $quantidade_produto
+     * @param  mixed $quantidade_movimentacao
+     * @return void
+     */
     public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao)
     {
 
@@ -207,6 +221,7 @@ Class MovimentacaoModel extends ModelMain
                         return true;
                     }
                     
+    
                 } else {
                     echo "erro";
                 }
@@ -216,10 +231,19 @@ Class MovimentacaoModel extends ModelMain
             return false;
         }
     }
-
+    
+    /**
+     * deleteInfoProdutoMovimentacao
+     *
+     * @param  mixed $id_movimentacao
+     * @param  mixed $aProdutos
+     * @param  mixed $tipo_movimentacao
+     * @param  mixed $quantidadeRemover
+     * @return void
+     */
     public function deleteInfoProdutoMovimentacao($id_movimentacao, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
     {
-    
+
         $item_movimentacao = $this->db->select(
             "movimentacoes_itens",
             "all",

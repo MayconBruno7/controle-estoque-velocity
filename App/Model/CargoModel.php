@@ -40,4 +40,3 @@ Class CargoModel extends ModelMain
             return [];
         }
     }
-}

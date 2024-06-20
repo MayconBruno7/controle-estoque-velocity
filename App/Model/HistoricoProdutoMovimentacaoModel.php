@@ -5,7 +5,13 @@ use App\Library\ModelMain;
 Class HistoricoProdutomovimentacaoModel extends ModelMain
 {
     public $table = "movimentacoes_itens";
-
+    
+    /**
+     * historico_produto_movimentacao
+     *
+     * @param  mixed $id_produto
+     * @return void
+     */
     public function historico_produto_movimentacao($id_produto)
     {
         $rsc = $this->db->dbSelect("SELECT m.id as id_mov, 

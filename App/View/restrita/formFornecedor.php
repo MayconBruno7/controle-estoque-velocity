@@ -168,40 +168,6 @@
             input.value = telefone;
         }
 
-        // document.getElementById('cnpj').addEventListener('input', function() {
-        // const campoCNPJ = document.getElementById('cnpj').value;
-        
-        // if (campoCNPJ.length === 18) {
-        //     fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + campoCNPJ)
-        //         .then(response => response.json())
-        //         .then(data => {
-        //             if (data.error) {
-        //                 console.error('Erro:', data.error);
-        //             } else {
-        //                 console.log(data);
-        //                 document.getElementById('nome').value = data.fantasia || data.nome || '';
-        //                 document.getElementById('estado').value = data.uf || '';
-        //                 document.getElementById('cidade').vaslue = data.municipio || '';
-        //                 document.getElementById('bairro').value = data.bairro || '';
-        //                 document.getElementById('endereco').value = data.logradouro || '';
-        //                 document.getElementById('numero').value = data.numero || '';
-        //                 document.getElementById('telefone').value = data.telefone || '';
-        //             }
-        //         })
-        //         .catch(error => {
-        //             console.error('Erro na solicitação:', error);
-        //         });
-        // } else if (campoCNPJ === "") {
-        //     document.getElementById('nome').value = '';
-        //     document.getElementById('estado').value = '';
-        //     document.getElementById('cidade').value = '';
-        //     document.getElementById('bairro').value = '';
-        //     document.getElementById('endereco').value = '';
-        //     document.getElementById('numero').value = '';
-        //     document.getElementById('telefone').value = '';
-        // }
-   
-
         $(function() {
             $('#estado').change(function() {
                 if ($(this).val()) {
@@ -225,5 +191,4 @@
                 }
             });
         });
-    // });
     </script>
