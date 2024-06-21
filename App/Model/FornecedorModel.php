@@ -14,7 +14,7 @@ Class FornecedorModel extends ModelMain
         ],
         'telefone' => [
             'label' => 'telefone',
-            'rules' => 'required|min:9|max:16'
+            'rules' => 'required|min:9|max:14'
         ],
 
         'statusRegistro' => [
@@ -43,26 +43,44 @@ Class FornecedorModel extends ModelMain
 
     public function requireAPI($cnpj)
     {
-        $cnpj_limpo = preg_replace("/[^0-9]/", "", $cnpj);
-        $url = "https://www.receitaws.com.br/v1/cnpj/{$cnpj_limpo}";
 
-        $options = [
-            'ssl' => [
-                'verify_peer' => false,
-                'verify_peer_name' => false,
-            ],
-        ];
-        $context = stream_context_create($options);
+    $cnpj_limpo = preg_replace("/[^0-9]/", "", $cnpj);
+    $url = "https://www.receitaws.com.br/v1/cnpj/{$cnpj_limpo}";
 
-        $response = file_get_contents($url, false, $context);
+    $options = [
+        'ssl' => [
+            'verify_peer' => false,
+            'verify_peer_name' => false,
+        ],
+    ];
 
-        if ($response !== false) {
-            $data = json_decode($response, true);
-            return $data !== null ? $data : ['error' => 'Erro ao decodificar a resposta da API.'];
+    $context = stream_context_create($options);
+
+    $response = file_get_contents($url, false, $context);
+
+    if ($response !== false) {
+        $data = json_decode($response, true);
+
+        // var_dump($data !== null);
+        // var_dump($data['status']);
+        // var_dump($response);
+        // var_dump($context);
+        // var_dump($options);
+        // var_dump($cnpj_limpo);
+        // var_dump($cnpj);
+        // var_dump($url);
+        // exit;
+        if ($data !== null && isset($data['status']) && $data['status'] == 'OK') { // Verifica se a resposta é válida
+            return $data;
         } else {
-            return ['error' => 'Erro ao consultar a API.'];
+            return ['error' => 'Erro ao consultar a API: ' . (isset($data['message']) ? $data['message'] : 'Resposta inválida')];
         }
+    } else {
+        return ['error' => 'Erro ao consultar a API.'];
     }
+
+
+}
 
     /**
      * getProdutoCombobox

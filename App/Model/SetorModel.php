@@ -27,10 +27,10 @@ Class SetorModel extends ModelMain
     public function lista($orderBy = 'id')
     {
         if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionarios as f ON s.responsavel = f.id ORDER BY {$orderBy}");
+            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionario as f ON s.responsavel = f.id ORDER BY {$orderBy}");
             
         } else {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionarios as f ON s.responsavel = f.id WHERE s.statusRegistro = 1 ORDER BY {$orderBy}");            
+            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionario as f ON s.responsavel = f.id WHERE s.statusRegistro = 1 ORDER BY {$orderBy}");            
         }
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {

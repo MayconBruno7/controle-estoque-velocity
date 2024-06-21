@@ -4,7 +4,7 @@ use App\Library\ModelMain;
 
 Class HistoricoProdutomovimentacaoModel extends ModelMain
 {
-    public $table = "movimentacoes_itens";
+    public $table = "movimentacao_item";
 
     public function historico_produto_movimentacao($id_produto)
     {
@@ -14,7 +14,7 @@ Class HistoricoProdutomovimentacaoModel extends ModelMain
                 m.data_chegada, 
                 (SELECT SUM(movi.quantidade) FROM $this->table movi WHERE movi.id_movimentacoes = m.id) AS Quantidade, 
                 (SELECT SUM(movi.valor) FROM $this->table movi WHERE movi.id_movimentacoes = m.id) AS Valor 
-            FROM movimentacoes m JOIN fornecedor f ON (f.id = m.id_fornecedor) 
+            FROM movimentacao m JOIN fornecedor f ON (f.id = m.id_fornecedor) 
             WHERE m.id IN (SELECT id_movimentacoes FROM $this->table WHERE id_produtos = ?)", 
                 [$id_produto]);
             

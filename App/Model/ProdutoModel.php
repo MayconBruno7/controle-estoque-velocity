@@ -8,7 +8,7 @@ use App\Library\ControllerMain;
 Class ProdutoModel extends ModelMain
 {
 
-    public $table = "produtos";
+    public $table = "produto";
 
     public $validationRules = [
         'descricao' => [
@@ -42,8 +42,8 @@ Class ProdutoModel extends ModelMain
             $rsc = $this->db->dbSelect(
 
                 "SELECT 
-                        produtos.*, 
-                        (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                        produto.*, 
+                        (SELECT valor FROM movimentacao_item WHERE id_produtos = produto.id LIMIT 1) AS valor
                     FROM 
                     {$this->table}"
             
@@ -52,8 +52,8 @@ Class ProdutoModel extends ModelMain
         } else {
 
             $rsc = $this->db->dbSelect("SELECT 
-                    produtos.*, 
-                    (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                    produto.*, 
+                    (SELECT valor FROM movimentacao_item WHERE id_produtos = produto.id LIMIT 1) AS valor
                 FROM 
                 {$this->table}
                 WHERE statusRegistro = 1 AND quantidade > 0");
@@ -79,24 +79,24 @@ Class ProdutoModel extends ModelMain
         if (Session::get('usuarioNivel') == 1) {
             $rsc = $this->db->dbSelect(
                 "SELECT 
-                    produtos.*, 
-                    (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                    produto.*, 
+                    (SELECT valor FROM movimentacao_item WHERE id_produtos = produto.id LIMIT 1) AS valor
                 FROM 
                     {$this->table}
                 WHERE 
-                    produtos.id = ?", [$id_produto]
+                    produto.id = ?", [$id_produto]
             );
             
         } else {
 
             $rsc = $this->db->dbSelect(
                 "SELECT 
-                    produtos.*, 
-                    (SELECT valor FROM movimentacoes_itens WHERE id_produtos = produtos.id LIMIT 1) AS valor
+                    produto.*, 
+                    (SELECT valor FROM movimentacao_item WHERE id_produtos = produto.id LIMIT 1) AS valor
                 FROM 
                     {$this->table}
                 WHERE 
-                    produtos.statusRegistro = 1 AND produtos.id = ?", [$id_produto]
+                    produto.statusRegistro = 1 AND produto.id = ?", [$id_produto]
             );
   
         }
@@ -147,7 +147,7 @@ Class ProdutoModel extends ModelMain
 
             foreach ($infoProduto as $item) {
                 
-                $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $id_produto], ['quantidade' => $item]);
+                $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $id_produto], ['quantidade' => $item]);
                 var_dump($atualizaProdutosMovimentacao);
                 var_dump([$item]);
                 exit;
@@ -160,6 +160,15 @@ Class ProdutoModel extends ModelMain
         } else {
             return false;
         }
+    }
+
+    
+    public function insertHistoricoProduto($item)
+    {
+        // var_dump($item);
+        // exit;
+
+        $this->db->insert("historico_produto", $item);
     }
 
     public function pesquisaProduto($dados) {
@@ -213,7 +222,7 @@ Class ProdutoModel extends ModelMain
     
     
     //     if ($this->getAcao() != 'insert'){
-    //         $ConfereHistorico = $this->db->dbSelect("SELECT mi.id_produtos FROM movimentacoes_itens mi WHERE id_produtos = ?", "first", [$_GET['id']]);
+    //         $ConfereHistorico = $this->db->dbSelect("SELECT mi.id_produtos FROM movimentacao_item mi WHERE id_produtos = ?", "first", [$_GET['id']]);
     //     }
     // }
     

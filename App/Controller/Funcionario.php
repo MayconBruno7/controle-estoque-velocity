@@ -45,7 +45,7 @@ class Funcionario extends ControllerMain
             $dados = $this->model->getById($this->getId());
         }
 
-        $SetorModel = $this->loadModel("Fornecedor");
+        $SetorModel = $this->loadModel("Setor");
         $dados['aSetor'] = $SetorModel->lista('id');
 
         $CargoModel = $this->loadModel("Cargo");

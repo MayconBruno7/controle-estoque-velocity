@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 20/06/2024 às 17:58
--- Versão do servidor: 8.3.0
--- Versão do PHP: 8.2.18
+-- Tempo de geração: 21/06/2024 às 21:37
+-- Versão do servidor: 8.2.0
+-- Versão do PHP: 8.2.13
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS `cargo` (
   `nome` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
   `statusRegistro` int DEFAULT '1' COMMENT '1 - Ativo    2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -51,7 +51,7 @@ CREATE TABLE IF NOT EXISTS `cidade` (
   `estado` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `estado` (`estado`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS `estado` (
   `sigla` varchar(2) NOT NULL,
   `regiao` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -84,7 +84,7 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
   `estado` varchar(250) DEFAULT NULL,
   `bairro` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
   `numero` varchar(250) DEFAULT NULL,
-  `telefone` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - ativo     2 - inativo',
   PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
@@ -92,11 +92,11 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `funcionarios`
+-- Estrutura para tabela `funcionario`
 --
 
-DROP TABLE IF EXISTS `funcionarios`;
-CREATE TABLE IF NOT EXISTS `funcionarios` (
+DROP TABLE IF EXISTS `funcionario`;
+CREATE TABLE IF NOT EXISTS `funcionario` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(80) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
   `cpf` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '0',
@@ -113,34 +113,33 @@ CREATE TABLE IF NOT EXISTS `funcionarios` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `historico_produtos`
+-- Estrutura para tabela `historico_produto`
 --
 
-DROP TABLE IF EXISTS `historico_produtos`;
-CREATE TABLE IF NOT EXISTS `historico_produtos` (
+DROP TABLE IF EXISTS `historico_produto`;
+CREATE TABLE IF NOT EXISTS `historico_produto` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_produtos` int NOT NULL,
-  `fornecedor_id` int NOT NULL,
-  `setor_id` int DEFAULT NULL,
+  `fornecedor_id` int DEFAULT NULL,
   `nome_produtos` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `descricao_anterior` varchar(50) NOT NULL,
-  `quantidade_anterior` int DEFAULT NULL,
+  `descricao_anterior` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `quantidade_anterior` int NOT NULL,
   `status_anterior` int NOT NULL,
   `statusItem_anterior` int NOT NULL,
-  `dataMod` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `dataMod` timestamp NOT NULL,
   PRIMARY KEY (`id`),
-  KEY `fk_setor_id` (`setor_id`),
-  KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE
+  KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE,
+  KEY `fornecedor_id` (`fornecedor_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `movimentacoes`
+-- Estrutura para tabela `movimentacao`
 --
 
-DROP TABLE IF EXISTS `movimentacoes`;
-CREATE TABLE IF NOT EXISTS `movimentacoes` (
+DROP TABLE IF EXISTS `movimentacao`;
+CREATE TABLE IF NOT EXISTS `movimentacao` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_setor` int NOT NULL,
   `id_fornecedor` int NOT NULL,
@@ -152,16 +151,16 @@ CREATE TABLE IF NOT EXISTS `movimentacoes` (
   PRIMARY KEY (`id`),
   KEY `id_fornecedor` (`id_fornecedor`),
   KEY `id_setor` (`id_setor`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `movimentacoes_itens`
+-- Estrutura para tabela `movimentacao_item`
 --
 
-DROP TABLE IF EXISTS `movimentacoes_itens`;
-CREATE TABLE IF NOT EXISTS `movimentacoes_itens` (
+DROP TABLE IF EXISTS `movimentacao_item`;
+CREATE TABLE IF NOT EXISTS `movimentacao_item` (
   `id` int NOT NULL AUTO_INCREMENT,
   `id_movimentacoes` int NOT NULL,
   `id_produtos` int NOT NULL,
@@ -175,11 +174,11 @@ CREATE TABLE IF NOT EXISTS `movimentacoes_itens` (
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `produtos`
+-- Estrutura para tabela `produto`
 --
 
-DROP TABLE IF EXISTS `produtos`;
-CREATE TABLE IF NOT EXISTS `produtos` (
+DROP TABLE IF EXISTS `produto`;
+CREATE TABLE IF NOT EXISTS `produto` (
   `id` int NOT NULL AUTO_INCREMENT,
   `descricao` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `quantidade` int DEFAULT NULL,
@@ -226,15 +225,77 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `usuariorecuperasenha`
+--
+
+DROP TABLE IF EXISTS `usuariorecuperasenha`;
+CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `chave` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
+  `created_at` datetime NOT NULL DEFAULT (concat(curdate(),_utf8mb4' ',curtime())),
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `FK1_usuariorecuperacaosenha` (`usuario_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
 --
 -- Restrições para tabelas despejadas
 --
 
 --
--- Restrições para tabelas `historico_produtos`
+-- Restrições para tabelas `cidade`
 --
-ALTER TABLE `historico_produtos`
-  ADD CONSTRAINT `fk_setor_id` FOREIGN KEY (`setor_id`) REFERENCES `setor` (`id`);
+ALTER TABLE `cidade`
+  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `funcionario`
+--
+ALTER TABLE `funcionario`
+  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `historico_produto`
+--
+ALTER TABLE `historico_produto`
+  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `movimentacao`
+--
+ALTER TABLE `movimentacao`
+  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `movimentacao_item`
+--
+ALTER TABLE `movimentacao_item`
+  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `produto`
+--
+ALTER TABLE `produto`
+  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `setor`
+--
+ALTER TABLE `setor`
+  ADD CONSTRAINT `fk_responsavel_id` FOREIGN KEY (`responsavel`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE;
+
+--
+-- Restrições para tabelas `usuariorecuperasenha`
+--
+ALTER TABLE `usuariorecuperasenha`
+  ADD CONSTRAINT `FK1_usuariorecuperacaosenha` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

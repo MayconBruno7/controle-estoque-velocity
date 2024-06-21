@@ -80,6 +80,8 @@
             <div class="col-6 mt-3">
                 <label for="dataMod" class="form-label">Data da ultima modificação</label>
                 <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod') ?>" disabled>
+
+                <input type="hidden" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod') ?>">
             </div>
             <?php 
             } 
