@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 21/06/2024 às 21:37
+-- Tempo de geração: 22/06/2024 às 17:04
 -- Versão do servidor: 8.2.0
 -- Versão do PHP: 8.2.13
 
@@ -201,7 +201,7 @@ DROP TABLE IF EXISTS `setor`;
 CREATE TABLE IF NOT EXISTS `setor` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `responsavel` int NOT NULL DEFAULT (0),
+  `responsavel` int DEFAULT '0',
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `responsavel_setor` (`responsavel`) USING BTREE
@@ -250,46 +250,40 @@ CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
 -- Restrições para tabelas `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `funcionario`
 --
 ALTER TABLE `funcionario`
-  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `historico_produto`
 --
 ALTER TABLE `historico_produto`
-  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `movimentacao`
 --
 ALTER TABLE `movimentacao`
-  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `movimentacao_item`
 --
 ALTER TABLE `movimentacao_item`
-  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `produto`
 --
 ALTER TABLE `produto`
-  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE;
-
---
--- Restrições para tabelas `setor`
---
-ALTER TABLE `setor`
-  ADD CONSTRAINT `fk_responsavel_id` FOREIGN KEY (`responsavel`) REFERENCES `funcionario` (`id`) ON DELETE CASCADE;
+  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Restrições para tabelas `usuariorecuperasenha`

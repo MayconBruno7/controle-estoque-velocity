@@ -120,12 +120,15 @@ class Movimentacao extends ControllerMain
             // exit;
 
             $verificaQuantidadeEstoqueNegativa = false;
+       
+            if(isset($id_produto) && $id_produto != '') {
+                if ($dadosProduto[0]['quantidade'] >= $quantidade && $tipo_movimentacao == '2') {
+                    $verificaQuantidadeEstoqueNegativa = true;
+                } else if ($dadosProduto[0]['quantidade'] <= $quantidade && $tipo_movimentacao == '2') {
+                    $verificaQuantidadeEstoqueNegativa = false;
+                } 
+            }
 
-            if ($dadosProduto[0]['quantidade'] >= $quantidade && $tipo_movimentacao == '2') {
-                $verificaQuantidadeEstoqueNegativa = true;
-            } else if ($dadosProduto[0]['quantidade'] <= $quantidade && $tipo_movimentacao == '2') {
-                $verificaQuantidadeEstoqueNegativa = false;
-            } 
             if ($tipo_movimentacao == '1') {
                 $verificaQuantidadeEstoqueNegativa = true;
             }

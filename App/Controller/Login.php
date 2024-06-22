@@ -49,7 +49,7 @@ class Login extends ControllerMain
             // Direcionar o usuário para página home
             if (Session::get('usuarioNivel') == 1) {
                 $redirectUrl = 'Home/homeAdmin';
-            } elseif (Session::get('usuarioNivel') == 2) {
+            } elseif (Session::get('usuarioId') != false) {
                 $redirectUrl = 'Home/home';
             } 
             

@@ -160,6 +160,7 @@ class Database
             $conexao = $this->connect();
             $query = $conexao->prepare($sql);
 
+            // var_dump($save['dados']);
             // var_dump($campos);
             // var_dump($query);
             // exit;

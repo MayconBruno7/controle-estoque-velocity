@@ -71,7 +71,7 @@ class Funcionario extends ControllerMain
             if ($this->model->insert([
                 "nome"              => $post['nome'],
                 "cpf"               => preg_replace("/[^0-9]/", "", $post['cpf']),
-                "telefone"          => $post['telefone'],
+                "telefone"          => preg_replace("/[^0-9]/", "", $post['telefone']),
                 "setor"             => $post['setor'],
                 "cargo"             => $post['cargo'],
                 "salario"           => preg_replace("/[^0-9,]/", "", $post['salario']),
