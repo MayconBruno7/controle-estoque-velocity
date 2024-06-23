@@ -585,15 +585,15 @@ class Movimentacao extends ControllerMain
     // }
 
 
-public function getProdutoComboBox()
-{
+    public function getProdutoComboBox()
+    {
 
-    $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); // Passa o termo para o método do modelo
-  
+        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); // Passa o termo para o método do modelo
+    
 
-    echo json_encode($dados);
+        echo json_encode($dados);
 
-  
-}
+    
+    }
 
 }

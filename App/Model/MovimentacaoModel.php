@@ -352,7 +352,6 @@ Class MovimentacaoModel extends ModelMain
      * @param int $estado 
      * @return array
      */
-
     public function getProdutoCombobox($termo)
     {
         // Verifica se foi fornecido um termo de pesquisa válido

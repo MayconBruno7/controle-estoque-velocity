@@ -38,7 +38,7 @@
     $total = 0;
 
     // unset($_SESSION['movimentacao']);
-    // var_dump(Session::get('movimentacao')['0']);
+    // var_dump(Session::get('movimentacao'));
     // var_dump($dadosMovimentacao['motivo']);
     // var_dump($_SESSION['movimentacao'][0]['produtos']);
     // var_dump($_SESSION['movimentacao']);

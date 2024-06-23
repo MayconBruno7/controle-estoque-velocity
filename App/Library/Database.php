@@ -363,9 +363,9 @@ class Database
 
             $rs = $query->rowCount();// or die(print_r($query->errorInfo(), true));
             self::__destruct();
-
+            
             return $rs;
-
+    
         } catch (Exception $e) {
             echo 'Exceção capturada: '.  $e->getMessage(); exit;
         }
