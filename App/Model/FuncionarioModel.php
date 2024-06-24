@@ -5,7 +5,7 @@ use App\Library\Session;
 
 Class FuncionarioModel extends ModelMain
 {
-    public $table = "funcionarios";
+    public $table = "funcionario";
 
     public $validationRules = [
         'nome' => [
@@ -15,7 +15,11 @@ Class FuncionarioModel extends ModelMain
         'cpf' => [
             'label' => 'cpf',
             'rules' => 'required|min:14'
-        ],  
+        ],
+        // 'setor' => [
+        //     'label' => 'setor',
+        //     'rules' => 'required|int'
+        // ],   
         'salario' => [
             'label' => 'salario',
             'rules' => 'required|decimal'
@@ -36,7 +40,7 @@ Class FuncionarioModel extends ModelMain
     {
         if (Session::get('usuarioNivel') == 1) {
             // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
-            $rsc = $this->db->dbSelect("SELECT funcionarios.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionarios.setor = setor.id ORDER BY {$orderBy}");
+            $rsc = $this->db->dbSelect("SELECT funcionario.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionario.setor = setor.id ORDER BY {$orderBy}");
             
         } else {
             $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE statusRegistro = 1 ORDER BY {$orderBy}");

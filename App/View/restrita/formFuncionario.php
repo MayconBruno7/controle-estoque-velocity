@@ -50,7 +50,9 @@
 
                 <div class="col-3 mt-3">
                     <label for="setor" class="form-label">Setor</label>
-                    <select name="setor" id="setor" class="form-control" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <select name="setor" id="setor" class="form-control" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>
+                    <?= !empty($aDados['aSetor']) ? 'required' : '' ?>  
+                    >
                     <option value="">...</option> <!-- Opção padrão -->
                     <?php foreach ($dados['aSetor'] as $setor): ?>
                             <option value="<?= $setor['id'] ?>" <?= setValor('setor') == $setor['id'] ? 'selected' : '' ?>>

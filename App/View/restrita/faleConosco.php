@@ -56,7 +56,7 @@
                 </div>
             </div>
 
-            <div class="col-auto mt-5">
+            <div class="col-auto mt-5 mb-3">
                 <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
             </div>
         </form>

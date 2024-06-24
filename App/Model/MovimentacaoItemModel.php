@@ -4,7 +4,7 @@ use App\Library\ModelMain;
 
 Class MovimentacaoItemModel extends ModelMain
 {
-    public $table = "movimentacoes_itens";
+    public $table = "movimentacao_item";
 
     /**
      * lista
@@ -21,7 +21,7 @@ Class MovimentacaoItemModel extends ModelMain
                     mi.valor,
                     p.*
                 FROM {$this->table} mi
-                INNER JOIN produtos p ON p.id = mi.id_produtos
+                INNER JOIN produto p ON p.id = mi.id_produtos
                 WHERE mi.id_movimentacoes = ?
                     OR mi.id_movimentacoes IS NULL
                 ORDER BY p.descricao;

@@ -52,6 +52,27 @@
                                 <td><?= Formulario::getCondicao($value['condicao']) ?></td>
                                 <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
                                 <td>
+                                    <!-- <?php if ($this->getAcao() == 'insert' || $this->getAcao() == 'update') : ?>
+                                        <form id="form<?= $value['id'] ?>" action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" method="POST">
+                                            <div class="row mt-3">
+                                                <div class="col">
+                                                    <label for="valor_<?= $value['id'] ?>" class="form-label">Valor</label>
+                                                    <input type="text" name="valor" id="valor_<?= $value['id'] ?>" class="form-control" disabled required>
+                                                </div>
+                                                <div class="col">
+                                                    <label for="quantidade_<?= $value['id'] ?>" class="form-label">Quantidade</label>
+                                                    <input type="number" name="quantidade" id="quantidade_<?= $value['id'] ?>" class="form-control" disabled required>
+                                                </div>
+                                                <div class="col">
+                                                    <input type="hidden" name="id_produto" value="<?= $value['id'] ?>">
+                                                    <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
+                                                    <input type="hidden" name="tipo" value="<?= $this->getAcao() == 'insert' ? $this->getOutrosParametros(6) : $this->getOutrosParametros(4) ?>">
+                                                    <button type="submit" class="btn btn-primary mt-4" onclick="enableInputs(<?= $value['id'] ?>)">Adicionar</button>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    <?php endif; ?> -->
+
                                     <?php if ($this->getAcao() == 'delete') : ?>
                                         <form class="g-3" action="<?= baseUrl() ?>Movimentacao/deleteProdutoMovimentacao/<?= $this->getAcao() ?>" method="post">
                                             <p>Quantidade atual: <?= $this->getOutrosParametros(5) ?></p>

@@ -5,7 +5,7 @@ use App\Library\Session;
 
 Class MovimentacaoModel extends ModelMain
 {
-    public $table = "movimentacoes";
+    public $table = "movimentacao";
 
     public $validationRules = [
         'setor_id' => [
@@ -54,9 +54,9 @@ Class MovimentacaoModel extends ModelMain
             LEFT JOIN
                 fornecedor f ON f.id = m.id_fornecedor
             LEFT JOIN
-                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+                movimentacao_item mi ON mi.id_movimentacoes = m.id
             LEFT JOIN
-                produtos p ON p.id = mi.id_produtos");
+                produto p ON p.id = mi.id_produtos");
 
         } else {
             $rsc = $this->db->dbSelect("SELECT DISTINCT
@@ -70,9 +70,9 @@ Class MovimentacaoModel extends ModelMain
             LEFT JOIN
                 fornecedor f ON f.id = m.id_fornecedor
             LEFT JOIN
-                movimentacoes_itens mi ON mi.id_movimentacoes = m.id
+                movimentacao_item mi ON mi.id_movimentacoes = m.id
             LEFT JOIN
-                produtos p ON p.id = mi.id_produtos
+                produto p ON p.id = mi.id_produtos
             WHERE
                 m.statusRegistro = 1;");
         }
@@ -83,16 +83,11 @@ Class MovimentacaoModel extends ModelMain
             return [];
         }
     }
-    
-    /**
-     * idUltimaMovimentacao
-     *
-     * @return void
-     */
+
     public function idUltimaMovimentacao()
     {
 
-        $rsc = $this->db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacoes");
+        $rsc = $this->db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacao");
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);
@@ -120,11 +115,11 @@ Class MovimentacaoModel extends ModelMain
 
                     $item["id_movimentacoes"] = $ultimoRegistro;
 
-                    $this->db->insert("movimentacoes_itens", $item);
+                    $this->db->insert("movimentacao_item", $item);
                 }
 
                 $produto = $this->db->select(
-                    "produtos",
+                    "produto",
                     "all",
                     [
                     "where" => ["id" => $aProdutos[0]["id_produtos"]]
@@ -143,7 +138,8 @@ Class MovimentacaoModel extends ModelMain
                 }
 
                 //atualiza a quantidade em estoque
-                $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
+                $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
+
             }
 
             return true;
@@ -180,33 +176,25 @@ Class MovimentacaoModel extends ModelMain
             return false;
         }
     }
-    
-    /**
-     * updateInformacoesProdutoMovimentacao
-     *
-     * @param  mixed $id_movimentacao
-     * @param  mixed $aProdutos
-     * @param  mixed $acao
-     * @param  mixed $quantidade_produto
-     * @param  mixed $quantidade_movimentacao
-     * @return void
-     */
-    public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao)
+
+    public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao = null)
     {
 
-        $id_produto = $aProdutos[0]['id_produtos'];
+        $id_produto = isset($aProdutos[0]['id_produtos']) ? $aProdutos[0]['id_produtos'] : "";
 
-
-        if($id_movimentacao) {
+        if($id_movimentacao && $id_produto != "") {
             $condWhere = $id_movimentacao['id_movimentacao'];
 
             foreach ($aProdutos as $item) {
                 if($acao['acaoProduto'] == 'update') {
                     $item['quantidade'] = $quantidade_movimentacao;
 
-                    $atualizaProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
-                    $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
+                    $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
+                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
 
+                    if($atualizaEstoqueProduto && $atualizaProdutosMovimentacao) {
+                        return true;
+                    }
                 }
 
                 else if($acao['acaoProduto'] == 'insert'){
@@ -214,8 +202,8 @@ Class MovimentacaoModel extends ModelMain
                     $item['id_movimentacoes'] = $id_movimentacao['id_movimentacao'];
                     $item['quantidade'] = $quantidade_movimentacao;
 
-                    $insereProdutosMovimentacao = $this->db->insert("movimentacoes_itens", $item);
-                    $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
+                    $insereProdutosMovimentacao = $this->db->insert("movimentacao_item", $item);
+                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
 
                     if($insereProdutosMovimentacao && $atualizaEstoqueProduto) {
                         return true;
@@ -231,21 +219,12 @@ Class MovimentacaoModel extends ModelMain
             return false;
         }
     }
-    
-    /**
-     * deleteInfoProdutoMovimentacao
-     *
-     * @param  mixed $id_movimentacao
-     * @param  mixed $aProdutos
-     * @param  mixed $tipo_movimentacao
-     * @param  mixed $quantidadeRemover
-     * @return void
-     */
+
     public function deleteInfoProdutoMovimentacao($id_movimentacao, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
     {
 
         $item_movimentacao = $this->db->select(
-            "movimentacoes_itens",
+            "movimentacao_item",
             "all",
             [
             "where" => ["id_movimentacoes" => $id_movimentacao, "id_produtos" => $aProdutos[0]["id"]]
@@ -263,13 +242,13 @@ Class MovimentacaoModel extends ModelMain
                 $novaQuantidadeMovimentacao = ($quantidadeAtual - $quantidadeRemover);
 
                 // Atualiza a tabela movimetacao_itens com a nova quantidade
-                $atualizaInfoProdutosMovimentacao = $this->db->update("movimentacoes_itens", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $item_movimentacao[0]['id_produtos']], ['quantidade' => $novaQuantidadeMovimentacao]);
+                $atualizaInfoProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $item_movimentacao[0]['id_produtos']], ['quantidade' => $novaQuantidadeMovimentacao]);
 
                 //Verifica se o produto existe
                 if ($atualizaInfoProdutosMovimentacao) {
 
                     $produto_movimentacao = $this->db->select(
-                        "produtos",
+                        "produto",
                         "first",
                         [
                         "where" => ["id" => $aProdutos[0]["id"]]
@@ -287,10 +266,10 @@ Class MovimentacaoModel extends ModelMain
                     }
 
                     //atualiza a quantidade em estoque
-                    $atualizaEstoqueProduto = $this->db->update("produtos", ['id' => $produto_movimentacao['id']], ['quantidade' => $novaQuantidadeEstoque]);
+                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $produto_movimentacao['id']], ['quantidade' => $novaQuantidadeEstoque]);
 
                     // Remove os produtos com quantidade igual a zero da movimentação
-                    $qtdZero = $this->db->delete('movimentacoes_itens', ['id_movimentacoes' => $id_movimentacao, 'id_produtos' =>  $item_movimentacao[0]['id_produtos'], 'quantidade' => 0]);
+                    $qtdZero = $this->db->delete('movimentacao_item', ['id_movimentacoes' => $id_movimentacao, 'id_produtos' =>  $item_movimentacao[0]['id_produtos'], 'quantidade' => 0]);
 
                     if ($atualizaEstoqueProduto || $qtdZero) {
                         return true;
@@ -314,5 +293,41 @@ Class MovimentacaoModel extends ModelMain
             Session::set("msgError", "Item não encontrado na movimentação.");
             return false;
         }
+    }
+
+    /**
+     * getProdutoCombobox
+     *
+     * @param int $estado 
+     * @return array
+     */
+    public function getProdutoCombobox($termo)
+    {
+        // Verifica se foi fornecido um termo de pesquisa válido
+        if (!empty($termo)) {
+            // Realiza a consulta no banco de dados
+            $rsc = $this->db->select(
+                "produto",
+                "all",
+                [
+                    'where' => [
+                        'nome' => ['LIKE', $termo],
+                    ]
+                ]
+            );
+
+            // Array para armazenar os resultados
+            $produtos = [];
+            foreach ($rsc as $produto) {
+                $produtos[] = [
+                    'id' => $produto['id'],
+                    'nome' => $produto['nome']
+                ];
+            }
+
+            return $produtos;
+        }
+
+        return [];
     }
 }

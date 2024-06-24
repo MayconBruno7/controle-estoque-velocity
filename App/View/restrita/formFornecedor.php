@@ -11,7 +11,7 @@
     
     <?= Formulario::titulo('Fornecedor', false, false) ?>
 
-    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/84429695000111">
+    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/33.592.510/0001-54">
         <button>Enviar</button>
     </a>
 
@@ -44,10 +44,26 @@
                 </select>
             </div>
 
+            <!-- <div class="mb-3 col-6">
+                <label for="estado" class="form-label">Estado</label>
+                <input type="text" class="form-control" name="estado" id="estado" 
+                    maxlength="50" placeholder="Informe estado"
+                    value="<?= setValor('estado') ?>"
+                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+            </div>
+
+            <div class="mb-3 col-6">
+                <label for="cidade" class="form-label">Cidade</label>
+                <input type="text" class="form-control" name="cidade" id="cidade" 
+                    maxlength="50" placeholder="Informe a cidade"
+                    value="<?= setValor('cidade') ?>"
+                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+            </div> -->
+
             <div class="col-6 mb-3">
                 <label for="estado" class="form-label">Estado</label>
                 <select class="form-control" name="estado" id="estado" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value="" selected disabled>...</option>
+                    <option value="" selected >...</option>
                     <?php foreach ($dados['aEstado'] as $value): ?>
                         <option value="<?= $value['id'] ?>" <?= $estadoSelecionado == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
@@ -116,79 +132,133 @@
 </div>
 
 <script>
-        function formatarCNPJ(campo) {
-            // Remove qualquer caracter especial, exceto números
-            campo.value = campo.value.replace(/[^\d]/g, '');
-            
-            // Formata o CNPJ (XX.XXX.XXX/XXXX-XX)
-            if (campo.value.length > 2 && campo.value.length <= 5) {
-                campo.value = campo.value.replace(/(\d{2})(\d)/, "$1.$2");
-            } else if (campo.value.length > 5 && campo.value.length <= 8) {
-                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d)/, "$1.$2.$3");
-            } else if (campo.value.length > 8 && campo.value.length <= 12) {
-                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d{3})(\d)/, "$1.$2.$3/$4");
-            } else if (campo.value.length > 12 && campo.value.length <= 14) {
-                campo.value = campo.value.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, "$1.$2.$3/$4-$5");
-            } else if (campo.value.length > 14) {
-                campo.value = campo.value.substring(0, 14);
-            }
+    function formatarCNPJ(campo) {
+    // Remove qualquer caracter especial, exceto números
+    let cnpj = campo.value.replace(/[^\d]/g, '');
+
+    // Formata o CNPJ (XX.XXX.XXX/XXXX-XX)
+    if (cnpj.length > 2 && cnpj.length <= 5) {
+        cnpj = cnpj.replace(/(\d{2})(\d)/, "$1.$2");
+    } else if (cnpj.length > 5 && cnpj.length <= 8) {
+        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d)/, "$1.$2.$3");
+    } else if (cnpj.length > 8 && cnpj.length <= 12) {
+        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d)/, "$1.$2.$3/$4");
+    } else if (cnpj.length > 12 && cnpj.length <= 14) {
+        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, "$1.$2.$3/$4-$5");
+    } else if (cnpj.length > 14) {
+        cnpj = cnpj.substring(0, 14);
+    }
+
+    campo.value = cnpj;
+    }
+
+    function formatarCNPJinput(cnpjInput) {
+        // Remove tudo o que não é dígito
+        let cnpj = cnpjInput.value.replace(/\D/g, '');
+
+        // Insere os caracteres especiais
+        cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
+        cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+        cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
+        cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
+
+        // Atualiza o valor do input
+        cnpjInput.value = cnpj;
+    }
+
+    function formatarTelefone(input) {
+        // Remove todos os caracteres não numéricos
+        var telefone = input.value.replace(/\D/g, '');
+
+        // Verifica o tamanho máximo do número de telefone
+        var maxLength = 11; // Se quiser permitir mais dígitos, ajuste o valor aqui
+
+        // Formatação do número de telefone
+        if (telefone.length <= maxLength) {
+            telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+        } else {
+            // Caso o número de telefone tenha mais dígitos do que o permitido
+            telefone = telefone.slice(0, maxLength);
+            telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
         }
 
-        function formatarCNPJinput(cnpjInput) {
-            // Remove tudo o que não é dígito
-            let cnpj = cnpjInput.value.replace(/\D/g, '');
+        // Atualiza o valor do input com o telefone formatado
+        input.value = telefone;
+    }
 
-            // Insere os caracteres especiais
-            cnpj = cnpj.replace(/^(\d{2})(\d)/, '$1.$2');
-            cnpj = cnpj.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-            cnpj = cnpj.replace(/\.(\d{3})(\d)/, '.$1/$2');
-            cnpj = cnpj.replace(/(\d{4})(\d)/, '$1-$2');
+    function pegaPrimeiroTelefone(phoneString) {
+            // Expressão regular para encontrar o primeiro número de telefone
+            const regex = /\(\d{2}\) \d{4,5}-\d{4}/;
+            const match = phoneString.match(regex);
 
-            // Atualiza o valor do input
-            cnpjInput.value = cnpj;
-        }
-
-        function formatarTelefone(input) {
-            // Remove todos os caracteres não numéricos
-            var telefone = input.value.replace(/\D/g, '');
-
-            // Verifica o tamanho máximo do número de telefone
-            var maxLength = 11; // Se quiser permitir mais dígitos, ajuste o valor aqui
-
-            // Formatação do número de telefone
-            if (telefone.length <= maxLength) {
-                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+            if (match) {
+                return match[0];
             } else {
-                // Caso o número de telefone tenha mais dígitos do que o permitido
-                telefone = telefone.slice(0, maxLength);
-                telefone = telefone.replace(/^(\d{2})(\d{1})(\d{4})(\d{4})/, '($1) $2 $3-$4');
+                return 'No valid phone number found';
             }
-
-            // Atualiza o valor do input com o telefone formatado
-            input.value = telefone;
         }
 
-        $(function() {
-            $('#estado').change(function() {
-                if ($(this).val()) {
-                    $('#cidade').hide();
-                    $('.carregando').show();
+    document.getElementById('cnpj').addEventListener('input', function() {
+        let campoCNPJ = document.getElementById('cnpj');
 
-                    $.getJSON('/Fornecedor/getCidadeComboBox/lista/' + $(this).val(), 
-                        function(data) {
-                            var options = '<option value="" selected disabled>... Escolha uma cidade ...</option>';
-                            for (var i = 0; i < data.length; i++) {
-                                options += '<option value="' + data[i].id + '">' + data[i].nome + '</option>';
-                            }
-                            $('#cidade').html(options);
-                            $('#cidade').show();
+        // Chama a função para formatar o CNPJ
+        formatarCNPJ(campoCNPJ);
+
+        // Remove todos os caracteres que não são dígitos para a chamada API
+        let cnpjParaAPI = campoCNPJ.value.replace(/\D/g, '');
+
+        if (cnpjParaAPI.length === 14) {
+            fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + cnpjParaAPI)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        console.error('Erro:', data.error);
+                    } else {
+                        document.getElementById('nome').value = data.fantasia || data.nome || '';
+                        document.getElementById('estado').value = data.uf || '';
+                        document.getElementById('cidade').value = data.municipio || '';
+                        document.getElementById('bairro').value = data.bairro || '';
+                        document.getElementById('endereco').value = data.logradouro || '';
+                        document.getElementById('numero').value = data.numero || '';
+                        document.getElementById('telefone').value = pegaPrimeiroTelefone(data.telefone) || '';
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na solicitação:', error);
+                });
+        } else {
+            // Limpar os campos se o CNPJ não estiver completo
+            document.getElementById('nome').value = '';
+            document.getElementById('estado').value = '';
+            document.getElementById('cidade').value = '';
+            document.getElementById('bairro').value = '';
+            document.getElementById('endereco').value = '';
+            document.getElementById('numero').value = '';
+            document.getElementById('telefone').value = '';
+        }
+    });
+
+    $(function() {
+        $('#estado').change(function() {
+            if ($(this).val()) {
+                $('#cidade').hide();
+                $('.carregando').show();
+
+                $.getJSON('/Fornecedor/getCidadeComboBox/lista/' + $(this).val(), 
+                    function(data) {
+                        var options = '<option value="" selected disabled>Escolha uma cidade</option>';
+                        for (var i = 0; i < data.length; i++) {
+                            options += '<option value="' + data[i].id + '">' + data[i].nome + '</option>';
                         }
-                    ).fail(function() {
-                        console.error("Erro ao carregar cidades.");
-                    }).always(function() {
-                        $('.carregando').hide();
-                    });
-                }
-            });
+                        $('#cidade').html(options);
+                        $('#cidade').show();
+                    }
+                ).fail(function() {
+                    console.error("Erro ao carregar cidades.");
+                }).always(function() {
+                    $('.carregando').hide();
+                });
+            }
         });
-    </script>
+    });
+</script>

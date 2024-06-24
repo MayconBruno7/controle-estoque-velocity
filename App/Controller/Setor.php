@@ -15,7 +15,6 @@ class Setor extends ControllerMain
     public function __construct($dados)
     {
         $this->auxiliarConstruct($dados);
-
     }
 
     /**

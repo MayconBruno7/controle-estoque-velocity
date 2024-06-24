@@ -18,9 +18,7 @@ class Produto extends ControllerMain
      */
     public function __construct($dados)
     {
-        
         $this->auxiliarConstruct($dados);
-
     }
 
     /**
@@ -107,35 +105,44 @@ class Produto extends ControllerMain
         if (Validator::make($post, $this->model->validationRules)) {
             return Redirect::page("Produto/form/update/" . $post['id']);    // error
         } else {
-            
-            if ($this->model->update(
-                [
-                    "id" => $post['id']
-                ], 
-                [
-                    "nome"                  => $post['nome'],
-                    "quantidade"            => $post['quantidade'],
-                    "fornecedor"            => $post['fornecedor_id'],
-                    "statusRegistro"        => $post['statusRegistro'],
-                    "condicao"              => $post['condicao'],
-                    "descricao"             => $post['descricao'],
-                    "dataMod"               => $post['dataMod'] = 'NOW()'
-                ],
 
-                [
-                    "id_produtos"           => $post['id'],
-                    "nome_produtos"         => setValor('nome'),
-                    "descricao_anterior"    => setValor('descricao'),
-                    "quantidade_anterior"   => setValor('quantidade'),
-                    "fornecedor_id"         => setValor('fornecedor'),
-                    "status_anterior"       => setValor('statusRegistro'),
-                    "statusItem_anterior"   => setValor('condicao'),
-                    "dataMod"               => setValor('dataMod'),
+            if ($post) 
+            {
+                     
+                $updateProduto = $this->model->update(
+                    [
+                        "id" => $post['id']
+                    ], 
+                    [
+                        "nome"                  => $post['nome'],
+                        "quantidade"            => $post['quantidade'],
+                        "fornecedor"            => $post['fornecedor_id'],
+                        "statusRegistro"        => $post['statusRegistro'],
+                        "condicao"              => $post['condicao'],
+                        "descricao"             => $post['descricao'],
+                    ],
+    
+                    
+                );
+        
+                $insertHistoricoProduto = $this->model->insertHistoricoProduto(
+                    [
+                        "id_produtos"           => $post['id'],
+                        "nome_produtos"         => setValor('nome'),
+                        "descricao_anterior"    => setValor('descricao'),
+                        "quantidade_anterior"   => setValor('quantidade'),
+                        "fornecedor_id"         => $post['fornecedor_id'],
+                        "status_anterior"       => setValor('statusRegistro'),
+                        "statusItem_anterior"   => setValor('condicao'),
+                        "dataMod"               => $post['dataMod'],
+    
+                    ]
+                );
 
+                if($updateProduto) {
+                    Session::set("msgSuccess", "Produto alterada com sucesso.");
+                } 
 
-                ]
-            )) {
-                Session::set("msgSuccess", "Produto alterada com sucesso.");
             } else {
                 Session::set("msgError", "Falha tentar alterar a Produto.");
             }

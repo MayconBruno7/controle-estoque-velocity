@@ -11,8 +11,6 @@ class Home extends ControllerMain
      */
     public function index()
     {
-    
-        // $this->loadView("home", $this->dados);
 
         $this->loadView("usuario/login", $this->dados);
 

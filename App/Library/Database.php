@@ -184,17 +184,17 @@ class Database
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
 
             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
-            if ($table == 'produtos') {
+            if ($table == 'produto') {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . ", dataMod = NOW() WHERE " . $condWhere['sql'] . ";";
 
             } else {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . " WHERE " . $condWhere['sql'] . ";";
             }
-
+     
             $query = $this->connect()->prepare($sql);
             $query->execute($save['save']);
             $rs = $query->rowCount();
-            
+
             self::__destruct();
 
             return $rs;
@@ -219,9 +219,10 @@ class Database
   
             $save = $this->getCampos($conditions, "AND");
             $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . "; ";
-  
+
             $query = $this->connect()->prepare($sql);
-            $query->execute($save['dados']);
+
+            $query->execute($save['dados']);           
     
             $rs = $query->rowCount();
             
@@ -355,9 +356,9 @@ class Database
 
             $rs = $query->rowCount();// or die(print_r($query->errorInfo(), true));
             self::__destruct();
-
+            
             return $rs;
-
+    
         } catch (Exception $e) {
             echo 'Exceção capturada: '.  $e->getMessage(); exit;
         }

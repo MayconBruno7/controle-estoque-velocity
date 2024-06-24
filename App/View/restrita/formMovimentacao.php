@@ -153,7 +153,6 @@
                 <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
             </div>
 
-
             <div class="col-12 mt-3">
                 <label for="motivo" class="form-label">Motivo</label>
                 <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'readonly' : ''?>><?= isset($dadosMovimentacao['motivo']) ? htmlspecialchars($dadosMovimentacao['motivo']) : '' ?></textarea>
@@ -439,7 +438,6 @@
             };
             xhr.send(JSON.stringify(movimentacao));
         }
-
     });
 
 </script>

@@ -5,6 +5,7 @@ use App\Library\Redirect;
 use App\Library\Session;
 use App\Library\Email;
 use App\Library\Validator;
+use App\Library\ModelMain;
 
 class Login extends ControllerMain 
 {
@@ -45,11 +46,11 @@ class Login extends ControllerMain
             Session::set("usuarioEmail", $aUsuario['email']);
             Session::set("usuarioNivel", $aUsuario['nivel']);
             Session::set("usuarioSenha", $aUsuario['senha']);
-            
+
             // Direcionar o usuário para página home
             if (Session::get('usuarioNivel') == 1) {
                 $redirectUrl = 'Home/homeAdmin';
-            } elseif (Session::get('usuarioNivel') == 2) {
+            } elseif (Session::get('usuarioId') != false) {
                 $redirectUrl = 'Home/home';
             } 
             
