@@ -263,6 +263,17 @@ class Formulario
         return $html;
     }
 
+    static public function retornaHomeAdminOuHome() {
+        if (Session::get('usuarioNivel') == 1) {
+            $redirectUrl = 'Home/homeAdmin';
+        } elseif (Session::get('usuarioNivel') == 11) {
+            $redirectUrl = 'Home/home';
+        } 
+
+        return $redirectUrl;
+    }
+
+
     /**
      * getDataTables
      *
