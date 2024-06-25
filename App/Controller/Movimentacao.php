@@ -16,11 +16,6 @@ class Movimentacao extends ControllerMain
     public function __construct($dados)
     {
         $this->auxiliarConstruct($dados);
-
-        // Somente pode ser acessado por usuários adminsitradores
-        // if (!$this->getAdministrador()) {
-        //     return Redirect::page("Home");
-        // }
     }
 
     /**
@@ -111,14 +106,8 @@ class Movimentacao extends ControllerMain
                         break;
                     }
                 }
-            
-                // Session::set("msgSuccess", "Produto adicionado a movimentação.");
             } 
         
-            // var_dump($dadosProduto[0]['quantidade']);
-            // var_dump($quantidade);
-            // exit;
-
             $verificaQuantidadeEstoqueNegativa = false;
        
             if(isset($id_produto) && $id_produto != '') {
@@ -266,14 +255,6 @@ class Movimentacao extends ControllerMain
             $ProdutoModel = $this->loadModel("Produto");
             $dadosProduto = $ProdutoModel->recuperaProduto($id_produto);
 
-            // $quantidadeProduto = $dadosProduto[0]['quantidade'];
-
-            // $quantidadeRemover = ($quantidadeProduto - $quantidadeRemover);
-
-            // var_dump($post);
-            // var_dump($quantidadeRemover, $quantidadeProduto);
-            // exit;
-           
             $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
 
             if($deletaProduto) {
@@ -518,20 +499,7 @@ class Movimentacao extends ControllerMain
        
         }
 
-
-
-        // excluir primeiro movimentacao_item
-
         if ($this->model->delete(["id" => $this->getPost('id')])) {
-
-            // var_dump($dadosProduto[0]['quantidade']);
-            // var_dump($this->getPost('id'));
-            // var_dump($dadosMovimentacao);
-            // var_dump($quantidades);
-            // var_dump($quantidade_produto);
-            // var_dump($post);
-            // var_dump(isset($id_produto) && $quantidade_produto);
-            // exit;
     
             if (isset($id_produto) || $quantidade_produto) {
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
@@ -560,36 +528,10 @@ class Movimentacao extends ControllerMain
         Redirect::page("Movimentacao");
     }
 
-    //  /**
-    //  * delete
-    //  *
-    //  * @return void
-    //  */
-    // public function pesquisaProduto()
-    // {
-
-    //     $post = $this->getPost();
-    
-    //     // Chama o método do model para buscar o produto
-    //     $buscandoProduto = $this->model->pesquisaProduto($post);
-    
-    //     // Exemplo de manipulação do resultado
-    //     if ($buscandoProduto) {
-    //         // Aqui você pode fazer algo com $buscandoProduto, como enviar para a view
-    //         return $this->LoadView('Movimentacao/form', ['produto' => $buscandoProduto]);
-    //     } else {
-    //         // Caso não encontre o produto, pode retornar uma mensagem de erro ou redirecionar
-    //         Redirect::page("Movimentacao");
-    //     }
-
-
-    // }
-
-
     public function getProdutoComboBox()
     {
 
-        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); // Passa o termo para o método do modelo
+        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); 
     
 
         echo json_encode($dados);

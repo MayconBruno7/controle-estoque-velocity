@@ -93,11 +93,7 @@
                 <select name="historico" id="historico" class="form-control" <?= $this->getAcao() != 'delete' && $this->getAcao() != 'insert' && $this->getAcao() != 'view' ? '' : 'disabled'?>>
                     <option value="">Selecione uma alteração</option>
                     <?php 
-
-                    // Recupera o histórico de alterações do item
-                    // $historicoQuery = "SELECT * FROM historico_produtos WHERE id_produtos = ?";
-                    // $historicoData = $db->dbSelect($historicoQuery, 'all', [$_GET['id']]);
-
+                    
                     foreach ($aDados['aHistoricoProduto'] as $historicoItem): ?>
                         <?php
 
@@ -109,9 +105,10 @@
                         }
                     
                         ?>
+
                         <!-- Usar o nome do fornecedor encontrado -->
                         <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_produtos'] ?>" data-fornecedor="<?= $historicoItem['fornecedor_id']; ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-status="<?= $historicoItem['status_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
-                            <?= $historicoItem['dataMod'] ?>
+                            <?= $historicoItem['dataMod'] != '0000-00-00 00:00:00' ? $historicoItem['dataMod'] : 'Primeira alteração' ?>
                         </option>
                     <?php endforeach; ?>
                     

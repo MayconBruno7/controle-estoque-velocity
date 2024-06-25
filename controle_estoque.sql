@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 25/06/2024 às 11:14
+-- Tempo de geração: 25/06/2024 às 13:12
 -- Versão do servidor: 8.2.0
 -- Versão do PHP: 8.2.13
 
@@ -5799,7 +5799,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`) VALUES
-(1, 'Maycon Bruno', '09068888867', '329849240', 1, 1412.000000, 1, 1);
+(1, 'Maycon Bruno', '09068888867', '32984924071', 1, 1412.000000, 1, 1);
 
 -- --------------------------------------------------------
 
@@ -5821,7 +5821,15 @@ CREATE TABLE IF NOT EXISTS `historico_produto` (
   PRIMARY KEY (`id`),
   KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE,
   KEY `fornecedor_id` (`fornecedor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `historico_produto`
+--
+
+INSERT INTO `historico_produto` (`id`, `id_produtos`, `fornecedor_id`, `nome_produtos`, `descricao_anterior`, `quantidade_anterior`, `status_anterior`, `statusItem_anterior`, `dataMod`) VALUES
+(1, 1, 1, 'Fonte de alimentação ', '<p>Fonte de alimentação de 450W</p>', 0, 2, 1, '0000-00-00 00:00:00'),
+(2, 1, 1, 'Fonte de alimentação ', '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-06-25 13:10:50');
 
 -- --------------------------------------------------------
 
@@ -5923,14 +5931,17 @@ CREATE TABLE IF NOT EXISTS `produto` (
   `fornecedor` int DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `fk_itens_fornecedor` (`fornecedor`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
 
 --
 -- Despejando dados para a tabela `produto`
 --
 
 INSERT INTO `produto` (`id`, `descricao`, `quantidade`, `statusRegistro`, `condicao`, `dataMod`, `nome`, `fornecedor`) VALUES
-(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, NULL, 'Fonte de alimentação ', 1);
+(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-06-25 13:11:02', 'Fonte de alimentação ', 1),
+(2, '<p>SSD de 480GB</p>', 0, 1, 1, NULL, 'SSD', 1),
+(3, '<p>Teclado USB&nbsp;</p>', 0, 1, 1, NULL, 'Teclado', 1),
+(4, '<p>Mouse óptico</p>', 0, 1, 1, NULL, 'Mouse', 1);
 
 -- --------------------------------------------------------
 
@@ -5953,7 +5964,7 @@ CREATE TABLE IF NOT EXISTS `setor` (
 --
 
 INSERT INTO `setor` (`id`, `nome`, `responsavel`, `statusRegistro`) VALUES
-(1, 'Departamento de informática', NULL, 1);
+(1, 'Departamento de informática', 1, 1);
 
 -- --------------------------------------------------------
 

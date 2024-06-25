@@ -1,11 +1,5 @@
 <?php
 
-
-
-    // $nome_produto = $db->dbSelect(
-    //     "SELECT nome FROM produtos WHERE id = ?", 'first', [$id_produto]
-    // );
-
     use App\Library\Formulario;
 
 ?>
