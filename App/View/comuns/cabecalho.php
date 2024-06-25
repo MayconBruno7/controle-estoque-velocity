@@ -1,6 +1,7 @@
 <?php 
 
-    use App\Library\Session;
+use App\Library\Session;
+use App\Library\Formulario;
 
 ?>
 
@@ -27,7 +28,9 @@
         <nav class="navbar navbar-expand-lg bg-body-tertiary">
         
             <div class="container-fluid">
-                <a href="<?= baseUrl() ?><?= Session::get('usuarioNivel') == 1 ? 'Home/homeAdmin' : (Session::get('usuarioNivel') == 11 ? 'Home/home' : "") ?>"><img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width= 95px; height= 85; alt="Brasão Prefeitura de Rosário da Limeira"></a>
+            <a href="<?= Session::get('usuarioId') ? baseUrl() . Formulario::retornaHomeAdminOuHome() : '#' ?>">
+                <img src="<?= baseUrl() ?>assets/img/brasao-pmrl.png" width="95" height="85" alt="Brasão Prefeitura de Rosário da Limeira">
+            </a>
                 <div>
                     <ul class="navbar-nav">
                         <?php if (Session::get('usuarioId') != false): ?>
@@ -49,11 +52,11 @@
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Setor">Setores</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Setor">Setores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a>
                         </li>
 
                         <li class="nav-item">

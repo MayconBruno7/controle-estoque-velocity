@@ -105,9 +105,10 @@
                         }
                     
                         ?>
+
                         <!-- Usar o nome do fornecedor encontrado -->
                         <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_produtos'] ?>" data-fornecedor="<?= $historicoItem['fornecedor_id']; ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-status="<?= $historicoItem['status_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
-                            <?= $historicoItem['dataMod'] ?>
+                            <?= $historicoItem['dataMod'] != '0000-00-00 00:00:00' ? $historicoItem['dataMod'] : 'Primeira alteração' ?>
                         </option>
                     <?php endforeach; ?>
                     

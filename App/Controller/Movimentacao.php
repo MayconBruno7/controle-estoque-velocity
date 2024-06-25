@@ -106,9 +106,8 @@ class Movimentacao extends ControllerMain
                         break;
                     }
                 }
-            
             } 
-    
+        
             $verificaQuantidadeEstoqueNegativa = false;
        
             if(isset($id_produto) && $id_produto != '') {
@@ -502,7 +501,7 @@ class Movimentacao extends ControllerMain
 
         if ($this->model->delete(["id" => $this->getPost('id')])) {
     
-            if (isset($id_produto) && $quantidade_produto) {
+            if (isset($id_produto) || $quantidade_produto) {
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
                         "id_movimentacao" => $this->getPost('id')
@@ -518,8 +517,6 @@ class Movimentacao extends ControllerMain
                     ],
                     $quantidade_produto
                 );
-
-               
             }
 
             Session::set("msgSuccess", "Movimentacao excluída com sucesso.");
@@ -534,9 +531,12 @@ class Movimentacao extends ControllerMain
     public function getProdutoComboBox()
     {
 
-        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); // Passa o termo para o método do modelo
+        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); 
     
+
         echo json_encode($dados);
+
+    
     }
 
 }

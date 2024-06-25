@@ -166,13 +166,19 @@ class Database
 
             self::__destruct();
 
-        } catch (\Exception $exc) {
-            echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getTraceAsString();
+        } catch (\PDOException $exc) {
+            if ($exc->errorInfo[0] == '45000') {
+                Session::set("msgError", "Operações não são permitidas no final de semana.");
+                Redirect::page(Formulario::retornaHomeAdminOuHome());
+            } else {
+                echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
+            }
             exit;
         }
 
         return $rs;
     }
+
 
     public function update($table, $conditions, $campos)
     {
@@ -190,17 +196,22 @@ class Database
             } else {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . " WHERE " . $condWhere['sql'] . ";";
             }
-     
+
             $query = $this->connect()->prepare($sql);
             $query->execute($save['save']);
             $rs = $query->rowCount();
-
+            
             self::__destruct();
 
             return $rs;
 
-        } catch (\Exception $exc) {
-            echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getTraceAsString();
+        } catch (\PDOException $exc) {
+            if ($exc->errorInfo[0] == '45000') {
+                Session::set("msgError", "Operações não são permitidas no final de semana.");
+                Redirect::page(Formulario::retornaHomeAdminOuHome());
+            } else {
+                echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
+            }
             exit;
         }
     }
@@ -219,10 +230,9 @@ class Database
   
             $save = $this->getCampos($conditions, "AND");
             $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . "; ";
-
+  
             $query = $this->connect()->prepare($sql);
-
-            $query->execute($save['dados']);           
+            $query->execute($save['dados']);
     
             $rs = $query->rowCount();
             
@@ -234,8 +244,13 @@ class Database
                 return $rs;
             }
 
-        } catch (\Exception $exc) {
-            echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getTraceAsString();
+        } catch (\PDOException $exc) {
+            if ($exc->errorInfo[0] == '45000') {
+                Session::set("msgError", "Operações não são permitidas no final de semana.");
+                Redirect::page(Formulario::retornaHomeAdminOuHome());
+            } else {
+                echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
+            }
             exit;
         }
     }
@@ -356,9 +371,9 @@ class Database
 
             $rs = $query->rowCount();// or die(print_r($query->errorInfo(), true));
             self::__destruct();
-            
+
             return $rs;
-    
+
         } catch (Exception $e) {
             echo 'Exceção capturada: '.  $e->getMessage(); exit;
         }

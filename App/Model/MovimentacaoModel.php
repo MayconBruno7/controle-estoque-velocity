@@ -222,7 +222,7 @@ Class MovimentacaoModel extends ModelMain
 
     public function deleteInfoProdutoMovimentacao($id_movimentacao, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
     {
-
+        
         $item_movimentacao = $this->db->select(
             "movimentacao_item",
             "all",
@@ -295,6 +295,9 @@ Class MovimentacaoModel extends ModelMain
         }
     }
 
+
+
+
     /**
      * getProdutoCombobox
      *
@@ -311,6 +314,7 @@ Class MovimentacaoModel extends ModelMain
                 "all",
                 [
                     'where' => [
+                        'statusRegistro' => 1,
                         'nome' => ['LIKE', $termo],
                     ]
                 ]

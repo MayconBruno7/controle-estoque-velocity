@@ -9,12 +9,8 @@
 
 <div class="container">
     
-    <?= Formulario::titulo('Fornecedor', false, false) ?>
-
-    <a href="<?= baseUrl() ?>Fornecedor/requireAPI/33.592.510/0001-54">
-        <button>Enviar</button>
-    </a>
-
+    <?= Formulario::titulo('Fornecedor', false, false) ?><br>
+    
     <form method="POST" action="<?= baseUrl() ?>Fornecedor/<?= $this->getAcao() ?>">
 
         <div class="row">
@@ -43,22 +39,6 @@
                     <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
                 </select>
             </div>
-
-            <!-- <div class="mb-3 col-6">
-                <label for="estado" class="form-label">Estado</label>
-                <input type="text" class="form-control" name="estado" id="estado" 
-                    maxlength="50" placeholder="Informe estado"
-                    value="<?= setValor('estado') ?>"
-                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-            </div>
-
-            <div class="mb-3 col-6">
-                <label for="cidade" class="form-label">Cidade</label>
-                <input type="text" class="form-control" name="cidade" id="cidade" 
-                    maxlength="50" placeholder="Informe a cidade"
-                    value="<?= setValor('cidade') ?>"
-                    <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-            </div> -->
 
             <div class="col-6 mb-3">
                 <label for="estado" class="form-label">Estado</label>
