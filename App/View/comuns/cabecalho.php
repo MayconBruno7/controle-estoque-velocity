@@ -52,11 +52,11 @@ use App\Library\Formulario;
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Setor">Setores</a>
                         </li>
 
                         <li class="nav-item">
-                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Setor">Setores</a>
+                            <a class="nav-link text-secondary" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a>
                         </li>
 
                         <li class="nav-item">

@@ -61,7 +61,8 @@ class Produto extends ControllerMain
         }
 
         $DbDados['aFornecedor'] = $FornecedorModel->lista('id');
-        $idProduto = $this->getId();
+        $idProduto = ($this->getId() !== null) ? $this->getId() : '';
+
         
         $DbDados['aHistoricoProduto'] = $HistoricoProdutoModel->historicoProduto('id', $idProduto);
 

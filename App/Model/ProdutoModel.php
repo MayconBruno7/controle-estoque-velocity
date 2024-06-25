@@ -148,9 +148,9 @@ Class ProdutoModel extends ModelMain
             foreach ($infoProduto as $item) {
                 
                 $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $id_produto], ['quantidade' => $item]);
-                var_dump($atualizaProdutosMovimentacao);
-                var_dump([$item]);
-                exit;
+                // var_dump($atualizaProdutosMovimentacao);
+                // var_dump([$item]);
+                // exit;
             }
 
             if($atualizaInformacoesProduto || $atualizaProdutosMovimentacao) {

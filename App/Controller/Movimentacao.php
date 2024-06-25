@@ -518,19 +518,22 @@ class Movimentacao extends ControllerMain
        
         }
 
-        // var_dump($dadosProduto[0]['quantidade']);
-        // var_dump($this->getPost('id'));
-        // var_dump($dadosMovimentacao);
-        // var_dump($quantidades);
-        // var_dump($quantidade_produto);
-        // var_dump($post);
-        // exit;
+
 
         // excluir primeiro movimentacao_item
 
         if ($this->model->delete(["id" => $this->getPost('id')])) {
+
+            // var_dump($dadosProduto[0]['quantidade']);
+            // var_dump($this->getPost('id'));
+            // var_dump($dadosMovimentacao);
+            // var_dump($quantidades);
+            // var_dump($quantidade_produto);
+            // var_dump($post);
+            // var_dump(isset($id_produto) && $quantidade_produto);
+            // exit;
     
-            if (isset($id_produto) && $quantidade_produto) {
+            if (isset($id_produto) || $quantidade_produto) {
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
                         "id_movimentacao" => $this->getPost('id')
@@ -546,8 +549,6 @@ class Movimentacao extends ControllerMain
                     ],
                     $quantidade_produto
                 );
-
-               
             }
 
             Session::set("msgSuccess", "Movimentacao excluída com sucesso.");

@@ -137,15 +137,17 @@ Class MovimentacaoModel extends ModelMain
                     exit;
                 }
 
-                //atualiza a quantidade em estoque
-                $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
-
                 // var_dump($atualizaEstoqueProduto);
                 // var_dump($novaQuantidadeEstoque);
                 // var_dump($tipo_movimentacao);
                 // var_dump($quantidadeProduto);
                 // var_dump($produto);
                 // exit;
+
+                //atualiza a quantidade em estoque
+                $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
+
+        
             }
 
             return true;
@@ -217,6 +219,13 @@ Class MovimentacaoModel extends ModelMain
 
         $id_produto = isset($aProdutos[0]['id_produtos']) ? $aProdutos[0]['id_produtos'] : "";
 
+                //    var_dump($acao);
+                //     var_dump($atualizaEstoqueProduto);
+                //     var_dump($id_produto);
+                //     var_dump($item);
+                //     var_dump($quantidade_produto);
+                //     exit('insert');
+
         if($id_movimentacao && $id_produto != "") {
             $condWhere = $id_movimentacao['id_movimentacao'];
 
@@ -226,6 +235,9 @@ Class MovimentacaoModel extends ModelMain
 
                     $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
                     $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
+
+                    // var_dump($atualizaEstoqueProduto);
+                    // exit;
 
                     if($atualizaEstoqueProduto && $atualizaProdutosMovimentacao) {
                         return true;

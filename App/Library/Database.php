@@ -190,7 +190,7 @@ class Database
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
 
             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
-            if ($table == 'produtos') {
+            if ($table == 'produto') {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . ", dataMod = NOW() WHERE " . $condWhere['sql'] . ";";
 
             } else {
