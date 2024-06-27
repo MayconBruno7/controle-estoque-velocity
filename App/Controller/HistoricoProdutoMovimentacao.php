@@ -16,6 +16,11 @@ class HistoricoProdutoMovimentacao extends ControllerMain
     {
         $this->auxiliarConstruct($dados);
 
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home");
+        }
+
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use App\Library\ControllerMain;
+use App\Library\Redirect;
 
 class Home extends ControllerMain
 {
@@ -11,7 +12,6 @@ class Home extends ControllerMain
      */
     public function index()
     {
-
         $this->loadView("usuario/login", $this->dados);
 
     }
@@ -33,6 +33,11 @@ class Home extends ControllerMain
      */
     public function homeAdmin()
     {
+        // Somente pode ser acessado por usuários adminsitradores
+        if (!$this->getAdministrador()) {
+            return Redirect::page("Home");
+        }
+        
         return $this->loadView("restrita/homeAdmin");
     }
 
@@ -43,6 +48,12 @@ class Home extends ControllerMain
      */
     public function home()
     {
+
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home");
+        }
+       
         return $this->loadView("restrita/home");
     }
 

@@ -20,6 +20,11 @@ class Produto extends ControllerMain
     {
         $this->auxiliarConstruct($dados);
 
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home/login");
+        }
+
     }
 
     /**
@@ -55,8 +60,7 @@ class Produto extends ControllerMain
         $DbDados['aFornecedor'] = $FornecedorModel->lista('id');
         $idProduto = ($this->getId() !== null) ? $this->getId() : '';
 
-        
-        $DbDados['aHistoricoProduto'] = $HistoricoProdutoModel->historicoProduto('id', $idProduto);
+        $DbDados['aHistoricoProduto'] = $HistoricoProdutoModel->historicoProduto($idProduto, 'id');
 
         return $this->loadView(
             "restrita/formProduto",

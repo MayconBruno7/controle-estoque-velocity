@@ -215,4 +215,18 @@ class ControllerMain
 
         return false;
     }
+
+    /**
+     * getUsuario
+     *
+     * @return boolean
+     */
+    public function getUsuario()
+    {
+        if (Session::get("usuarioId") != "" && (Session::get("usuarioNivel") == 1 || Session::get("usuarioNivel") == 11)) {
+            return true;      
+        }
+    
+        return false;
+    }
 }
