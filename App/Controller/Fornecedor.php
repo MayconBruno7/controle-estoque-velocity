@@ -16,6 +16,10 @@ class Fornecedor extends ControllerMain
     {
         $this->auxiliarConstruct($dados);
 
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home");
+        }
     }
 
     /**
@@ -121,6 +125,7 @@ class Fornecedor extends ControllerMain
             return Redirect::page("Fornecedor");
         }
     }
+    
     /**
      * delete
      *
@@ -159,7 +164,7 @@ class Fornecedor extends ControllerMain
      * getCidadeComboBox
      *
      * @return string
-     */
+    */
     public function getCidadeComboBox()
     {
         $dados = $this->model->getCidadeComboBox($this->getId());

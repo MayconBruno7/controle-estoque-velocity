@@ -15,6 +15,11 @@ class Setor extends ControllerMain
     public function __construct($dados)
     {
         $this->auxiliarConstruct($dados);
+
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home");
+        }
     }
 
     /**

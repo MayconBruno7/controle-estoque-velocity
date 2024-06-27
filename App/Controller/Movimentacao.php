@@ -16,6 +16,11 @@ class Movimentacao extends ControllerMain
     public function __construct($dados)
     {
         $this->auxiliarConstruct($dados);
+
+        // Só acessa se tiver logado
+        if (!$this->getUsuario()) {
+            return Redirect::page("Home");
+        }
     }
 
     /**
@@ -380,7 +385,6 @@ class Movimentacao extends ControllerMain
             if ($tipo_movimentacao == '1') {
                 $verificaQuantidadeEstoqueNegativa = true;
             } 
-            
             
             if ($this->getAcao() != 'updateProdutoMovimentacao') {
 
