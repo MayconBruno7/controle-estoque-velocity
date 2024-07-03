@@ -9,9 +9,9 @@
 <main class="container mt-5">
 
         <div class="row">
-            <div class="col-10">
-            <!-- <?= $nome_produto->nome ?> -->
-                <h2>Histórico de Movimentações: </h2>
+            <div class="col-10 text-center">
+                 
+                <h2>Histórico de Movimentações: <p><?= $dados[0]['nome_produto'] ?></p></h2>
             </div>
         </div>
 
@@ -51,7 +51,7 @@
                             <td> <?= isset($row['tipo']) ? Formulario::getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
                             <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
                             <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
-                            <td> <?= isset($row['Quantidade']) ? number_format($row['Quantidade'], 2, ",", "."): 'Nenhuma '?> </td>
+                            <td> <?= isset($row['Quantidade']) ? $row['Quantidade'] : 'Nenhuma '?> </td>
                             <td> <?= isset($row['Valor']) ? number_format($row['Valor'], 2, ",", "."): 'Nenhuma '?> </td>
                             <td>
                                 <a href="<?= baseUrl() ?>Movimentacao/Form/view/<?= $row['id_mov'] ?>" class="btn btn-outline-secondary btn-sm styleButton" title="Visualizar">Visualizar</a>&nbsp;

@@ -1,5 +1,9 @@
 <?php
-use App\Library\Formulario;
+    use App\Library\Formulario;
+
+    $page = $this->getOutrosParametros(1);
+
+    $tituloPage = isset($page) && $page == 'relatorioMovimentacoes' ? 'Relatorio de Movimentações' : 'Relatório de itens por fornecedor';
 ?>
 
 <main class="container">
@@ -14,9 +18,24 @@ use App\Library\Formulario;
     </div>
 
     <div class="card">
-        <div class="card-header d-flex justify-content-center">Relatório de Movimentações</div>
+        <div class="card-header d-flex justify-content-center"><?= $tituloPage ?></div>
         <div class="card-body">
-            <form id="relatorioForm">
+
+            <?php if ($page == 'relatorioItensPorFornecedor') : ?>
+                <div class="col-12 mt-3">
+                <label for="fornecedor_id" class="form-label">Fornecedor</label>
+                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <option value="">...</option>
+                    <?php foreach($dados as $fornecedor) : ?>
+                        <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor') == $fornecedor['id'] ? 'selected' : '' ?>>
+                            <?= $fornecedor['nome'] ?>
+                        </option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
+            <?php endif ; ?>
+
+            <form id="relatorioForm" class="mt-2">
                 <div class="form-group">
                     <label for="tipoRelatorio">Tipo de Relatório</label>
                     <select id="tipoRelatorio" class="form-control mb-2">
@@ -28,9 +47,30 @@ use App\Library\Formulario;
                 </div>
                 <!-- Div para exibir calendários dinamicamente -->
                 <div id="calendarios" class="form-group"></div>
-                <button type="button" id="gerarRelatorio" class="btn btn-primary mt-3">Gerar Relatório</button>
-                <button type="button" id="imprimirRelatorio" class="btn btn-secondary mt-3">Imprimir Relatório</button>
+
+                <div class="container">
+                    <div class="row">
+                        <div class="col d-flex align-items-center">
+                            <button type="button" id="gerarRelatorio" class="btn btn-primary mt-3">Gerar Relatório</button>
+                            <button type="button" id="imprimirRelatorio" class="btn btn-secondary mt-3 ms-1">Imprimir Relatório</button>
+
+                            <div class="dropdown mt-3 ms-1">
+                                <a class="btn btn-secondary dropdown-toggle" id="downloads" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" disabled>
+                                    Downloads
+                                </a>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item" id="downloadCSV" href="javascript:void(0);">CSV</a></li>
+                                    <li><a class="dropdown-item" id="downloadExcel" href="javascript:void(0);">Excel</a></li>
+                                    <li><a class="dropdown-item" id="downloadPDF" href="javascript:void(0);">PDF</a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
             </form>
+
             <div class="container">            
                 <canvas id="graficoRelatorio" class="mt-4"></canvas>
                 <div id="relatorioHtml" class="mt-4"></div> 
@@ -40,6 +80,15 @@ use App\Library\Formulario;
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- parte do pdf -->
+<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
 
 <script>
     // Função para mostrar/esconder calendários baseado no tipo de relatório selecionado
@@ -49,9 +98,11 @@ use App\Library\Formulario;
 
         var gerarRelatorioBtn = document.getElementById('gerarRelatorio');
         var imprimirRelatorioBtn = document.getElementById('imprimirRelatorio');
+        var downloadRelatorioBtn = document.getElementById('downloads');
 
         gerarRelatorioBtn.disabled = true; // Desabilita por padrão
         imprimirRelatorioBtn.disabled = true; // Desabilita por padrão
+        downloadRelatorioBtn.disabled = true;
 
         if (tipo === 'dia') {
             // Mostrar calendário para selecionar dia e mês
@@ -123,9 +174,11 @@ use App\Library\Formulario;
                     if (dataInicio && fim) {
                         gerarRelatorioBtn.disabled = false;
                         imprimirRelatorioBtn.disabled = false;
+                        downloadRelatorioBtn.disabled = false;
                     } else {
                         gerarRelatorioBtn.disabled = true;
                         imprimirRelatorioBtn.disabled = true;
+                        downloadRelatorioBtn.disabled = true;
                     }
                     break;
                 case 'mes':
@@ -141,9 +194,11 @@ use App\Library\Formulario;
             if (dataInicio) {
                 gerarRelatorioBtn.disabled = false;
                 imprimirRelatorioBtn.disabled = false;
+                downloadRelatorioBtn.disabled = false;
             } else {
                 gerarRelatorioBtn.disabled = true;
                 imprimirRelatorioBtn.disabled = true;
+                downloadRelatorioBtn.disabled = true;
             }
         }
 
@@ -166,6 +221,8 @@ use App\Library\Formulario;
 
         // Evento para gerar relatório
         document.getElementById('gerarRelatorio').addEventListener('click', function() {
+            fetchedData = null; // Limpar os dados anteriores
+
             var tipoRelatorio = document.getElementById('tipoRelatorio').value;
             var dataInicio;
             var fim;
@@ -189,16 +246,128 @@ use App\Library\Formulario;
                     break;
             }
 
+            var id_fornecedor = document.getElementById('fornecedor_id')?.value;
+
             // Montar URL com os parâmetros
             var url = '<?= baseUrl() ?>Relatorio/getDados/' + tipoRelatorio + '/' + dataInicio;
-            if (fim) {
-                url += '/' + fim;
-            }
+            url += '/' + (fim || 'default_value'); // Substitua 'default_value' pelo valor desejado
+            url += '/' + id_fornecedor;
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    fetchedData = data; // Armazena os dados retornados
+
+                    console.log(data)
+                    // Transformação para um array de objetos
+                    fetchedData = [];
+
+                    for (let i = 0; i < data.labels.length; i++) {
+                        fetchedData.push({
+                            label: data.labels[i],
+                            descricao: data.descricoes[i],
+                            valor: data.valores[i],
+                            entrada: data.entradas[i],
+                            saida: data.saidas[i]
+                        });
+                    }
+
+                    console.log(fetchedData);
+
+
+                    // for (let i = 0; i < fetchedData.labels.length; i++) {
+                    //     console.log(fetchedData);
+                    // }
+
+                    // Função para baixar CSV
+                    document.getElementById('downloadCSV').addEventListener('click', function() {
+                        if (fetchedData) {
+                            let csv = Papa.unparse(fetchedData);
+                            let blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+                            let url = URL.createObjectURL(blob);
+                            let link = document.createElement('a');
+                            link.setAttribute('href', url);
+                            link.setAttribute('download', 'relatorio.csv');
+                            link.style.visibility = 'hidden';
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        }
+                    });
+                    
+                    // Função para baixar Excel
+                    document.getElementById('downloadExcel').addEventListener('click', function() {
+                        if (fetchedData) {
+                            let ws = XLSX.utils.json_to_sheet(fetchedData); // Certifique-se fetchedData é um array de objetos
+                            let wb = XLSX.utils.book_new();
+                            XLSX.utils.book_append_sheet(wb, ws, "Relatorio");
+                            XLSX.writeFile(wb, "relatorio.xlsx");
+                        }
+                    });
+
+
+                    // Evento para baixar PDF
+                    document.getElementById('downloadPDF').addEventListener('click', function() {
+                        if (fetchedData) {
+                            const { jsPDF } = window.jspdf;
+                            const doc = new jsPDF();
+
+                            // Adicionar imagem
+                            const imgData = '<?= baseUrl() ?>assets/img/brasao-pmrl.png'; // Substitua com o seu próprio dado de imagem
+                            const imgWidth = 25; // Largura da imagem
+                            const imgHeight = 20; // Altura da imagem
+                            const marginX = (doc.internal.pageSize.width - imgWidth) / 2; // Centraliza horizontalmente
+                            const marginY = 10; // Distância a partir do topo
+                            doc.addImage(imgData, 'JPEG', marginX, marginY, imgWidth, imgHeight);
+
+                            // Cabeçalho do PDF abaixo da imagem
+                            const headerText = 'Relatório de Movimentações';
+                            const headerFontSize = 14;
+                            const headerTextWidth = doc.getStringUnitWidth(headerText) * headerFontSize / doc.internal.scaleFactor;
+                            const headerX = (doc.internal.pageSize.width - headerTextWidth) / 2;
+                            const headerY = marginY + imgHeight + 10; // Posiciona abaixo da imagem
+                            doc.setFontSize(headerFontSize);
+                            doc.text(headerText, headerX, headerY);
+
+                            // Construir a tabela no PDF
+                            let posY = headerY + headerFontSize + 10; // Posição inicial Y da tabela
+                            let margins = { top: 20, left: 10, bottom: 10 };
+
+                            // Cabeçalho da tabela
+                            doc.setFontSize(12);
+                            doc.setTextColor(0, 0, 0); // Cor do texto
+                            doc.setFillColor(240, 240, 240); // Cor de fundo do cabeçalho
+                            doc.rect(margins.left, posY, 190, 10, 'F');
+                            doc.text('Data', margins.left + 5, posY + 8);
+                            doc.text('Produto', margins.left + 45, posY + 8);
+                            doc.text('Valor', margins.left + 85, posY + 8);
+                            doc.text('Entradas', margins.left + 115, posY + 8);
+                            doc.text('Saídas', margins.left + 145, posY + 8);
+                            posY += 10;
+
+                            // Conteúdo da tabela
+                            doc.setFontSize(10);
+                            doc.setTextColor(0, 0, 0); // Cor do texto
+
+                            fetchedData.forEach(item => {
+                                doc.rect(margins.left, posY, 190, 10);
+                                doc.text(String(item.label), margins.left + 5, posY + 8); // Converter para string
+                                doc.text(String(item.descricao), margins.left + 45, posY + 8); // Converter para string
+                                doc.text(String(item.valor), margins.left + 85, posY + 8); // Converter para string
+                                doc.text(String(item.entrada), margins.left + 115, posY + 8); // Converter para string
+                                doc.text(String(item.saida), margins.left + 145, posY + 8); // Converter para string
+                                posY += 10;
+
+                                // Adicionar nova página se necessário
+                                if (posY > 280) { // 280 é o limite da página para evitar overflow
+                                    doc.addPage();
+                                    posY = margins.top;
+                                }
+                            });
+
+                            // Salvar o PDF
+                            doc.save('relatorio.pdf');
+                        }
+                    });
 
                     var ctx = document.getElementById('graficoRelatorio').getContext('2d');
 
@@ -295,6 +464,7 @@ options: {
             window.print(); // Imprime a página
         });
     });
+
 </script>
 
 <style>

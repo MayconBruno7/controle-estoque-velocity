@@ -19,7 +19,23 @@ class Relatorio extends ControllerMain
 
     public function index()
     {
+        $this->loadView("restrita/indexRelatorio");
+    }
+
+    public function relatorioMovimentacoes()
+    {
         $this->loadView("restrita/formRelatorio");
+    }
+
+    public function relatorioItensPorFornecedor()
+    {
+
+        $dados = [];
+
+        $FornecedorModel = $this->loadModel('Fornecedor');
+        $dados = $FornecedorModel->lista('id');
+
+        return $this->loadView("restrita/formRelatorio", $dados);
     }
 
     public function getDados()
@@ -28,32 +44,53 @@ class Relatorio extends ControllerMain
         $tipo = $this->getOutrosParametros(2);
         $dataInicio = $this->getOutrosParametros(3);
         $dataFinal = $this->getOutrosParametros(4);
+        $id_fornecedor = (int)$this->getOutrosParametros(5);
 
         $dados = [];
-        
-        switch ($tipo) {
-            case 'dia':
-                $dados = $this->model->RelatorioDia($dataInicio);
-                break;
-            case 'semana':
-                $dados = $this->model->RelatorioSemana($dataInicio, $dataFinal);
-                break;
-            case 'mes':
-                $dados = $this->model->RelatorioMes($dataInicio);
-                break;
-            case 'ano':
-                $dados = $this->model->RelatorioAno($dataInicio);
-                break;
-            default:
-                $dados = [];
-        }
 
+        if (!empty($id_fornecedor)) {
+            switch ($tipo) {
+                case 'dia':
+                    $dados = $this->model->RelatorioDiaItemFornecedor($dataInicio, $id_fornecedor);
+                    break;
+                case 'semana':
+                    $dados = $this->model->RelatorioSemanaItemFornecedor($dataInicio, $dataFinal, $id_fornecedor);
+                    break;
+                case 'mes':
+                    $dados = $this->model->RelatorioMesItemFornecedor($dataInicio, $id_fornecedor);
+                    break;
+                case 'ano':
+                    $dados = $this->model->RelatorioAnoItemFornecedor($dataInicio, $id_fornecedor);
+                    break;
+                default:
+                    $dados = [];
+            }
+        } else {
+            switch ($tipo) {
+                case 'dia':
+                    $dados = $this->model->RelatorioDia($dataInicio);
+                    break;
+                case 'semana':
+                    $dados = $this->model->RelatorioSemana($dataInicio, $dataFinal);
+                    break;
+                case 'mes':
+                    $dados = $this->model->RelatorioMes($dataInicio);
+                    break;
+                case 'ano':
+                    $dados = $this->model->RelatorioAno($dataInicio);
+                    break;
+                default:
+                    $dados = [];
+            }
+        }
+        
         header('Content-Type: application/json');
         echo json_encode($this->formatarDadosParaGrafico($dados));
     }
 
     private function formatarDadosParaGrafico($dados)
     {
+
         $entradas = [];
         $saidas = [];
         $labels = [];
@@ -61,6 +98,7 @@ class Relatorio extends ControllerMain
         $valores = [];
 
         foreach ($dados as $dado) {
+
             $labels[] = Formulario::formatarDataBrasileira($dado['data_pedido']);
             $descricoes[] = $dado['descricao'];
             $valores[] = number_format($dado['valor'], 2, ",", ".");

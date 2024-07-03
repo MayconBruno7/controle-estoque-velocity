@@ -40,10 +40,11 @@ use App\Library\Formulario;
                                 <?= $_SESSION["usuarioLogin"] ?>
                             </a>
                             <?php endif; ?>
-                            <ul class="dropdown-menu text-danger">
+                            <ul class="dropdown-menu">
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Funcionario">Lista funcionários</a></li>
                                 <li ><a class="dropdown-item" href="<?= baseUrl() ?>Cargo">Lista cargos</a></li>
+                                <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Relatorio">Relatórios</a></li>
                             </ul>
                         </li>
