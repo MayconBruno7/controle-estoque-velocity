@@ -13,7 +13,7 @@ use App\Library\Formulario;
 
     <link rel="stylesheet" href="<?= baseUrl() ?>assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/style.css">
-    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css"/>
+    <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/dataTables.boostrap5.min.css"/>
     <link rel="icon" href="<?= baseUrl() ?>assets/img/brasao-pmrl-icon.jpeg" type="image/jpeg">
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>

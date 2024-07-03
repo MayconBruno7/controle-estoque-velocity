@@ -3,6 +3,8 @@
 use App\Library\ControllerMain;
 use App\Library\Redirect;
 
+use App\Library\Formulario;
+
 class Relatorio extends ControllerMain
 {
     public function __construct($dados)
@@ -59,9 +61,9 @@ class Relatorio extends ControllerMain
         $valores = [];
 
         foreach ($dados as $dado) {
-            $labels[] = $dado['data_pedido'];
+            $labels[] = Formulario::formatarDataBrasileira($dado['data_pedido']);
             $descricoes[] = $dado['descricao'];
-            $valores[] = $dado['valor'];
+            $valores[] = number_format($dado['valor'], 2, ",", ".");
             
             if ($dado['tipo'] == 1) { // Entrada
                 $entradas[] = $dado['quantidade'];

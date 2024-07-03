@@ -1,5 +1,5 @@
 
-        <footer>
+        <footer class="mt-4">
             <p>Departamento de Informática Rosário da Limeira - MG</p>
             <span>© 2024 Company, Inc</span>
 
@@ -15,7 +15,7 @@
                 } 
 
             ?>
-            <div class="container">
+            <div class="container mt-2">
                 <?php if (Session::get('usuarioId') != false) : ?>
                     <a class="mt-2" href="<?= baseUrl() . $redirectUrl ?>">Home</a>
                 <?php endif; ?>

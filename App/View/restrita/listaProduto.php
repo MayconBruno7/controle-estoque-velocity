@@ -5,7 +5,7 @@
 ?>
 
 <main class="container">
-        <?= Formulario::titulo('', true, false); ?>
+        <?= Formulario::titulo($this->getAcao() == 'delete' ? 'Produto' : '', true, false); ?>
         
         <div class="row">
             <div class="col-12">
@@ -79,14 +79,6 @@
     </main>
 
     <?= Formulario::getDataTables('tbListaprodutos'); ?>
-
-    <script>
-        // Função para habilitar campos de entrada quando o botão de adicionar é clicado
-        function enableInputs(idProduto) {
-            document.getElementById('valor_' + idProduto).removeAttribute('disabled');
-            document.getElementById('quantidade_' + idProduto).removeAttribute('disabled');
-        }
-    </script>
 
 
 
