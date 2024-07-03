@@ -44,6 +44,7 @@ use App\Library\Formulario;
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
                                 <li><a class="dropdown-item" href="<?= baseUrl() ?>Funcionario">Lista funcionários</a></li>
                                 <li ><a class="dropdown-item" href="<?= baseUrl() ?>Cargo">Lista cargos</a></li>
+                                <li><a class="dropdown-item" href="<?= baseUrl() ?>Relatorio">Relatórios</a></li>
                             </ul>
                         </li>
 

@@ -100,7 +100,7 @@
                         // Encontrar o fornecedor correto com base no fornecedor_id do histórico
                         $fornecedorNome = '';
                         
-                        if (setValor('fornecedor') == $historicoItem['id']) {
+                        if (setValor('fornecedor') == $historicoItem['fornecedor_id']) {
                             $fornecedorNome = $fornecedor['nome'];
                         }
                     

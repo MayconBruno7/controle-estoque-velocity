@@ -1,7 +1,5 @@
 <?php
 
-    $this->get();
-    exit;
     // Verifica se o parâmetro 'cnpj' foi enviado na requisição GET
     if(isset($this->getGet()['cnpj'])) {
 

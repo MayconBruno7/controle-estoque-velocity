@@ -231,9 +231,11 @@
 
             <div class="col mt-4">
                 <div class="col-auto text-end ml-2">
+                <?php if ($this->getAcao() != "view" && $this->getAcao() != "delete"): ?>
                     <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" <?= ($this->getAcao() != 'insert') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
                         Adicionar Produtos
                     </button>
+                <?php endif; ?>
                 </div>
             </div>
 

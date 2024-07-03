@@ -33,9 +33,11 @@
                 </div>
             </div>
 
-            <div class="mb-3">
-                <button type="submit" class="btn btn-outline-primary">Gravar</button>&nbsp;&nbsp;
+            <div class="form-group col-12 mt-5">
                 <?= Formulario::botao('voltar') ?>
+                <?php if ($this->getAcao() != "view"): ?>
+                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <?php endif; ?>
             </div>
         </form>
     </main>

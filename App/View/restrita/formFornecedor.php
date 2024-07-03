@@ -8,6 +8,8 @@
 ?>
 
 <div class="container">
+
+<a href="<?= baseUrl() ?>Fornecedor/requireAPI/">teste</a>
     
     <?= Formulario::titulo('Fornecedor', false, false) ?><br>
 
@@ -100,11 +102,12 @@
 
             <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
-            <div class="mb-3">
-                <button type="submit" class="btn btn-outline-primary">Gravar</button>&nbsp;&nbsp;
+            <div class="form-group col-12 mt-5">
                 <?= Formulario::botao('voltar') ?>
+                <?php if ($this->getAcao() != "view"): ?>
+                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <?php endif; ?>
             </div>
-            
         </div>
 
     </form>
@@ -174,7 +177,7 @@
             if (match) {
                 return match[0];
             } else {
-                return 'No valid phone number found';
+                return '';
             }
         }
 

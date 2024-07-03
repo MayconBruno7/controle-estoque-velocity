@@ -6,7 +6,7 @@ Class HistoricoProdutoModel extends ModelMain
 {
     public $table = "historico_produto";
 
-    public function historicoProduto($orderBy = 'id', $idProduto)
+    public function historicoProduto($idProduto, $orderBy = 'id')
     {
         $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE id_produtos = ? ORDER BY {$orderBy}", [$idProduto]);
             
