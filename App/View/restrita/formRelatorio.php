@@ -67,8 +67,6 @@
                         </div>
                     </div>
                 </div>
-
-
             </form>
 
             <div class="container">            
@@ -80,14 +78,15 @@
 </main>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <!-- parte do pdf -->
-<script src="https://cdn.jsdelivr.net/npm/dompurify/dist/purify.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
-
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.3.1/jspdf.umd.min.js"></script>
+
+<!-- parte do excel -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+
+<!-- parte do csv -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
 
 
 <script>
@@ -263,20 +262,15 @@
 
                     for (let i = 0; i < data.labels.length; i++) {
                         fetchedData.push({
-                            label: data.labels[i],
-                            descricao: data.descricoes[i],
-                            valor: data.valores[i],
-                            entrada: data.entradas[i],
-                            saida: data.saidas[i]
+                            Data: data.labels[i],
+                            Descricao: data.descricoes[i],
+                            Valor: data.valores[i],
+                            Entrada: data.entradas[i],
+                            Saida: data.saidas[i]
                         });
                     }
 
                     console.log(fetchedData);
-
-
-                    // for (let i = 0; i < fetchedData.labels.length; i++) {
-                    //     console.log(fetchedData);
-                    // }
 
                     // Função para baixar CSV
                     document.getElementById('downloadCSV').addEventListener('click', function() {
@@ -350,11 +344,11 @@
 
                             fetchedData.forEach(item => {
                                 doc.rect(margins.left, posY, 190, 10);
-                                doc.text(String(item.label), margins.left + 5, posY + 8); // Converter para string
-                                doc.text(String(item.descricao), margins.left + 45, posY + 8); // Converter para string
-                                doc.text(String(item.valor), margins.left + 85, posY + 8); // Converter para string
-                                doc.text(String(item.entrada), margins.left + 115, posY + 8); // Converter para string
-                                doc.text(String(item.saida), margins.left + 145, posY + 8); // Converter para string
+                                doc.text(String(item.Data), margins.left + 5, posY + 8); // Converter para string
+                                doc.text(String(item.Descricao), margins.left + 45, posY + 8); // Converter para string
+                                doc.text(String(item.Valor), margins.left + 85, posY + 8); // Converter para string
+                                doc.text(String(item.Entrada), margins.left + 115, posY + 8); // Converter para string
+                                doc.text(String(item.Saida), margins.left + 145, posY + 8); // Converter para string
                                 posY += 10;
 
                                 // Adicionar nova página se necessário
