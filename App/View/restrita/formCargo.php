@@ -4,7 +4,9 @@
 
 ?>
 
-<?= Formulario::titulo('Cargos', false, false) ?>
+<div class="container" style="margin-top: 100px;">
+    <?= Formulario::titulo('Cargos', false, false) ?>
+</div>
 
 
     <main class="container mt-5">

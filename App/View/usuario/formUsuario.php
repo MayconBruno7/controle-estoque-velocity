@@ -6,9 +6,13 @@ use App\Library\Formulario;
 
 <script type="text/javascript" src="<?= baseUrl(); ?>assets/js/usuario.js"></script>
 
-<main class="container">
 
+<div class="container" style="margin-top: 130px;">
     <?= Formulario::titulo("Usuário", false, true) ?>
+</div>
+
+
+<main class="container mt-5">
 
     <form method="POST" action="<?= baseUrl() ?>Usuario/<?= $this->getAcao() ?>">
 

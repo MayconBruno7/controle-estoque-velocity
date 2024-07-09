@@ -1,64 +1,64 @@
 <?php
-
     use App\Library\Formulario;
-
 ?>
 
-    <main class="container">
-        <?= Formulario::titulo('', true, false); ?>
-        <div class="row">
-            <div class="col-12">
+<div class="loader"></div>
+<div id="app">
+    <div class="main-wrapper main-wrapper-1">
+        <!-- Navbar, Sidebar e Conteúdo aqui -->
+        <main class="container mt-5">
+            <div class="row">
+                <div class="col-12 mt-3">
                     <?= Formulario::exibeMsgError() ?>
                 </div>
-
                 <div class="col-12 mt-3">
                     <?= Formulario::exibeMsgSucesso() ?>
                 </div>
             </div>
-        </div>
+            <div class="container mb-3">
+            <?= Formulario::titulo('', true, false); ?>
 
-    
-        <div class="card">
-            <div class="card-header d-flex justify-content-center">Lista de Funcionários</div>
+            </div>
+            <div class="card">
+                <div class="card-header d-flex justify-content-center">
+                    Lista de Funcionários
+                </div>
+                
                 <div class="card-body">
-                    <table id="tbListafuncionarios" class="table table-striped table-hover table-bordered table-responsive-sm display" style="width:100%">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nome</th>
-                                <th>Salário</th>
-                                <th>Setor</th>
-                                <th>Status</th>
-                                <th>Opções</th>
-                            </tr>
-                        <thead>   
-
-                        <tbody>
-                            <?php
-                                foreach ($dados as $row) {
-                                    ?>
-                                        <tr>
-                                        <td> <?= $row['id'] ?> </td>
-                                        <td> <?= $row['nome'] ?> </td>
-                                        <td> R$ <?= number_format($row['salario'], 2, ',', '.') ?></td>
-                                            <td> <?= $row['nome_do_setor'] ? : "Nenhum setor selecionado" ?> </td>
-
-                                            <td><?= Formulario::getStatusDescricao($row['statusRegistro']) ?></td>
-                                            <td>
-                                                <?= Formulario::botao("view", $row['id']) ?>
-                                                <?= Formulario::botao("update", $row['id']) ?>
-                                                <?= Formulario::botao("delete", $row['id']) ?>
-                                            </td>
-                                        </tr>
-                                        
-                                    <?php
-                                }
-                            ?>
-                        </tbody>
-                    </table>
+                    <div class="table-responsive">
+                        <table id="tbListausuario" class="table table-striped table-hover dataTable no-footer" style="width: 100%;" role="grid">
+                            <thead>
+                                <tr role="row">
+                                    <th class="sorting_asc" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Salário</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Setor</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Status</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 79.875px;" aria-label="Opções: activate to sort column ascending">Opções</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($aDados as $value): ?>
+                                    <tr role="row" class="odd">
+                                        <td class="sorting_1"><?= $value['id'] ?></td>
+                                        <td><?= $value['nome'] ?></td>
+                                        <td>R$ <?= number_format($value['salario'], 2, ',', '.') ?></td>
+                                        <td><?= $value['nome_do_setor'] ? : "Nenhum setor selecionado" ?></td>
+                                        <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
+                                        <td>
+                                            <?= Formulario::botao("view", $value['id']) ?>
+                                            <?= Formulario::botao("update", $value['id']) ?>
+                                            <?= Formulario::botao("delete", $value['id']) ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
-        </div>
-    </main>
-    
-    <?= Formulario::getDataTables("tbListafuncionarios"); ?>
+        </main>
+
+        <?= Formulario::getDataTables("tbListausuario"); ?>
+    </div>
+</div>

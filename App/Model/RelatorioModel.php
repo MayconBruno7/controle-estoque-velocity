@@ -8,14 +8,30 @@ Class RelatorioModel extends ModelMain
     public $table = "movimentacao_item";
 
     // Movimentacoes
-    public function RelatorioDia($dia)
+    public function RelatorioDia($dia = null)
     {
-        $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes, m.data_pedido, p.descricao, mi.quantidade, mi.valor, m.tipo
+        // Se $dia não for fornecido, use a data atual
+        if ($dia === null) {
+            $dia = date('Y-m-d');
+        }
+
+        $rsc = $this->db->dbSelect(
+            "SELECT 
+                SUM(mi.quantidade) AS quantidadeDia,
+                m.data_pedido,
+                mi.id_movimentacoes,
+                p.descricao,
+                mi.quantidade,
+                mi.valor,
+                m.tipo
             FROM movimentacao m
             INNER JOIN movimentacao_item mi ON m.id = mi.id_movimentacoes
             INNER JOIN produto p ON mi.id_produtos = p.id
             WHERE DATE(m.data_pedido) = ?
-            ORDER BY m.data_pedido ASC", [$dia]);
+            GROUP BY m.id
+            ORDER BY m.data_pedido ASC
+        ", [$dia]);
+
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);
@@ -24,14 +40,44 @@ Class RelatorioModel extends ModelMain
         }
     }
 
-    public function RelatorioSemana($dataInicio, $dataFinal)
+    public function RelatorioSemana($dataInicio = null, $dataFinal = null)
     {
-        $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes, m.data_pedido, p.descricao, mi.quantidade, mi.valor, m.tipo
+        // Se $dataInicio ou $dataFinal não forem fornecidos, use a semana atual
+        if ($dataInicio === null || $dataFinal === null) {
+            // Defina a data atual
+            $hoje = new DateTime();
+            
+            // Encontre o início da semana (segunda-feira)
+            $inicioSemana = clone $hoje;
+            $inicioSemana->modify('monday this week');
+            
+            // Encontre o fim da semana (domingo)
+            $fimSemana = clone $hoje;
+            $fimSemana->modify('sunday this week');
+
+            // Formate as datas no formato desejado (d-m-Y)
+            $dataInicio = $inicioSemana->format('Y-m-d');
+            $dataFinal = $fimSemana->format('Y-m-d');
+        }
+
+        $rsc = $this->db->dbSelect(
+            "SELECT 
+                SUM(mi.quantidade) AS quantidadeSemana,
+                mi.id_movimentacoes, 
+                m.data_pedido, 
+                p.descricao, 
+                mi.quantidade, 
+                mi.valor, 
+                m.tipo  
             FROM movimentacao m
             INNER JOIN movimentacao_item mi ON m.id = mi.id_movimentacoes
             INNER JOIN produto p ON mi.id_produtos = p.id
             WHERE m.data_pedido BETWEEN ? AND ?
-            ORDER BY m.data_pedido ASC", [$dataInicio, $dataFinal]);
+            GROUP BY m.id
+            ORDER BY m.data_pedido ASC
+
+        ", [$dataInicio, $dataFinal]);
+
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);
@@ -40,13 +86,28 @@ Class RelatorioModel extends ModelMain
         }
     }
 
-    public function RelatorioMes($mes)
+    public function RelatorioMes($mes = null)
     {
-        $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes, m.data_pedido, p.descricao, mi.quantidade, mi.valor, m.tipo
+        // Se $mes não for fornecido, use o mês atual
+        if ($mes === null) {
+            // Defina a data atual e formate-a para 'Y-m'
+            $mes = date('Y-m');
+        }
+
+        $rsc = $this->db->dbSelect(
+            "SELECT 
+                SUM(mi.quantidade) AS quantidadeMes,
+                mi.id_movimentacoes, 
+                m.data_pedido, 
+                p.descricao, 
+                mi.quantidade, 
+                mi.valor, 
+                m.tipo
             FROM movimentacao m
             INNER JOIN movimentacao_item mi ON m.id = mi.id_movimentacoes
             INNER JOIN produto p ON mi.id_produtos = p.id
             WHERE DATE_FORMAT(m.data_pedido, '%Y-%m') = ?
+            GROUP BY m.id
             ORDER BY m.data_pedido ASC", [$mes]);
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
@@ -56,21 +117,38 @@ Class RelatorioModel extends ModelMain
         }
     }
 
-    public function RelatorioAno($ano)
+
+    public function RelatorioAno($ano = null)
     {
-        $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes, m.data_pedido, p.descricao, mi.quantidade, mi.valor, m.tipo
+        // Se $ano não for fornecido, use o ano atual
+        if ($ano === null) {
+            // Defina a data atual e formate-a para 'Y'
+            $ano = date('Y');
+        }
+    
+        $rsc = $this->db->dbSelect(
+            "SELECT 
+                SUM(mi.quantidade) AS quantidadeAno,
+                mi.id_movimentacoes, 
+                m.data_pedido, 
+                p.descricao, 
+                mi.quantidade, 
+                mi.valor, 
+                m.tipo
             FROM movimentacao m
             INNER JOIN movimentacao_item mi ON m.id = mi.id_movimentacoes
             INNER JOIN produto p ON mi.id_produtos = p.id
             WHERE DATE_FORMAT(m.data_pedido, '%Y') = ?
+             GROUP BY m.id
             ORDER BY m.data_pedido ASC", [$ano]);
-
+    
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);
         } else {
             return [];
         }
     }
+    
 
     // fornecedor
     public function RelatorioDiaItemFornecedor($dataInicio, $id_fornecedor)

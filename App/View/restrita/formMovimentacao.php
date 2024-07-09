@@ -77,17 +77,17 @@
         </div>
     </div>
 
-    <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
-    <?= Formulario::titulo('Movimentação', true, false); ?>
+       
+    <div class="container" style="margin-top: 200px;">
+        <?= Formulario::titulo('Movimentação', false, false) ?>
+    </div>
 
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-12">
-                <?= Formulario::exibeMsgError() ?>
-            </div>
-
-            <div class="col-12">
-                <?= Formulario::exibeMsgSucesso() ?>
-            </div>
+            <?= Formulario::exibeMsgError() ?>
+        </div>
+        <div class="col-12">
+            <?= Formulario::exibeMsgSucesso() ?>
         </div>
     </div>
 
@@ -98,7 +98,7 @@
         <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
         <?php if ( $this->getAcao() == 'insert') : ?>
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
@@ -161,7 +161,7 @@
         <?php endif; ?>
             
         <?php if ($this->getAcao() != 'insert') : ?>
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
@@ -322,11 +322,13 @@
         </p>
         </div>
 
-        <div class="form-group col-12 mt-5">
+        <div class="row justify-content-center">
+            <div class="col-6 d-flex justify-content-center mt-3">
             <?= Formulario::botao('voltar') ?>
             <?php if ($this->getAcao() != "view"): ?>
                 <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
             <?php endif; ?>
+            </div>
         </div>
     </form>
 

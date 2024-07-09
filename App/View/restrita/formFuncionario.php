@@ -7,7 +7,7 @@
     <main class="container mt-5">
 
         <div class="row">
-            <div class="col-10">
+            <div class="col-10" style="margin-top: 100px;">
                 <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
                 <?= Formulario::titulo('Funcionários', false, false) ?>
 

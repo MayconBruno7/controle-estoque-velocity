@@ -11,7 +11,10 @@
 
 <a href="<?= baseUrl() ?>Fornecedor/requireAPI/">teste</a>
     
-    <?= Formulario::titulo('Fornecedor', false, false) ?><br>
+        
+    <div class="container" style="margin-top: 100px;">
+        <?= Formulario::titulo('Fornecedor', false, false) ?>
+    </div>
 
     <form method="POST" action="<?= baseUrl() ?>Fornecedor/<?= $this->getAcao() ?>">
 

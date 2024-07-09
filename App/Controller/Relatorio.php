@@ -19,7 +19,7 @@ class Relatorio extends ControllerMain
 
     public function index()
     {
-        $this->loadView("restrita/indexRelatorio");
+        $this->loadView("restrita/formRelatorio");
     }
 
     public function relatorioMovimentacoes()
@@ -40,7 +40,6 @@ class Relatorio extends ControllerMain
 
     public function getDados()
     {
-
         $tipo = $this->getOutrosParametros(2);
         $dataInicio = $this->getOutrosParametros(3);
         $dataFinal = $this->getOutrosParametros(4);
@@ -91,6 +90,7 @@ class Relatorio extends ControllerMain
     private function formatarDadosParaGrafico($dados)
     {
 
+        $id_movimentacao = [];
         $entradas = [];
         $saidas = [];
         $labels = [];
@@ -102,6 +102,7 @@ class Relatorio extends ControllerMain
             $labels[] = Formulario::formatarDataBrasileira($dado['data_pedido']);
             $descricoes[] = $dado['descricao'];
             $valores[] = number_format($dado['valor'], 2, ",", ".");
+            $id_movimentacao[] = $dado['id_movimentacoes'];
             
             if ($dado['tipo'] == 1) { // Entrada
                 $entradas[] = $dado['quantidade'];
@@ -117,7 +118,8 @@ class Relatorio extends ControllerMain
             'descricoes' => $descricoes,
             'valores' => $valores,
             'entradas' => $entradas,
-            'saidas' => $saidas
+            'saidas' => $saidas,
+            'id_movimentacao' => $id_movimentacao
         ];
     }
 }

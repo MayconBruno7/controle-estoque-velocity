@@ -283,7 +283,8 @@ class Formulario
     static public function getDataTables($table_id)
     {
         return '
-            <script type="text/javascript" src="' . baseUrl() . 'assets/Datatables/datatables.min.js"></script>           
+     
+            <script type="text/javascript" src="' . baseUrl() . 'assets/DataTables/datatables.min.js"></script>         
             <style>
                 .dataTables_wrapper {
                     position: relative;
