@@ -57,6 +57,7 @@ class UploadImages
      */
     public static function delete($nomeImagem, $pasta)
     {
+        
         unlink("uploads/$pasta/" . $nomeImagem);
     }
 }

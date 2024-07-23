@@ -149,9 +149,10 @@
 
             <div class="col-2 mt-3">
                 <label for="data_chegada" class="form-label">Data de Chegada</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+                <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
+                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
             </div>
+
 
             <div class="col-12 mt-3">
                 <label for="motivo" class="form-label">Motivo</label>
@@ -442,6 +443,19 @@
             };
             xhr.send(JSON.stringify(movimentacao));
         }
+
+        const dataChegadaInput = document.getElementById('data_chegada');
+        const dataPedidoInput = document.getElementById('data_pedido');
+        const today = new Date().toISOString().split('T')[0];
+        dataChegadaInput.setAttribute('max', today);
+        dataPedidoInput.setAttribute('max', today);
+
+        dataChegadaInput.addEventListener('change', (event) => {
+            if (dataChegadaInput.value || dataPedidoInput.value> today) {
+                alert('A data de chegada não pode ser maior que a data atual.');
+                dataChegadaInput.value = today;
+            }
+        });
     });
 
 </script>

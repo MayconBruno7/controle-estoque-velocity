@@ -2,7 +2,6 @@
     use App\Library\Formulario;
 ?>
 
-<div class="loader"></div>
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
@@ -30,6 +29,7 @@
                             <thead>
                                 <tr role="row">
                                     <th class="sorting_asc" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">E-mail</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nível</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListausuario" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Status</th>

@@ -226,34 +226,36 @@ class Database
     public function delete($table, $conditions)
     {
         try {
-
-  
             $save = $this->getCampos($conditions, "AND");
-            $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . "; ";
-  
+            $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . ";";
+
             $query = $this->connect()->prepare($sql);
             $query->execute($save['dados']);
-    
+
             $rs = $query->rowCount();
-            
+
             self::__destruct();
 
-            if ($rs == []) {
-                return false;
-            } else {
-                return $rs;
-            }
+            return $rs;
 
         } catch (\PDOException $exc) {
-            if ($exc->errorInfo[0] == '45000') {
+            // Verifica o código de erro específico para a violação de chave estrangeira
+            if ($exc->errorInfo[0] == '23000' && in_array($exc->errorInfo[1], [1451, 1452])) {
+                // Mensagem amigável para o usuário
+                Session::set("msgError", "Não é possível excluir o registro porque ele possui dependências em outras tabelas.");
+                Redirect::page(Formulario::retornaHomeAdminOuHome());
+            } else if ($exc->errorInfo[0] == '45000') {
+                // Mensagem específica para erros programados
                 Session::set("msgError", "Operações não são permitidas no final de semana.");
                 Redirect::page(Formulario::retornaHomeAdminOuHome());
             } else {
-                echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
+                // Mensagem genérica para outros erros
+                echo "Erro ao excluir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
             }
             exit;
         }
     }
+
 
     /**
      * select
@@ -361,7 +363,6 @@ class Database
     }
 
     /* Método update que altera valores do banco de dados e retorna o número de linhas afetadas */
-
     public function dbUpdate( $sql , $params = null )
     {
 

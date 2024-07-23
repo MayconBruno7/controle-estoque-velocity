@@ -22,7 +22,7 @@ class Movimentacao extends ControllerMain
             return Redirect::page("Home");
         }
     }
-
+ 
     /**
      * index
      *
@@ -504,7 +504,7 @@ class Movimentacao extends ControllerMain
         }
 
         if ($this->model->delete(["id" => $this->getPost('id')])) {
-    
+       
             if (isset($id_produto) || $quantidade_produto) {
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
@@ -526,6 +526,7 @@ class Movimentacao extends ControllerMain
             Session::set("msgSuccess", "Movimentacao excluída com sucesso.");
 
         } else {
+        
             Session::set("msgError", "Falha tentar excluir a Movimentacao.");
         }
 

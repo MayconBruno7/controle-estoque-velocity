@@ -30,7 +30,7 @@ Class CargoModel extends ModelMain
             $rsc = $this->db->dbSelect("SELECT * FROM cargo ORDER BY {$orderBy}");
             
         } else {
-            $rsc = $this->db->dbSelect("SELECT * FROM cargo ORDER BY {$orderBy} WHERE statusRegistro = 1");
+            $rsc = $this->db->dbSelect("SELECT * FROM cargo WHERE statusRegistro = 1 ORDER BY {$orderBy}");
             
         }
 

@@ -46,6 +46,15 @@ class Login extends ControllerMain
             Session::set("usuarioEmail", $aUsuario['email']);
             Session::set("usuarioNivel", $aUsuario['nivel']);
             Session::set("usuarioSenha", $aUsuario['senha']);
+            Session::set("id_funcionario", $aUsuario['id_funcionario']);
+
+            $FuncionarioModel = $this->loadModel("Funcionario");
+            $dados['aFuncionario'] = $FuncionarioModel->recuperaFuncionario($aUsuario['id_funcionario']);
+
+            // var_dump($dados['aFuncionario'][0]['imagem'], $aUsuario['id']);
+            // exit;
+
+            Session::set("usuarioImagem", $dados['aFuncionario'][0]['imagem']);
 
             // Direcionar o usuário para página home
             if (Session::get('usuarioNivel') == 1) {
@@ -74,6 +83,8 @@ class Login extends ControllerMain
         Session::destroy('usuarioEmail');
         Session::destroy('usuarioNivel');
         Session::destroy('usuarioSenha');
+        Session::destroy('id_funcionario');
+        Session::destroy('usuarioImagem');
         
         return Redirect::Page("home");
     }

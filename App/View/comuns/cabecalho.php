@@ -30,7 +30,8 @@ use App\Library\Formulario;
 
 </head>
 
-<body>
+<body class="sidebar-gone sidebar-mini">
+
 <div class="loader"></div>
 <div class="settingSidebar" id="settingSidebar">
     <a href="javascript:void(0)" class="settingPanelToggle"> <i class="fa fa-spin fa-cog"></i>
@@ -149,7 +150,7 @@ use App\Library\Formulario;
             </div>
 
             <ul class="navbar-nav navbar-right">
-                <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <!-- <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                     </a>
                     <div class="dropdown-menu dropdown-list dropdown-menu-right pullDown">
                         <div class="dropdown-header">
@@ -188,23 +189,30 @@ use App\Library\Formulario;
                             <a href="#">Ver todos <i class="fas fa-chevron-right"></i></a>
                         </div>
                     </div>
-                </li>
-                <li class="dropdown"><a href="#" data-toggle="dropdown"
-                                        class="nav-link dropdown-toggle nav-link-lg nav-link-user"> <img alt="imagem" src="<?= baseUrl() ?>assets/img/users/user.png"
-                                                                                                         class="user-img-radious-style"> <span class="d-sm-none d-lg-inline-block"></span></a>
+                </li> -->
+                <li class="dropdown">
+                    <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
+                        <?php if ((Session::get('id_funcionario')) && (Session::get('usuarioImagem'))) : ?>
+                            <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'uploads/funcionarios/' . Session::get('usuarioImagem') ?>" width="40px" height="40px">
+                        <?php else : ?>
+                            <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
+                        <?php endif; ?>
+                        <span class="d-sm-none d-lg-inline-block"></span>
+                    </a>
+
                     <div class="dropdown-menu dropdown-menu-right pullDown">
                         <div class="dropdown-title">Olá, <?= $_SESSION["usuarioLogin"] ?></div>
-                        <!-- <a href="profile.html" class="dropdown-item has-icon"> 
-                          <i class="far fa-user"></i> Perfil
-                        </a>  -->
-                        <a href="timeline.html" class="dropdown-item has-icon"> <i class="fas fa-bolt"></i>
-                            Atividades
+                        
+                        <?php if(Session::get('id_funcionario') != false) : ?>
+                        <a href="<?= baseUrl() ?>Usuario/profile/view/<?= Session::get('usuarioId') ?>" class="dropdown-item has-icon"><i class="fas fa-id-badge"></i>
+                            Perfil
                         </a> 
+                        <?php endif; ?>
                         <a href="settingSidebar" class="dropdown-item has-icon"> <i class="fas fa-cog"></i>
                             Configurações
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a href="<?= baseUrl() ?>Login/signOut" class="dropdown-item has-icon text-danger"> <i class="fas fa-sign-out-alt"></i>
+                        <a href="<?= baseUrl() ?>Login/signOut" class="dropdown-item has-icon text-danger"><i class="fas fa-sign-out-alt"></i>
                             Sair
                         </a>
                     </div>
@@ -226,16 +234,20 @@ use App\Library\Formulario;
                 </li>
                 <?php if (Session::get('usuarioNivel') == 1): ?>
                 <li class="dropdown">
-                    <a href="#" class="menu-toggle nav-link has-dropdown"><i
-                                data-feather="briefcase"></i><span>Administrador</span></a>
+                    <a href="#" class="menu-toggle nav-link has-dropdown">
+                        <i data-feather="briefcase"></i>
+                        <span>Administrador</span>
+                    </a>
                     <ul class="dropdown-menu">
                         <li><a class="nav-link" href="<?= baseUrl() ?>Usuario">Lista de usuários</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Funcionario">Lista de funcionários</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Cargo">Lista de cargos</a></li>
                         <li><hr class="dropdown-divider"></li>
                         <li class="menu-header">Relatórios</li>
-                        <li> <a href="<?= baseUrl() ?>Relatorio/relatorioMovimentacoes" class="nav-link">Movimentações</a></li>
-                        <li><a href="<?= baseUrl() ?>Relatorio/relatorioItensPorFornecedor" class="nav-link">Por fornecedor</a></li>
+                        <li class="dropdown">
+                            <li><a href="<?= baseUrl() ?>Relatorio/relatorioMovimentacoes" class="nav-link">Movimentações</a></li>
+                            <li><a href="<?= baseUrl() ?>Relatorio/relatorioItensPorFornecedor" class="nav-link">Por fornecedor</a></li>
+                        </li>
                     </ul>
                 </li>
                 <?php endif; ?>
@@ -256,7 +268,9 @@ use App\Library\Formulario;
     </div>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function() {
+        $(document).ready(function() {
+
+            // abre a barra de configurações do aplicativo
             var settingSidebar = document.getElementById('settingSidebar');
             var settingSidebarLink = document.querySelector('a[href="settingSidebar"]');
             
@@ -266,8 +280,25 @@ use App\Library\Formulario;
                     settingSidebar.classList.toggle('showSettingPanel'); // Toggle a classe para mostrar/ocultar a barra lateral
                 });
             }
+
+            // Verificar o tema salvo no localStorage
+            if (localStorage.getItem('theme') === 'dark') {
+                $("body").addClass("dark dark-sidebar theme-black");
+                $(".selectgroup-input[value='2']").prop("checked", true);
+            } else {
+                $("body").addClass("light light-sidebar theme-white");
+                $(".selectgroup-input[value='1']").prop("checked", true);
+            }
+
+            // Alterar tema e salvar a preferência no localStorage
+            $(".layout-color input:radio").change(function () {
+                if ($(this).val() == "1") {
+                    $("body").removeClass().addClass("light light-sidebar theme-white");
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    $("body").removeClass().addClass("dark dark-sidebar theme-black");
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
         });
     </script>
-</div>
-</body>
-</html>

@@ -2,6 +2,10 @@
 
 namespace App\Library;
 
+use PDO;
+use PDOException;
+use Exception;
+
 use App\Library\Formulario as LibraryFormulario;
 
 class Formulario
@@ -367,6 +371,4 @@ class Formulario
             </script>
         ';
     }
-    
-
 }
