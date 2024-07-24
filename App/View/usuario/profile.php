@@ -79,10 +79,6 @@
                                 R$ <?= number_format($dados['aFuncionario'][0]['salario'], 2, ',', '.') ?>
                             </span> 			
                         </p>
-
-                        <?php 
-                            var_dump(Session::get('id_funcionario'), Session::get('usuarioImagem'));
-                        ?>
                     </div>
                 </div>
             </div>
