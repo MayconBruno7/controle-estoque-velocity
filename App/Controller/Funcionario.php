@@ -4,6 +4,7 @@ use App\Library\ControllerMain;
 use App\Library\Redirect;
 use App\Library\Validator;
 use App\Library\Session;
+use App\Library\UploadImages;
 
 class Funcionario extends ControllerMain
 {
@@ -68,6 +69,21 @@ class Funcionario extends ControllerMain
             return Redirect::page("Funcionario/form/insert");     // error
         } else {
 
+            if (!empty($_FILES['imagem']['name'])) {
+
+                // Faz uploado da imagem
+                $nomeRetornado = UploadImages::upload($_FILES, 'funcionarios');
+
+                // se for boolean, significa que o upload falhou
+                if (is_bool($nomeRetornado)) {
+                    Session::set( 'inputs' , $post );
+                    return Redirect::page("Funcionario/form/update/" . $post['id']);
+                }
+
+            } else {
+                $nomeRetornado = $post['nomeImagem'];
+            }
+
             if ($this->model->insert([
                 "nome"              => $post['nome'],
                 "cpf"               => preg_replace("/[^0-9]/", "", $post['cpf']),
@@ -75,7 +91,8 @@ class Funcionario extends ControllerMain
                 "setor"             => $post['setor'],
                 "cargo"             => $post['cargo'],
                 "salario"           => preg_replace("/[^0-9,]/", "", $post['salario']),
-                "statusRegistro"    => $post['statusRegistro']
+                "statusRegistro"    => $post['statusRegistro'],
+                "imagem"            => $nomeRetornado
             ])) {
                 Session::set("msgSuccess", "Funcionario adicionada com sucesso.");
             } else {
@@ -100,6 +117,21 @@ class Funcionario extends ControllerMain
             return Redirect::page("Funcionario/form/update/" . $post['id']);
         } else {
 
+            if (!empty($_FILES['imagem']['name'])) {
+
+                // Faz uploado da imagem
+                $nomeRetornado = UploadImages::upload($_FILES, 'funcionarios');
+
+                // se for boolean, significa que o upload falhou
+                if (is_bool($nomeRetornado)) {
+                    Session::set( 'inputs' , $post );
+                    return Redirect::page("Funcionario/form/update/" . $post['id']);
+                }
+
+            } else {
+                $nomeRetornado = $post['nomeImagem'];
+            }
+
             if ($this->model->update(
                 [
                     "id" => $post['id']
@@ -111,9 +143,12 @@ class Funcionario extends ControllerMain
                     "setor"             => $post['setor'],
                     "cargo"             => $post['cargo'],
                     "salario"           => preg_replace("/[^0-9,]/", "", $post['salario']),
-                    "statusRegistro"    => $post['statusRegistro']
+                    "statusRegistro"    => $post['statusRegistro'],
+                    "imagem"            => $nomeRetornado
+
                 ]
             )) {
+                UploadImages::delete($post['nomeImagem'], 'funcionarios');
                 Session::set("msgSuccess", "Funcionario alterada com sucesso.");
             } else {
                 Session::set("msgError", "Falha tentar alterar a Funcionario.");

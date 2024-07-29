@@ -110,7 +110,7 @@ class Cargo extends ControllerMain
      *
      * @return void
      */
-    public function delete()
+    public function delete()    
     {
         if ($this->model->delete(["id" => $this->getPost('id')])) {
             Session::set("msgSuccess", "Cargo excluída com sucesso.");

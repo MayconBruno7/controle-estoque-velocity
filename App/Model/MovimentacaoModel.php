@@ -103,7 +103,7 @@ Class MovimentacaoModel extends ModelMain
      * @param array $aProdutos
      * @return void
      */
-    public function insertMovimentacao($movimentacao, $aProdutos, $tipo_movimentacao)
+    public function insertMovimentacao($movimentacao, $aProdutos)
     {
 
         $ultimoRegistro = $this->db->insert($this->table, $movimentacao);
@@ -117,29 +117,6 @@ Class MovimentacaoModel extends ModelMain
 
                     $this->db->insert("movimentacao_item", $item);
                 }
-
-                $produto = $this->db->select(
-                    "produto",
-                    "all",
-                    [
-                    "where" => ["id" => $aProdutos[0]["id_produtos"]]
-                    ]
-                );
-
-                $quantidadeProduto = $produto[0]['quantidade'];
-
-                if ($tipo_movimentacao == '1') {
-                    $novaQuantidadeEstoque = ($quantidadeProduto + $aProdutos[0]['quantidade']);
-
-                } else if ($tipo_movimentacao == '2') {
-                    $novaQuantidadeEstoque = ($quantidadeProduto - $aProdutos[0]['quantidade']);
-                } else {
-                    exit;
-                }
-
-                //atualiza a quantidade em estoque
-                $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $aProdutos[0]['id_produtos']], ['quantidade' => $novaQuantidadeEstoque]);
-
             }
 
             return true;
@@ -190,9 +167,8 @@ Class MovimentacaoModel extends ModelMain
                     $item['quantidade'] = $quantidade_movimentacao;
 
                     $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
-                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
 
-                    if($atualizaEstoqueProduto && $atualizaProdutosMovimentacao) {
+                    if($atualizaProdutosMovimentacao) {
                         return true;
                     }
                 }
@@ -203,9 +179,8 @@ Class MovimentacaoModel extends ModelMain
                     $item['quantidade'] = $quantidade_movimentacao;
 
                     $insereProdutosMovimentacao = $this->db->insert("movimentacao_item", $item);
-                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $id_produto], ['quantidade' => $quantidade_produto]);
 
-                    if($insereProdutosMovimentacao && $atualizaEstoqueProduto) {
+                    if($insereProdutosMovimentacao) {
                         return true;
                     }
                     
@@ -246,36 +221,10 @@ Class MovimentacaoModel extends ModelMain
 
                 //Verifica se o produto existe
                 if ($atualizaInfoProdutosMovimentacao) {
-
-                    $produto_movimentacao = $this->db->select(
-                        "produto",
-                        "first",
-                        [
-                        "where" => ["id" => $aProdutos[0]["id"]]
-                        ]
-                    );
-
-                    $quantidadeProduto = $produto_movimentacao['quantidade'];
-
-                    if($tipo_movimentacao == '1') {
-                        $novaQuantidadeEstoque = ($quantidadeProduto - $quantidadeRemover);
-                    } else if($tipo_movimentacao == '2') {
-                        $novaQuantidadeEstoque = ($quantidadeProduto + $quantidadeRemover);
-                    } else {
-                        echo 'Tipo de movimentação incorreto';
-                    }
-
-                    //atualiza a quantidade em estoque
-                    $atualizaEstoqueProduto = $this->db->update("produto", ['id' => $produto_movimentacao['id']], ['quantidade' => $novaQuantidadeEstoque]);
-
                     // Remove os produtos com quantidade igual a zero da movimentação
                     $qtdZero = $this->db->delete('movimentacao_item', ['id_movimentacoes' => $id_movimentacao, 'id_produtos' =>  $item_movimentacao[0]['id_produtos'], 'quantidade' => 0]);
-
-                    if ($atualizaEstoqueProduto || $qtdZero) {
-                        return true;
-                    } else {
-                        return false;
-                    }
+                    
+                    return true;
 
                 } else {
                     exit("msgError Erro ao atualizar produto na movimentação.");

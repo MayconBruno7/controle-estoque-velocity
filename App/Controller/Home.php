@@ -37,8 +37,21 @@ class Home extends ControllerMain
         if (!$this->getAdministrador()) {
             return Redirect::page("Home");
         }
+
+        $RelatorioModel = $this->loadModel('Relatorio');
+
+        $DbDados = [];
+
+        $DbDados['aRelatorioDia'] = $RelatorioModel->RelatorioDia();
+        $DbDados['aRelatorioSemana'] = $RelatorioModel->RelatorioSemana();
+        $DbDados['aRelatorioMes'] = $RelatorioModel->RelatorioMes();
+        $DbDados['aRelatorioAno'] = $RelatorioModel->RelatorioAno();
+
+        return $this->loadView(
+            "restrita/homeAdmin",
+            $DbDados
+        );
         
-        return $this->loadView("restrita/homeAdmin");
     }
 
       /**

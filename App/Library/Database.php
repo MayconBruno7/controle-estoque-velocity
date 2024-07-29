@@ -6,6 +6,8 @@ use PDO;
 use PDOException;
 use Exception;
 
+use App\Library\Session;
+
 class Database
 {
     private $conexao;
@@ -89,8 +91,31 @@ class Database
             die("Erro: <code>" . $i->getMessage() . "</code>");
         }
 
+        // Definir a variável de sessão `@current_user` após a conexão
+        $this->setCurrentUser(Session::get('usuarioId')); 
+
         return ($this->conexao);
 
+    }
+
+    // Novo método para definir a variável de sessão @current_user
+    public function setCurrentUser($username)
+    {
+        try {
+            
+            $sql = "SET @current_user = ?";
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->execute([$username]);
+
+            $sql = "SELECT @current_user";
+            $stmt = $this->conexao->prepare($sql);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        } catch (PDOException $e) {
+            echo "Erro ao definir variável de sessão: " . $e->getMessage();
+            exit;
+        }
     }
 
     private function disconnect(){
@@ -158,6 +183,7 @@ class Database
             $sql = 'INSERT INTO `' . $table . '` (`' . $fields . '`) VALUES (' . $values . ')';
 
             $conexao = $this->connect();
+
             $query = $conexao->prepare($sql);
 
             $query->execute($save['dados']);
@@ -200,6 +226,7 @@ class Database
             $query = $this->connect()->prepare($sql);
             $query->execute($save['save']);
             $rs = $query->rowCount();
+
             
             self::__destruct();
 
@@ -226,34 +253,36 @@ class Database
     public function delete($table, $conditions)
     {
         try {
-
-  
             $save = $this->getCampos($conditions, "AND");
-            $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . "; ";
-  
+            $sql = "DELETE FROM {$table} WHERE " . $save['sql'] . ";";
+
             $query = $this->connect()->prepare($sql);
             $query->execute($save['dados']);
-    
+
             $rs = $query->rowCount();
-            
+
             self::__destruct();
 
-            if ($rs == []) {
-                return false;
-            } else {
-                return $rs;
-            }
+            return $rs;
 
         } catch (\PDOException $exc) {
-            if ($exc->errorInfo[0] == '45000') {
+            // Verifica o código de erro específico para a violação de chave estrangeira
+            if ($exc->errorInfo[0] == '23000' && in_array($exc->errorInfo[1], [1451, 1452])) {
+                // Mensagem amigável para o usuário
+                Session::set("msgError", "Não é possível excluir o registro porque ele possui dependências em outras tabelas.");
+                Redirect::page(Formulario::retornaHomeAdminOuHome());
+            } else if ($exc->errorInfo[0] == '45000') {
+                // Mensagem específica para erros programados
                 Session::set("msgError", "Operações não são permitidas no final de semana.");
                 Redirect::page(Formulario::retornaHomeAdminOuHome());
             } else {
-                echo "Erro ao inserir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
+                // Mensagem genérica para outros erros
+                echo "Erro ao excluir registro, favor entrar em contato com o suporte técnico: ERROR: " . $exc->getMessage();
             }
             exit;
         }
     }
+
 
     /**
      * select
@@ -345,6 +374,7 @@ class Database
     {
         try {
             $conexao = $this->connect();
+
             $query   = $conexao->prepare($sql);
             $query->execute($params);
 
@@ -361,7 +391,6 @@ class Database
     }
 
     /* Método update que altera valores do banco de dados e retorna o número de linhas afetadas */
-
     public function dbUpdate( $sql , $params = null )
     {
 
@@ -370,6 +399,7 @@ class Database
             $query->execute($params);
 
             $rs = $query->rowCount();// or die(print_r($query->errorInfo(), true));
+
             self::__destruct();
 
             return $rs;

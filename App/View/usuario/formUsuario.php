@@ -6,9 +6,13 @@ use App\Library\Formulario;
 
 <script type="text/javascript" src="<?= baseUrl(); ?>assets/js/usuario.js"></script>
 
-<main class="container">
 
+<div class="container" style="margin-top: 130px;">
     <?= Formulario::titulo("Usuário", false, true) ?>
+</div>
+
+
+<main class="container mt-5">
 
     <form method="POST" action="<?= baseUrl() ?>Usuario/<?= $this->getAcao() ?>">
 
@@ -30,19 +34,31 @@ use App\Library\Formulario;
                 </select>
             </div>
 
-            <div class="form-group col-12 col-md-8 mt-3">
+            <div class="form-group col-12 col-md-8">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="text" name="email" id="email"  class="form-control" maxlength="100" 
                     value="<?= setValor('email') ?>" 
                     required placeholder="E-mail: seu-nome@dominio.com">
             </div>
 
-            <div class="form-group col-12 col-md-4 mt-3">
+            <div class="form-group col-12 col-md-4">
                 <label for="nivel" class="form-label">Nível</label>
                 <select name="nivel" id="nivel" class="form-control" required>
                     <option value=""   <?= setValor('nivel') == ""    ? "selected" : "" ?>>.....</option>
                     <option value="1"  <?= setValor('nivel') == "1"   ? "selected" : "" ?>>Administrador</option>
                     <option value="11" <?= setValor('nivel') == "11"  ? "selected" : "" ?>>Usuário</option>
+                </select>
+            </div>
+
+            <div class="col-12">
+                <label for="funcionarios" class="form-label">Funcionários</label>
+                <select name="funcionarios" id="funcionarios" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
+                    <option value="">...</option>
+                    <?php foreach($dados['aFuncionario'] as $funcionario) : ?>
+                        <option value="<?= $funcionario['id'] ?>" <?= setValor('id_funcionario') == $funcionario['id'] ? 'selected' : '' ?>>
+                            <?= $funcionario['nome'] ?>
+                        </option>
+                    <?php endforeach; ?>
                 </select>
             </div>
 

@@ -92,4 +92,25 @@ class UsuarioModel extends ModelMain
 
         return 0;
     }
+
+    /**
+     * getUserEmail
+     *
+     * @param string $email 
+     * @return array
+     */
+    public function getUserEmailAdm($id)
+    {
+        $user = $this->db->select(
+            $this->table, 
+            "first",
+            [ "where" => [ 'id' => $id]]
+        );
+
+        if ($user == false) {
+            return [];
+        } else {
+            return $user;
+        }
+    }
 }

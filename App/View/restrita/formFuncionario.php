@@ -7,7 +7,7 @@
     <main class="container mt-5">
 
         <div class="row">
-            <div class="col-10">
+            <div class="col-10" style="margin-top: 100px;">
                 <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
                 <?= Formulario::titulo('Funcionários', false, false) ?>
 
@@ -15,7 +15,7 @@
         </div>
 
         <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
-        <form method="POST" action="<?= baseUrl() ?>Funcionario/<?= $this->getAcao() ?>">
+        <form method="POST" action="<?= baseUrl() ?>Funcionario/<?= $this->getAcao() ?>" enctype="multipart/form-data">
 
             <!--  verifica se o id está no banco de dados e retorna esse id -->
             <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
@@ -83,7 +83,26 @@
                     <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= Formulario::formatarSalario(setValor('salario')) ?>" oninput="formatarSalario(this)" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                 </div>
             </div>
-       
+
+            <?php if (in_array($this->getAcao(), ['insert', 'update'])): ?>
+
+                <div class="col-12 mb-3">
+                    <label for="anexos" class="form-label">Imagem</label>
+                    <input class="form-control" type="file" id="imagem" name="imagem">
+                </div>
+
+                <?php endif; ?>
+
+                <?php if (!empty(setValor('imagem'))): ?>
+
+                <div class="mb-3 col-12">
+                    <h5>Imagem</h5>
+                    <img src="<?= baseUrl() ?>uploads/funcionarios/<?= setValor('imagem') ?>" class="img-thumbnail" height="120" width="120"/>
+                </div>
+
+            <?php endif; ?>
+
+            <input type="hidden" name="nomeImagem" value="<?= setValor('imagem') ?>">
 
             <div class="form-group col-12 mt-5">
                 <?= Formulario::botao('voltar') ?>

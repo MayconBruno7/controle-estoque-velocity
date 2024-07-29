@@ -1,5 +1,4 @@
 <?php
-//App\Controller\Erros.php
 
 use App\Library\ControllerMain;
 

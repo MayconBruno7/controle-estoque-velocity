@@ -77,17 +77,16 @@
         </div>
     </div>
 
-    <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
-    <?= Formulario::titulo('Movimentação', true, false); ?>
+    <div class="container" style="margin-top: 200px;">
+        <?= Formulario::titulo('Movimentação', false, false) ?>
+    </div>
 
-    <div class="row">
+    <div class="row justify-content-center">
         <div class="col-12">
-                <?= Formulario::exibeMsgError() ?>
-            </div>
-
-            <div class="col-12">
-                <?= Formulario::exibeMsgSucesso() ?>
-            </div>
+            <?= Formulario::exibeMsgError() ?>
+        </div>
+        <div class="col-12">
+            <?= Formulario::exibeMsgSucesso() ?>
         </div>
     </div>
 
@@ -98,7 +97,7 @@
         <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
         <?php if ( $this->getAcao() == 'insert') : ?>
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
@@ -144,13 +143,13 @@
             <div class="col-2 mt-3">
                 <label for="data_pedido" class="form-label">Data do Pedido</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" <?=  $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" max="<?= date('Y-m-d') ?>" <?=  $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
             </div>
 
             <div class="col-2 mt-3">
                 <label for="data_chegada" class="form-label">Data de Chegada</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+                <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
+                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido') ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
             </div>
 
             <div class="col-12 mt-3">
@@ -161,7 +160,7 @@
         <?php endif; ?>
             
         <?php if ($this->getAcao() != 'insert') : ?>
-        <div class="row">
+        <div class="row justify-content-center">
             <div class="col-6 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
@@ -207,13 +206,13 @@
             <div class="col-2 mt-3">
                 <label for="data_pedido" class="form-label">Data do Pedido</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 
             <div class="col-2 mt-3">
                 <label for="data_chegada" class="form-label">Data de Chegada</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada') ?>" min="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 
 
@@ -231,9 +230,11 @@
 
             <div class="col mt-4">
                 <div class="col-auto text-end ml-2">
+                <?php if ($this->getAcao() != "view" && $this->getAcao() != "delete"): ?>
                     <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" <?= ($this->getAcao() != 'insert') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
                         Adicionar Produtos
                     </button>
+                <?php endif; ?>
                 </div>
             </div>
 
@@ -320,11 +321,18 @@
         </p>
         </div>
 
-        <div class="form-group col-12 mt-5">
-            <?= Formulario::botao('voltar') ?>
+        <div class="row justify-content-center">
+            <div class="col-6 d-flex justify-content-center mt-3">
+
+            <?php if ($this->getOutrosParametros(4) == "home"): ?>
+                <a href="<?= baseUrl() . Formulario::retornaHomeAdminOuHome() ?>" class="btn btn-primary btn-sm">Voltar</a>
+            <?php endif; ?>
+
             <?php if ($this->getAcao() != "view"): ?>
                 <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <?= Formulario::botao('voltar') ?>
             <?php endif; ?>
+            </div>
         </div>
     </form>
 

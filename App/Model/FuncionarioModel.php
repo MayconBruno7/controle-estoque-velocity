@@ -53,4 +53,27 @@ Class FuncionarioModel extends ModelMain
             return [];
         }
     }
+
+    public function recuperaFuncionario($id)
+    {
+        if (Session::get('usuarioNivel') == 1) {
+            // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
+            $rsc = $this->db->dbSelect("SELECT funcionario.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionario.setor = setor.id WHERE funcionario.id = ?", [$id]);
+            
+        } else {
+            $rsc = $this->db->dbSelect(
+                "SELECT * FROM {$this->table} 
+                 WHERE statusRegistro = 1 
+                 AND funcionario.id = ?", 
+                [$id]
+            );
+            
+        }
+
+        if ($this->db->dbNumeroLinhas($rsc) > 0) {
+            return $this->db->dbBuscaArrayAll($rsc);
+        } else {
+            return [];
+        }
+    }
 }

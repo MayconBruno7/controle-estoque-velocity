@@ -2,11 +2,14 @@
 
     use App\Library\Formulario;
 
+    // var_dump($dados);
 ?>
 
 <div class="container">
     
-    <?= Formulario::titulo('Produto', false, false) ?>
+    <div class="container" style="margin-top: 100px;">
+        <?= Formulario::titulo('Produto', false, false) ?>
+    </div>
 
     <?php
 
@@ -90,28 +93,9 @@
             <?php if ($this->getAcao() != 'insert' && $this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
             <div class="col-6 mt-3">
                 <label for="historico" class="form-label">Histórico de Alterações</label>
-                <select name="historico" id="historico" class="form-control" <?= $this->getAcao() != 'delete' && $this->getAcao() != 'insert' && $this->getAcao() != 'view' ? '' : 'disabled'?>>
-                    <option value="">Selecione uma alteração</option>
-                    <?php 
-                    
-                    foreach ($aDados['aHistoricoProduto'] as $historicoItem): ?>
-                        <?php
-
-                        // Encontrar o fornecedor correto com base no fornecedor_id do histórico
-                        $fornecedorNome = '';
-                        
-                        if (setValor('fornecedor') == $historicoItem['id']) {
-                            $fornecedorNome = $fornecedor['nome'];
-                        }
-                    
-                        ?>
-
-                        <!-- Usar o nome do fornecedor encontrado -->
-                        <option value="<?= $historicoItem['id'] ?>" data-nome="<?= $historicoItem['nome_produtos'] ?>" data-fornecedor="<?= $historicoItem['fornecedor_id']; ?>" data-descricao="<?= $historicoItem['descricao_anterior'] ?>" data-quantidade="<?= $historicoItem['quantidade_anterior'] ?>" data-status="<?= $historicoItem['status_anterior'] ?>" data-statusitem="<?= $historicoItem['statusItem_anterior'] ?>">
-                            <?= $historicoItem['dataMod'] != '0000-00-00 00:00:00' ? $historicoItem['dataMod'] : 'Primeira alteração' ?>
-                        </option>
-                    <?php endforeach; ?>
-                    
+                <input type="date" class="form-control" name="historico" id="search_historico" placeholder="Data do histórico" autofocus value="" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <select id="id_produto" class="form-control" style="display:none;">
+                    <option value="" selected disabled>Escolha a data</option>
                 </select>
             </div>
             <?php endif; ?>
@@ -130,6 +114,7 @@
     </form>
 
 </div>
+
 
 <script src="<?= baseUrl() ?>assets/ckeditor5/ckeditor.js"></script>
 
@@ -156,6 +141,62 @@
             .catch(error => {
                 console.error(error);
             });
+    });
+
+    // busca historico a partir da data escolhida
+    $(function() {
+        $('#search_historico').change(function() {
+            var termo = $(this).val().trim();
+
+            if (termo.length > 0) {
+                $('.carregando').show();
+
+                $.getJSON('/HistoricoProduto/getHistoricoProduto/' + termo, function(data) {
+                    console.log(data);
+                    var options = '<option value="" selected disabled>Escolha a data</option>';
+                    if (data.length > 0) {
+                        for (var i = 0; i < data.length; i++) {
+                            options += '<option value="' + data[i].id + '" data-nome="' + data[i].nome_produtos + '" data-fornecedor="' + data[i].fornecedor_id + '" data-descricao="' + data[i].descricao_anterior + '" data-quantidade="' + data[i].quantidade_anterior + '" data-status="' + data[i].status_anterior + '" data-statusitem="' + data[i].statusItem_anterior + '">' + (data[i].dataMod != '0000-00-00 00:00:00' ? data[i].dataMod : 'Primeira alteração') + '</option>';
+                        }
+                    } else {
+                        options = '<option value="" selected disabled>Nenhum histórico encontrado</option>';
+                    }
+                    $('#id_produto').html(options).show();
+
+                    // Atualizar o formulário com os dados do primeiro item retornado
+                    if (data.length > 0) {
+                        var firstItem = data[0];
+                        $('#nome').val(firstItem.nome_produtos);
+                        $('#quantidade').val(firstItem.quantidade_anterior);
+                        $('#fornecedor_id').val(firstItem.fornecedor_id);
+                        $('#statusRegistro').val(firstItem.status_anterior);
+                        $('#condicao').val(firstItem.statusItem_anterior);
+                        $('#descricao').val(firstItem.descricao_anterior);
+                    }
+                })
+                .fail(function() {
+                    console.error("Erro ao carregar histórico.");
+                    $('#id_produto').html('<option value="" selected disabled>Erro ao carregar históricos</option>').show();
+                })
+                .always(function() {
+                    $('.carregando').hide();
+                });
+            } else {
+                $('#id_produto').html('<option value="" selected disabled>Escolha a data</option>').show();
+            }
+        });
+
+        $('#id_produto').change(function() {
+            var selectedOption = $(this).find(':selected');
+
+            // Atualizar o formulário com os dados do item selecionado
+            $('#nome').val(selectedOption.data('nome'));
+            $('#quantidade').val(selectedOption.data('quantidade'));
+            $('#fornecedor_id').val(selectedOption.data('fornecedor'));
+            $('#statusRegistro').val(selectedOption.data('status'));
+            $('#condicao').val(selectedOption.data('statusitem'));
+            $('#descricao').val(selectedOption.data('descricao'));
+        });
     });
 
 </script>

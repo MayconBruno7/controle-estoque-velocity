@@ -2,14 +2,15 @@
 
     use App\Library\Formulario;
 
+    // var_dump($_POST);
+    // exit;
+
 ?>
     <main class="container mt-5">
 
-        <div class="row">
-            <div class="col-10">
-                <!-- muda o texto do form se e insert, delete, update a partir da função subTitulo -->
-                <?= Formulario::Titulo('Setores', false, false) ?>
-            </div>
+    
+        <div class="container" style="margin-top: 100px;">
+            <?= Formulario::titulo('Setor', false, false) ?>
         </div>
 
         <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->

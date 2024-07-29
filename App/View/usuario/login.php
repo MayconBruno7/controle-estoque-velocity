@@ -4,50 +4,74 @@ use App\Library\Formulario;
 
 ?>
 
-<section class="about section-margin">
+<section class="about section-margin" style="margin-top: 130px;">
 
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-
-            <div class="col-6">
-                <div class="login_form_inner">
-                    <h3>Entre com seu Login</h3>
-
-                    <form method="POST" class="row login_form" action="<?= baseUrl() ?>Login/signIn" id="contactForm">
-
-                        <div class="col-md-12 form-group mt-3">
-                            <input type="email" class="form-control" id="email" name="email" placeholder="E-mail" onfocus="this.placeholder = ''" onblur="this.placeholder = 'E-mail'" required autofocus>
-                        </div>
-                        <div class="col-md-12 form-group mt-3">
-                            <input type="password" class="form-control" id="senha" name="senha" placeholder="Senha" onfocus="this.placeholder = ''" onblur="this.placeholder = 'Senha'" required>
-                        </div>
-
-                        <!--
-                        <div class="col-md-12 form-group mt-3">
-                            <div class="creat_account">
-                                <input type="checkbox" id="f-option2" name="selector">
-                                <label for="f-option2">Mantenha-me conectado</label>
-                            </div>
-                        </div>
-                        -->
-
-                        <div class="col-12 mt-3">
-                            <?= Formulario::exibeMsgError() ?>
-                        </div>
-
-                        <div class="col-12 mt-3">
-                            <?= Formulario::exibeMsgSucesso() ?>
-                        </div>
-                        
-                        <div class="container col-12 mt-1 mb-3">
-                            <button type="submit" value="submit" class="btn btn-primary">Entrar</button>
-                            <a class="btn btn-outline-secondary" href="<?= baseUrl() ?>Home/criarConta">Crie sua conta aqui</a>
-
-                            <a href="<?= baseUrl() ?>Login/solicitaRecuperacaoSenha">Esqueceu a senha?</a>
-                        </div>
-                    </form>
+    <div class="row">
+          <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h4>Login</h4>
+              </div>
+              <div class="col-12 mt-3">
+                <?= Formulario::exibeMsgError() ?>
                 </div>
+
+                <div class="col-12 mt-3">
+                    <?= Formulario::exibeMsgSucesso() ?>
+                </div>
+              <div class="card-body">
+                <form method="POST" action="<?= baseUrl() ?>Login/signIn" class="needs-validation" novalidate="">
+                  <div class="form-group">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" class="form-control" name="email" tabindex="1" required="" autofocus=""  value="<?= isset($_COOKIE['username']) ? $_COOKIE['username'] : '' ?>">
+                    <div class="invalid-feedback">
+                      Por favor preencha o email.
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="d-block">
+                      <label for="senha" class="control-label">Senha</label>
+                      <div class="float-right">
+                        <a href="<?= baseUrl() ?>Login/solicitaRecuperacaoSenha" class="text-small">
+                          Esqueceu sua senha?
+                        </a>
+                      </div>
+                    </div>
+                    <input id="senha" type="password" class="form-control" name="senha" tabindex="2" required="" value="<?= isset($_COOKIE['password']) ? $_COOKIE['password'] : '' ?>">
+                    <div class="invalid-feedback">
+                      Por favor preencha a senha.
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <div class="custom-control custom-checkbox">
+                      <input type="checkbox" name="remember" class="custom-control-input" tabindex="3" id="remember-me" <?= isset($_COOKIE['username']) ? 'checked' : '' ?>>
+                      <label class="custom-control-label" for="remember-me">Lembre de mim</label>
+                    </div>
+                  </div>
+                  <div class="form-group">
+                    <button type="submit" value="submit" class="btn btn-primary">Entrar</button>
+                  </div>
+                </form>
+                <!-- <div class="text-center mt-4 mb-3">
+                  <div class="text-job text-muted">Login With Social</div>
+                </div>
+                <div class="row sm-gutters">
+                  <div class="col-6">
+                    <a class="btn btn-block btn-social btn-facebook">
+                      <span class="fab fa-facebook"></span> Facebook
+                    </a>
+                  </div>
+                  <div class="col-6">
+                    <a class="btn btn-block btn-social btn-twitter">
+                      <span class="fab fa-twitter"></span> Twitter
+                    </a>
+                  </div>
+                </div> -->
+              </div>
             </div>
+            <div class="mt-5 text-muted text-center">
+              Não tem uma conta? <a href="<?= baseUrl() ?>Home/criarConta">Crie sua conta aqui</a>
+            </div>
+          </div>
         </div>
-    </div>
 </section>

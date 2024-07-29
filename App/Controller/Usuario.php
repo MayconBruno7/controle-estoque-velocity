@@ -29,14 +29,35 @@ class Usuario extends ControllerMain
      */
     public function form()
     {
-        $dbDados = [];
+        $dados = [];
 
         if ( $this->getAcao() != 'new') {
             // buscar o usuário pelo $id no banco de dados
-            $dbDados = $this->model->getById($this->getId());
+            $dados = $this->model->getById($this->getId());
         }
 
-        $this->loadView('usuario/formUsuario', $dbDados);
+        $FuncionarioModel = $this->loadModel("Funcionario");
+        $dados['aFuncionario'] = $FuncionarioModel->lista();
+
+        return $this->loadView('usuario/formUsuario', $dados);
+    }
+
+    public function profile()
+    {
+        $dados = [];
+
+        if ( $this->getAcao() != 'new') {
+            // buscar o usuário pelo $id no banco de dados
+            $dados = $this->model->getById($this->getId());
+        }
+
+        $FuncionarioModel = $this->loadModel("Funcionario");
+        $dados['aFuncionario'] = $FuncionarioModel->recuperaFuncionario(Session::get('id_funcionario'));
+
+        $CargoModel = $this->loadModel("Cargo");
+        $dados['aCargo'] = $CargoModel->lista();
+
+        return $this->loadView('usuario/profile', $dados);
     }
 
     /**
@@ -58,7 +79,8 @@ class Usuario extends ControllerMain
                 "nivel"             => $post['nivel'],
                 "nome"              => $post['nome'],
                 "email"             => $post['email'],
-                "senha"             => password_hash($post['senha'], PASSWORD_DEFAULT)
+                "senha"             => password_hash($post['senha'], PASSWORD_DEFAULT),
+                "id_funcionario"    => $post['funcionarios']
             ])) {
                 return Redirect::page("Usuario", ["msgSuccess" => "Usuário inserido com sucesso !"]);
             } else {
@@ -86,7 +108,8 @@ class Usuario extends ControllerMain
                 "nome"              => $post['nome'],
                 "statusRegistro"    => $post['statusRegistro'],
                 "nivel"             => $post['nivel'],
-                "email"             => $post['email']
+                "email"             => $post['email'],
+                "id_funcionario"    => $post['funcionarios']
             ])) {
                 return Redirect::page("Usuario", ["msgSuccess" => "Usuário alterado com sucesso !"]);
             } else {

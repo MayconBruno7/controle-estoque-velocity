@@ -7,6 +7,9 @@ use App\Library\Email;
 use App\Library\Validator;
 use App\Library\ModelMain;
 
+
+use App\Library\Formulario;
+
 class Login extends ControllerMain 
 {
     public function signIn()
@@ -46,15 +49,27 @@ class Login extends ControllerMain
             Session::set("usuarioEmail", $aUsuario['email']);
             Session::set("usuarioNivel", $aUsuario['nivel']);
             Session::set("usuarioSenha", $aUsuario['senha']);
+            Session::set("id_funcionario", $aUsuario['id_funcionario']);
 
-            // Direcionar o usuário para página home
-            if (Session::get('usuarioNivel') == 1) {
-                $redirectUrl = 'Home/homeAdmin';
-            } elseif (Session::get('usuarioId') != false) {
-                $redirectUrl = 'Home/home';
+            $FuncionarioModel = $this->loadModel("Funcionario");
+            $dados['aFuncionario'] = $FuncionarioModel->recuperaFuncionario($aUsuario['id_funcionario']);
+
+            Session::set("usuarioImagem", $dados['aFuncionario'][0]['imagem']);
+
+            // Cookies
+            if (isset($_COOKIE['username']) && $_COOKIE['username']  != $post["email"]) {
+                // Limpar cookies
+                setcookie('username', '', time() - 3600, "/");
+                setcookie('password', '', time() - 3600, "/");
+            } 
+
+            // seta os cookies
+            if (isset($_POST['remember'])) {
+                setcookie('username', $post["email"], time() + (86400 * 30), "/"); // 86400 = 1 dia
+                setcookie('password', $post["senha"], time() + (86400 * 30), "/"); // Por motivos de segurança, evite armazenar senhas diretamente em cookies
             } 
             
-            return Redirect::page($redirectUrl);
+            return Redirect::page(Formulario::retornaHomeAdminOuHome());
 
         } else {
             Session::set('msgError', 'Usuário e ou senha inválido.');
@@ -74,6 +89,12 @@ class Login extends ControllerMain
         Session::destroy('usuarioEmail');
         Session::destroy('usuarioNivel');
         Session::destroy('usuarioSenha');
+        Session::destroy('id_funcionario');
+        Session::destroy('usuarioImagem');
+
+        // Limpar cookies
+        // setcookie('username', '', time() - 3600, "/");
+        // setcookie('password', '', time() - 3600, "/");
         
         return Redirect::Page("home");
     }

@@ -22,7 +22,7 @@ class Movimentacao extends ControllerMain
             return Redirect::page("Home");
         }
     }
-
+ 
     /**
      * index
      *
@@ -146,8 +146,7 @@ class Movimentacao extends ControllerMain
                         "quantidade"        => $quantidade,
                         "valor"             => $valor_produto
                     ]
-                ],
-                    $tipo_movimentacao
+                ]
                 );
 
                 
@@ -311,7 +310,7 @@ class Movimentacao extends ControllerMain
 
             $found = false;
 
-            $quantidade_produto = 0; 
+            (int)$quantidade_produto = (int)$quantidades; 
 
             $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
             $dadosItensMovimentacao = $MovimentacaoItemModel->listaProdutos($id_movimentacao);
@@ -330,23 +329,12 @@ class Movimentacao extends ControllerMain
                     $quantidade_movimentacao = (int)$quantidades;
                 }
             }
-            
-            $ItemModel = $this->loadModel("Produto");
-            $dadosProduto = $ItemModel->recuperaProduto($id_produto);
-
-            (int)$quantidade_produto = isset($dadosProduto[0]['quantidade']) ? (int)$dadosProduto[0]['quantidade'] : 0;
 
             if (!empty($dadosItensMovimentacao)) {
              
                 foreach ($dadosItensMovimentacao as $item) {
 
                     if ($id_produto == $item['id_prod_mov_itens'] && $id_movimentacao == $item['id_movimentacoes']) {
-                        if ($tipo_movimentacao == 1) {
-                           (int)$quantidade_produto += (int)$quantidades;
-                        } else if ($tipo_movimentacao == 2) {
-                           (int)$quantidade_produto -=  (int)$quantidades;
-                       
-                        }
                         $acaoProduto = 'update';
                         $found = true;
 
@@ -355,7 +343,6 @@ class Movimentacao extends ControllerMain
                 }     
 
                 if (!$found) {
-                    $quantidade_produto = $quantidades;
                     $acaoProduto = 'insert';
                 }
          
@@ -363,13 +350,6 @@ class Movimentacao extends ControllerMain
                 $quantidade_movimentacao = (int)$quantidades;
                 if(isset($post['id_produto'])) {
                     if ($id_produto == $post['id_produto'] && $id_movimentacao == $post['id_movimentacao']) {
-                    
-                        if ($tipo_movimentacao == 1) {
-                            $quantidade_produto = $quantidade_produto + $quantidades;
-                        
-                        } else if ($tipo_movimentacao == 2) {
-                            $quantidade_produto = $quantidade_produto - $quantidades;
-                        }
                         $acaoProduto = 'insert';
                     }
                 }   
@@ -504,7 +484,7 @@ class Movimentacao extends ControllerMain
         }
 
         if ($this->model->delete(["id" => $this->getPost('id')])) {
-    
+       
             if (isset($id_produto) || $quantidade_produto) {
                 $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                     [
@@ -526,6 +506,7 @@ class Movimentacao extends ControllerMain
             Session::set("msgSuccess", "Movimentacao excluída com sucesso.");
 
         } else {
+        
             Session::set("msgError", "Falha tentar excluir a Movimentacao.");
         }
 
