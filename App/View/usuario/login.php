@@ -23,7 +23,7 @@ use App\Library\Formulario;
                 <form method="POST" action="<?= baseUrl() ?>Login/signIn" class="needs-validation" novalidate="">
                   <div class="form-group">
                     <label for="email">Email</label>
-                    <input id="email" type="email" class="form-control" name="email" tabindex="1" required="" autofocus=""  value="<?= isset($_COOKIE['username']) ? $_COOKIE['username'] : '' ?>">
+                    <input id="email" type="email" class="form-control" name="email" tabindex="1" required="" autofocus=""  value="<?= isset($_COOKIE['username']) ? $_COOKIE['username'] : '' ?>" autocomplete="current-username">
                     <div class="invalid-feedback">
                       Por favor preencha o email.
                     </div>
@@ -37,7 +37,7 @@ use App\Library\Formulario;
                         </a>
                       </div>
                     </div>
-                    <input id="senha" type="password" class="form-control" name="senha" tabindex="2" required="" value="<?= isset($_COOKIE['password']) ? $_COOKIE['password'] : '' ?>">
+                    <input id="senha" type="password" class="form-control" name="senha" tabindex="2" required="" value="<?= isset($_COOKIE['password']) ? $_COOKIE['password'] : '' ?>" autocomplete="current-password">
                     <div class="invalid-feedback">
                       Por favor preencha a senha.
                     </div>

@@ -1,10 +1,5 @@
         <!-- General JS Scripts -->
         <script src="<?= baseUrl() ?>assets/js/app.min.js"></script>
-
-        <script src="assets/bundles/jquery-ui/jquery-ui.min.js"></script>
-
-        <script src="assets/js/page/advance-table.js"></script>
-
         
         <!-- JS Libraies -->
         <script src="<?= baseUrl() ?>assets/bundles/apexcharts/apexcharts.min.js"></script>
@@ -114,7 +109,7 @@
 
         </style>
         
-        <footer class="mt-4">
+        <footer class="main-footer mt-4">
 
 
 

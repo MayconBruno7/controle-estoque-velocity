@@ -25,6 +25,79 @@ USE `controle_estoque`;
 
 -- --------------------------------------------------------
 
+SET FOREIGN_KEY_CHECKS = 0;
+--------------------------------------------
+
+--
+-- Estrutura para tabela `ordens_servico`
+--
+
+DROP TABLE IF EXISTS `ordens_servico`;
+CREATE TABLE IF NOT EXISTS `ordens_servico` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_nome` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone_cliente` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `modelo_dispositivo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imei_dispositivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `descricao_servico` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `tipo_servico` enum('Reparo','Troca de Peça','Atualização','Outros') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `problema_reportado` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `data_abertura` date NOT NULL,
+  `data_fechamento` date DEFAULT NULL,
+  `status` enum('Aberto','Em Andamento','Aguardando Peças','Concluído','Cancelado') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `observacoes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `ordens_servico_pecas`
+--
+
+DROP TABLE IF EXISTS `ordens_servico_pecas`;
+CREATE TABLE IF NOT EXISTS `ordens_servico_pecas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_ordem_servico` int NOT NULL,
+  `id_peca` int NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fk_ordem_servico` (`id_ordem_servico`),
+  KEY `fk_id_peca` (`id_peca`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `pecas`
+--
+
+DROP TABLE IF EXISTS `pecas`;
+CREATE TABLE IF NOT EXISTS `pecas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome_peca` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `quantidade` int NOT NULL,
+  `valor_peca` decimal(10,2) NOT NULL,
+  `descricao_peca` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Restrições para tabelas despejadas
+--
+
+--
+-- Restrições para tabelas `ordens_servico_pecas`
+--
+ALTER TABLE `ordens_servico_pecas`
+  ADD CONSTRAINT `fk_id_peca` FOREIGN KEY (`id_peca`) REFERENCES `pecas` (`id`),
+  ADD CONSTRAINT `fk_ordem_servico` FOREIGN KEY (`id_ordem_servico`) REFERENCES `ordens_servico` (`id`);
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+
 --
 -- Estrutura para tabela `cargo`
 --
@@ -6830,6 +6903,7 @@ ALTER TABLE `usuariorecuperasenha`
   ADD CONSTRAINT `FK1_usuariorecuperacaosenha` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
 COMMIT;
 
+SET FOREIGN_KEY_CHECKS = 1;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

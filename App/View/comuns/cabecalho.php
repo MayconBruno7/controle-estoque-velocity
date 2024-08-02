@@ -16,15 +16,15 @@ use App\Library\Formulario;
     <link rel="icon" href="<?= baseUrl() ?>assets/img/brasao-pmrl-icon.jpeg" type="image/jpeg">
 
     <!-- Datatables -->
-    <link rel="stylesheet" href="assets/css/app.min.css">
-    <link rel="stylesheet" href="assets/bundles/datatables/datatables.min.css">
-    <link rel="stylesheet" href="assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/app.min.css">
+    <link rel="stylesheet" href="<?= baseUrl() ?>assets/bundles/datatables/datatables.min.css">
+    <link rel="stylesheet" href="<?= baseUrl() ?>assets/bundles/datatables/DataTables-1.10.16/css/dataTables.bootstrap4.min.css">
 
     <!-- Template -->
     <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/app.min.css">
     <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/style.css">
     <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/components.css">
-    <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/custom.css">
+    <!-- <link rel="stylesheet" href="<?= baseUrl() ?>assets/css/custom.css"> -->
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="<?= baseUrl() ?>assets/js/jquery-3.3.1.js"></script>
@@ -127,7 +127,8 @@ use App\Library\Formulario;
                     </label>
                 </div>
             </div>
-            <div class="p-15 border-bottom">
+
+            <!-- <div class="p-15 border-bottom">
                 <h6 class="font-medium m-b-10">Tema cores</h6>
                 <div class="theme-setting-options">
                     <ul class="choose-theme list-unstyled mb-0">
@@ -154,7 +155,8 @@ use App\Library\Formulario;
                         </li>
                     </ul>
                 </div>
-            </div>
+            </div> -->
+            
             <div class="p-15 border-bottom">
                 <div class="theme-setting-options">
                     <label class="m-b-0">
@@ -183,6 +185,7 @@ use App\Library\Formulario;
         </div>
     </div>
 </div>
+
 <div id="app">
     <?php if (Session::get('usuarioId') != false): ?>
     <div class="main-wrapper main-wrapper-1">
@@ -249,6 +252,7 @@ use App\Library\Formulario;
                         </div>
                     </div>
                 </li> -->
+
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                         <?php if ((Session::get('id_funcionario')) && (Session::get('usuarioImagem'))) : ?>
@@ -325,6 +329,7 @@ use App\Library\Formulario;
                         <li><a class="nav-link" href="<?= baseUrl() ?>Setor">Setor</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Movimentacao">Movimentações</a></li>
+                        <li><a class="nav-link" href="<?= baseUrl() ?>OrdemServico">Ordem de Servico</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>FaleConosco/formularioEmail">Suporte técnico</a></li>
                     </ul>
                 </li>
