@@ -245,8 +245,6 @@ Class MovimentacaoModel extends ModelMain
     }
 
 
-
-
     /**
      * getProdutoCombobox
      *

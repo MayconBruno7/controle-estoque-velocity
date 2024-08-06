@@ -33,139 +33,413 @@ class OrdemServico extends ControllerMain
     }
 
     /**
-     * viewLog
+     * form
      *
      * @return void
      */
-    public function viewLog()
+    public function form()
     {
         $dados = [];
-    
-        $FuncionarioModel = $this->loadModel('Funcionario');
-        $dados['aFuncionario'] = $FuncionarioModel->lista('id');
-    
-        $UsuarioModel = $this->loadModel('Usuario');
-        $dados['aUsuario'] = $UsuarioModel->lista('id');
-    
-        if ($this->getAcao() != "new") {
+
+        $PecaModel = $this->loadModel("Peca");
+        $dados['aPeca'] = $PecaModel->listaPeca($this->getId());
+
+        if ($this->getAcao() != "insert") {
             $registro = $this->model->getById($this->getId());
             // Mescla os dados de $registro com os dados existentes em $dados
             $dados = array_merge($dados, $registro);
         }
-    
-        return $this->loadView("restrita/viewLog", $dados);
+        return $this->loadView("restrita/formOrdemServico", $dados);
     }
     
+    public function getPecaComboBox()
+    {
 
-    // /**
-    //  * insert
-    //  *
-    //  * @return void
-    //  */
-    // public function insert()
-    // {
-    //     $post = $this->getPost();
-
-    //     if (Validator::make($post, $this->model->validationRules)) {
-    //         return Redirect::page("Cargo/form/insert");     // error
-    //     } else {
-
-    //         if ($this->model->insert([
-    //             "nome" => $post['nome'],
-    //             "statusRegistro" => $post['statusRegistro']
-    //         ])) {
-    //             Session::set("msgSuccess", "Cargo adicionada com sucesso.");
-    //         } else {
-    //             Session::set("msgError", "Falha tentar inserir uma nova Cargo.");
-    //         }
+        $dados = $this->model->getPecaCombobox($this->getOutrosParametros(2)); 
     
-    //         Redirect::page("Cargo");
-    //     }
-    // }
 
-//   
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "ordem_servico";
+        echo json_encode($dados);
 
-// // Criar conexão
-// $conn = new mysqli($servername, $username, $password, $dbname);
+    
+    }
 
-// // Verificar conexão
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
+    public function insert()
+    {
 
-// $cliente_nome = $_POST['cliente_nome'];
-// $telefone_cliente = $_POST['telefone_cliente'];
-// $modelo_dispositivo = $_POST['modelo_dispositivo'];
-// $imei_dispositivo = $_POST['imei_dispositivo'];
-// $descricao_servico = $_POST['descricao_servico'];
-// $tipo_servico = $_POST['tipo_servico'];
-// $problema_reportado = $_POST['problema_reportado'];
-// $data_abertura = $_POST['data_abertura'];
-// $status = $_POST['status'];
-// $observacoes = $_POST['observacoes'];
-// $pecas = $_POST['peca'];
+        $post = $this->getPost();
 
-// // Preparar e executar inserção da ordem de serviço
-// $stmt = $conn->prepare("INSERT INTO ordens_servico (cliente_nome, telefone_cliente, modelo_dispositivo, imei_dispositivo, descricao_servico, tipo_servico, problema_reportado, data_abertura, status, observacoes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
-// $stmt->bind_param("ssssssssss", $cliente_nome, $telefone_cliente, $modelo_dispositivo, $imei_dispositivo, $descricao_servico, $tipo_servico, $problema_reportado, $data_abertura, $status, $observacoes);
-// $stmt->execute();
+        // var_dump($post);
+        // exit;
 
-// // Obter o ID da ordem de serviço inserida
-// $id_ordem_servico = $stmt->insert_id;
-// $stmt->close();
+        // Verifica se todos os campos do formulário foram enviados
+        if (
+            isset($post['cliente_nome'], $post['telefone_cliente'], $post['modelo_dispositivo'], $post['imei_dispositivo'],
+            $post['tipo_servico'], $post['descricao_servico'], $post['problema_reportado'], $post['data_abertura'], 
+            $post['status'], $post['observacoes'], $post['quantidade'], $post['id_peca'], $post['valor'])
+        ) {
+         
+            // Dados da ordem de servico
+            $cliente_nome = $post['cliente_nome'];
+            $telefone_cliente = $post['telefone_cliente'];
+            $modelo_dispositivo = $post['modelo_dispositivo'];
+            $imei_dispositivo = $post['imei_dispositivo'];
+            $tipo_servico = $post['tipo_servico'];
+            $descricao_servico = $post['descricao_servico'];
+            $problema_reportado = $post['problema_reportado'];
+            $data_abertura = $post['data_abertura'];
+            $status = $post['status'];
+            $observacoes = $post['observacoes'];
 
-// // Preparar e executar inserção das peças associadas
-// if (!empty($pecas)) {
-//     $stmt_pecas = $conn->prepare("INSERT INTO ordens_servico_pecas (id_ordem_servico, id_peca) VALUES (?, ?)");
-//     foreach ($pecas as $id_peca) {
-//         $stmt_pecas->bind_param("ii", $id_ordem_servico, $id_peca);
-//         $stmt_pecas->execute();
-//     }
-//     $stmt_pecas->close();
-// }
+            // Dados da peça
+            $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
+            $id_peca = isset($post['id_peca']) ? (int)$post['id_peca'] : '';
+            $valor_peca = isset($post['valor']) ? (float)$post['valor'] : '';
 
-// $conn->close();
+            $PecaModel = $this->loadModel("Peca");
+            $dadosProduto = $PecaModel->recuperaPeca($id_peca);
+          
+            if ($this->getAcao() == 'update') {
+                
+                // Verificar se há uma sessão de movimentação
+                if (!isset($_SESSION['ordem_servico'])) {
+                    $_SESSION['ordem_servico'] = array();
+                }
+            
+                // Verificar se há produtos na sessão de movimentação
+                if (!isset($_SESSION['ordem_servico'][0]['produtos'])) {
+                    $_SESSION['ordem_servico'][0]['produtos'] = array();
+                }
+            
+                // Verificar se o produto já está na sessão de movimentação
+                $produtoEncontrado = false;
+                foreach ($_SESSION['ordem_servico'][0]['produtos'] as &$produto_sessao) {
+                    if ($produto_sessao['id_peca'] == $id_peca) {
+                        // Atualizar a quantidade do produto na sessão
+                        $produto_sessao['quantidade'] += $quantidade;
+                        $produtoEncontrado = true;
+                        break;
+                    }
+                }
+            } 
+            
+                // parte da inserção de movimentações e produtos
+                $inserindoMovimentacaoEProdutos = $this->model->insertOrdemServico([
+                    "cliente_nome"              => $cliente_nome,
+                    "telefone_cliente"          => $telefone_cliente,
+                    "modelo_dispositivo"        => $modelo_dispositivo,
+                    "imei_dispositivo"          => $imei_dispositivo,
+                    "tipo_servico"              => $tipo_servico,
+                    "descricao_servico"         => $descricao_servico,
+                    "problema_reportado"        => $problema_reportado,
+                    "status"                    => $status,
+                    "data_abertura"             => $data_abertura,
+                    "observacoes"               => $observacoes,
+                
+                ],
+                [
+                    [
+                        // "d_ordem_servico"  => '',
+                        "id_peca"           => $id_peca,
+                        "quantidade"        => $quantidade,
+                    ]
+                ]
+                );
 
-// header("Location: visualizar_os.php");
-// exit();
-// 
+                
+                // exit('opa');
+            
+                if($inserindoMovimentacaoEProdutos) {
+                    Session::destroy('ordem_servico');
+                    Session::destroy('produtos');
+                    Session::set("msgSuccess", "Movimentação adicionada com sucesso.");
+                    Redirect::page("OrdemServico");
+                }
+        } else {
+            Session::set("msgError", "Dados do formulário insuficientes.");
+            Redirect::page("OrdemServico/form/insert/0");
+        }
+    }
 
+    /**
+     * insertProdutoMovimentacao
+     *
+     * @return void
+     */
+    public function insertProdutoMovimentacao()
+    {
+        $post = $this->getPost();
 
-    // /**
-    //  * update
-    //  *
-    //  * @return void
-    //  */
-    // public function update()
-    // {
-    //     $post = $this->getPost();
+        // var_dump($post);
+        // exit;
 
-    //     if (Validator::make($post, $this->model->validationRules)) {
-    //         // error
-    //         return Redirect::page("Cargo/form/update/" . $post['id']);
-    //     } else {
+        $id_ordem_servico = isset($post['id_ordem_servico']) ? $post['id_ordem_servico'] : ""; 
+        $quantidade = $post['quantidade'];
+        $id_peca = $post['id_peca'];
+        $valor_produto = (float)$post['valor'];
 
-    //         if ($this->model->update(
-    //             [
-    //                 "id" => $post['id']
-    //             ], 
-    //             [
-    //                 "nome" => $post['nome'],
-    //                 "statusRegistro" => $post['statusRegistro']
-    //             ]
-    //         )) {
-    //             Session::set("msgSuccess", "Cargo alterada com sucesso.");
-    //         } else {
-    //             Session::set("msgError", "Falha tentar alterar a Cargo.");
-    //         }
+        $PecaModel = $this->loadModel("Peca");
+        $dadosProduto['aPeca'] = $PecaModel->recuperaPeca($id_peca);
 
-    //         return Redirect::page("Cargo");
-    //     }
-    // }
+        // Verificar se há uma sessão de movimentação
+        if (!isset($_SESSION['ordem_servico'])) {
+            $_SESSION['ordem_servico'] = array();
+        }
+
+        // Verificar se há produtos na sessão de movimentação
+        if (!isset($_SESSION['ordem_servico'][0]['produtos'])) {
+            $_SESSION['ordem_servico'][0]['produtos'] = array();
+        }
+    
+        // Verificar se o produto já está na sessão de movimentação
+        $produtoEncontrado = false;
+        foreach ($_SESSION['ordem_servico'][0]['produtos'] as &$produto_sessao) {
+            if ($produto_sessao['id_peca'] == $id_peca) {
+                // Atualizar a quantidade do produto na sessão
+                $produto_sessao['quantidade'] += $quantidade;
+                $produtoEncontrado = true;
+                break;
+            }
+        }
+   
+        // Se o produto não estiver na sessão de movimentação, adicioná-lo
+        if (!$produtoEncontrado) {
+            $_SESSION['ordem_servico'][0]['produtos'][] = array(
+                'nome_peca' => $dadosProduto['aPeca'][0]['nome_peca'],
+                'id_peca' => $id_peca,
+                'quantidade' => $quantidade,
+                'valor' => $valor_produto
+            );
+        }
+
+        Session::set("msgSuccess", "Peça adicionada a ordem de serviço.");
+        Redirect::page("OrdemServico/form/insert/0");
+    }
+
+    /**
+     * update
+     *
+     * @return void
+     */
+    public function update()
+    {
+        $post = $this->getPost();
+    
+        if (
+            isset($post['cliente_nome'], $post['telefone_cliente'], $post['modelo_dispositivo'], $post['imei_dispositivo'],
+            $post['tipo_servico'], $post['descricao_servico'], $post['problema_reportado'], $post['data_abertura'], 
+            $post['status'], $post['observacoes'], $post['quantidade'], $post['id_peca'], $post['valor'])
+        ) {
+
+            // Dados da ordem de servico
+            $id_ordem_servico = $post['id'];
+            $cliente_nome = $post['cliente_nome'];
+            $telefone_cliente = $post['telefone_cliente'];
+            $modelo_dispositivo = $post['modelo_dispositivo'];
+            $imei_dispositivo = $post['imei_dispositivo'];
+            $tipo_servico = $post['tipo_servico'];
+            $descricao_servico = $post['descricao_servico'];
+            $problema_reportado = $post['problema_reportado'];
+            $data_abertura = $post['data_abertura'];
+            $status = $post['status'];
+            $observacoes = $post['observacoes'];
+
+            // Dados da peça
+            $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
+            $id_peca = isset($post['id_peca']) ? (int)$post['id_peca'] : '';
+            $valor_peca = isset($post['valor']) ? (float)$post['valor'] : '';
+
+            $produtoMovAtualizado = isset($_SESSION['produto_mov_atualizado']) ? $_SESSION['produto_mov_atualizado'] : [];
+
+            $found = false;
+
+            (int)$quantidade_peca = (int)$quantidade; 
+
+            $MovimentacaoItemModel = $this->loadModel("OrdemServico");
+            $dadosItensMovimentacao = $MovimentacaoItemModel->recuperaPecaOS($id_peca);
+
+            $quantidade_movimentacao = 0;
+
+            // foreach ($dadosItensMovimentacao as $index => $item) {
+            //     if ($id_peca == $item['id_prod_mov_itens'] && $id_ordem_servico == $item['id_movimentacoes']) {
+            //         if ($tipo_movimentacao == 1) {
+            //             $quantidade_movimentacao = $item['quantidade'] + (int)$quantidades;
+            //         } else if ($tipo_movimentacao == 2) {
+            //             $quantidade_movimentacao =  $item['quantidade'] - (int)$quantidades;
+            //         }
+            //         break;
+            //     } else {
+            //         $quantidade_movimentacao = (int)$quantidades;
+            //     }
+            // }
+
+            if (!empty($dadosItensMovimentacao)) {
+             
+                foreach ($dadosItensMovimentacao as $item) {
+
+                    if ($id_peca == $item['id_peca'] && $id_ordem_servico == $item['id_ordem_servico']) {
+                        $acaoProduto = 'update';
+                        $found = true;
+
+                        break;
+                    }
+                }     
+
+                if (!$found) {
+                    $acaoProduto = 'insert';
+                }
+         
+            } else {
+                $quantidade_movimentacao = (int)$quantidade;
+                if(isset($post['id_peca'])) {
+                    if ($id_peca == $post['id_peca'] && $id_ordem_servico == $post['id_ordem_servico']) {
+                        $acaoProduto = 'insert';
+                    }
+                }   
+            }
+
+            if (!empty($dadosProduto)) {
+                if ($dadosProduto[0]['quantidade'] >= $quantidade) {
+                    $verificaQuantidadeEstoqueNegativa = true;
+                } else if ($dadosProduto[0]['quantidade'] < $quantidade) {
+                    $verificaQuantidadeEstoqueNegativa = false;
+                } 
+            }
+            
+            if ($this->getAcao() != 'updateProdutoMovimentacao') {
+
+                $AtualizandoMovimentacaoEProdutos = $this->model->updateOrdemServico(
+                    [
+                        "id"   => $id_ordem_servico
+                    ],
+                    [
+                        "cliente_nome"      => $cliente_nome,
+                        "telefone_cliente"  => $telefone_cliente,
+                        "modelo_dispositivo"=> $modelo_dispositivo,
+                        "imei_dispositivo"  => $imei_dispositivo,
+                        "tipo_servico"      => $tipo_servico,
+                        "descricao_servico" => $descricao_servico,
+                        "problema_reportado"=> $problema_reportado,
+                        "status"            => $status,
+                        "data_abertura"     => $data_abertura,
+                        "observacoes"       => $observacoes,
+                    ],
+                    [
+                        [
+                            "id_peca"       => $id_peca,
+                            "quantidade"    => $quantidade,
+                            "valor"         => $valor_peca
+                        ]
+                    ],
+
+                );
+
+                if ($AtualizandoMovimentacaoEProdutos) {
+                    Session::destroy('OrdemServico');
+                    Session::destroy('produtos');
+                    Session::set("msgSuccess", "OrdemServico alterada com sucesso.");
+                    return Redirect::page("OrdemServico");
+                } else {
+                    Session::set("msgError", "Falha tentar alterar a Movimentacao.");
+                }
+
+            } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
+
+                if ($verificaQuantidadeEstoqueNegativa) {
+                    $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
+                        [
+                            "id" => $id_ordem_servico
+                        ],
+                        [
+                            [
+                                "id_pecas"           => $id_peca,
+                                // "quantidade"            => $quantidades,
+                                "valor"                 => $valor_peca
+                            ]
+                        ],
+                        [
+                            'acaoProduto' => $acaoProduto
+                        ],
+                        $quantidade_movimentacao
+                        
+                    );
+
+                    if ($AtualizandoInfoProdutoMovimentacao) {
+                        if (!isset($_SESSION['produto_mov_atualizado'])) {
+                            $_SESSION['produto_mov_atualizado'] = true;
+                        }
+                        
+                        Session::destroy('movimentacao');
+                        Session::destroy('produtos');
+                        Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
+                        return Redirect::page("Movimentacao/form/update/" . $id_ordem_servico); 
+                    }
+
+                } else {
+                    Session::set("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
+                    return Redirect::page("Movimentacao/form/update/" . $id_ordem_servico);
+                }
+            } else {
+                Session::set("msgError", "Falha tentar alterar a Movimentacao.");
+                return Redirect::page("Movimentacao");
+            }
+        }
+    }
+
+    /**
+     * deleteProdutoMovimentacao
+     *
+     * @return void
+     */
+    public function deleteProdutoMovimentacao()
+    {
+        $post = $this->getPost();
+
+        $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
+        $quantidadeRemover = (int)$post['quantidadeRemover'];
+        $id_produto = (int)$post['id_produto'];
+        $tipo_movimentacao = (int)$post['tipo'];
+
+        if(isset($_SESSION['ordem_servico'][0]['produtos']) && $this->getAcao() == 'delete') {
+            // Verificar se o produto já está na sessão de movimentação
+            $produtoEncontrado = false;
+            foreach ($_SESSION['ordem_servico'][0]['produtos'] as $key => &$produto_sessao) {
+                if ($produto_sessao['id_produto'] == $id_produto) {
+                    // Atualizar a quantidade do produto na sessão
+                    $produto_sessao['quantidade'] -= $quantidadeRemover;
+
+                    if ($produto_sessao['quantidade'] <= 0) {
+                        // Remover o produto do array na sessão
+                        unset($_SESSION['ordem_servico'][0]['produtos'][$key]);
+                    }
+                    $produtoEncontrado = true;
+
+                    Session::set("msgSuccess", "Produto excluído da movimentação.");
+                    Redirect::page("OrdemServico/form/insert/0");
+                    break;
+                }
+            }
+        }
+   
+        if(!isset($_SESSION['ordem_servico']) && $this->getAcao() == 'delete') {
+            $ProdutoModel = $this->loadModel("Peca");
+            $dadosProduto = $ProdutoModel->recuperaPeca($id_produto);
+
+            $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
+
+            if($deletaProduto) {
+                Session::set("msgSuccess", "Item deletado da movimentação.");
+                Redirect::page("OrdemServico/form/update/" . $id_movimentacao);
+            }
+        }
+        
+    }
+
+    public function requireimprimirOS() {
+
+        $this->model->imprimirOS($this->getOutrosParametros(2));
+    }
+
+    // 
     // /**
     //  * delete
     //  *
@@ -181,124 +455,6 @@ class OrdemServico extends ControllerMain
 
     //     Redirect::page("Cargo");
     // }
-
-
-    // function imprimir
-// require('vendor/autoload.php');
-// $servername = "localhost";
-// $username = "root";
-// $password = "";
-// $dbname = "ordem_servico";
-
-// // Criar conexão
-// $conn = new mysqli($servername, $username, $password, $dbname);
-
-// // Verificar conexão
-// if ($conn->connect_error) {
-//     die("Connection failed: " . $conn->connect_error);
-// }
-
-// $id = $_GET['id'];
-
-// // Buscar dados da ordem de serviço
-// $sql = "SELECT * FROM ordens_servico WHERE id = ?";
-// $stmt = $conn->prepare($sql);
-// $stmt->bind_param("i", $id);
-// $stmt->execute();
-// $result = $stmt->get_result();
-// $row = $result->fetch_assoc();
-
-// // Buscar dados das peças
-// $sql_pecas = "SELECT * FROM pecas WHERE id = ?";
-// $stmt_pecas = $conn->prepare($sql_pecas);
-// $stmt_pecas->bind_param("i", $id);
-// $stmt_pecas->execute();
-// $result_pecas = $stmt_pecas->get_result();
-
-// $stmt->close();
-// $stmt_pecas->close();
-// $conn->close();
-
-// $pdf = new FPDF();
-// $pdf->AddPage();
-// $pdf->SetFont('Arial', 'B', 16);
-
-// // Adicionar a imagem
-// $pdf->Image('C:\Users\Maycon Bruno\Desktop\Ordem de servico\brasao-pmrl.png', 98, 10, 15);
-
-// // Adicionar espaço abaixo da imagem
-// $pdf->Ln(20);
-
-// // Título
-// $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', 'Ordem de Serviço'), 0, 1, 'C');
-// $pdf->Ln(10);
-
-// $pdf->SetFont('Arial', '', 12);
-
-// // Cabeçalho da tabela principal
-// $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', 'Campo'), 1, 0, 'C');
-// $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', 'Valor'), 1, 1, 'C');
-
-// // Função para alternar cores
-// function alternaCor($pdf, $line_number) {
-//     if ($line_number % 2 == 0) {
-//         $pdf->SetFillColor(230, 230, 230);
-//     } else {
-//         $pdf->SetFillColor(255, 255, 255);
-//     }
-// }
-
-// // Dados da tabela principal com linhas zebrada
-// $linhas = [
-//     ['ID:', $row['id']],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Nome do Cliente:'), iconv('UTF-8', 'ISO-8859-1', $row['cliente_nome'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Telefone:'), iconv('UTF-8', 'ISO-8859-1', $row['telefone_cliente'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Modelo do Dispositivo:'), iconv('UTF-8', 'ISO-8859-1', $row['modelo_dispositivo'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'IMEI:'), iconv('UTF-8', 'ISO-8859-1', $row['imei_dispositivo'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Descrição do Serviço:'), iconv('UTF-8', 'ISO-8859-1', $row['descricao_servico'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Tipo de Serviço:'), iconv('UTF-8', 'ISO-8859-1', $row['tipo_servico'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Problema Reportado:'), iconv('UTF-8', 'ISO-8859-1', $row['problema_reportado'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Data de Abertura:'), iconv('UTF-8', 'ISO-8859-1', $row['data_abertura'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Status:'), iconv('UTF-8', 'ISO-8859-1', $row['status'])],
-//     [iconv('UTF-8', 'ISO-8859-1', 'Observações:'), iconv('UTF-8', 'ISO-8859-1', $row['observacoes'])],
-// ];
-
-// // Largura das colunas
-// $largura_campo = 60;
-// $largura_valor = $pdf->GetPageWidth() - $largura_campo - 20;
-
-// $line_number = 0;
-// foreach ($linhas as $linha) {
-//     alternaCor($pdf, $line_number);
-//     $pdf->SetX(10);
-//     $pdf->Cell($largura_campo, 10, $linha[0], 1, 0, 'L', true);
-//     $pdf->SetX(10 + $largura_campo);
-//     $pdf->MultiCell($largura_valor, 10, $linha[1], 1, 'L', true);
-//     $line_number++;
-// }
-
-// // Adicionar espaço antes da seção de peças
-// $pdf->Ln(10);
-// $pdf->SetFont('Arial', 'B', 14);
-// $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', 'Valores das Peças'), 0, 1, 'C');
-// $pdf->Ln(10);
-
-// $pdf->SetFont('Arial', '', 12);
-
-// // Cabeçalho da tabela de peças
-// $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', 'Peça'), 1, 0, 'C');
-// $pdf->Cell(0, 10, iconv('UTF-8', 'ISO-8859-1', 'Valor'), 1, 1, 'C');
-
-// // Dados das peças
-// while ($peca = $result_pecas->fetch_assoc()) {
-//     $peca_nome = isset($peca['nome_peca']) ? trim($peca['nome_peca']) : 'N/A';
-//     $valor = isset($peca['valor_peca']) ? (float)$peca['valor_peca'] : 0.0;
-
-//     $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', $peca_nome), 1, 0, 'L');
-//     $pdf->Cell(0, 10, number_format($valor, 2, ',', '.'), 1, 1, 'R');
-// }
-
-// $pdf->Output();
 
 
 }

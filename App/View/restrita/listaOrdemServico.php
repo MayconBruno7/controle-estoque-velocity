@@ -2,7 +2,6 @@
     use App\Library\Formulario;
 ?>
 
-<div class="loader"></div>
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->

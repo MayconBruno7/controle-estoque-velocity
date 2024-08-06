@@ -4,8 +4,8 @@
     use App\Library\Session;
 
     // Verificar se há uma sessão de movimentação
-    if (!Session::get('movimentacao')) {
-        Session::get('movimentacao');
+    if (!Session::get('ordem_servico')) {
+        Session::get('ordem_servico');
     }
 
     // Verificar se há uma sessão de produtos
@@ -16,27 +16,30 @@
     if ($this->getAcao() == 'insert') {
         if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Decodifica os dados recebidos do JavaScript
-            $movimentacao = json_decode(file_get_contents("php://input"), true);
-    
+            $ordem_servico = json_decode(file_get_contents("php://input"), true);
+
             // Verificar se há produtos a serem adicionados
             if (Session::get('produtos') && count(Session::get('produtos')) > 0) {
                 // Adicionar os produtos à sessão de movimentação
-                $movimentacao['produtos'] = Session::get('produtos');
+                $ordem_servico['produtos'] = Session::get('produtos');
             }
-    
+
             // Adiciona os dados à sessão
-            if (isset($movimentacao)) {
-                $_SESSION['movimentacao'][] = $movimentacao;
+            if (isset($ordem_servico)) {
+                $_SESSION['ordem_servico'][] = $ordem_servico;
             }
-    
+
             // Limpar a sessão de produtos
             Session::destroy('produtos');
         }
     }
-    
-    $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
+
+    $dadosMovimentacao = isset($_SESSION['ordem_servico'][0]) ? $_SESSION['ordem_servico'][0] : [];
     $total = 0;
 
+    // unset($_SESSION['ordem_servico']);
+    // var_dump($dados);
+    // var_dump( $_SESSION['ordem_servico'][0]);  
 ?>
 
 <main class="container mt-5">
@@ -45,16 +48,16 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="modalAdicionarProdutoLabel">Adicionar Produto</h5>
+                    <h5 class="modal-title" id="modalAdicionarProdutoLabel">Adicionar peça</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
+                    <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'OrdemServico/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'OrdemServico/insertProdutoMovimentacao/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
                         <div class="mb-3">
                             <div class="mb-3">
-                                <label for="id_produto" class="form-label">Produto</label>
-                                <input type="text" class="form-control" id="search_produto" placeholder="Pesquisar produto">
-                                <select class="form-control" name="id_produto" id="id_produto" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                                <label for="id_peca" class="form-label">Produto</label>
+                                <input type="text" class="form-control" id="search_peca" placeholder="Pesquisar produto">
+                                <select class="form-control" name="id_peca" id="id_peca" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                                     <option value="" selected disabled>Vazio</option>
                                 </select>
                             </div>
@@ -68,8 +71,7 @@
                             <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
                         </div>
 
-                        <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
-                        <input type="hidden" name="tipo" value="<?= setValor('tipo') ?>">
+                        <input type="hidden" name="id_ordem_servico" value="<?= $this->getId() ?>">
                         <button type="submit" class="btn btn-primary">Adicionar</button>
                     </form>
                 </div>
@@ -78,7 +80,7 @@
     </div>
 
     <div class="container" style="margin-top: 200px;">
-        <?= Formulario::titulo('Movimentação', false, false) ?>
+        <?= Formulario::titulo('Ordem de serviço', false, false) ?>
     </div>
 
     <div class="row justify-content-center">
@@ -91,148 +93,160 @@
     </div>
 
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
-    <form class="g-3" action="<?= baseUrl() ?>Movimentacao/<?= $this->getAcao() ?>" method="POST" id="form">
+    <form class="g-3" action="<?= baseUrl() ?>OrdemServico/<?= $this->getAcao() ?>" method="POST" id="form">
 
         <!--  verifica se o id está no banco de dados e retorna esse id -->
         <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
-        <?php if ( $this->getAcao() == 'insert') : ?>
+        <?php if ($this->getAcao() == 'insert') : ?>
         <div class="row justify-content-center">
             <div class="col-6 mt-3">
-                <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
-                    <option value="">...</option>
-                    <?php foreach($dados['aFornecedorMovimentacao'] as $fornecedor) : ?>
-                        <option value="<?= $fornecedor['id'] ?>" <?= isset($dadosMovimentacao['fornecedor_id']) && $dadosMovimentacao['fornecedor_id'] == $fornecedor['id'] ? 'selected' : '' ?>>
-                            <?= $fornecedor['nome'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
+                <label for="cliente_nome" class="form-label">Nome do Cliente:</label>
+                <input type="text" id="cliente_nome"  class="form-control" name="cliente_nome" value="<?= isset($dadosMovimentacao['cliente_nome']) ? $dadosMovimentacao['cliente_nome'] : "" ?>" required>
             </div>
 
             <div class="col-3 mt-3">
-                <label for="tipo" class="form-label">Tipo de Movimentação</label>
-                <select name="tipo" id="tipo" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
-                    <option value="">...</option>
-                    <option value="1" <?= isset($dadosMovimentacao['tipo_movimentacao']) && $dadosMovimentacao['tipo_movimentacao'] == 1 ? 'selected' : '' ?>>Entrada</option>
-                    <option value="2" <?= isset($dadosMovimentacao['tipo_movimentacao']) && $dadosMovimentacao['tipo_movimentacao'] == 2 ? 'selected' : '' ?>>Saída</option>
-                </select>
+                <label for="telefone_cliente" class="form-label">Telefone:</label>
+                <input type="text" id="telefone_cliente"  class="form-control" name="telefone_cliente" value="<?= isset($dadosMovimentacao['telefone_cliente']) ? $dadosMovimentacao['telefone_cliente'] : "" ?>">
             </div>
 
             <div class="col-3 mt-3">
-                <label for="statusRegistro" class="form-label">Status da Movimentação</label>
-                <select name="statusRegistro" id="statusRegistro" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
-                    <option value="">...</option>
-                    <option value="1" <?= isset($dadosMovimentacao['statusRegistro']) && $dadosMovimentacao['statusRegistro'] == 1 ? 'selected' : '' ?>>Ativo</option>
-                    <option value="2" <?= isset($dadosMovimentacao['statusRegistro']) && $dadosMovimentacao['statusRegistro'] == 2 ? 'selected' : '' ?>>Inativo</option>
-                </select>
+                <label for="modelo_dispositivo" class="form-label">Modelo do Dispositivo:</label>
+                <input type="text" id="modelo_dispositivo"  class="form-control" name="modelo_dispositivo" value="<?= isset($dadosMovimentacao['modelo_dispositivo']) ? $dadosMovimentacao['modelo_dispositivo'] : ""?>">
             </div>
 
             <div class="col-8 mt-3">
-                <label for="setor_id" class="form-label">Setor</label>
-                <select name="setor_id" id="setor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : '' ?>>
-                    <option value="">...</option>
-                    <?php foreach ($dados['aSetorMovimentacao'] as $setor): ?>
-                        <option value="<?= $setor['id'] ?>" <?= (isset($dadosMovimentacao['setor_id']) && $dadosMovimentacao['setor_id'] == $setor['id']) ? 'selected' : '' ?>>
-                            <?= $setor['nome'] ?>
-                        </option>
-                    <?php endforeach; ?>
+                <label for="imei_dispositivo" class="form-label">IMEI:</label>
+                <input type="text" id="imei_dispositivo"  class="form-control" name="imei_dispositivo" value="<?= isset($dadosMovimentacao['imei_dispositivo']) ? $dadosMovimentacao['imei_dispositivo'] : "" ?>">
+            </div>
+
+            <div class="col-4 mt-3">
+                <label for="tipo_servico" class="form-label">Tipo de Serviço:</label>
+                <select id="tipo_servico"  class="form-control" name="tipo_servico" required>
+                    <option value="" <?= isset($dadosMovimentacao['tipo_servico']) && $dadosMovimentacao['tipo_servico'] == "" ? "SELECTED" : "" ?>>...</option>
+                    <option value="Reparo" <?= isset($dadosMovimentacao['tipo_servico']) && $dadosMovimentacao['tipo_servico'] == "Reparo" ? "SELECTED" : "" ?>>Reparo</option>
+                    <option value="Troca de Peça" <?= isset($dadosMovimentacao['tipo_servico']) && $dadosMovimentacao['tipo_servico'] == "Troca de Peça" ? "SELECTED" : "" ?>>Troca de Peça</option>
+                    <option value="Atualização" <?= isset($dadosMovimentacao['tipo_servico']) && $dadosMovimentacao['tipo_servico'] == "Atualização" ? "SELECTED" : "" ?>>Atualização</option>
+                    <option value="Outros" <?= isset($dadosMovimentacao['tipo_servico']) && $dadosMovimentacao['tipo_servico'] == "Outros" ? "SELECTED" : "" ?>>Outros</option>
                 </select>
             </div>
 
-            <div class="col-2 mt-3">
-                <label for="data_pedido" class="form-label">Data do Pedido</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" max="<?= date('Y-m-d') ?>" <?=  $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
-            </div>
-
-            <div class="col-2 mt-3">
-                <label for="data_chegada" class="form-label">Data de Chegada</label>
-                <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
-                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido') ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
+            <div class="col-12 mt-3">
+                <label for="descricao_servico" class="form-label">Descrição do Serviço:</label>
+                <textarea id="descricao_servico"  class="form-control" name="descricao_servico" required><?= isset($dadosMovimentacao['descricao_servico']) ? $dadosMovimentacao['descricao_servico'] : "" ?></textarea>
             </div>
 
             <div class="col-12 mt-3">
-                <label for="motivo" class="form-label">Motivo</label>
-                <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?= $this->getAcao() != 'insert' && $this->getAcao() != 'update' ? 'readonly' : ''?>><?= isset($dadosMovimentacao['motivo']) ? htmlspecialchars($dadosMovimentacao['motivo']) : '' ?></textarea>
+                <label for="problema_reportado" class="form-label">Problema Reportado:</label>
+                <textarea id="problema_reportado"  class="form-control" name="problema_reportado"><?= isset($dadosMovimentacao['problema_reportado']) ? $dadosMovimentacao['problema_reportado'] : "" ?></textarea>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="data_abertura" class="form-label">Data de Abertura:</label>
+                <input type="date" id="data_abertura"  class="form-control" name="data_abertura" value="<?= isset($dadosMovimentacao['data_abertura']) ? $dadosMovimentacao['data_abertura'] : "" ?>" required>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="status" class="form-label">Status do Serviço:</label>
+                <select id="status"  class="form-control" name="status" required>
+                    <option value="Aberto" <?= isset($dadosMovimentacao['status']) && $dadosMovimentacao['status'] == "" ? "SELECTED" : "" ?>>Aberto</option>
+                    <option value="Em Andamento" <?= isset($dadosMovimentacao['status']) && $dadosMovimentacao['status'] == "" ? "SELECTED" : "" ?>>Em Andamento</option>
+                    <option value="Aguardando Peças" <?= isset($dadosMovimentacao['status']) && $dadosMovimentacao['status'] == "" ? "SELECTED" : "" ?>>Aguardando Peças</option>
+                    <option value="Concluído" <?= isset($dadosMovimentacao['status']) && $dadosMovimentacao['status'] == "" ? "SELECTED" : "" ?>>Concluído</option>
+                    <option value="Cancelado" <?= isset($dadosMovimentacao['status']) && $dadosMovimentacao['status'] == "" ? "SELECTED" : "" ?>>Cancelado</option>
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="observacoes" class="form-label">Observações:</label>
+                <textarea id="observacoes"  class="form-control" name="observacoes"><?= isset($dadosMovimentacao['observacoes']) ? $dadosMovimentacao['observacoes'] : "" ?></textarea>
+            </div>
+        </div>
+        <?php endif; ?>
+
+        <?php if ($this->getAcao() != 'insert') : ?>
+        <div class="row justify-content-center">
+            <div class="col-6 mt-3">
+                <label for="cliente_nome" class="form-label">Nome do Cliente:</label>
+                <input type="text" id="cliente_nome"  class="form-control" name="cliente_nome" value="<?= setValor('cliente_nome') ?>" required>
+            </div>
+
+            <div class="col-3 mt-3">
+                <label for="telefone_cliente" class="form-label">Telefone:</label>
+                <input type="text" id="telefone_cliente"  class="form-control" name="telefone_cliente" value="<?= setValor('telefone_cliente') ?>">
+            </div>
+
+            <div class="col-3 mt-3">
+                <label for="modelo_dispositivo" class="form-label">Modelo do Dispositivo:</label>
+                <input type="text" id="modelo_dispositivo"  class="form-control" name="modelo_dispositivo" value="<?= setValor('modelo_dispositivo') ?>">
+            </div>
+
+            <div class="col-8 mt-3">
+                <label for="imei_dispositivo" class="form-label">IMEI:</label>
+                <input type="text" id="imei_dispositivo"  class="form-control" name="imei_dispositivo" value="<?= setValor('imei_dispositivo') ?>">
+            </div>
+
+            <div class="col-4 mt-3">
+                <label for="tipo_servico" class="form-label">Tipo de Serviço:</label>
+                <select id="tipo_servico"  class="form-control" name="tipo_servico" required>
+                    <option value="" <?= setValor('tipo_servico') == "" ? "SELECTED" : "" ?>>...</option>
+                    <option value="Reparo" <?= setValor('tipo_servico') == "Reparo" ? "SELECTED" : "" ?>>Reparo</option>
+                    <option value="Troca de Peça" <?= setValor('tipo_servico') == "Troca de Peça" ? "SELECTED" : "" ?>>Troca de Peça</option>
+                    <option value="Atualização" <?= setValor('tipo_servico') == "Atualização" ? "SELECTED" : "" ?>>Atualização</option>
+                    <option value="Outros" <?= setValor('tipo_servico') == "Outros" ? "SELECTED" : "" ?>>Outros</option>
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="descricao_servico" class="form-label">Descrição do Serviço:</label>
+                <textarea id="descricao_servico"  class="form-control" name="descricao_servico" required><?= setValor('descricao_servico') ?></textarea>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="problema_reportado" class="form-label">Problema Reportado:</label>
+                <textarea id="problema_reportado"  class="form-control" name="problema_reportado"><?= setValor('problema_reportado') ?></textarea>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="data_abertura" class="form-label">Data de Abertura:</label>
+                <input type="date" id="data_abertura"  class="form-control" name="data_abertura" value="<?= setValor('data_abertura') ?>" required>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="status" class="form-label">Status do Serviço:</label>
+                <select id="status"  class="form-control" name="status" required>
+                    <option value="Aberto">Aberto</option>
+                    <option value="Em Andamento">Em Andamento</option>
+                    <option value="Aguardando Peças">Aguardando Peças</option>
+                    <option value="Concluído">Concluído</option>
+                    <option value="Cancelado">Cancelado</option>
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="status" class="form-label">Tipo de Serviço:</label>
+                <select id="status"  class="form-control" name="status" required>
+                    <option value="" <?= setValor('status') == "" ? "SELECTED" : "" ?>>...</option>
+                    <option value="Aberto" <?= setValor('status') == "Aberto" ? "SELECTED" : "" ?>>Aberto</option>
+                    <option value="Em Andamento" <?= setValor('status') == "Em Andamento" ? "SELECTED" : "" ?>>Em Andamento</option>
+                    <option value="Aguardando Peças" <?= setValor('status') == "Aguardando Peças" ? "SELECTED" : "" ?>>Aguardando Peças</option>
+                    <option value="Concluído" <?= setValor('status') == "Concluído" ? "SELECTED" : "" ?>>Concluído</option>
+                    <option value="Cancelado" <?= setValor('status') == "Cancelado" ? "SELECTED" : "" ?>>Cancelado</option>
+                </select>
+            </div>
+
+            <div class="col-12 mt-3">
+                <label for="observacoes" class="form-label">Observações:</label>
+                <textarea id="observacoes"  class="form-control" name="observacoes"><?= setValor('observacoes') ?></textarea>
             </div>
         </div>
         <?php endif; ?>
             
-        <?php if ($this->getAcao() != 'insert') : ?>
-        <div class="row justify-content-center">
-            <div class="col-6 mt-3">
-                <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value="">...</option>
-                    <?php foreach($dados['aFornecedorMovimentacao'] as $fornecedor) : ?>
-                        <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor') == $fornecedor['id'] ? 'selected' : '' ?>>
-                            <?= $fornecedor['nome'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="col-3 mt-3">
-                <label for="tipo" class="form-label">Tipo de Movimentação</label>
-                <select name="tipo" id="tipo" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value="">...</option>
-                    <option value="1" <?= setValor('tipo') == 1 ? 'selected' : '' ?>>Entrada</option>
-                    <option value="2" <?= setValor('tipo') == 2 ? 'selected' : '' ?>>Saída</option>
-                </select>
-            </div>
-
-            <div class="col-3 mt-3">
-                <label for="statusRegistro" class="form-label">Status da Movimentação</label>
-                <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value="">...</option>
-                    <option value="1" <?= setValor('statusRegistro') == 1 ? 'selected' : '' ?>>Ativo</option>
-                    <option value="2" <?= setValor('statusRegistro') == 2 ? 'selected' : '' ?>>Inativo</option>
-                </select>
-            </div>
-
-            <div class="col-8 mt-3">
-                <label for="setor_id" class="form-label">Setor</label>
-                <select name="setor_id" id="setor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value="">...</option>
-                    <?php foreach ($dados['aSetorMovimentacao'] as $setor): ?>
-                        <option value="<?= $setor['id'] ?>" <?= setValor('id_setor') ? 'selected' : '' ?>>
-                            <?= $setor['nome'] ?>
-                        </option>
-                    <?php endforeach; ?>
-                </select>
-            </div>
-
-            <div class="col-2 mt-3">
-                <label for="data_pedido" class="form-label">Data do Pedido</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-            </div>
-
-            <div class="col-2 mt-3">
-                <label for="data_chegada" class="form-label">Data de Chegada</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada') ?>" min="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-            </div>
-
-
-            <div class="col-12 mt-3">
-                <label for="motivo" class="form-label">Motivo</label>
-                <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>><?= setValor('motivo') ?></textarea>
-            </div>
-            <?php endif; ?>
-
-            <div class="col mt-4">
-                <div class="col-md-8">
-                    <h3 class="d-inline">Produtos do pedido</h3>
-                </div>
-            </div>
-
             <div class="col mt-4">
                 <div class="col-auto text-end ml-2">
                 <?php if ($this->getAcao() != "view" && $this->getAcao() != "delete"): ?>
                     <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($this->getAcao() == 'insert') ? 'btnSalvar' : '' ?>" <?= ($this->getAcao() != 'insert') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
-                        Adicionar Produtos
+                        Adicionar Peça
                     </button>
                 <?php endif; ?>
                 </div>
@@ -250,27 +264,26 @@
                 </tr>
             </thead>
             <tbody>
-                <?php if(isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos']) && $this->getAcao() == 'insert' ? $this->getAcao() : "") : "" ?>
-                    <?php foreach ($_SESSION['movimentacao'][0]['produtos'] as $produto) : ?>
+                <?php if(isset($_SESSION['ordem_servico']) && isset($_SESSION['ordem_servico'][0]['produtos']) && $this->getAcao() == 'insert' ? $this->getAcao() : "") : "" ?>
+                    <?php foreach ($_SESSION['ordem_servico'][0]['produtos'] as $produto) : ?>
                         <tr>
-                            <td><?= $produto['id_produto'] ?></td>
-                            <td><?= $produto['nome_produto'] ?></td>
+                            <td><?= $produto['id_peca'] ?></td>
+                            <td><?= $produto['nome_peca'] ?></td>
                             <td><?= number_format($produto['valor'], 2, ",", ".") ?></td>
                             <td><?= $produto['quantidade'] ?></td>
                             <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                             <td>
                                 <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                    <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $produto['id_produto'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
-                                    <!-- <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
+                                    <a href="<?= baseUrl() ?>/index/delete/<?= $this->getId() ?>/<?= $produto['id_peca'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <?php endif; ?>
-                                    <a href="formProdutos.php?acao=view&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                    <a href="formProdutos.php?acao=view&id=<?= $produto['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
                         </tr>
 
                         <input type="hidden" name="quantidade" id="quantidade" value="<?= $produto['quantidade'] ?>">
-                        <input type="hidden" name="id_produto" id="id_produto" value="<?= $produto['id_produto'] ?>">
+                        <input type="hidden" name="id_peca" id="id_peca" value="<?= $produto['id_peca'] ?>">
                         <input type="hidden" name="valor" id="valor" value="<?= $produto['valor'] ?>">
-                        <!-- <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>"> -->
 
                         <?php
                             $total += $produto['quantidade'] * $produto['valor'];
@@ -281,32 +294,29 @@
                 <?php if($this->getAcao() != 'insert') : ?>
                     <?php
 
-                            foreach ($dados['aItemMovimentacao'] as $row) {
+                            foreach ($dados['aPeca'] as $row) {
                         ?>
                         <tr>
-                            <td><?= $row['id_prod_mov_itens'] ?></td>
-                            <td><?= $row['nome'] ?></td>
-                            <td><?= number_format($row['valor'], 2, ",", ".")  ?> </td>
-                            <td><?= $row['mov_itens_quantidade'] ?></td>
-                            <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
+                            <td><?= $row['id_peca'] ?></td>
+                            <td><?= $row['nome_peca'] ?></td>
+                            <td><?= number_format($row['valor_peca'], 2, ",", ".")  ?> </td>
+                            <td><?= $row['quantidade_peca_ordem'] ?></td>
+                            <td><?= number_format(($row["quantidade_peca_ordem"] * $row["valor_peca"]), 2, ",", ".") ?></td>
                             <td>
                             <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
-                                <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
-                            <?php endif; ?>
-                                <a href="<?= baseUrl() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
-                                <!-- <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a> -->
+                                    <a href="<?= baseUrl() ?>Peca/index/delete/<?= $this->getId() ?>/<?= $row['id_peca'] ?>/<?= $row['quantidade'] ?>/1" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                <?php endif; ?>
+                                    <a href="formProdutos.php?acao=view&id=<?= $row['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
                         </tr>
 
-                        <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['mov_itens_quantidade'] ?>">
-                        <input type="hidden" name="id_produto" id="id_produto" value="<?= $row['id_prod_mov_itens'] ?>">
-                        <input type="hidden" name="valor" id="valor" value="<?= $row['valor'] ?>">
-                        <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
+                        <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['quantidade_peca_ordem'] ?>">
+                        <input type="hidden" name="id_peca" id="id_peca" value="<?= $row['id_peca'] ?>">
+                        <input type="hidden" name="valor" id="valor" value="<?= $row['valor_peca'] ?>">
 
                         <?php
 
-                            $total = $total + ($row["mov_itens_quantidade"] * $row["valor"]);
+                            $total = $total + ($row["quantidade_peca_ordem"] * $row["valor_peca"]);
 
                             }
                         ?>
@@ -324,12 +334,14 @@
         <div class="row justify-content-center">
             <div class="col-6 d-flex justify-content-center mt-3">
 
+            <a href="<?= baseUrl() . 'OrdemServico/requireimprimirOS/' . setValor('id') ?>" class="btn btn-primary btn-sm">Imprimir ordem de serviço</a>
+
             <?php if ($this->getOutrosParametros(4) == "home"): ?>
                 <a href="<?= baseUrl() . Formulario::retornaHomeAdminOuHome() ?>" class="btn btn-primary btn-sm">Voltar</a>
             <?php endif; ?>
 
             <?php if ($this->getAcao() != "view"): ?>
-                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Criar ordem de serviço</button>
                 <?= Formulario::botao('voltar') ?>
             <?php endif; ?>
             </div>
@@ -344,35 +356,35 @@
 <script>
 
     $(function() {
-        $('#search_produto').keyup(function() {
+        $('#search_peca').keyup(function() {
             var termo = $(this).val().trim();
 
             if (termo.length > 0) {
-                $('#id_produto').hide();
+                $('#id_peca').hide();
                 $('.carregando').show();
 
-                $.getJSON('/Movimentacao/getProdutoComboBox/' + termo, 
+                $.getJSON('/OrdemServico/getPecaComboBox/' + termo, 
                 function(data) {
                     console.log(data);
                     var options = '<option value="" selected disabled>Escolha o produto</option>';
                     if (data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
-                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
+                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome_peca + '</option>';
                         }
                     } else {
                         options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
                     }
-                    $('#id_produto').html(options).show();
+                    $('#id_peca').html(options).show();
                 })
                 .fail(function() {
                     console.error("Erro ao carregar produtos.");
-                    $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
+                    $('#id_peca').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
                 })
                 .always(function() {
                     $('.carregando').hide();
                 });
             } else {
-                $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
+                $('#id_peca').html('<option value="" selected disabled>Escolha um produto</option>').show();
             }
         });
     });
@@ -386,13 +398,17 @@
         });
 
         function capturarValores() {
-            var fornecedor_id = document.getElementById('fornecedor_id').value;
-            var tipo_movimentacao = document.getElementById('tipo').value;
-            var statusRegistro = document.getElementById('statusRegistro').value;
-            var setor_id = document.getElementById('setor_id').value;
-            var data_pedido = document.getElementById('data_pedido').value;
-            var data_chegada = document.getElementById('data_chegada').value;
-            var motivo = document.getElementById('motivo').value;
+            var cliente_nome = document.getElementById('cliente_nome').value;
+            var telefone_cliente = document.getElementById('telefone_cliente').value;
+            var modelo_dispositivo = document.getElementById('modelo_dispositivo').value;
+            var imei_dispositivo = document.getElementById('imei_dispositivo').value;
+            var tipo_servico = document.getElementById('tipo_servico').value;
+            var descricao_servico = document.getElementById('descricao_servico').value;
+            var problema_reportado = document.getElementById('problema_reportado').value;
+            var data_abertura = document.getElementById('data_abertura').value;
+            var status = document.getElementById('status').value;
+            var peca = document.getElementById('id_peca').value;
+            var observacoes = document.getElementById('observacoes').value;
 
             // Array para armazenar os produtos
             var produtos = [];
@@ -400,13 +416,13 @@
             // Iterar sobre os campos de produto e capturar seus valores
             var produtosCampos = document.querySelectorAll('.produto-campo');
             produtosCampos.forEach(function(campo) {
-                var id_produto = campo.querySelector('.id_produto').value;
-                var nome_produto = campo.querySelector('.nome_produto').value;
+                var id_peca = campo.querySelector('.id_peca').value;
+                var nome_produto = campo.querySelector('.nome_peca').value;
                 var valor = campo.querySelector('.valor').value;
                 var quantidade = campo.querySelector('.quantidade').value;
 
                 produtos.push({
-                    'id_produto': id_produto,
+                    'id_peca': id_peca,
                     'nome_produto': nome_produto,
                     'valor': valor,
                     'quantidade': quantidade
@@ -414,16 +430,23 @@
             });
 
             // Criação do objeto movimentacao
-            var movimentacao = {
-                'fornecedor_id': fornecedor_id,
-                'tipo_movimentacao': tipo_movimentacao,
-                'statusRegistro': statusRegistro,
-                'setor_id': setor_id,
-                'data_pedido': data_pedido,
-                'data_chegada': data_chegada,
-                'motivo': motivo,
+            var ordem_servico = {
+                'cliente_nome': cliente_nome,
+                'telefone_cliente': telefone_cliente,
+                'modelo_dispositivo': modelo_dispositivo,
+                'imei_dispositivo': imei_dispositivo,
+                'tipo_servico': tipo_servico,
+                'descricao_servico': descricao_servico,
+                'problema_reportado': problema_reportado,
+                'data_abertura': data_abertura,
+                'status': status,
+                'peca': peca,
+                'observacoes': observacoes,
                 'produtos': produtos 
             };
+
+            
+            console.log(ordem_servico);
 
             // Função para abrir o modal
             function abrirModal() {
@@ -433,113 +456,19 @@
 
             // Envia os dados para o PHP usando AJAX
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'formMovimentacoes.php?acao=insert', true);
+            xhr.open('POST', 'formOrdemServico.php?acao=insert', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {
-                    var idMovimentacoes = ''; // Defina o valor corretamente
-                    var tipo = tipo_movimentacao;
+                    
                     abrirModal();
                 } else {
                     console.log('Erro ao salvar informações');
                 }
             };
-            xhr.send(JSON.stringify(movimentacao));
+            xhr.send(JSON.stringify(ordem_servico));
         }
     });
 
 </script>
 
-
-
-<!-- 
-
-<?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ordem_servico";
-
-// Criar conexão
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Verificar conexão
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-// Buscar dados das peças
-$sql = "SELECT id, nome_peca, valor_peca FROM pecas";
-$result = $conn->query($sql);
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Criar Ordem de Serviço</title>
-</head>
-<body>
-    <h1>Criar Ordem de Serviço</h1>
-    <form method="POST" action="criar_os.php">
-        <label for="cliente_nome">Nome do Cliente:</label><br>
-        <input type="text" id="cliente_nome" name="cliente_nome" required><br><br>
-
-        <label for="telefone_cliente">Telefone:</label><br>
-        <input type="text" id="telefone_cliente" name="telefone_cliente"><br><br>
-
-        <label for="modelo_dispositivo">Modelo do Dispositivo:</label><br>
-        <input type="text" id="modelo_dispositivo" name="modelo_dispositivo"><br><br>
-
-        <label for="imei_dispositivo">IMEI:</label><br>
-        <input type="text" id="imei_dispositivo" name="imei_dispositivo"><br><br>
-
-        <label for="descricao_servico">Descrição do Serviço:</label><br>
-        <textarea id="descricao_servico" name="descricao_servico" required></textarea><br><br>
-
-        <label for="tipo_servico">Tipo de Serviço:</label><br>
-        <select id="tipo_servico" name="tipo_servico" required>
-            <option value="Reparo">Reparo</option>
-            <option value="Troca de Peça">Troca de Peça</option>
-            <option value="Atualização">Atualização</option>
-            <option value="Outros">Outros</option>
-        </select><br><br>
-
-        <label for="problema_reportado">Problema Reportado:</label><br>
-        <textarea id="problema_reportado" name="problema_reportado"></textarea><br><br>
-
-        <label for="data_abertura">Data de Abertura:</label><br>
-        <input type="date" id="data_abertura" name="data_abertura" required><br><br>
-
-        <label for="status">Status do Serviço:</label><br>
-        <select id="status" name="status" required>
-            <option value="Aberto">Aberto</option>
-            <option value="Em Andamento">Em Andamento</option>
-            <option value="Aguardando Peças">Aguardando Peças</option>
-            <option value="Concluído">Concluído</option>
-            <option value="Cancelado">Cancelado</option>
-        </select><br><br>
-
-        <label for="peca">Peça:</label><br>
-        <select id="peca" name="peca[]" multiple>
-            <?php
-            if ($result->num_rows > 0) {
-                while ($row = $result->fetch_assoc()) {
-                    echo '<option value="' . $row['id'] . '">' . $row['nome_peca'] . ' - R$ ' . number_format($row['valor_peca'], 2, ',', '.') . '</option>';
-                }
-            } else {
-                echo '<option value="">Nenhuma peça disponível</option>';
-            }
-            ?>
-        </select><br><br>
-        
-        <label for="observacoes">Observações:</label><br>
-        <textarea id="observacoes" name="observacoes"></textarea><br><br>
-
-        <button type="submit">Criar Ordem de Serviço</button>
-    </form>
-</body>
-</html>
-
-<?php
-$conn->close();
-?> -->

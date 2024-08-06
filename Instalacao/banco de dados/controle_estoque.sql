@@ -26,7 +26,6 @@ USE `controle_estoque`;
 -- --------------------------------------------------------
 
 SET FOREIGN_KEY_CHECKS = 0;
---------------------------------------------
 
 --
 -- Estrutura para tabela `ordens_servico`
