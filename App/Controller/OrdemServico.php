@@ -41,17 +41,19 @@ class OrdemServico extends ControllerMain
     {
         $dados = [];
 
-        $PecaModel = $this->loadModel("Peca");
+        $PecaModel = $this->loadModel("Produto");
         $dados['aPeca'] = $PecaModel->listaPeca($this->getId());
-
+        
         if ($this->getAcao() != "insert") {
             $registro = $this->model->getById($this->getId());
-            // Mescla os dados de $registro com os dados existentes em $dados
-            $dados = array_merge($dados, $registro);
+            if (is_array($registro)) {
+                // Mescla os dados de $registro com os dados existentes em $dados
+                $dados = array_merge($dados, $registro);
+            }
         }
         return $this->loadView("restrita/formOrdemServico", $dados);
     }
-    
+
     public function getPecaComboBox()
     {
 
@@ -77,7 +79,7 @@ class OrdemServico extends ControllerMain
             $post['tipo_servico'], $post['descricao_servico'], $post['problema_reportado'], $post['data_abertura'], 
             $post['status'], $post['observacoes'], $post['quantidade'], $post['id_peca'], $post['valor'])
         ) {
-         
+
             // Dados da ordem de servico
             $cliente_nome = $post['cliente_nome'];
             $telefone_cliente = $post['telefone_cliente'];
@@ -95,7 +97,7 @@ class OrdemServico extends ControllerMain
             $id_peca = isset($post['id_peca']) ? (int)$post['id_peca'] : '';
             $valor_peca = isset($post['valor']) ? (float)$post['valor'] : '';
 
-            $PecaModel = $this->loadModel("Peca");
+            $PecaModel = $this->loadModel("Produto");
             $dadosProduto = $PecaModel->recuperaPeca($id_peca);
           
             if ($this->getAcao() == 'update') {
@@ -168,16 +170,13 @@ class OrdemServico extends ControllerMain
     public function insertProdutoMovimentacao()
     {
         $post = $this->getPost();
-
-        // var_dump($post);
-        // exit;
-
+   
         $id_ordem_servico = isset($post['id_ordem_servico']) ? $post['id_ordem_servico'] : ""; 
         $quantidade = $post['quantidade'];
         $id_peca = $post['id_peca'];
         $valor_produto = (float)$post['valor'];
 
-        $PecaModel = $this->loadModel("Peca");
+        $PecaModel = $this->loadModel("Produto");
         $dadosProduto['aPeca'] = $PecaModel->recuperaPeca($id_peca);
 
         // Verificar se há uma sessão de movimentação
@@ -223,39 +222,38 @@ class OrdemServico extends ControllerMain
     public function update()
     {
         $post = $this->getPost();
-    
-        if (
-            isset($post['cliente_nome'], $post['telefone_cliente'], $post['modelo_dispositivo'], $post['imei_dispositivo'],
-            $post['tipo_servico'], $post['descricao_servico'], $post['problema_reportado'], $post['data_abertura'], 
-            $post['status'], $post['observacoes'], $post['quantidade'], $post['id_peca'], $post['valor'])
-        ) {
 
+        if (
+            isset($post['cliente_nome']) || isset($post['telefone_cliente']) || isset($post['modelo_dispositivo']) || isset($post['imei_dispositivo']) ||
+            isset($post['tipo_servico']) || isset($post['descricao_servico']) || isset($post['problema_reportado']) || isset($post['data_abertura']) || 
+            isset($post['status']) || isset($post['observacoes']) || isset($post['quantidade']) || isset($post['id_peca']) || isset($post['valor'])) {
+            
             // Dados da ordem de servico
-            $id_ordem_servico = $post['id'];
-            $cliente_nome = $post['cliente_nome'];
-            $telefone_cliente = $post['telefone_cliente'];
-            $modelo_dispositivo = $post['modelo_dispositivo'];
-            $imei_dispositivo = $post['imei_dispositivo'];
-            $tipo_servico = $post['tipo_servico'];
-            $descricao_servico = $post['descricao_servico'];
-            $problema_reportado = $post['problema_reportado'];
-            $data_abertura = $post['data_abertura'];
-            $status = $post['status'];
-            $observacoes = $post['observacoes'];
+            $id_ordem_servico = isset($post['id']) ? $post['id'] : $post['id_ordem_servico'];
+            $cliente_nome = isset($post['cliente_nome']) ? $post['cliente_nome'] : null;
+            $telefone_cliente = isset($post['telefone_cliente']) ? $post['telefone_cliente'] : null;
+            $modelo_dispositivo = isset($post['modelo_dispositivo']) ? $post['modelo_dispositivo'] : null;
+            $imei_dispositivo = isset($post['imei_dispositivo']) ? $post['imei_dispositivo'] : null;
+            $tipo_servico = isset($post['tipo_servico']) ? $post['tipo_servico'] : null;
+            $descricao_servico = isset($post['descricao_servico']) ? $post['descricao_servico'] : null;
+            $problema_reportado = isset($post['problema_reportado']) ? $post['problema_reportado'] : null;
+            $data_abertura = isset($post['data_abertura']) ? $post['data_abertura'] : null;
+            $status = isset($post['status']) ? $post['status'] : null;
+            $observacoes = isset($post['observacoes']) ? $post['observacoes'] : null;
 
             // Dados da peça
             $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
             $id_peca = isset($post['id_peca']) ? (int)$post['id_peca'] : '';
             $valor_peca = isset($post['valor']) ? (float)$post['valor'] : '';
-
+            
             $produtoMovAtualizado = isset($_SESSION['produto_mov_atualizado']) ? $_SESSION['produto_mov_atualizado'] : [];
-
+            
             $found = false;
 
             (int)$quantidade_peca = (int)$quantidade; 
 
-            $MovimentacaoItemModel = $this->loadModel("OrdemServico");
-            $dadosItensMovimentacao = $MovimentacaoItemModel->recuperaPecaOS($id_peca);
+            $MovimentacaoItemModel = $this->loadModel("OrdemServicoPeca");
+            $dadosItensMovimentacao = $MovimentacaoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
 
             $quantidade_movimentacao = 0;
 
@@ -271,15 +269,16 @@ class OrdemServico extends ControllerMain
             //         $quantidade_movimentacao = (int)$quantidades;
             //     }
             // }
-
+            
             if (!empty($dadosItensMovimentacao)) {
              
                 foreach ($dadosItensMovimentacao as $item) {
-
+       
                     if ($id_peca == $item['id_peca'] && $id_ordem_servico == $item['id_ordem_servico']) {
                         $acaoProduto = 'update';
+                
                         $found = true;
-
+                   
                         break;
                     }
                 }     
@@ -297,14 +296,16 @@ class OrdemServico extends ControllerMain
                 }   
             }
 
-            if (!empty($dadosProduto)) {
-                if ($dadosProduto[0]['quantidade'] >= $quantidade) {
+            // var_dump($dadosProduto);
+            // exit;
+            // if (!empty($dadosProduto)) {
+            //     if ($dadosProduto[0]['quantidade'] >= $quantidade) {
+            //         $verificaQuantidadeEstoqueNegativa = true;
+            //     } else if ($dadosProduto[0]['quantidade'] < $quantidade) {
                     $verificaQuantidadeEstoqueNegativa = true;
-                } else if ($dadosProduto[0]['quantidade'] < $quantidade) {
-                    $verificaQuantidadeEstoqueNegativa = false;
-                } 
-            }
-            
+            //     } 
+            // }
+      
             if ($this->getAcao() != 'updateProdutoMovimentacao') {
 
                 $AtualizandoMovimentacaoEProdutos = $this->model->updateOrdemServico(
@@ -333,9 +334,10 @@ class OrdemServico extends ControllerMain
 
                 );
 
-                if ($AtualizandoMovimentacaoEProdutos) {
+                if ($AtualizandoMovimentacaoEProdutos || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
                     Session::destroy('OrdemServico');
                     Session::destroy('produtos');
+                    Session::destroy('produto_mov_atualizado');
                     Session::set("msgSuccess", "OrdemServico alterada com sucesso.");
                     return Redirect::page("OrdemServico");
                 } else {
@@ -344,16 +346,18 @@ class OrdemServico extends ControllerMain
 
             } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
 
+                // var_dump( $id_ordem_servico,  $id_peca, $quantidade, $acaoProduto, $quantidade_movimentacao);
+                // exit("opa");
                 if ($verificaQuantidadeEstoqueNegativa) {
                     $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
                         [
-                            "id" => $id_ordem_servico
+                            "id_ordem_servico" => $id_ordem_servico
                         ],
                         [
                             [
-                                "id_pecas"           => $id_peca,
-                                // "quantidade"            => $quantidades,
-                                "valor"                 => $valor_peca
+                                "id_peca"           => $id_peca,
+                                "quantidade"            => $quantidade,
+                                // "valor"                 => $valor_peca
                             ]
                         ],
                         [
@@ -370,17 +374,17 @@ class OrdemServico extends ControllerMain
                         
                         Session::destroy('movimentacao');
                         Session::destroy('produtos');
-                        Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
-                        return Redirect::page("Movimentacao/form/update/" . $id_ordem_servico); 
+                        Session::set("msgSuccess", "OrdemServico alterada com sucesso.");
+                        return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico); 
                     }
 
                 } else {
                     Session::set("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
-                    return Redirect::page("Movimentacao/form/update/" . $id_ordem_servico);
+                    return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico);
                 }
             } else {
-                Session::set("msgError", "Falha tentar alterar a Movimentacao.");
-                return Redirect::page("Movimentacao");
+                Session::set("msgError", "Falha tentar alterar a OrdemServico.");
+                return Redirect::page("OrdemServico");
             }
         }
     }
@@ -394,6 +398,8 @@ class OrdemServico extends ControllerMain
     {
         $post = $this->getPost();
 
+        // var_dump($post, $_SESSION['ordem_servico'][0]['produtos']);
+
         $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
         $quantidadeRemover = (int)$post['quantidadeRemover'];
         $id_produto = (int)$post['id_produto'];
@@ -403,7 +409,7 @@ class OrdemServico extends ControllerMain
             // Verificar se o produto já está na sessão de movimentação
             $produtoEncontrado = false;
             foreach ($_SESSION['ordem_servico'][0]['produtos'] as $key => &$produto_sessao) {
-                if ($produto_sessao['id_produto'] == $id_produto) {
+                if ($produto_sessao['id_peca'] == $id_produto) {
                     // Atualizar a quantidade do produto na sessão
                     $produto_sessao['quantidade'] -= $quantidadeRemover;
 
@@ -421,10 +427,14 @@ class OrdemServico extends ControllerMain
         }
    
         if(!isset($_SESSION['ordem_servico']) && $this->getAcao() == 'delete') {
-            $ProdutoModel = $this->loadModel("Peca");
+            $ProdutoModel = $this->loadModel("Produto");
             $dadosProduto = $ProdutoModel->recuperaPeca($id_produto);
 
             $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
+
+            if (!isset($_SESSION['produto_mov_atualizado']) && $deletaProduto) {
+                $_SESSION['produto_mov_atualizado'] = true;
+            }
 
             if($deletaProduto) {
                 Session::set("msgSuccess", "Item deletado da movimentação.");

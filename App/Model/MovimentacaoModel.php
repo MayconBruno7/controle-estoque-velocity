@@ -251,7 +251,7 @@ Class MovimentacaoModel extends ModelMain
      * @param int $estado 
      * @return array
      */
-    public function getProdutoCombobox($termo)
+    public function getProdutoCombobox($termo, $tipo_produto)
     {
         // Verifica se foi fornecido um termo de pesquisa válido
         if (!empty($termo)) {
@@ -262,10 +262,14 @@ Class MovimentacaoModel extends ModelMain
                 [
                     'where' => [
                         'statusRegistro' => 1,
+                        'tipo_produto' => $tipo_produto,
                         'nome' => ['LIKE', $termo],
                     ]
                 ]
             );
+
+            // var_dump($rsc);
+            // exit;
 
             // Array para armazenar os resultados
             $produtos = [];

@@ -3,6 +3,8 @@
 use App\Library\ModelMain;
 use App\Library\Session;
 
+use App\Library\Formulario;
+
 Class OrdemServicoModel extends ModelMain
 {
     public $table = "ordens_servico";
@@ -50,7 +52,7 @@ Class OrdemServicoModel extends ModelMain
             INNER JOIN
                 ordens_servico_pecas osp ON os.id = osp.id_ordem_servico
             INNER JOIN
-                pecas p ON osp.id_peca = p.id;
+                produto p ON osp.id_peca = p.id;
             ");
             
         // } 
@@ -78,11 +80,12 @@ Class OrdemServicoModel extends ModelMain
         if (!empty($termo)) {
             // Realiza a consulta no banco de dados
             $rsc = $this->db->select(
-                "pecas",
+                "produto",
                 "all",
                 [
                     'where' => [
-                        'nome_peca' => ['LIKE', $termo],
+                        'nome' => ['LIKE', $termo],
+                        'tipo_produto' => 2
                     ]
                 ]
             );
@@ -92,7 +95,7 @@ Class OrdemServicoModel extends ModelMain
             foreach ($rsc as $produto) {
                 $produtos[] = [
                     'id' => $produto['id'],
-                    'nome_peca' => $produto['nome_peca']
+                    'nome' => $produto['nome']
                 ];
             }
 
@@ -162,12 +165,12 @@ Class OrdemServicoModel extends ModelMain
         if($idMovimentacao) {
 
             $condWhere = $idMovimentacao['id'];
-
+        
             $atualizaInformacoesMovimentacao = $this->db->update($this->table, ['id' => $condWhere], $movimentacao);
 
-            if($atualizaInformacoesMovimentacao) {
+            if($atualizaInformacoesMovimentacao || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
                 return true;
-            }
+            } 
 
         } else {
             return false;
@@ -177,34 +180,39 @@ Class OrdemServicoModel extends ModelMain
     public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_movimentacao = null)
     {
 
-        $id_produto = isset($aProdutos[0]['id_produtos']) ? $aProdutos[0]['id_produtos'] : "";
+
+    
+        // var_dump($aProdutos);
+        // var_dump($acao);
+        // var_dump($quantidade_movimentacao);
+
+        $id_produto = isset($aProdutos[0]['id_peca']) ? $aProdutos[0]['id_peca'] : "";
 
         if($id_movimentacao && $id_produto != "") {
-            $condWhere = $id_movimentacao['id_movimentacao'];
+            $condWhere = (int)$id_movimentacao['id_ordem_servico'];
 
             foreach ($aProdutos as $item) {
+                
                 if($acao['acaoProduto'] == 'update') {
-                    $item['quantidade'] = $quantidade_movimentacao;
+                   
+                    $item['quantidade'] = $aProdutos[0]['quantidade'];
 
-                    $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
-
+                    $atualizaProdutosMovimentacao = $this->db->update("ordens_servico_pecas", ['id_ordem_servico' => $condWhere, 'id_peca' => $id_produto], $item);
+                    
                     if($atualizaProdutosMovimentacao) {
                         return true;
                     }
-                }
+                } else if($acao['acaoProduto'] == 'insert'){
 
-                else if($acao['acaoProduto'] == 'insert'){
+                    $item['id_ordem_servico'] = $id_movimentacao['id_ordem_servico'];
+                    $item['quantidade'] = $aProdutos[0]['quantidade'];
 
-                    $item['id_movimentacoes'] = $id_movimentacao['id_movimentacao'];
-                    $item['quantidade'] = $quantidade_movimentacao;
-
-                    $insereProdutosMovimentacao = $this->db->insert("movimentacao_item", $item);
+                    $insereProdutosMovimentacao = $this->db->insert("ordens_servico_pecas", $item);
 
                     if($insereProdutosMovimentacao) {
                         return true;
                     }
                     
-    
                 } else {
                     echo "erro";
                 }
@@ -225,13 +233,6 @@ Class OrdemServicoModel extends ModelMain
             "where" => ["id_ordem_servico" => $id_movimentacao, "id_peca" => $aProdutos[0]["id"]]
             ]
         );
-
-        // var_dump($item_movimentacao);
-        // var_dump($id_movimentacao);
-        // var_dump($aProdutos);
-        // var_dump($tipo_movimentacao);
-        // var_dump($quantidadeRemover);
-        // exit;
 
         if ($item_movimentacao) {
 
@@ -291,14 +292,14 @@ Class OrdemServicoModel extends ModelMain
             ]
         );
 
-        $result_pecas = $this->db->select(
-            "pecas",
-            "all",
-            [
-            "where" => ["id" => $resultA[0]['id_peca']]
-            ]
-        );
+        $id_pecas = [];
 
+        foreach ($resultA as $row) {
+            if(!empty($row['id_peca'])) {
+                $id_pecas[] = $row['id_peca'];
+            }
+        }
+       
         $pdf = new FPDF();
         $pdf->AddPage();
         $pdf->SetFont('Arial', 'B', 16);
@@ -332,13 +333,13 @@ Class OrdemServicoModel extends ModelMain
         $linhas = [
             // ['ID:', $result[0]['id']],
             [iconv('UTF-8', 'ISO-8859-1', 'Nome do Cliente:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['cliente_nome'])],
-            [iconv('UTF-8', 'ISO-8859-1', 'Telefone:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['telefone_cliente'])],
+            [iconv('UTF-8', 'ISO-8859-1', 'Telefone:'), iconv('UTF-8', 'ISO-8859-1', Formulario::formatarTelefone($result[0]['telefone_cliente']))],
             [iconv('UTF-8', 'ISO-8859-1', 'Modelo do Dispositivo:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['modelo_dispositivo'])],
             [iconv('UTF-8', 'ISO-8859-1', 'IMEI:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['imei_dispositivo'])],
             [iconv('UTF-8', 'ISO-8859-1', 'Descrição do Serviço:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['descricao_servico'])],
             [iconv('UTF-8', 'ISO-8859-1', 'Tipo de Serviço:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['tipo_servico'])],
             [iconv('UTF-8', 'ISO-8859-1', 'Problema Reportado:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['problema_reportado'])],
-            [iconv('UTF-8', 'ISO-8859-1', 'Data de Abertura:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['data_abertura'])],
+            [iconv('UTF-8', 'ISO-8859-1', 'Data de Abertura:'), iconv('UTF-8', 'ISO-8859-1', Formulario::formatarDataBrasileira($result[0]['data_abertura']))],
             [iconv('UTF-8', 'ISO-8859-1', 'Status:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['status'])],
             [iconv('UTF-8', 'ISO-8859-1', 'Observações:'), iconv('UTF-8', 'ISO-8859-1', $result[0]['observacoes'])],
         ];
@@ -371,21 +372,35 @@ Class OrdemServicoModel extends ModelMain
 
         $total = 0;
 
-        // Dados das peças
-        foreach ($result_pecas as $peca) {
-            $peca_nome = isset($peca['nome_peca']) ? trim($peca['nome_peca']) : 'N/A';
-            $valor = isset($peca['valor_peca']) ? (float)$peca['valor_peca'] : 0.0;
+        foreach ($id_pecas as $id_peca) {
+            if(!empty($id_peca)) {
+                $result_pecas = $this->db->select(
+                    "pecas",
+                    "all",
+                    [
+                    "where" => ["id" => $id_peca]
+                    ]
+                );
 
-            $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', $peca_nome), 1, 0, 'L');
-            $pdf->Cell(0, 10, number_format($valor, 2, ',', '.'), 1, 1, 'R');
+                // Dados das peças
+                foreach ($result_pecas as $peca) {
 
-            $total += $valor;
+                    $peca_nome = isset($peca['nome_peca']) ? trim($peca['nome_peca']) : 'N/A';
+                    $valor = isset($peca['valor_peca']) ? (float)$peca['valor_peca'] : 0.0;
+
+                    $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', $peca_nome), 1, 0, 'L');
+                    $pdf->Cell(0, 10,'R$ ' . number_format($valor, 2, ',', '.'), 1, 1, 'R');
+
+                    $total += $valor;
+                }
+            }
         }
+        
 
         // Adicionando uma linha para o total
         $pdf->Ln(10);
         $pdf->Cell(60, 10, 'Total', 1, 0, 'L');
-        $pdf->Cell(0, 10, number_format($total, 2, ',', '.'), 1, 1, 'R');
+        $pdf->Cell(0, 10, 'R$ ' . number_format($total, 2, ',', '.'), 1, 1, 'R');
 
         $pdf->Ln(20);
         $pdf->Cell(0, 10, '___________________________________________', 0, 1, 'C'); // Centralizado na página

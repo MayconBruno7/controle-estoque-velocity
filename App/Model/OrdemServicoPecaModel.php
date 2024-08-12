@@ -49,10 +49,10 @@ Class OrdemServicoPecaModel extends ModelMain
         }
     }
 
-    public function recuperaPecaOS($idPeca)
+    public function recuperaPecaOS($idPeca, $id_ordem_servico)
     {
 
-        $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE id = ?", [$idPeca]);
+        $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE id_peca = ? AND id_ordem_servico = ?", [$idPeca, $id_ordem_servico]);
             
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);

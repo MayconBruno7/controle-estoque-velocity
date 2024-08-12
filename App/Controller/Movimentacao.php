@@ -516,8 +516,11 @@ class Movimentacao extends ControllerMain
     public function getProdutoComboBox()
     {
 
-        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2)); 
+        $dados = $this->model->getProdutoCombobox($this->getOutrosParametros(2), $this->getOutrosParametros(3)); 
     
+        // var_dump($this->getOutrosParametros(3));
+        // var_dump($dados);
+        // exit;
 
         echo json_encode($dados);
 

@@ -50,6 +50,16 @@
                 </div>
                 <div class="modal-body">
                     <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'Movimentacao/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'Movimentacao/insertProdutoMovimentacao/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
+                        
+                        <div class="col-12 mb-3">
+                            <label for="tipo_produto" class="form-label">Tipo de produto</label>
+                            <select name="tipo_produto" id="tipo_produto" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : ''?>>
+                                <option value="">...</option>    
+                                <option value="1" >Produto</option>
+                                <option value="2" >Peça</option>
+                            </select>
+                        </div>    
+                        
                         <div class="mb-3">
                             <div class="mb-3">
                                 <label for="id_produto" class="form-label">Produto</label>
@@ -59,10 +69,12 @@
                                 </select>
                             </div>
                         </div>
+
                         <div class="mb-3">
                             <label for="quantidade" class="form-label">Quantidade</label>
                             <input type="number" class="form-control" id="quantidade" name="quantidade" required>
                         </div>
+                        
                         <div class="mb-3">
                             <label for="valor" class="form-label">Valor Unitário</label>
                             <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
@@ -89,6 +101,8 @@
             <?= Formulario::exibeMsgSucesso() ?>
         </div>
     </div>
+
+    <!-- <a href="<?= baseUrl() ?>/Movimentacao/getProdutoComboBox/a/2"> Testar </a> -->
 
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <form class="g-3" action="<?= baseUrl() ?>Movimentacao/<?= $this->getAcao() ?>" method="POST" id="form">
@@ -128,7 +142,7 @@
                 </select>
             </div>
 
-            <div class="col-8 mt-3">
+            <div class="col-4 mt-3">
                 <label for="setor_id" class="form-label">Setor</label>
                 <select name="setor_id" id="setor_id" class="form-control" required <?=  $this->getAcao() != 'insert' &&  $this->getAcao() != 'update' ? 'disabled' : '' ?>>
                     <option value="">...</option>
@@ -344,38 +358,47 @@
 <script>
 
     $(function() {
-        $('#search_produto').keyup(function() {
-            var termo = $(this).val().trim();
+        // Evento de change no select de tipo_produto
+        $('#tipo_produto').change(function() {
+            var tipo_produto = $(this).val(); // Obtém o valor selecionado (2 para Produto ou Peça)
+            
+            // Agora vamos modificar a função de busca para considerar esse tipo de produto
+            $('#search_produto').keyup(function() {
+                var termo = $(this).val().trim();
 
-            if (termo.length > 0) {
-                $('#id_produto').hide();
-                $('.carregando').show();
+                console.log(termo);
 
-                $.getJSON('/Movimentacao/getProdutoComboBox/' + termo, 
-                function(data) {
-                    console.log(data);
-                    var options = '<option value="" selected disabled>Escolha o produto</option>';
-                    if (data.length > 0) {
-                        for (var i = 0; i < data.length; i++) {
-                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
+                if (termo.length > 0) {
+                    $('#id_produto').hide();
+                    $('.carregando').show();
+
+                    $.getJSON('/Movimentacao/getProdutoComboBox/' + termo + '/' + tipo_produto, 
+                    function(data) {
+                        console.log(data);
+                        var options = '<option value="" selected disabled>Escolha o produto</option>';
+                        if (data.length > 0) {
+                            for (var i = 0; i < data.length; i++) {
+                                options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
+                            }
+                        } else {
+                            options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
                         }
-                    } else {
-                        options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
-                    }
-                    $('#id_produto').html(options).show();
-                })
-                .fail(function() {
-                    console.error("Erro ao carregar produtos.");
-                    $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
-                })
-                .always(function() {
-                    $('.carregando').hide();
-                });
-            } else {
-                $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
-            }
+                        $('#id_produto').html(options).show();
+                    })
+                    .fail(function() {
+                        console.error("Erro ao carregar produtos.");
+                        $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
+                    })
+                    .always(function() {
+                        $('.carregando').hide();
+                    });
+                } else {
+                    $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
+                }
+            });
         });
     });
+
 
     document.addEventListener("DOMContentLoaded", function() {
  

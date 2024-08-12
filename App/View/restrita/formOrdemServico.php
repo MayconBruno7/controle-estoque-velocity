@@ -92,6 +92,7 @@
         </div>
     </div>
 
+    <a href="<?= baseUrl()?>/OrdemServico/getPecaComboBox/a">Testar</a>
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <form class="g-3" action="<?= baseUrl() ?>OrdemServico/<?= $this->getAcao() ?>" method="POST" id="form">
 
@@ -274,8 +275,7 @@
                             <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                             <td>
                                 <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                    <a href="<?= baseUrl() ?>/index/delete/<?= $this->getId() ?>/<?= $produto['id_peca'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
-                                    <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="<?= baseUrl() ?>Peca/index/delete/<?= $this->getId() ?>/<?= $produto['id_peca'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <?php endif; ?>
                                     <a href="formProdutos.php?acao=view&id=<?= $produto['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>
@@ -334,14 +334,16 @@
         <div class="row justify-content-center">
             <div class="col-6 d-flex justify-content-center mt-3">
 
-            <a href="<?= baseUrl() . 'OrdemServico/requireimprimirOS/' . setValor('id') ?>" class="btn btn-primary btn-sm">Imprimir ordem de serviço</a>
+            <?php  if($this->getAcao() != 'insert') : ?>
+                <a href="<?= baseUrl() . 'OrdemServico/requireimprimirOS/' . setValor('id') ?>" class="btn btn-primary btn-sm">Imprimir ordem de serviço</a>
+            <?php endif; ?>
 
             <?php if ($this->getOutrosParametros(4) == "home"): ?>
                 <a href="<?= baseUrl() . Formulario::retornaHomeAdminOuHome() ?>" class="btn btn-primary btn-sm">Voltar</a>
             <?php endif; ?>
 
             <?php if ($this->getAcao() != "view"): ?>
-                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Criar ordem de serviço</button>
+                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                 <?= Formulario::botao('voltar') ?>
             <?php endif; ?>
             </div>
@@ -369,7 +371,7 @@
                     var options = '<option value="" selected disabled>Escolha o produto</option>';
                     if (data.length > 0) {
                         for (var i = 0; i < data.length; i++) {
-                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome_peca + '</option>';
+                            options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
                         }
                     } else {
                         options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
@@ -456,7 +458,7 @@
 
             // Envia os dados para o PHP usando AJAX
             var xhr = new XMLHttpRequest();
-            xhr.open('POST', 'formOrdemServico.php?acao=insert', true);
+            xhr.open('POST', '<?= baseUrl() ?>/OrdemServico/form/insert/0', true);
             xhr.setRequestHeader('Content-Type', 'application/json');
             xhr.onreadystatechange = function() {
                 if (xhr.readyState === 4 && xhr.status === 200) {

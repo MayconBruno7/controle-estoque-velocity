@@ -176,6 +176,10 @@ class Database
     {
         try {
 
+            // var_dump($table);
+            // var_dump($campos);
+            // exit;
+
             $save = $this->getCampos($campos);
             $fields = implode("` , `", array_keys($campos));
             $values = implode(" , ", array_keys($save['dados']));
@@ -214,7 +218,7 @@ class Database
             $condWhere      = $this->getCampos($conditions, "AND");
 
             $save['save']   = array_merge($save['dados'], $condWhere['dados']);
-
+        
             // Construir a string SQL, adicionando a cláusula dataMod = NOW() somente para a tabela 'produtos'
             if ($table == 'produto') {
                 $sql = "UPDATE `" . $table . "` SET " . $save['sql'] . ", dataMod = NOW() WHERE " . $condWhere['sql'] . ";";
@@ -224,9 +228,11 @@ class Database
             }
 
             $query = $this->connect()->prepare($sql);
-            $query->execute($save['save']);
-            $rs = $query->rowCount();
 
+
+            $query->execute($save['save']);
+
+            $rs = $query->rowCount();
             
             self::__destruct();
 
@@ -299,6 +305,7 @@ class Database
         $campos = "*";
         $sql = '';
 
+
         // select
         if (isset($configs['campos'])) {
             $campos = "`" . implode("`, `" , $configs['campos']) . "`";
@@ -333,7 +340,12 @@ class Database
         $sql .= (!empty($orderby) ? " ORDER BY ". $orderby : '');
 
         $query = $this->connect()->prepare($sql);
+
+        // var_dump($query);
+        // exit;
+
         $query->execute($where['dados']);
+        
 
         if ($tipo == "first") {
             return $this->dbBuscaArray($query);

@@ -34,7 +34,16 @@
                 <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
             </div>
 
-            <div class="col-4">
+            <div class="col-2">
+                <label for="tipo_produto" class="form-label">Tipo de produto</label>
+                <select class="form-control" name="tipo_produto" id="tipo_produto" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <option value=""  <?= setValor('tipo_produto') == ""  ? "SELECTED": "" ?>>...</option>
+                    <option value="1" <?= setValor('tipo_produto') == "1" ? "SELECTED": "" ?>>Produto</option>
+                    <option value="2" <?= setValor('tipo_produto') == "2" ? "SELECTED": "" ?>>Peça</option>
+                </select>
+            </div>
+
+            <div class="col-2">
                 <label for="quantidade" class="form-label">Quantidade</label>
                 <!--  verifica se a quantidade está no banco de dados e retorna essa quantidade -->
                 <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade') ?>" disabled >

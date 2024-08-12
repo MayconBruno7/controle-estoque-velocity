@@ -88,7 +88,8 @@ class Produto extends ControllerMain
                 "fornecedor"            => $post['fornecedor_id'],
                 "statusRegistro"        => $post['statusRegistro'],
                 "condicao"              => $post['condicao'],
-                "descricao"             => $post['descricao']
+                "descricao"             => $post['descricao'],
+                "tipo_produto"          => $post['tipo_produto']
             ])) {
                 Session::set("msgSuccess", "Produto adicionada com sucesso.");
             } else {
@@ -126,6 +127,7 @@ class Produto extends ControllerMain
                         "statusRegistro"        => $post['statusRegistro'],
                         "condicao"              => $post['condicao'],
                         "descricao"             => $post['descricao'],
+                        "tipo_produto"          => $post['tipo_produto']
                     ],
     
                     
