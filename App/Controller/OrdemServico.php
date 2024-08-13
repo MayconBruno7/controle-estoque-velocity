@@ -398,8 +398,6 @@ class OrdemServico extends ControllerMain
     {
         $post = $this->getPost();
 
-        // var_dump($post, $_SESSION['ordem_servico'][0]['produtos']);
-
         $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
         $quantidadeRemover = (int)$post['quantidadeRemover'];
         $id_produto = (int)$post['id_produto'];

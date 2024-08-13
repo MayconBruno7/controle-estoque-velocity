@@ -4,10 +4,10 @@ set host=localhost
 set user=root
 set pass=
 set db=controle_estoque
-set backupDir="C:\Users\TI\Desktop\!\ADS\Estudos\Programacao Web\Projeto Controle de estoque-v1\Projeto Controle de estoque-v1.0\controle-estoque-develop\Instalacao\banco de dados\backup banco"
+set backupDir="C:\Users\Maycon Bruno\Documents\backupBanco"
 
 :: Adiciona o caminho do MySQL bin ao PATH, se necessário
-set PATH=%PATH%;C:\wamp64\bin\mysql\mysql8.0.33\bin
+set PATH=%PATH%;C:\wamp64\bin\mysql\mysql8.3.0\bin
 
 :: Criar diretório de backups se não existir
 if not exist %backupDir% mkdir %backupDir%

@@ -276,7 +276,7 @@
                             <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                             <td>
                                 <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                    <a href="<?= baseUrl() ?>Peca/index/delete/<?= $this->getId() ?>/<?= $produto['id_peca'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $produto['id_peca'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <?php endif; ?>
                                     <a href="formProdutos.php?acao=view&id=<?= $produto['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>

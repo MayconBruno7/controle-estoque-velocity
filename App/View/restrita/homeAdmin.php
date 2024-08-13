@@ -265,20 +265,19 @@
                             plugins: {
                                 tooltip: {
                                     callbacks: {
-                                        label: function(tooltipItem) {
-                                            let index = tooltipItem.dataIndex;
-                                            let entrada = data.entradas[index];
-                                            let saida = data.saidas[index];
-                                            let descricao = data.descricoes[index];
-                                            let valor = data.valores[index];
-                                            return `
-                                                Data: ${tooltipItem.label}
-                                                Produto: ${descricao}
-                                                Valor: ${valor}
-                                                Entradas: ${entrada}
-                                                Saídas: ${saida}
-                                            `;
-                                        }
+                                      label: function(tooltipItem) {
+                                          let index = tooltipItem.dataIndex;
+                                          let entrada = data.entradas[index];
+                                          let saida = data.saidas[index];
+                                          let descricao = data.descricoes[index];
+                                          let valor = data.valores[index];
+                                          return `Data: ${tooltipItem.label}\n
+                                          Produto: ${descricao}\n
+                                          Valor: ${valor}\n
+                                          Entradas: ${entrada}\n
+                                          Saídas: ${saida}`;
+                                      }
+
                                     },
                                     displayColors: false, // Oculta a exibição das cores
                                     backgroundColor: 'rgba(0, 0, 0, 0.8)', // Cor de fundo do tooltip

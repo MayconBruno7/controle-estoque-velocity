@@ -405,14 +405,9 @@ options: {
                     let saida = data.saidas[index];
                     let descricao = data.descricoes[index];
                     let valor = data.valores[index];
-                    return `
-                        Data: ${tooltipItem.label}
-                        Produto: ${descricao}
-                        Valor: ${valor}
-                        Entradas: ${entrada}
-                        Saídas: ${saida}
-                    `;
+                    return `Data: ${tooltipItem.label}\nProduto: ${descricao}\nValor: ${valor}\nEntradas: ${entrada}\nSaídas: ${saida}`;
                 }
+
             },
             displayColors: false, // Oculta a exibição das cores
             backgroundColor: 'rgba(0, 0, 0, 0.8)', // Cor de fundo do tooltip
