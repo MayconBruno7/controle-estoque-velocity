@@ -66,6 +66,18 @@
                                             </form>
                                         <?php endif; ?>
 
+                                        <?php if ($this->getAcao() == 'delete_peca') : ?>
+                                            <form class="g-3" action="<?= baseUrl() ?>OrdemServico/deleteProdutoMovimentacao/delete" method="post">
+                                                <p>Quantidade atual: <?= $this->getOutrosParametros(5) ?></p>
+                                                <label for="quantidadeRemover" class="form-label">Quantidade</label>
+                                                <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
+                                                <input type="hidden" name="id_produto" value="<?= $this->getOutrosParametros(4) ?>">
+                                                <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
+                                                <input type="hidden" name="tipo" value="<?= $this->getOutrosParametros(6) ?>">
+                                                <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
+                                            </form>
+                                        <?php endif; ?>
+
                                         <?php if (!$this->getAcao()) : ?>
                                             <?= Formulario::botao("view", $value['id']) ?>
                                             <?= Formulario::botao("update", $value['id']) ?>

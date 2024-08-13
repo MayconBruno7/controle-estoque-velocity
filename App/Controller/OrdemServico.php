@@ -203,7 +203,7 @@ class OrdemServico extends ControllerMain
         // Se o produto não estiver na sessão de movimentação, adicioná-lo
         if (!$produtoEncontrado) {
             $_SESSION['ordem_servico'][0]['produtos'][] = array(
-                'nome_peca' => $dadosProduto['aPeca'][0]['nome_peca'],
+                'nome_peca' => $dadosProduto['aPeca'][0]['nome'],
                 'id_peca' => $id_peca,
                 'quantidade' => $quantidade,
                 'valor' => $valor_produto
@@ -255,7 +255,7 @@ class OrdemServico extends ControllerMain
             $MovimentacaoItemModel = $this->loadModel("OrdemServicoPeca");
             $dadosItensMovimentacao = $MovimentacaoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
 
-            $quantidade_movimentacao = 0;
+            $quantidade_movimentacao = $dadosItensMovimentacao[0]['quantidade'];
 
             // foreach ($dadosItensMovimentacao as $index => $item) {
             //     if ($id_peca == $item['id_prod_mov_itens'] && $id_ordem_servico == $item['id_movimentacoes']) {
@@ -416,6 +416,7 @@ class OrdemServico extends ControllerMain
                     if ($produto_sessao['quantidade'] <= 0) {
                         // Remover o produto do array na sessão
                         unset($_SESSION['ordem_servico'][0]['produtos'][$key]);
+                        unset($_SESSION['ordem_servico']);
                     }
                     $produtoEncontrado = true;
 
@@ -425,13 +426,16 @@ class OrdemServico extends ControllerMain
                 }
             }
         }
-   
+        
+    
         if(!isset($_SESSION['ordem_servico']) && $this->getAcao() == 'delete') {
+
             $ProdutoModel = $this->loadModel("Produto");
             $dadosProduto = $ProdutoModel->recuperaPeca($id_produto);
 
             $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
-
+            // var_dump($dadosProduto,$);
+            // exit("Opa");
             if (!isset($_SESSION['produto_mov_atualizado']) && $deletaProduto) {
                 $_SESSION['produto_mov_atualizado'] = true;
             }

@@ -72,6 +72,7 @@
                         </div>
 
                         <input type="hidden" name="id_ordem_servico" value="<?= $this->getId() ?>">
+                        
                         <button type="submit" class="btn btn-primary">Adicionar</button>
                     </form>
                 </div>
@@ -293,18 +294,17 @@
             
                 <?php if($this->getAcao() != 'insert') : ?>
                     <?php
-
                             foreach ($dados['aPeca'] as $row) {
                         ?>
                         <tr>
                             <td><?= $row['id_peca'] ?></td>
-                            <td><?= $row['nome_peca'] ?></td>
+                            <td><?= $row['nome'] ?></td>
                             <td><?= number_format($row['valor_peca'], 2, ",", ".")  ?> </td>
                             <td><?= $row['quantidade_peca_ordem'] ?></td>
                             <td><?= number_format(($row["quantidade_peca_ordem"] * $row["valor_peca"]), 2, ",", ".") ?></td>
                             <td>
                             <?php if($this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
-                                    <a href="<?= baseUrl() ?>Peca/index/delete/<?= $this->getId() ?>/<?= $row['id_peca'] ?>/<?= $row['quantidade'] ?>/1" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                    <a href="<?= baseUrl() ?>Produto/index/delete_peca/<?= $this->getId() ?>/<?= $row['id_peca'] ?>/<?= $row['quantidade'] ?>/1" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <?php endif; ?>
                                     <a href="formProdutos.php?acao=view&id=<?= $row['id_peca'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             </td>

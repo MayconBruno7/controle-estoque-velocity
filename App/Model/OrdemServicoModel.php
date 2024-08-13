@@ -44,15 +44,20 @@ Class OrdemServicoModel extends ModelMain
                 os.observacoes,
                 osp.quantidade AS quantidade_peca_ordem,
                 p.id AS peca_id,
-                p.nome_peca,
-                p.valor_peca,
-                p.descricao_peca
+                p.nome AS nome_peca,
+                p.descricao,
+                mi.valor AS valor_peca -- Coluna de valor da tabela movimentacao_item
             FROM
                 ordens_servico os
             INNER JOIN
                 ordens_servico_pecas osp ON os.id = osp.id_ordem_servico
             INNER JOIN
-                produto p ON osp.id_peca = p.id;
+                produto p ON osp.id_peca = p.id
+            INNER JOIN
+                movimentacao_item mi ON osp.id_peca = mi.id_produtos
+            WHERE
+                p.tipo_produto = 2; -- Filtra apenas os produtos do tipo peça
+
             ");
             
         // } 
@@ -180,12 +185,6 @@ Class OrdemServicoModel extends ModelMain
     public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_movimentacao = null)
     {
 
-
-    
-        // var_dump($aProdutos);
-        // var_dump($acao);
-        // var_dump($quantidade_movimentacao);
-
         $id_produto = isset($aProdutos[0]['id_peca']) ? $aProdutos[0]['id_peca'] : "";
 
         if($id_movimentacao && $id_produto != "") {
@@ -194,8 +193,8 @@ Class OrdemServicoModel extends ModelMain
             foreach ($aProdutos as $item) {
                 
                 if($acao['acaoProduto'] == 'update') {
-                   
-                    $item['quantidade'] = $aProdutos[0]['quantidade'];
+
+                    $item['quantidade'] = $aProdutos[0]['quantidade'] + $quantidade_movimentacao;
 
                     $atualizaProdutosMovimentacao = $this->db->update("ordens_servico_pecas", ['id_ordem_servico' => $condWhere, 'id_peca' => $id_produto], $item);
                     
@@ -374,19 +373,25 @@ Class OrdemServicoModel extends ModelMain
 
         foreach ($id_pecas as $id_peca) {
             if(!empty($id_peca)) {
-                $result_pecas = $this->db->select(
-                    "pecas",
-                    "all",
-                    [
-                    "where" => ["id" => $id_peca]
-                    ]
+                $result_pecas = $this->db->dbSelect("SELECT 
+                    p.*,
+                    mi.valor
+                FROM 
+                    produto p
+                INNER JOIN 
+                    movimentacao_item mi ON p.id = mi.id_produtos
+                WHERE 
+                    p.id = ?;"
+                    ,
+                    [$id_peca]
+                   
                 );
 
                 // Dados das peças
                 foreach ($result_pecas as $peca) {
 
-                    $peca_nome = isset($peca['nome_peca']) ? trim($peca['nome_peca']) : 'N/A';
-                    $valor = isset($peca['valor_peca']) ? (float)$peca['valor_peca'] : 0.0;
+                    $peca_nome = isset($peca['nome']) ? trim($peca['nome']) : 'N/A';
+                    $valor = isset($peca['valor']) ? (float)$peca['valor'] : 0.0;
 
                     $pdf->Cell(60, 10, iconv('UTF-8', 'ISO-8859-1', $peca_nome), 1, 0, 'L');
                     $pdf->Cell(0, 10,'R$ ' . number_format($valor, 2, ',', '.'), 1, 1, 'R');

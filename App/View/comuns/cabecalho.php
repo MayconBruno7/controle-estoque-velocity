@@ -326,7 +326,6 @@ use App\Library\Formulario;
                     <a href="#" class="menu-toggle nav-link has-dropdown"><i data-feather="copy"></i><span>Páginas</span></a>
                     <ul class="dropdown-menu">
                         <li><a class="nav-link" href="<?= baseUrl() ?>Produto">Estoque</a></li>
-                        <li><a class="nav-link" href="<?= baseUrl() ?>Peca">Peça</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Setor">Setor</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Fornecedor">Fornecedores</a></li>
                         <li><a class="nav-link" href="<?= baseUrl() ?>Movimentacao">Movimentações</a></li>

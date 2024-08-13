@@ -180,17 +180,25 @@ Class ProdutoModel extends ModelMain
     public function listaPeca($id_ordem_servico)
     {
 
-        $rsc = $this->db->dbSelect("SELECT osp.id_ordem_servico,
-                    osp.id_peca,
-                    osp.quantidade AS quantidade_peca_ordem,
-                    p.*
-                FROM {$this->table} p
-                INNER JOIN ordens_servico_pecas osp ON p.id = osp.id_peca
-                WHERE osp.id_ordem_servico = ?
-                    OR osp.id_ordem_servico IS NULL
-                ORDER BY p.id;
-                ",
-                $id_ordem_servico);
+        $rsc = $this->db->dbSelect("SELECT 
+                osp.id_ordem_servico,
+                osp.id_peca,
+                osp.quantidade AS quantidade_peca_ordem,
+                p.*,
+                mi.valor AS valor_peca -- Inclui o valor do produto da tabela movimentacao_item
+            FROM 
+                {$this->table} p
+            INNER JOIN 
+                ordens_servico_pecas osp ON p.id = osp.id_peca
+            INNER JOIN 
+                movimentacao_item mi ON osp.id_peca = mi.id_produtos
+            WHERE 
+                osp.id_ordem_servico = ?
+                OR osp.id_ordem_servico IS NULL
+            ORDER BY 
+                p.id;
+            ",
+        $id_ordem_servico);
 
         if ($this->db->dbNumeroLinhas($rsc) > 0) {
             return $this->db->dbBuscaArrayAll($rsc);
