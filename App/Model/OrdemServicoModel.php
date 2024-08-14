@@ -110,22 +110,22 @@ Class OrdemServicoModel extends ModelMain
         return [];
     }
 
-    public function idUltimaMovimentacao()
-    {
+    // public function idUltimaMovimentacao()
+    // {
 
-        $rsc = $this->db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacao");
+    //     $rsc = $this->db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacao");
 
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
-    }
+    //     if ($this->db->dbNumeroLinhas($rsc) > 0) {
+    //         return $this->db->dbBuscaArrayAll($rsc);
+    //     } else {
+    //         return [];
+    //     }
+    // }
 
     /**
-     * insertMovimentacao
+     * insertOrdemServico
      *
-     * @param array $movimentacao
+     * @param array $OrdemServico
      * @param array $aProdutos
      * @return void
      */
@@ -133,9 +133,6 @@ Class OrdemServicoModel extends ModelMain
     {
 
         $ultimoRegistro = $this->db->insert($this->table, $ordem_servico);
-
-        // var_dump($aPecas);
-        // exit;
         
         if ($ultimoRegistro > 0) {
 
@@ -143,8 +140,6 @@ Class OrdemServicoModel extends ModelMain
                 foreach ($aPecas as $item) {
 
                     $item["id_ordem_servico"] = $ultimoRegistro;
-
-                    // exit('opa');
 
                     $this->db->insert("ordens_servico_pecas", $item);
                 }
@@ -158,22 +153,22 @@ Class OrdemServicoModel extends ModelMain
     }
 
     /**
-     * updateMovimentacao
+     * updateOrdemServico
      *
-     * @param array $movimentacao
+     * @param array $OrdemServico
      * @param array $aProdutos
      * @return void
      */
-    public function updateOrdemServico($idMovimentacao, $movimentacao, $aProdutos)
+    public function updateOrdemServico($id_ordem_servico, $ordem_servico, $aProdutos)
     {
 
-        if($idMovimentacao) {
+        if($id_ordem_servico) {
 
-            $condWhere = $idMovimentacao['id'];
+            $condWhere = $id_ordem_servico['id'];
         
-            $atualizaInformacoesMovimentacao = $this->db->update($this->table, ['id' => $condWhere], $movimentacao);
+            $atualizaInformacoesOrdemServico = $this->db->update($this->table, ['id' => $condWhere], $ordem_servico);
 
-            if($atualizaInformacoesMovimentacao || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
+            if($atualizaInformacoesOrdemServico || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
                 return true;
             } 
 
@@ -182,19 +177,19 @@ Class OrdemServicoModel extends ModelMain
         }
     }
 
-    public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_movimentacao = null)
+    public function updateInformacoesProdutoOrdemServico($id_ordem_servico, $aProdutos, $acao, $quantidade_ordem_servico = null)
     {
 
         $id_produto = isset($aProdutos[0]['id_peca']) ? $aProdutos[0]['id_peca'] : "";
 
-        if($id_movimentacao && $id_produto != "") {
-            $condWhere = (int)$id_movimentacao['id_ordem_servico'];
+        if($id_ordem_servico && $id_produto != "") {
+            $condWhere = (int)$id_ordem_servico['id_ordem_servico'];
 
             foreach ($aProdutos as $item) {
                 
                 if($acao['acaoProduto'] == 'update') {
 
-                    $item['quantidade'] = $aProdutos[0]['quantidade'] + $quantidade_movimentacao;
+                    $item['quantidade'] = $aProdutos[0]['quantidade'] + $quantidade_ordem_servico;
 
                     $atualizaProdutosMovimentacao = $this->db->update("ordens_servico_pecas", ['id_ordem_servico' => $condWhere, 'id_peca' => $id_produto], $item);
                     
@@ -203,7 +198,7 @@ Class OrdemServicoModel extends ModelMain
                     }
                 } else if($acao['acaoProduto'] == 'insert'){
 
-                    $item['id_ordem_servico'] = $id_movimentacao['id_ordem_servico'];
+                    $item['id_ordem_servico'] = $id_ordem_servico['id_ordem_servico'];
                     $item['quantidade'] = $aProdutos[0]['quantidade'];
 
                     $insereProdutosMovimentacao = $this->db->insert("ordens_servico_pecas", $item);
@@ -222,53 +217,57 @@ Class OrdemServicoModel extends ModelMain
         }
     }
 
-    public function deleteInfoProdutoMovimentacao($id_movimentacao, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
+    public function deleteInfoProdutoOrdemServico($id_ordem_servico, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
     {
 
         $item_movimentacao = $this->db->select(
             "ordens_servico_pecas",
             "all",
             [
-            "where" => ["id_ordem_servico" => $id_movimentacao, "id_peca" => $aProdutos[0]["id"]]
+            "where" => ["id_ordem_servico" => $id_ordem_servico, "id_peca" => $aProdutos[0]["id"]]
             ]
         );
 
         if ($item_movimentacao) {
 
-            // recupera a quantidade atual do item na movimentação
+            // recupera a quantidade atual do item na ordem de serviço
             $quantidadeAtual = $item_movimentacao[0]['quantidade'];
 
-            // Verifica se a quantidade a ser removida não ultrapassa a quantidade atual na comanda
+            // Verifica se a quantidade a ser removida não ultrapassa a quantidade atual na ordem de serviço
             if ($quantidadeRemover <= $quantidadeAtual) {
-                // Subtrai a quantidade a ser removida da quantidade atual na comanda
+                // Subtrai a quantidade a ser removida da quantidade atual na ordem de serviço
                 $novaQuantidadeMovimentacao = ($quantidadeAtual - $quantidadeRemover);
 
                 // Atualiza a tabela movimetacao_itens com a nova quantidade
-                $atualizaInfoProdutosMovimentacao = $this->db->update("ordens_servico_pecas", ['id_ordem_servico' => $id_movimentacao, 'id_peca' => $item_movimentacao[0]['id_peca']], ['quantidade' => $novaQuantidadeMovimentacao]);
+                $atualizaInfoProdutosMovimentacao = $this->db->update("ordens_servico_pecas", ['id_ordem_servico' => $id_ordem_servico, 'id_peca' => $item_movimentacao[0]['id_peca']], ['quantidade' => $novaQuantidadeMovimentacao]);
 
                 //Verifica se o produto existe
                 if ($atualizaInfoProdutosMovimentacao) {
-                    // Remove os produtos com quantidade igual a zero da movimentação
-                    $qtdZero = $this->db->delete('ordens_servico_pecas', ['id_ordem_servico' => $id_movimentacao, 'id_peca' =>  $item_movimentacao[0]['id_peca'], 'quantidade' => 0]);
+                    // Remove os produtos com quantidade igual a zero da ordem de servico
+                    $qtdZero = $this->db->delete('ordens_servico_pecas', ['id_ordem_servico' => $id_ordem_servico, 'id_peca' =>  $item_movimentacao[0]['id_peca'], 'quantidade' => 0]);
                     
                     return true;
 
                 } else {
-                    exit("msgError Erro ao atualizar produto na movimentação.");
-                    Session::set("msgError", "Erro ao atualizar produto na movimentação.");
+                    exit("msgError Erro ao atualizar produto na ordem de serviço.");
+                    Session::set("msgError", "Erro ao atualizar produto na ordem de serviço.");
                     return false;
                 }
             } else {
-                exit("msgError Quantidade maior que a da movimentação..");
-                Session::set("msgError", "Quantidade maior que a da movimentação.");
+                exit("msgError Quantidade maior que a da ordem de serviço.");
+                Session::set("msgError", "Quantidade maior que a da ordem de serviço.");
                 return false;
                 
             }
         } else {
-            exit("msgError Item não encontrado na movimentação.");
-            Session::set("msgError", "Item não encontrado na movimentação.");
+            exit("msgError Item não encontrado na ordem de serviço.");
+            Session::set("msgError", "Item não encontrado na ordem de serviço.");
             return false;
         }
+    }
+
+    public function delete_pecas_ordem($id_ordem_servico) {
+        $qtdZero = $this->db->delete('ordens_servico_pecas', ['id_ordem_servico' => $id_ordem_servico]);
     }
 
     public function imprimirOS($id_ordem_servico) {
@@ -400,7 +399,6 @@ Class OrdemServicoModel extends ModelMain
                 }
             }
         }
-        
 
         // Adicionando uma linha para o total
         $pdf->Ln(10);

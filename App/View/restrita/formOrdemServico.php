@@ -334,10 +334,6 @@
         <div class="row justify-content-center">
             <div class="col-6 d-flex justify-content-center mt-3">
 
-            <?php  if($this->getAcao() != 'insert') : ?>
-                <a href="<?= baseUrl() . 'OrdemServico/requireimprimirOS/' . setValor('id') ?>" class="btn btn-primary btn-sm">Imprimir ordem de serviço</a>
-            <?php endif; ?>
-
             <?php if ($this->getOutrosParametros(4) == "home"): ?>
                 <a href="<?= baseUrl() . Formulario::retornaHomeAdminOuHome() ?>" class="btn btn-primary btn-sm">Voltar</a>
             <?php endif; ?>
@@ -345,6 +341,10 @@
             <?php if ($this->getAcao() != "view"): ?>
                 <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                 <?= Formulario::botao('voltar') ?>
+            <?php endif; ?>
+
+            <?php if($this->getAcao() != 'insert' || $this->getAcao() != 'delete') : ?>
+                <a target="parent" href="<?= baseUrl() . 'OrdemServico/requireimprimirOS/' . setValor('id') ?>" class="btn btn-primary btn-sm">Imprimir ordem de serviço</a>
             <?php endif; ?>
             </div>
         </div>

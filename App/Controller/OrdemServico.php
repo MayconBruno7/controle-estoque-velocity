@@ -59,9 +59,7 @@ class OrdemServico extends ControllerMain
 
         $dados = $this->model->getPecaCombobox($this->getOutrosParametros(2)); 
     
-
         echo json_encode($dados);
-
     
     }
 
@@ -69,9 +67,6 @@ class OrdemServico extends ControllerMain
     {
 
         $post = $this->getPost();
-
-        // var_dump($post);
-        // exit;
 
         // Verifica se todos os campos do formulário foram enviados
         if (
@@ -98,21 +93,21 @@ class OrdemServico extends ControllerMain
             $valor_peca = isset($post['valor']) ? (float)$post['valor'] : '';
 
             $PecaModel = $this->loadModel("Produto");
-            $dadosProduto = $PecaModel->recuperaPeca($id_peca);
+            $dadosPeca = $PecaModel->recuperaPeca($id_peca);
           
             if ($this->getAcao() == 'update') {
                 
-                // Verificar se há uma sessão de movimentação
+                // Verificar se há uma sessão de ordem de serviço
                 if (!isset($_SESSION['ordem_servico'])) {
                     $_SESSION['ordem_servico'] = array();
                 }
             
-                // Verificar se há produtos na sessão de movimentação
+                // Verificar se há produtos na sessão de ordem de serviço
                 if (!isset($_SESSION['ordem_servico'][0]['produtos'])) {
                     $_SESSION['ordem_servico'][0]['produtos'] = array();
                 }
             
-                // Verificar se o produto já está na sessão de movimentação
+                // Verificar se o produto já está na sessão de ordem de serviço
                 $produtoEncontrado = false;
                 foreach ($_SESSION['ordem_servico'][0]['produtos'] as &$produto_sessao) {
                     if ($produto_sessao['id_peca'] == $id_peca) {
@@ -124,8 +119,8 @@ class OrdemServico extends ControllerMain
                 }
             } 
             
-                // parte da inserção de movimentações e produtos
-                $inserindoMovimentacaoEProdutos = $this->model->insertOrdemServico([
+                // parte da inserção de ordem de serviço e produtos
+                $inserindoOrdemServicoEProdutos = $this->model->insertOrdemServico([
                     "cliente_nome"              => $cliente_nome,
                     "telefone_cliente"          => $telefone_cliente,
                     "modelo_dispositivo"        => $modelo_dispositivo,
@@ -146,14 +141,11 @@ class OrdemServico extends ControllerMain
                     ]
                 ]
                 );
-
-                
-                // exit('opa');
             
-                if($inserindoMovimentacaoEProdutos) {
+                if($inserindoOrdemServicoEProdutos) {
                     Session::destroy('ordem_servico');
                     Session::destroy('produtos');
-                    Session::set("msgSuccess", "Movimentação adicionada com sucesso.");
+                    Session::set("msgSuccess", "Ordem de serviço adicionada com sucesso.");
                     Redirect::page("OrdemServico");
                 }
         } else {
@@ -177,19 +169,19 @@ class OrdemServico extends ControllerMain
         $valor_produto = (float)$post['valor'];
 
         $PecaModel = $this->loadModel("Produto");
-        $dadosProduto['aPeca'] = $PecaModel->recuperaPeca($id_peca);
+        $dadosPeca['aPeca'] = $PecaModel->recuperaPeca($id_peca);
 
-        // Verificar se há uma sessão de movimentação
+        // Verificar se há uma sessão de ordem de serviço
         if (!isset($_SESSION['ordem_servico'])) {
             $_SESSION['ordem_servico'] = array();
         }
 
-        // Verificar se há produtos na sessão de movimentação
+        // Verificar se há produtos na sessão de ordem de serviço
         if (!isset($_SESSION['ordem_servico'][0]['produtos'])) {
             $_SESSION['ordem_servico'][0]['produtos'] = array();
         }
     
-        // Verificar se o produto já está na sessão de movimentação
+        // Verificar se o produto já está na sessão de ordem de serviço
         $produtoEncontrado = false;
         foreach ($_SESSION['ordem_servico'][0]['produtos'] as &$produto_sessao) {
             if ($produto_sessao['id_peca'] == $id_peca) {
@@ -200,10 +192,10 @@ class OrdemServico extends ControllerMain
             }
         }
    
-        // Se o produto não estiver na sessão de movimentação, adicioná-lo
+        // Se o produto não estiver na sessão de ordem de serviço, adicioná-lo
         if (!$produtoEncontrado) {
             $_SESSION['ordem_servico'][0]['produtos'][] = array(
-                'nome_peca' => $dadosProduto['aPeca'][0]['nome'],
+                'nome_peca' => $dadosPeca['aPeca'][0]['nome'],
                 'id_peca' => $id_peca,
                 'quantidade' => $quantidade,
                 'valor' => $valor_produto
@@ -253,11 +245,11 @@ class OrdemServico extends ControllerMain
             (int)$quantidade_peca = (int)$quantidade; 
 
             $MovimentacaoItemModel = $this->loadModel("OrdemServicoPeca");
-            $dadosItensMovimentacao = $MovimentacaoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
+            $dadosItensOrdemServico = $MovimentacaoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
 
-            $quantidade_movimentacao = $dadosItensMovimentacao[0]['quantidade'];
+            $quantidade_movimentacao = $dadosItensOrdemServico[0]['quantidade'];
 
-            // foreach ($dadosItensMovimentacao as $index => $item) {
+            // foreach ($dadosItensOrdemServico as $index => $item) {
             //     if ($id_peca == $item['id_prod_mov_itens'] && $id_ordem_servico == $item['id_movimentacoes']) {
             //         if ($tipo_movimentacao == 1) {
             //             $quantidade_movimentacao = $item['quantidade'] + (int)$quantidades;
@@ -270,9 +262,9 @@ class OrdemServico extends ControllerMain
             //     }
             // }
             
-            if (!empty($dadosItensMovimentacao)) {
+            if (!empty($dadosItensOrdemServico)) {
              
-                foreach ($dadosItensMovimentacao as $item) {
+                foreach ($dadosItensOrdemServico as $item) {
        
                     if ($id_peca == $item['id_peca'] && $id_ordem_servico == $item['id_ordem_servico']) {
                         $acaoProduto = 'update';
@@ -296,12 +288,12 @@ class OrdemServico extends ControllerMain
                 }   
             }
 
-            // var_dump($dadosProduto);
+            // var_dump($dadosPeca);
             // exit;
-            // if (!empty($dadosProduto)) {
-            //     if ($dadosProduto[0]['quantidade'] >= $quantidade) {
+            // if (!empty($dadosPeca)) {
+            //     if ($dadosPeca[0]['quantidade'] >= $quantidade) {
             //         $verificaQuantidadeEstoqueNegativa = true;
-            //     } else if ($dadosProduto[0]['quantidade'] < $quantidade) {
+            //     } else if ($dadosPeca[0]['quantidade'] < $quantidade) {
                     $verificaQuantidadeEstoqueNegativa = true;
             //     } 
             // }
@@ -338,18 +330,16 @@ class OrdemServico extends ControllerMain
                     Session::destroy('OrdemServico');
                     Session::destroy('produtos');
                     Session::destroy('produto_mov_atualizado');
-                    Session::set("msgSuccess", "OrdemServico alterada com sucesso.");
+                    Session::set("msgSuccess", "Ordem de servico alterada com sucesso.");
                     return Redirect::page("OrdemServico");
                 } else {
-                    Session::set("msgError", "Falha tentar alterar a Movimentacao.");
+                    Session::set("msgError", "Falha tentar alterar a Ordem de serviço.");
                 }
 
             } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
 
-                // var_dump( $id_ordem_servico,  $id_peca, $quantidade, $acaoProduto, $quantidade_movimentacao);
-                // exit("opa");
                 if ($verificaQuantidadeEstoqueNegativa) {
-                    $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
+                    $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoOrdemServico(
                         [
                             "id_ordem_servico" => $id_ordem_servico
                         ],
@@ -374,16 +364,16 @@ class OrdemServico extends ControllerMain
                         
                         Session::destroy('movimentacao');
                         Session::destroy('produtos');
-                        Session::set("msgSuccess", "OrdemServico alterada com sucesso.");
+                        Session::set("msgSuccess", "Ordem de servico alterada com sucesso.");
                         return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico); 
                     }
 
                 } else {
-                    Session::set("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
+                    Session::set("msgError", "Sem produto em estoque.");
                     return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico);
                 }
             } else {
-                Session::set("msgError", "Falha tentar alterar a OrdemServico.");
+                Session::set("msgError", "Falha tentar alterar a Ordem de servico.");
                 return Redirect::page("OrdemServico");
             }
         }
@@ -418,7 +408,7 @@ class OrdemServico extends ControllerMain
                     }
                     $produtoEncontrado = true;
 
-                    Session::set("msgSuccess", "Produto excluído da movimentação.");
+                    Session::set("msgSuccess", "Produto excluído da Ordem de serviço.");
                     Redirect::page("OrdemServico/form/insert/0");
                     break;
                 }
@@ -429,17 +419,17 @@ class OrdemServico extends ControllerMain
         if(!isset($_SESSION['ordem_servico']) && $this->getAcao() == 'delete') {
 
             $ProdutoModel = $this->loadModel("Produto");
-            $dadosProduto = $ProdutoModel->recuperaPeca($id_produto);
+            $dadosPeca = $ProdutoModel->recuperaPeca($id_produto);
 
-            $deletaProduto =  $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
-            // var_dump($dadosProduto,$);
+            $deletaProduto =  $this->model->deleteInfoProdutoOrdemServico($id_movimentacao, $dadosPeca, $tipo_movimentacao, $quantidadeRemover);
+            // var_dump($dadosPeca,$);
             // exit("Opa");
             if (!isset($_SESSION['produto_mov_atualizado']) && $deletaProduto) {
                 $_SESSION['produto_mov_atualizado'] = true;
             }
 
             if($deletaProduto) {
-                Session::set("msgSuccess", "Item deletado da movimentação.");
+                Session::set("msgSuccess", "Item deletado da Ordem de serviço.");
                 Redirect::page("OrdemServico/form/update/" . $id_movimentacao);
             }
         }
@@ -450,23 +440,23 @@ class OrdemServico extends ControllerMain
 
         $this->model->imprimirOS($this->getOutrosParametros(2));
     }
+    
+    /**
+     * delete
+     *
+     * @return void
+     */
+    public function delete()
+    {
+        if ($this->model->delete(["id" => $this->getPost('id')])) {
+            $this->model->delete_pecas_ordem($this->getId());
+            Session::set("msgSuccess", "Ordem de serviço excluída com sucesso.");
+        } else {
+            Session::set("msgError", "Falha tentar excluir a O|rdem de serviço.");
+        }
 
-    // 
-    // /**
-    //  * delete
-    //  *
-    //  * @return void
-    //  */
-    // public function delete()
-    // {
-    //     if ($this->model->delete(["id" => $this->getPost('id')])) {
-    //         Session::set("msgSuccess", "Cargo excluída com sucesso.");
-    //     } else {
-    //         Session::set("msgError", "Falha tentar excluir a Cargo.");
-    //     }
-
-    //     Redirect::page("Cargo");
-    // }
+        Redirect::page("OrdemServico");
+    }
 
 
 }
