@@ -229,11 +229,10 @@ class Database
 
             $query = $this->connect()->prepare($sql);
 
-
             $query->execute($save['save']);
 
             $rs = $query->rowCount();
-            
+
             self::__destruct();
 
             return $rs;

@@ -166,7 +166,7 @@ Class OrdemServicoModel extends ModelMain
 
             $condWhere = $id_ordem_servico['id'];
         
-            $atualizaInformacoesOrdemServico = $this->db->update($this->table, ['id' => $condWhere], $ordem_servico);
+            $atualizaInformacoesOrdemServico = $this->db->update($this->table, ['id' => $condWhere], $ordem_servico);   
 
             if($atualizaInformacoesOrdemServico || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
                 return true;

@@ -155,7 +155,7 @@ class OrdemServico extends ControllerMain
     }
 
     /**
-     * insertProdutoMovimentacao
+     * insertProdutoOrdemServico
      *
      * @return void
      */
@@ -334,6 +334,8 @@ class OrdemServico extends ControllerMain
                     return Redirect::page("OrdemServico");
                 } else {
                     Session::set("msgError", "Falha tentar alterar a Ordem de serviço.");
+                    return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico);
+
                 }
 
             } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
@@ -346,7 +348,7 @@ class OrdemServico extends ControllerMain
                         [
                             [
                                 "id_peca"           => $id_peca,
-                                "quantidade"            => $quantidade,
+                                "quantidade"        => $quantidade,
                                 // "valor"                 => $valor_peca
                             ]
                         ],
@@ -404,7 +406,7 @@ class OrdemServico extends ControllerMain
                     if ($produto_sessao['quantidade'] <= 0) {
                         // Remover o produto do array na sessão
                         unset($_SESSION['ordem_servico'][0]['produtos'][$key]);
-                        unset($_SESSION['ordem_servico']);
+
                     }
                     $produtoEncontrado = true;
 

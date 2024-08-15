@@ -154,13 +154,13 @@
                 </select>
             </div>
 
-            <div class="col-2 mt-3">
+            <div class="col-4 mt-3">
                 <label for="data_pedido" class="form-label">Data do Pedido</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
                 <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" max="<?= date('Y-m-d') ?>" <?=  $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
             </div>
 
-            <div class="col-2 mt-3">
+            <div class="col-4 mt-3">
                 <label for="data_chegada" class="form-label">Data de Chegada</label>
                 <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
                 <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido') ?>" <?= $this->getAcao() && ( $this->getAcao() == 'delete' ||  $this->getAcao() == 'view') ? 'disabled' : '' ?>>
