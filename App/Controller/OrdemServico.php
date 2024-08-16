@@ -72,7 +72,7 @@ class OrdemServico extends ControllerMain
         if (
             isset($post['cliente_nome'], $post['telefone_cliente'], $post['modelo_dispositivo'], $post['imei_dispositivo'],
             $post['tipo_servico'], $post['descricao_servico'], $post['problema_reportado'], $post['data_abertura'], 
-            $post['status'], $post['observacoes'], $post['quantidade'], $post['id_peca'], $post['valor'])
+            $post['status'], $post['observacoes'])
         ) {
 
             // Dados da ordem de servico
@@ -159,7 +159,7 @@ class OrdemServico extends ControllerMain
      *
      * @return void
      */
-    public function insertProdutoMovimentacao()
+    public function insertProdutoOrdemServico()
     {
         $post = $this->getPost();
    
@@ -244,23 +244,10 @@ class OrdemServico extends ControllerMain
 
             (int)$quantidade_peca = (int)$quantidade; 
 
-            $MovimentacaoItemModel = $this->loadModel("OrdemServicoPeca");
-            $dadosItensOrdemServico = $MovimentacaoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
+            $OrdemServicoItemModel = $this->loadModel("OrdemServicoPeca");
+            $dadosItensOrdemServico = $OrdemServicoItemModel->recuperaPecaOS($id_peca, $id_ordem_servico);
 
-            $quantidade_movimentacao = $dadosItensOrdemServico[0]['quantidade'];
-
-            // foreach ($dadosItensOrdemServico as $index => $item) {
-            //     if ($id_peca == $item['id_prod_mov_itens'] && $id_ordem_servico == $item['id_movimentacoes']) {
-            //         if ($tipo_movimentacao == 1) {
-            //             $quantidade_movimentacao = $item['quantidade'] + (int)$quantidades;
-            //         } else if ($tipo_movimentacao == 2) {
-            //             $quantidade_movimentacao =  $item['quantidade'] - (int)$quantidades;
-            //         }
-            //         break;
-            //     } else {
-            //         $quantidade_movimentacao = (int)$quantidades;
-            //     }
-            // }
+            $quantidade_ordem_servico = $dadosItensOrdemServico[0]['quantidade'];
             
             if (!empty($dadosItensOrdemServico)) {
              
@@ -280,7 +267,7 @@ class OrdemServico extends ControllerMain
                 }
          
             } else {
-                $quantidade_movimentacao = (int)$quantidade;
+                $quantidade_ordem_servico = (int)$quantidade;
                 if(isset($post['id_peca'])) {
                     if ($id_peca == $post['id_peca'] && $id_ordem_servico == $post['id_ordem_servico']) {
                         $acaoProduto = 'insert';
@@ -298,9 +285,9 @@ class OrdemServico extends ControllerMain
             //     } 
             // }
       
-            if ($this->getAcao() != 'updateProdutoMovimentacao') {
+            if ($this->getAcao() != 'updateProdutoOrdemServico') {
 
-                $AtualizandoMovimentacaoEProdutos = $this->model->updateOrdemServico(
+                $AtualizandoOrdemServicoEProdutos = $this->model->updateOrdemServico(
                     [
                         "id"   => $id_ordem_servico
                     ],
@@ -326,7 +313,7 @@ class OrdemServico extends ControllerMain
 
                 );
 
-                if ($AtualizandoMovimentacaoEProdutos || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
+                if ($AtualizandoOrdemServicoEProdutos || isset($_SESSION['produto_mov_atualizado']) && $_SESSION['produto_mov_atualizado'] == true) {
                     Session::destroy('OrdemServico');
                     Session::destroy('produtos');
                     Session::destroy('produto_mov_atualizado');
@@ -338,10 +325,10 @@ class OrdemServico extends ControllerMain
 
                 }
 
-            } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
+            } else if ($this->getAcao() == 'updateProdutoOrdemServico') {
 
                 if ($verificaQuantidadeEstoqueNegativa) {
-                    $AtualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoOrdemServico(
+                    $AtualizandoInfoProdutoOrdemServico = $this->model->updateInformacoesProdutoOrdemServico(
                         [
                             "id_ordem_servico" => $id_ordem_servico
                         ],
@@ -355,16 +342,16 @@ class OrdemServico extends ControllerMain
                         [
                             'acaoProduto' => $acaoProduto
                         ],
-                        $quantidade_movimentacao
+                        $quantidade_ordem_servico
                         
                     );
 
-                    if ($AtualizandoInfoProdutoMovimentacao) {
+                    if ($AtualizandoInfoProdutoOrdemServico) {
                         if (!isset($_SESSION['produto_mov_atualizado'])) {
                             $_SESSION['produto_mov_atualizado'] = true;
                         }
                         
-                        Session::destroy('movimentacao');
+                        Session::destroy('OrdemServico');
                         Session::destroy('produtos');
                         Session::set("msgSuccess", "Ordem de servico alterada com sucesso.");
                         return Redirect::page("OrdemServico/form/update/" . $id_ordem_servico); 
@@ -382,15 +369,15 @@ class OrdemServico extends ControllerMain
     }
 
     /**
-     * deleteProdutoMovimentacao
+     * deleteProdutoOrdemServico
      *
      * @return void
      */
-    public function deleteProdutoMovimentacao()
+    public function deleteProdutoOrdemServico()
     {
         $post = $this->getPost();
 
-        $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
+        $id_ordem_servico = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
         $quantidadeRemover = (int)$post['quantidadeRemover'];
         $id_produto = (int)$post['id_produto'];
         $tipo_movimentacao = (int)$post['tipo'];
@@ -423,7 +410,7 @@ class OrdemServico extends ControllerMain
             $ProdutoModel = $this->loadModel("Produto");
             $dadosPeca = $ProdutoModel->recuperaPeca($id_produto);
 
-            $deletaProduto =  $this->model->deleteInfoProdutoOrdemServico($id_movimentacao, $dadosPeca, $tipo_movimentacao, $quantidadeRemover);
+            $deletaProduto =  $this->model->deleteInfoProdutoOrdemServico($id_ordem_servico, $dadosPeca, $tipo_movimentacao, $quantidadeRemover);
             // var_dump($dadosPeca,$);
             // exit("Opa");
             if (!isset($_SESSION['produto_mov_atualizado']) && $deletaProduto) {
@@ -432,7 +419,7 @@ class OrdemServico extends ControllerMain
 
             if($deletaProduto) {
                 Session::set("msgSuccess", "Item deletado da Ordem de serviço.");
-                Redirect::page("OrdemServico/form/update/" . $id_movimentacao);
+                Redirect::page("OrdemServico/form/update/" . $id_ordem_servico);
             }
         }
         

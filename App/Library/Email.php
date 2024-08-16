@@ -26,7 +26,7 @@ class Email
 
         //
 
-        $mail = new PHPMailer();
+        $mail = new PHPMailer(); 
 
         try {
 
@@ -48,6 +48,7 @@ class Email
             $mail->Subject      = $assunto;                         // Assunto do e-mail
             $mail->Body         = $corpoEmail;                      // Corpo do E-mail HTML
             
+           
             // Anexos
 
             if (count($aAnexos) > 0) {

@@ -52,11 +52,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'OrdemServico/update/updateProdutoMovimentacao/' . $this->getId() : baseUrl() . 'OrdemServico/insertProdutoMovimentacao/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
+                    <form action="<?= ($this->getAcao() == 'update') ? baseUrl() . 'OrdemServico/update/updateProdutoOrdemServico/' . $this->getId() : baseUrl() . 'OrdemServico/insertProdutoOrdemServico/' . $this->getAcao() ?>" id="formAdicionarProduto" method="POST">
                         <div class="mb-3">
                             <div class="mb-3">
                                 <label for="id_peca" class="form-label">Produto</label>
-                                <input type="text" class="form-control" id="search_peca" placeholder="Pesquisar produto">
+                                <input type="text" class="form-control" id="search_peca" placeholder="Pesquisar peça">
                                 <select class="form-control" name="id_peca" id="id_peca" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                                     <option value="" selected disabled>Vazio</option>
                                 </select>

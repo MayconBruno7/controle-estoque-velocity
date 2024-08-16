@@ -6790,41 +6790,41 @@ CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
 -- Restrições para tabelas `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `fornecedor`
 --
 ALTER TABLE `fornecedor`
-  ADD CONSTRAINT `cidade` FOREIGN KEY (`cidade`) REFERENCES `cidade` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cidade` FOREIGN KEY (`cidade`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `funcionario`
 --
 ALTER TABLE `funcionario`
-  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `historico_produto`
 --
 ALTER TABLE `historico_produto`
-  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `movimentacao`
 --
 ALTER TABLE `movimentacao`
-  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `movimentacao_item`
 --
 ALTER TABLE `movimentacao_item`
-  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `ordens_servico_pecas`
@@ -6837,7 +6837,7 @@ ALTER TABLE `ordens_servico_pecas`
 -- Restrições para tabelas `produto`
 --
 ALTER TABLE `produto`
-  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `usuario`
