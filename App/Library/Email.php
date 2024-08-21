@@ -55,7 +55,7 @@ class Email
                 for ($yyy = 0; $yyy < count($aAnexos['name']); $yyy++) {
                     $mail->addAttachment($aAnexos['tmp_name'][$yyy], $aAnexos['name'][$yyy]);
                 }
-            }
+            }   
 
             if ($mail->send()) {
                 return true;
