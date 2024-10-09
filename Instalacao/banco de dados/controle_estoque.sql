@@ -20,10 +20,12 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `controle_estoque`
 --
-CREATE DATABASE IF NOT EXISTS `controle_estoque` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
-USE `controle_estoque`;
+CREATE DATABASE IF NOT EXISTS `controle_estoque_prefeitura` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
+USE `controle_estoque_prefeitura`;
 
 -- --------------------------------------------------------
+
+SET FOREIGN_KEY_CHECKS = 0;
 
 --
 -- Estrutura para tabela `cargo`
@@ -6830,6 +6832,7 @@ ALTER TABLE `usuariorecuperasenha`
   ADD CONSTRAINT `FK1_usuariorecuperacaosenha` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
 COMMIT;
 
+SET FOREIGN_KEY_CHECKS = 1;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
