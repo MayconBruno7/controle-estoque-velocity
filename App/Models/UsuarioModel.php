@@ -8,13 +8,13 @@ class UsuarioModel extends Model
 {
     protected $table = 'usuario';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['nome', 'statusRegistro', 'email', 'nivel', 'senha'];
+    protected $allowedFields = ['nome', 'statusRegistro', 'email', 'nivel', 'senha', 'funcionarios'];
     
     // Ativa timestamps para created_at e updated_at
-    protected $useTimestamps = true;
+    // protected $useTimestamps = true;
     
     // Habilita SoftDeletes (deletar logicamente)
-    protected $useSoftDeletes = true;
+    // protected $useSoftDeletes = true;
 
     // Regras de validação
     protected $validationRules = [

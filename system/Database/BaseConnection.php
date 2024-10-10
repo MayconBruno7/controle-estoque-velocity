@@ -615,6 +615,7 @@ abstract class BaseConnection implements ConnectionInterface
         if (empty($this->connID)) {
             $this->initialize();
         }
+        
 
         /**
          * @var Query $query
@@ -685,6 +686,7 @@ abstract class BaseConnection implements ConnectionInterface
                 Events::trigger('DBQuery', $query);
 
                 if ($exception !== null) {
+
                     throw new DatabaseException(
                         $exception->getMessage(),
                         $exception->getCode(),

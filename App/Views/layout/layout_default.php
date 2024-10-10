@@ -12,7 +12,7 @@
 
     // session()->get
 
-    // var_dump(base_url("assets/css/app.min.css") );
+    // var_dump(base_url("assets/css/app.min.css")) ;
 ?>
 
 <!DOCTYPE html>
@@ -20,10 +20,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
     <title>Controle de estoque</title>
 
-    <!-- <link rel="stylesheet" href="<?= base_url("assets/bootstrap/css/bootstrap.min.css") ?>"> -->
+    <link rel="stylesheet" href="<?= base_url("assets/bootstrap/css/bootstrap.min.css") ?>">
     <link rel="icon" href="<?= base_url("assets/img/brasao-pmrl-icon.jpeg") ?>" type="image/jpeg">
 
     <!-- Datatables -->
@@ -39,7 +40,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="<?= base_url("assets/js/jquery-3.3.1.js") ?>"></script>
-    <script src="<?= base_url("assets/bootstrap/js/bootstrap.min.js") ?>"></script>
+    <!-- <script src="<?= base_url("assets/bootstrap/js/bootstrap.min.js") ?>"></script> -->
 
 </head>
 
@@ -286,7 +287,7 @@
                             Configurações
                         </a>
                         <div class="dropdown-divider"></div>
-                        <a href="<?= base_url() ?>Login/signOut" class="dropdown-item has-icon text-danger"><i class="fas fa-sign-out-alt"></i>
+                        <a href="<?= base_url("Login/signOut") ?>" class="dropdown-item has-icon text-danger"><i class="fas fa-sign-out-alt"></i>
                             Sair
                         </a>
                     </div>
@@ -313,7 +314,7 @@
                         <span>Administrador</span>
                     </a>
                     <ul class="dropdown-menu">
-                        <li><a class="nav-link" href="<?= base_url() ?>Usuario">Lista de usuários</a></li>
+                        <li><a class="nav-link" href="/Usuario">Lista de usuários</a></li>
                         <li><a class="nav-link" href="<?= base_url() ?>Funcionario">Lista de funcionários</a></li>
                         <li><a class="nav-link" href="<?= base_url() ?>Cargo">Lista de cargos</a></li>
 
@@ -519,7 +520,7 @@
             ?>
             <div class="container mt-2">
                 <?php if (session()->get('usuarioId') != false) : ?>
-                    <a class="mt-2" href="<?= base_url() . $redirectUrl ?>">Home</a>
+                    <a class="mt-2" href="<?= base_url($redirectUrl) ?>">Home</a>
                 <?php endif; ?>
             </div>
         </footer>

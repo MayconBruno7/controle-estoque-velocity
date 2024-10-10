@@ -1,47 +1,36 @@
 <?php
 
-use App\Library\ModelMain;
-use App\Library\Session;
+namespace App\Models; // Certifique-se de que o namespace está correto
 
-Class EstadoModel extends ModelMain
+use CodeIgniter\Model;
+use Config\Services; // Para acessar o serviço de sessão
+
+class EstadoModel extends Model
 {
-
-    public $table = "estado";
+    protected $table = 'estado'; // Usar 'protected' para que seja acessível em subclasses
+    protected $primaryKey = 'id'; // Defina a chave primária
+    protected $allowedFields = ['nome', 'sigla', 'statusRegistro']; // Adicione os campos permitidos
+    protected $returnType = 'array'; // Tipo de retorno das operações do modelo
 
     /**
-     * lista
+     * Lista estados
      *
-     * @param string $orderBy 
-     * @return void
+     * @param string $orderBy
+     * @return array
      */
     public function lista($orderBy = 'id')
     {
-
-        if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect(
-
-                "SELECT 
-                       *
-                    FROM 
-                    {$this->table}"
-            
-            );
-            
-        } else {
-
-            $rsc = $this->db->dbSelect(
-                "SELECT 
-                       * 
-                    FROM 
-                    {$this->table}
-                ");
-  
-        }
+        // Usar a classe de sessão do CodeIgniter 4
+        $session = Services::session();
         
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
+        // Se o nível do usuário for 1, retorna todos os estados
+        if ($session->get('usuarioNivel') == 1) {
+            return $this->orderBy($orderBy)->findAll();
         } else {
-            return [];
+            // Retorna apenas os estados com statusRegistro ativo (1)
+            return $this->where('statusRegistro', 1)
+                        ->orderBy($orderBy)
+                        ->findAll();
         }
     }
 }

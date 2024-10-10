@@ -44,7 +44,7 @@ class Departamento extends BaseController
         $data['errors'] = [];
 
         if ($action != "new") {
-            $data['data'] = $this->DepartamentoModel->find($id);
+            $data = $this->DepartamentoModel->find($id);
         }
 
         return view("admin/formDepartamento", $data);

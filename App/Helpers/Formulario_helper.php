@@ -322,7 +322,7 @@
     {
         return '
      
-            <script type="text/javascript" src="' . baseUrl() . 'assets/DataTables/datatables.min.js"></script>         
+            <script type="text/javascript" src="' . base_url() . 'assets/DataTables/datatables.min.js"></script>         
             <style>
                 .dataTables_wrapper {
                     position: relative;

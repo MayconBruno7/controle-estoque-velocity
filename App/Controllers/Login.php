@@ -2,324 +2,187 @@
 
 namespace App\Controllers;
 
+use App\Models\UsuarioModel;
+use App\Models\RelatorioModel;
+use App\Models\FuncionarioModel;
+use App\Models\UsuarioRecuperaSenhaModel;
+
+use CodeIgniter\HTTP\RedirectResponse;
+
 class Login extends BaseController 
 {
-    public function signIn()
+    protected $usuarioModel;
+    protected $relatorioModel;
+    protected $usuarioRecuperaSenhaModel;
+    protected $funcionarioModel;
+
+    public function __construct()
     {
-        $UsuarioModel = $this->loadModel("Usuario");
-        $post = $this->getPost();
+        $this->usuarioModel = new UsuarioModel();
+        $this->relatorioModel = new RelatorioModel();
+        $this->usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        $this->funcionarioModel = new FuncionarioModel();
+    }
 
-        // super usário
-        $superUser = $UsuarioModel->criaSuperUser();
+    public function signIn(): RedirectResponse
+    {
+        $post = $this->request->getPost();
 
-        if ($superUser > 0) {          // 1=Falhou criação do super user; 2=sucesso na criação do super user
-            return Redirect::page("home/login");
+        // Criação de super usuário
+        $superUser = $this->usuarioModel->criaSuperUser();
+        if ($superUser > 0) {
+            return redirect()->to(base_url('home/login'))->with('msgError', 'Falha na criação do super usuário');
         }
 
-        // Buscar usuário na base de dados
+        // Buscar usuário no banco de dados
+        $usuario = $this->usuarioModel->getUserEmail($post['email']);
 
-        $aUsuario = $UsuarioModel->getUserEmail($post['email']);
-
-        if (count($aUsuario) > 0 ) {
-
-            // validar a senha            
-            if (!password_verify(trim($post["senha"]), $aUsuario['senha']) ) {
-                Session::set("msgError", 'Usuário e ou senha inválido.');
-                return Redirect::page("home/login");
-            }
-            
-            // validar o status do usuário            
-            if ($aUsuario['statusRegistro'] == 2 ) {
-                Session::set("msgError", "Usuário Inativo, não será possível prosseguir !");
-                return Redirect::page("home/login");
+        if ($usuario) {
+            // Validar a senha
+            if (!password_verify(trim($post["senha"]), $usuario['senha'])) {
+                return redirect()->to(base_url('home/login'))->with('msgError', 'Usuário ou senha inválidos.');
             }
 
-            //  Criar flag's de usuário logado no sistema
-            
-            Session::set("usuarioId"   , $aUsuario['id']);
-            Session::set("usuarioLogin", $aUsuario['nome']);
-            Session::set("usuarioEmail", $aUsuario['email']);
-            Session::set("usuarioNivel", $aUsuario['nivel']);
-            Session::set("usuarioSenha", $aUsuario['senha']);
-            Session::set("id_funcionario", $aUsuario['id_funcionario']);
+            // Validar status do usuário
+            if ($usuario['statusRegistro'] == 2) {
+                return redirect()->to(base_url('home/login'))->with('msgError', 'Usuário inativo.');
+            }
 
-            $FuncionarioModel = $this->loadModel("Funcionario");
-            $dados['aFuncionario'] = $FuncionarioModel->recuperaFuncionario($aUsuario['id_funcionario']);
-
-            Session::set("usuarioImagem", $dados['aFuncionario'][0]['imagem']);
-
-            // Cookies
-            if (isset($_COOKIE['username']) && $_COOKIE['username']  != $post["email"]) {
-                // Limpar cookies
-                setcookie('username', '', time() - 3600, "/");
-                setcookie('password', '', time() - 3600, "/");
-            } 
-
-            // seta os cookies
-            if (isset($_POST['remember'])) {
-                setcookie('username', $post["email"], time() + (86400 * 30), "/"); // 86400 = 1 dia
-                setcookie('password', $post["senha"], time() + (86400 * 30), "/"); // Por motivos de segurança, evite armazenar senhas diretamente em cookies
-            } 
-            
-            return Redirect::page(Formulario::retornaHomeAdminOuHome());
-
-        } else {
-            Session::set('msgError', 'Usuário e ou senha inválido.');
-            return Redirect::page("home/login");
-        }
-    }
-
-    /**
-     * signOut
-     *
-     * @return void
-     */
-    public function signOut()
-    {
-        Session::destroy('usuarioId');
-        Session::destroy('usuarioLogin');
-        Session::destroy('usuarioEmail');
-        Session::destroy('usuarioNivel');
-        Session::destroy('usuarioSenha');
-        Session::destroy('id_funcionario');
-        Session::destroy('usuarioImagem');
-        
-        return Redirect::Page("home");
-    }
-
-    /**
-     * solicitaRecuperacaoSenha - Carrega a view para recuperação de senha
-     *
-     * @return void
-     */
-    public function solicitaRecuperacaoSenha() 
-    {
-        return $this->loadView("usuario/formSolicitaRecuperacaoSenha");
-    }
-
-    /*
-    *   Envia e-mail com link para recuperação da senha
-    */
-
-    public function gerarLinkRecuperaSenha() 
-    {
-        $post           = $this->getPost();
-        $usuarioModel   = $this->loadModel("Usuario");
-        
-        $user           = $usuarioModel->getUserEmail($post['email']);
-
-        if (!$user) {
-
-            return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                "msgError" => "Não foi possivel localizar o e-mail na base de dados !"
+            // Definir sessão do usuário logado
+            session()->set([
+                'usuarioId'    => $usuario['id'],
+                'usuarioLogin' => $usuario['nome'],
+                'usuarioEmail' => $usuario['email'],
+                'usuarioNivel' => $usuario['nivel'],
+                'id_funcionario' => $usuario['id_funcionario'],
             ]);
 
-        } else {
+            // Recuperar imagem do funcionário
+            
+            // Recuperar imagem do funcionário
+            $funcionario = $this->funcionarioModel->recuperaFuncionario($usuario['id_funcionario']);
 
-            $created_at = date('Y-m-d H:i:s');
-            $chave      = sha1($user['id'] . $user['senha'] . date('YmdHis', strtotime($created_at)));
-            $cLink      = baseUrl() . "Login/recuperarSenha/recuperaSenha/" . $chave;
-
-            $corpoEmail = '
-                Você solicitou a recuperação de sua senha? <br><br>
-                Caso tenha solicitação clique no link a seguir para prosseguir <a href="'. $cLink . '" title="Recuperar a senha">Recuperar a senha</a> <br><br>
-                Att: <br><br>
-                Equipe Controle estoque
-            ';
-
-            $lRetMail = Email::enviaEmail(
-                'maycon7ads@gmail.com',                                             /* Email do Remetente*/
-                'Controle estoque - Contato',                                       /* Nome do Remetente */
-                'Controle estoque - Solicitação de recuperação de senha.',          /* Assunto do e-mail */
-                $corpoEmail,                                                        /* Corpo do E-mail */
-                $user['email']                                                      /* Destinatário do E-mail */
-            );
-
-            if ($lRetMail) {
-
-                // Gravar o link no banco de dados
-                $usuarioRecuperaSenhaModel = $this->loadModel("UsuarioRecuperaSenha");
-
-                // Desativando solicitações antigas
-
-                $usuarioRecuperaSenhaModel->desativaChaveAntigas($user["id"]);
-
-                // Inserindo nova solicitação
-
-                $resIns = $usuarioRecuperaSenhaModel->insert([
-                    "usuario_id" => $user["id"], 
-                    "chave" => $chave,
-                    "created_at" => $created_at
-                ]);
-
-                if ($resIns) {
-                    return Redirect::page("Home/Login", [
-                        "msgSuccess" => "Link para recuperação da senha enviado com sucesso! Verifique seu e-mail."
-                    ]);   
-                } else {
-                    return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                        "msgError" => "Ocorreu uma falha ao resgistrar o link de recuperação da senha, favor descartar o e-mail recibido e solictar no link mais tarde."
-                    ]);   
-                }
-
+            // Verifica se $funcionario é um array e não está vazio
+            if (!empty($funcionario) && isset($funcionario[0]['imagem'])) {
+                session()->set('usuarioImagem', $funcionario[0]['imagem']);
             } else {
-
-                return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                    "msgError" => "Não foi possivel enviar o e-mail, favor tentar mais tarde."
-                ]);      
-
+                // Trate o caso em que não há funcionário ou imagem disponível
+                session()->set('usuarioImagem', 'default_image_path'); // Substitua pelo caminho da imagem padrão, se necessário
             }
+
+            // Gerenciamento de cookies
+            if (isset($_COOKIE['username']) && $_COOKIE['username'] !== $post["email"]) {
+                setcookie('username', '', time() - 3600, "/");
+                setcookie('password', '', time() - 3600, "/");
+            }
+
+            if (isset($post['remember'])) {
+                setcookie('username', $post["email"], time() + (86400 * 30), "/");
+                setcookie('password', $post["senha"], time() + (86400 * 30), "/");
+            }
+
+            $redirectUrl = '';
+
+            if (session()->get('usuarioNivel') == 1) {
+                $redirectUrl = 'Home/homeAdmin';
+            } elseif (session()->get('usuarioNivel') == 11) {
+                $redirectUrl = 'Home/home';
+            } 
+
+            return redirect()->to(base_url($redirectUrl));
+        } else {
+            return redirect()->to(base_url('Home/login'))->with('msgError', 'Usuário ou senha inválidos.');
         }
     }
 
-
-    /**
-     * recuperarSenha - Abre formulário para chamada da view de recuperação da senha
-     *
-     * @return void
-     */
-    public function recuperarSenha()
+    public function signOut(): RedirectResponse
     {
-        $chave = $this->getid();
+        session()->destroy();
+        return redirect()->to(base_url('Home'));
+    }
 
-        $usuarioRecuperaSenhaModel  = $this->loadModel('UsuarioRecuperaSenha');
-        $userChave                  = $usuarioRecuperaSenhaModel->getRecuperaSenhaChave($chave);
+    public function solicitaRecuperacaoSenha()
+    {
+        return view('usuario/formSolicitaRecuperacaoSenha');
+    }
+
+    public function gerarLinkRecuperaSenha(): RedirectResponse
+    {
+        $post = $this->request->getPost();
+        $usuario = $this->usuarioModel->getUserEmail($post['email']);
+
+        if (!$usuario) {
+            return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'E-mail não encontrado.');
+        }
+
+        $created_at = date('Y-m-d H:i:s');
+        $chave = sha1($usuario['id'] . $usuario['senha'] . date('YmdHis', strtotime($created_at)));
+        $link = base_url('login/recuperarSenha/' . $chave);
+
+        $corpoEmail = 'Clique no link para recuperar sua senha: <a href="'. $link .'">Recuperar a senha</a>';
+        // $enviado = Email::enviaEmail('noreply@exemplo.com', 'Recuperação de Senha', 'Recuperação de Senha', $corpoEmail, $usuario['email']);
+
+        // if ($enviado) {
+        //     $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        //     $usuarioRecuperaSenhaModel->desativaChaveAntigas($usuario['id']);
+        //     $usuarioRecuperaSenhaModel->insert(['usuario_id' => $usuario['id'], 'chave' => $chave, 'created_at' => $created_at]);
+
+        //     return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Link de recuperação enviado!');
+        // }
+
+        return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Falha ao enviar o e-mail.');
+    }
+
+    public function recuperarSenha($chave)
+    {
+        $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        $userChave = $usuarioRecuperaSenhaModel->getRecuperaSenhaChave($chave);
 
         if ($userChave) {
-
-            if (date("Y-m-d H:i:s") <= date("Y-m-d H:i:s" , strtotime("+1 hours" , strtotime($userChave['created_at'])))) {
-
-                $usuarioModel = $this->loadModel('Usuario');
-                $user           = $usuarioModel->getById($userChave['usuario_id']);
-
-                if ($user) {
-
-                    $chaveRecSenha = sha1($userChave['usuario_id'] . $user['senha'] . date("YmdHis", strtotime($userChave['created_at'])));
-
-                    if ($chaveRecSenha == $userChave['chave']) {
-
-                        $dbDados = [
-                            "id"    => $user['id'],
-                            'nome'  => $user['nome'],
-                            'usuariorecuperasenha_id' => $userChave['id']
-                        ];
-
-                        Session::destroy("msgError");
-
-                        // chave válida
-
-                        return $this->loadView("usuario/formRecuperarSenha", $dbDados);
-
-                        //
-
-                    } else {
-                        // Desativa chave
-                        $upd = $usuarioRecuperaSenhaModel->desativaChave($userChave['id']);
-
-                        return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                            "msgError" => "Chave de recuperação da senha inválida."
-                        ]); 
-                    }
-
-                } else {
-
-                    // Desativa chave
-                    $upd = $usuarioRecuperaSenhaModel->desativaChave($userChave['id']);
-
-                    return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                        "msgError" => "Chave de recuperação da senha inválida."
-                    ]); 
-
+            $validade = strtotime("+1 hour", strtotime($userChave['created_at']));
+            if (time() <= $validade) {
+                $usuario = $this->usuarioModel->find($userChave['usuario_id']);
+                if ($usuario && sha1($userChave['usuario_id'] . $usuario['senha'] . date('YmdHis', strtotime($userChave['created_at']))) === $chave) {
+                    session()->set('recuperaSenha', ['usuario_id' => $usuario['id'], 'recupera_id' => $userChave['id']]);
+                    return view('usuario/formRecuperarSenha', ['usuario' => $usuario]);
                 }
-                
-            } else {
-
-                // Desativa chave
-                $upd = $usuarioRecuperaSenhaModel->desativaChave($userChave['id']);
-
-                return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                    "msgError" => "Chave de recuperação da senha inválida."
-                ]); 
             }
-
-        } else {
-            return Redirect::page("Login/solicitaRecuperacaoSenha", [
-                "msgError" => "Chave de recuperação da senha inválida (1)."
-            ]);             
         }
+        return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Chave inválida ou expirada.');
     }
 
-        /**
-     * atualizaRecuperaSenha - Atualiza recupera a senha do usuário
-     *
-     * @return void
-     */
-    public function atualizaRecuperaSenha() 
+    public function atualizaRecuperaSenha(): RedirectResponse
     {
-        $UsuarioModel = $this->loadModel("Usuario");
+        $post = $this->request->getPost();
 
-        $post       = $this->getPost();
-        $userAtual  = $UsuarioModel->getById($post["id"]);
-
-        if ($userAtual) {
-
-            if (trim($post["NovaSenha"]) == trim($post["NovaSenha2"])) {
-
-                if ($UsuarioModel->update(['id' => $post['id']], ['senha' => password_hash(trim($post["NovaSenha"]), PASSWORD_DEFAULT)])) {
-
-                    // Desativa chave
-                    $usuarioRecuperaSenhaModel = $this->loadModel('UsuarioRecuperaSenha');
-
-                    $usuarioRecuperaSenhaModel->update(['id' => $post['usuariorecuperasenha_id']], ['statusRegistro' => 2]);
-                    //
-
-                    Session::destroy("msgError");
-                    return Redirect::page("Home/Login", [
-                        "msgSuccess"    => "Senha alterada com sucesso !"
-                    ]);  
-
-                } else {
-                    Session::set("msgError", "Falha na atualização da nova senha !");
-                    return $this->loadView("usuario/formRecuperaSenha"); 
-                }
-
-            } else {
-                Session::set("msgErros", "Nova senha e conferência da senha estão divergentes !");
-                return $this->loadView("usuario/formRecuperaSenha");                   
-            }
-
-        } else {
-            Session::set("msgErros", "Usuário inválido !");
-            return $this->loadView("usuario/formRecuperaSenha"); 
+        if ($post['NovaSenha'] !== $post['NovaSenha2']) {
+            return redirect()->back()->with('msgError', 'Senhas não conferem.');
         }
+
+        $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        $usuario = $this->usuarioModel->find($post['id']);
+        if ($usuario) {
+            $usuarioRecuperaSenhaModel->update($post['usuariorecuperasenha_id'], ['statusRegistro' => 2]);
+            $this->usuarioModel->update($usuario['id'], ['senha' => password_hash($post['NovaSenha'], PASSWORD_DEFAULT)]);
+            return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Senha alterada com sucesso!');
+        }
+
+        return redirect()->back()->with('msgError', 'Falha ao atualizar senha.');
     }
-    
-    /**
-     * novaContaVisitante
-     *
-     * @return void
-     */
-    public function novaContaVisitante()
+
+    public function novaContaVisitante(): RedirectResponse
     {
-        $post           = $this->getPost();
-        $UsuarioModel   = $this->loadModel("Usuario");
+        $post = $this->request->getPost();
 
-       // Valida dados recebidos do formulário
-        if (Validator::make($post, $UsuarioModel->validationRules)) {
-            return Redirect::page("Home/criarConta");
-        } else {
-
-            if ($UsuarioModel->insert([
-                "statusRegistro"    => $post['statusRegistro'],
-                "nivel"             => $post['nivel'],
-                "nome"              => $post['nome'],
-                "email"             => $post['email'],
-                "senha"             => password_hash($post['senha'], PASSWORD_DEFAULT)
-            ])) {
-                return Redirect::page("Home/Login", ["msgSuccess" => "Usuário criado com sucesso !"]);
-            } else {
-                return Redirect::page("Home/criarConta", ["msgError" => "Falha na criação do Usuário !"]);
-            }
+        if (!$this->validate($this->usuarioModel->validationRules)) {
+            return redirect()->to(base_url('home/criarConta'))->with('msgError', 'Dados inválidos.');
         }
+
+        $post['senha'] = password_hash($post['senha'], PASSWORD_DEFAULT);
+        if ($this->usuarioModel->insert($post)) {
+            return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Usuário criado com sucesso!');
+        }
+
+        return redirect()->to(base_url('home/criarConta'))->with('msgError', 'Falha ao criar usuário.');
     }
 }

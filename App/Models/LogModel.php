@@ -1,33 +1,29 @@
 <?php
 
-use App\Library\ModelMain;
+namespace App\Models;
+
+use CodeIgniter\Model;
 use App\Library\Session;
 
-Class LogModel extends ModelMain
+class LogModel extends Model
 {
-    public $table = "logs";
-    
-    /**
-     * lista
-     *
-     * @param string $orderBy 
-     * @return void
-     */
-    public function lista($orderBy = 'id')
-    {
-        if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT * FROM logs ORDER BY {$orderBy}");
-            
-        } else {
-            $rsc = $this->db->dbSelect("SELECT * FROM logs ORDER BY {$orderBy}");
-            
-        }
+    protected $table = 'logs'; // Define a tabela do banco de dados
+    protected $primaryKey = 'id'; // Define a chave primária
+    protected $returnType = 'array'; // Define o tipo de retorno
+    protected $allowedFields = ['*']; // Permite todos os campos (ajuste conforme necessário)
 
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
+    /**
+     * Lista os logs, ordenados por uma coluna específica
+     *
+     * @param string $orderBy
+     * @return array
+     */
+    public function lista(string $orderBy = 'id'): array
+    {
+        // Verifica o nível do usuário
+        $query = $this->orderBy($orderBy);
+
+        // Recupera todos os registros
+        return $query->findAll();
     }
-    
 }

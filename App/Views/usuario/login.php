@@ -1,20 +1,16 @@
-
 <?= $this->extend('layout/layout_default') ?>
 
 <?= $this->section('conteudo') ?>
 
-
 <section class="about section-margin" style="margin-top: 130px;">
-
     <div class="row">
         <div class="col-12 col-sm-8 offset-sm-2 col-md-6 offset-md-3 col-lg-6 offset-lg-3 col-xl-4 offset-xl-4">
             <div class="card card-primary">
                 <div class="card-header">
                     <h4>Login</h4>
                 </div>
-             
                 <div class="card-body">
-                    <form method="POST" action="Login/signIn" class="needs-validation" novalidate="">
+                    <?= form_open("Login/signIn", ['class' => 'needs-validation', 'novalidate' => '']) ?>
                         <div class="form-group">
                             <label for="email">Email</label>
                             <input id="email" type="email" class="form-control" name="email" tabindex="1" required="" autofocus="" value="<?= isset($_COOKIE['username']) ? $_COOKIE['username'] : '' ?>">
@@ -26,7 +22,7 @@
                             <div class="d-block">
                                 <label for="senha" class="control-label">Senha</label>
                                 <div class="float-right">
-                                    <a href="Login/solicitaRecuperacaoSenha" class="text-small">
+                                    <a href="<?= site_url("Login/solicitaRecuperacaoSenha") ?>" class="text-small">
                                         Esqueceu sua senha?
                                     </a>
                                 </div>
@@ -45,11 +41,11 @@
                         <div class="form-group">
                             <button type="submit" value="submit" class="btn btn-primary">Entrar</button>
                         </div>
-                    </form>
+                    <?= form_close() ?>
                 </div>
             </div>
             <div class="mt-5 text-muted text-center">
-                Não tem uma conta? <a href="Home/criarConta">Crie sua conta aqui</a>
+                Não tem uma conta? <a href="<?= site_url("Home/criarConta") ?>">Crie sua conta aqui</a>
             </div>
         </div>
     </div>

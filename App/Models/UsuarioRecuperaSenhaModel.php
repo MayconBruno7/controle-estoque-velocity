@@ -1,75 +1,49 @@
 <?php
 
-use App\Library\ModelMain;
+namespace App\Models;
 
-class UsuarioRecuperaSenhaModel extends ModelMain
+use CodeIgniter\Model;
+
+class UsuarioRecuperaSenhaModel extends Model
 {
-    public $table = "usuariorecuperasenha";
+    protected $table = 'usuariorecuperasenha';
+    protected $primaryKey = 'id';
+    protected $allowedFields = ['usuario_id', 'chave', 'statusRegistro', 'created_at'];
 
     /**
-     * getRecuperaSenhaChave - Recuperar os dados do usuário especificado em $email
+     * getRecuperaSenhaChave - Recupera os dados do usuário pela chave
      *
-     * @param string $chave 
-     * @return array
+     * @param string $chave
+     * @return array|null
      */
-    public function getRecuperaSenhaChave($chave) 
+    public function getRecuperaSenhaChave($chave)
     {
-        $dados  = $this->db->select(
-            $this->table, 
-            "first",
-            [
-                "where" => [
-                    "statusRegistro" => 1, 
-                    "chave" => $chave
-                ]
-            ]
-        );
-
-        if ($dados == false) {
-            return [];
-        } else {            
-            return $dados;
-        }
+        return $this->where(['statusRegistro' => 1, 'chave' => $chave])
+                    ->first();
     }
 
     /**
-     * desativaChave - Desativa chave de acesso
+     * desativaChave - Desativa a chave de acesso específica
      *
-     * @param mixed $id 
-     * @return void
+     * @param int $id
+     * @return bool
      */
-    function desativaChave($id) 
+    public function desativaChave($id)
     {
-        $rs = $this->db->update($this->table,
-            ["id" => $id],
-            ["statusRegistro" => 2]            
-        );
-        
-        if ($rs > 0) {
-            return true;
-        } else {
-            return false;
-        }      
+        return $this->update($id, ['statusRegistro' => 2]);
     }
 
     /**
-     * desativaChave - Desativa chave de acesso
+     * desativaChaveAntigas - Desativa todas as chaves de acesso antigas
      *
-     * @param mixed $id 
-     * @return void
+     * @param int $usuario_id
+     * @return bool
      */
-    function desativaChaveAntigas($id) 
+    public function desativaChaveAntigas($usuario_id)
     {
-        $rs = $this->db->update($this->table,
-            ["id <>" => $id],
-            ["statusRegistro" => 2]            
-        );
-        
-        if ($rs > 0) {
-            return true;
-        } else {
-            return false;
-        }      
+        return $this->where('usuario_id', $usuario_id)
+                    ->where('statusRegistro', 1)
+                    ->set('statusRegistro', 2)
+                    ->update();
     }
-    
 }

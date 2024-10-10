@@ -2,83 +2,86 @@
 
 namespace App\Models;
 
-
-use App\Controllers\BaseController;
-
 use CodeIgniter\Model;
 
-
-Class FuncionarioModel extends Model
+class FuncionarioModel extends Model
 {
-    public $table = "funcionario";
+    protected $table = 'funcionario'; // Define a tabela do banco de dados
+    protected $primaryKey = 'id'; // Define a chave primária
+    protected $returnType = 'array'; // Define o tipo de retorno
+    protected $useSoftDeletes = false; // Defina como true se você usar Soft Deletes
 
-    public $validationRules = [
+    protected $allowedFields = [
+        'nome',
+        'cpf',
+        'setor',
+        'salario',
+        'statusRegistro'
+    ]; // Campos permitidos para inserção e atualização
+
+    protected $validationRules = [
         'nome' => [
-            'label' => 'nome',
-            'rules' => 'required|min:3|max:80'
+            'label' => 'Nome',
+            'rules' => 'required|min_length[3]|max_length[80]'
         ],
         'cpf' => [
-            'label' => 'cpf',
-            'rules' => 'required|min:14'
+            'label' => 'CPF',
+            'rules' => 'required|min_length[14]'
         ],
-        // 'setor' => [
-        //     'label' => 'setor',
-        //     'rules' => 'required|int'
-        // ],   
         'salario' => [
-            'label' => 'salario',
+            'label' => 'Salário',
             'rules' => 'required|decimal'
         ],
         'statusRegistro' => [
             'label' => 'Status',
-            'rules' => 'required|int'
+            'rules' => 'required|integer'
         ]
     ];
 
+    protected $validationMessages = [
+        // Personalize as mensagens de validação aqui, se necessário
+    ];
+
+    protected $skipValidation = false; // Mude para true se não quiser validação em determinadas situações
+
     /**
-     * lista
+     * Lista todos os funcionários, com base no nível de usuário
      *
-     * @param string $orderBy 
-     * @return void
+     * @param string $orderBy
+     * @return array
      */
     public function lista($orderBy = 'id')
     {
-        if (Session::get('usuarioNivel') == 1) {
-            // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
-            $rsc = $this->db->dbSelect("SELECT funcionario.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionario.setor = setor.id ORDER BY {$orderBy}");
-            
+        // Consulta com base no nível do usuário
+        if (session()->get('usuarioNivel') == 1) {
+            return $this->select('funcionario.*, setor.nome AS nome_do_setor')
+                ->join('setor', 'funcionario.setor = setor.id', 'left')
+                ->orderBy($orderBy)
+                ->findAll();
         } else {
-            $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE statusRegistro = 1 ORDER BY {$orderBy}");
-            
-        }
-
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
+            return $this->where('statusRegistro', 1)
+                ->orderBy($orderBy)
+                ->findAll();
         }
     }
 
+    /**
+     * Recupera um funcionário específico pelo ID
+     *
+     * @param int $id
+     * @return array|null
+     */
     public function recuperaFuncionario($id)
     {
-        if (Session::get('usuarioNivel') == 1) {
-            // $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} ORDER BY {$orderBy}");
-            $rsc = $this->db->dbSelect("SELECT funcionario.*, setor.nome AS nome_do_setor FROM {$this->table} LEFT JOIN setor ON funcionario.setor = setor.id WHERE funcionario.id = ?", [$id]);
-            
+        if (session()->get('usuarioNivel') == 1) {
+            return $this->select('funcionario.*, setor.nome AS nome_do_setor')
+                ->join('setor', 'funcionario.setor = setor.id', 'left')
+                ->where('funcionario.id', $id)
+                ->first();
         } else {
-            $rsc = $this->db->dbSelect(
-                "SELECT * FROM {$this->table} 
-                 WHERE statusRegistro = 1 
-                 AND funcionario.id = ?", 
-                [$id]
-            );
-            
-        }
-
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
+            return $this->where('statusRegistro', 1)
+                ->where('funcionario.id', $id)
+                ->first();
         }
     }
 }

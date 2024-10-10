@@ -3,11 +3,13 @@
 namespace App\Controllers;
 
 use App\Models\UsuarioModel;
+use App\Models\RelatorioModel;
 
 class Home extends BaseController
 {
 
     public $UsuarioModel;
+    public $RelatorioModel;
 
     /**
      * construct
@@ -15,6 +17,7 @@ class Home extends BaseController
     public function __construct()
     {
         $this->UsuarioModel = new UsuarioModel();
+        $this->RelatorioModel = new RelatorioModel();
     }
 
     /**
@@ -25,7 +28,7 @@ class Home extends BaseController
     public function index()
     {
 
-        $dados['dados'] = $this->UsuarioModel;
+        $dados['dados'] = $this->UsuarioModel->findAll();
                             // ->orderBy("descricao")
                             // ->findAll();
         return view("usuario/login", $dados);
@@ -51,17 +54,15 @@ class Home extends BaseController
     {
         // Somente pode ser acessado por usuários adminsitradores
         if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
+            return redirect("Home");
         }
-
-        $RelatorioModel = $this->loadModel('Relatorio');
 
         $DbDados = [];
 
-        $DbDados['aRelatorioDia'] = $RelatorioModel->RelatorioDia();
-        $DbDados['aRelatorioSemana'] = $RelatorioModel->RelatorioSemana();
-        $DbDados['aRelatorioMes'] = $RelatorioModel->RelatorioMes();
-        $DbDados['aRelatorioAno'] = $RelatorioModel->RelatorioAno();
+        $DbDados['aRelatorioDia'] = $this->RelatorioModel->RelatorioDia();
+        $DbDados['aRelatorioSemana'] = $this->RelatorioModel->RelatorioSemana();
+        $DbDados['aRelatorioMes'] = $this->RelatorioModel->RelatorioMes();
+        $DbDados['aRelatorioAno'] = $this->RelatorioModel->RelatorioAno();
 
         return view(
             "restrita/homeAdmin",
@@ -80,7 +81,7 @@ class Home extends BaseController
 
         // Só acessa se tiver logado
         if (!$this->getUsuario()) {
-            return Redirect::page("Home");
+            return redirect("Home");
         }
        
         return view("restrita/home");

@@ -2,48 +2,41 @@
 
 namespace App\Models;
 
-
-use App\Controllers\BaseController;
-
 use CodeIgniter\Model;
 
-
-Class CargoModel extends Model
+class CargoModel extends Model
 {
-    public $table = "cargo";
-
-    public $validationRules = [
+    protected $table = 'cargo'; // Use 'protected' para que seja acessível em subclasses
+    protected $primaryKey = 'id'; // Defina a chave primária
+    protected $allowedFields = ['nome', 'statusRegistro']; // Campos que podem ser manipulados
+    protected $validationRules = [
         'nome' => [
-            'label' => 'nome',
-            'rules' => 'required|min:3|max:50'
+            'label' => 'Nome',
+            'rules' => 'required|min_length[3]|max_length[50]'
         ],
         'statusRegistro' => [
             'label' => 'Status',
-            'rules' => 'required|int'
+            'rules' => 'required|integer'
         ]
     ];
-
+    
     /**
-     * lista
+     * Lista cargos
      *
      * @param string $orderBy 
-     * @return void
+     * @return array
      */
     public function lista($orderBy = 'id')
     {
-        if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT * FROM cargo ORDER BY {$orderBy}");
-            
+        // Usar a classe de sessão do CodeIgniter 4
+        $session = \Config\Services::session();
+        
+        if ($session->get('usuarioNivel') == 1) {
+            return $this->orderBy($orderBy)->findAll();
         } else {
-            $rsc = $this->db->dbSelect("SELECT * FROM cargo WHERE statusRegistro = 1 ORDER BY {$orderBy}");
-            
-        }
-
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
+            return $this->where('statusRegistro', 1)
+                        ->orderBy($orderBy)
+                        ->findAll();
         }
     }
-    
 }

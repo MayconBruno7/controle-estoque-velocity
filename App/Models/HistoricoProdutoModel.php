@@ -1,60 +1,52 @@
 <?php
 
-use App\Library\ModelMain;
+namespace App\Models;
 
-Class HistoricoProdutoModel extends ModelMain
+use CodeIgniter\Model;
+
+class HistoricoProdutoModel extends Model
 {
-    public $table = "historico_produto";
+    protected $table = 'historico_produto'; // Define a tabela do banco de dados
+    protected $primaryKey = 'id'; // Define a chave primária
+    protected $returnType = 'array'; // Define o tipo de retorno
+    protected $allowedFields = [
+        'id_produtos',
+        'fornecedor_id',
+        'nome_produtos',
+        'descricao_anterior',
+        'quantidade_anterior',
+        'status_anterior',
+        'statusItem_anterior',
+        'dataMod',
+    ]; // Campos permitidos para inserção e atualização
 
-    public function historicoProduto($idProduto, $orderBy = 'id')
-    {
-        $rsc = $this->db->dbSelect("SELECT * FROM {$this->table} WHERE id_produtos = ? ORDER BY {$orderBy}", [$idProduto]);
-            
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
-    }
-
-       /**
-     * getProdutoCombobox
+    /**
+     * Recupera o histórico do produto com base no ID do produto
      *
-     * @param int $estado 
+     * @param int $idProduto
+     * @param string $orderBy
      * @return array
      */
-    public function getHistoricoProduto($termo)
+    public function historicoProduto(int $idProduto, string $orderBy = 'id'): array
+    {
+        return $this->where('id_produtos', $idProduto)
+                    ->orderBy($orderBy)
+                    ->findAll();
+    }
+
+    /**
+     * Recupera o histórico de produtos com base em um termo de pesquisa
+     *
+     * @param string $termo
+     * @return array
+     */
+    public function getHistoricoProduto(string $termo): array
     {
         // Verifica se foi fornecido um termo de pesquisa válido
-        if (!empty($termo)) {
+        if (!empty($termo) && strlen($termo) >= 3) { // Adiciona um comprimento mínimo
             // Realiza a consulta no banco de dados
-            $rsc = $this->db->select(
-                "historico_produto",
-                "all",
-                [
-                    'where' => [
-                        'dataMod' => ['LIKE', $termo]
-                    ]
-                ]
-            );
-
-            // Array para armazenar os resultados
-            $historico = [];
-            foreach ($rsc as $historico_produto) {
-                $historico[] = [
-                    'id' => $historico_produto['id'],
-                    'id_produtos' => $historico_produto['id_produtos'],
-                    'fornecedor_id' => $historico_produto['fornecedor_id'],
-                    'nome_produtos' => $historico_produto['nome_produtos'],
-                    'descricao_anterior' => $historico_produto['descricao_anterior'],
-                    'quantidade_anterior' => $historico_produto['quantidade_anterior'],
-                    'status_anterior' => $historico_produto['status_anterior'],
-                    'statusItem_anterior' => $historico_produto['statusItem_anterior'],
-                    'dataMod' => $historico_produto['dataMod']
-                ];
-            }
-
-            return $historico;
+            return $this->like('dataMod', $termo)
+                        ->findAll();
         }
 
         return [];

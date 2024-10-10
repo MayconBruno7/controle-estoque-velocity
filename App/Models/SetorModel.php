@@ -1,64 +1,55 @@
 <?php
 
-use App\Library\ModelMain;
-use App\Library\Session;
+namespace App\Models;
 
-Class SetorModel extends ModelMain
+use CodeIgniter\Model;
+
+class SetorModel extends Model
 {
-    public $table = "setor";
+    protected $table = 'setor';
+    protected $primaryKey = 'id';
 
-    public $validationRules = [
-        'nome' => [
-            'label' => 'Nome',
-            'rules' => 'required|min:3|max:100'
-        ],
-        'statusRegistro' => [
-            'label' => 'Status',
-            'rules' => 'required|int'
-        ]
+    protected $allowedFields = ['nome', 'statusRegistro', 'responsavel']; // Adicione os campos permitidos para inserção/atualização
+
+    protected $validationRules = [
+        'nome' => 'required|min_length[3]|max_length[100]',
+        'statusRegistro' => 'required|integer'
     ];
 
     /**
      * lista
      *
-     * @param string $orderBy 
-     * @return void
+     * @param string $orderBy
+     * @return array
      */
     public function lista($orderBy = 'id')
     {
-        if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionario as f ON s.responsavel = f.id ORDER BY {$orderBy}");
-            
-        } else {
-            $rsc = $this->db->dbSelect("SELECT s.*, f.nome as nomeResponsavel FROM {$this->table} as s LEFT JOIN funcionario as f ON s.responsavel = f.id WHERE s.statusRegistro = 1 ORDER BY {$orderBy}");            
+        $builder = $this->db->table($this->table);
+        $builder->select('s.*, f.nome as nomeResponsavel');
+        $builder->join('funcionario as f', 's.responsavel = f.id', 'left');
+
+        if (session()->get('usuarioNivel') != 1) {
+            $builder->where('s.statusRegistro', 1);
         }
 
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
+        $builder->orderBy($orderBy);
+        return $builder->get()->getResultArray();
     }
-    
+
     /**
      * getProdutoCombobox
      *
-     * @param int $categoria_id 
+     * @param int $categoria_id
      * @return array
      */
-    public function getProdutoCombobox($categoria_id) 
+    public function getProdutoCombobox($categoria_id)
     {
-        $rsc = $this->db->dbSelect("SELECT p.id, p.descricao 
-                                    FROM {$this->table} as p
-                                    INNER JOIN categoria as c ON c.id = p.categoria_id
-                                    WHERE c.id = ?
-                                    ORDER BY p.descricao",
-                                    [$categoria_id]);
+        $builder = $this->db->table($this->table);
+        $builder->select('p.id, p.descricao');
+        $builder->join('categoria as c', 'c.id = p.categoria_id');
+        $builder->where('c.id', $categoria_id);
+        $builder->orderBy('p.descricao');
 
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
+        return $builder->get()->getResultArray();
     }
 }

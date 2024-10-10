@@ -744,7 +744,7 @@ abstract class BaseModel
         if ((array) $row === []) {
             return true;
         }
-
+      
         if ($this->shouldUpdate($row)) {
             $response = $this->update($this->getIdValue($row), $row);
         } else {

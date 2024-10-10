@@ -1,18 +1,12 @@
-<?php
+<?= $this->extend('layout/layout_default') ?>
 
-    use App\Library\Formulario;
-    use App\Library\Session;
+<?= $this->section('conteudo') ?>
 
-?>
+
 <!-- Main Content -->
 <div class="main-content">
     <div class="row mb-2">
-        <div class="col-12">
-            <?= Formulario::exibeMsgError() ?>
-        </div>
-        <div class="col-12">
-            <?= Formulario::exibeMsgSucesso() ?>
-        </div>
+        <!-- Mensagens de erro -->
     </div>
     <section class="section">
         <div class="row ">
@@ -28,7 +22,7 @@
                                             <?php 
                                                 $totalQuantidadeDia = 0;
 
-                                                foreach ($aDados['aRelatorioDia'] as $item) {
+                                                foreach ($aRelatorioDia as $item) {
                                                     // Acessando e somando a quantidadeDia de cada item do array
                                                     $totalQuantidadeDia = intval($item['quantidadeDia']);
                                                 }
@@ -62,7 +56,7 @@
                                         <?php 
                                                 $totalQuantidadeSemana = 0;
 
-                                                foreach ($aDados['aRelatorioSemana'] as $item) {
+                                                foreach ($aRelatorioSemana as $item) {
                                                     // Acessando e somando a quantidadeSemanda de cada item do array
                                                     $totalQuantidadeSemana = intval($item['quantidadeSemana']);
                                                 }
@@ -96,7 +90,7 @@
                                         <?php 
                                                 $totalQuantidadeMes = 0;
 
-                                                foreach ($aDados['aRelatorioMes'] as $item) {
+                                                foreach ($aRelatorioMes as $item) {
                                                     // Acessando e somando a quantidadeMes de cada item do array
                                                     $totalQuantidadeMes = intval($item['quantidadeMes']);
                                                 }
@@ -129,7 +123,7 @@
                                         <?php 
                                                 $totalQuantidadeAno = 0;
 
-                                                foreach ($aDados['aRelatorioAno'] as $item) {
+                                                foreach ($aRelatorioAno as $item) {
                                                     // Acessando e somando a quantidadeAno de cada item do array
                                                     $totalQuantidadeAno = intval($item['quantidadeAno']);
                                                 }
@@ -182,7 +176,7 @@
 
             var formattedDate = year + '-' + month + '-' + day;
 
-            var url = '<?= baseUrl() ?>Relatorio/getDados/dia/' + formattedDate;
+            var url = '<?= base_url() ?>Relatorio/getDados/dia/' + formattedDate;
             // Adiciona um valor padrão para 'fim' se necessário
             var fim = 'default_value';
             url += '/' + fim;
@@ -322,7 +316,7 @@
               html += `<td>${data.valores[i]}</td>`;
               html += `<td>${data.entradas[i]}</td>`;
               html += `<td>${data.saidas[i]}</td>`;
-              html += `<td><a href="<?= baseUrl(); ?>Movimentacao/form/view/${data.id_movimentacao[i]}/home" class="btn btn-outline-primary">Detalhes da movimentação</a></td>`;
+              html += `<td><a href="<?= base_url(); ?>Movimentacao/form/view/${data.id_movimentacao[i]}/home" class="btn btn-outline-primary">Detalhes da movimentação</a></td>`;
               html += '</tr>';
           }
 
@@ -340,5 +334,4 @@
 
     </script>
   
-
-
+<?= $this->endSection() ?>

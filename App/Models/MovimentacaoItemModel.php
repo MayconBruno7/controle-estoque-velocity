@@ -1,37 +1,31 @@
 <?php
 
-use App\Library\ModelMain;
+namespace App\Models;
 
-Class MovimentacaoItemModel extends ModelMain
+use CodeIgniter\Model;
+
+class MovimentacaoItemModel extends Model
 {
-    public $table = "movimentacao_item";
+    protected $table = 'movimentacao_item'; // Define a tabela do banco de dados
+    protected $primaryKey = 'id'; // Define a chave primária
+    protected $returnType = 'array'; // Define o tipo de retorno
+    protected $allowedFields = ['*']; // Permite todos os campos (ajuste conforme necessário)
 
     /**
-     * lista
+     * Lista produtos relacionados a uma movimentação
      *
-     * @param string $orderBy 
-     * @return void
+     * @param int $id_movimentacao
+     * @return array
      */
-    public function listaProdutos($id_movimentacao)
+    public function listaProdutos(int $id_movimentacao): array
     {
+        $query = $this->db->table($this->table)
+            ->select('mi.id_movimentacoes, mi.id_produtos AS id_prod_mov_itens, mi.quantidade AS mov_itens_quantidade, mi.valor, p.*')
+            ->join('produto p', 'p.id = mi.id_produtos')
+            ->where('mi.id_movimentacoes', $id_movimentacao)
+            ->orWhere('mi.id_movimentacoes IS NULL')
+            ->orderBy('p.descricao');
 
-        $rsc = $this->db->dbSelect("SELECT mi.id_movimentacoes,
-                    mi.id_produtos AS id_prod_mov_itens,
-                    mi.quantidade AS mov_itens_quantidade,
-                    mi.valor,
-                    p.*
-                FROM {$this->table} mi
-                INNER JOIN produto p ON p.id = mi.id_produtos
-                WHERE mi.id_movimentacoes = ?
-                    OR mi.id_movimentacoes IS NULL
-                ORDER BY p.descricao;
-                ",
-                $id_movimentacao);
-
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
+        return $query->get()->getResultArray(); // Retorna os resultados como um array
     }
 }

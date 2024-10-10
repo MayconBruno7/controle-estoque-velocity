@@ -1,283 +1,198 @@
 <?php
 
-use App\Library\ModelMain;
-use App\Library\Session;
+namespace App\Models;
 
-Class MovimentacaoModel extends ModelMain
+use CodeIgniter\Model;
+use CodeIgniter\Session\Session;
+
+class MovimentacaoModel extends Model
 {
-    public $table = "movimentacao";
-
-    public $validationRules = [
-        'setor_id' => [
-            'label' => 'Setor',
-            'rules' => 'required|int'
-        ],
-        'fornecedor_id' => [
-            'label' => 'Fornecedor',
-            'rules' => 'required|int'
-        ],
-        'tipo' => [
-            'label' => 'Tipo',
-            'rules' => 'required|int'
-        ],
-        'motivo' => [
-            'label' => 'Motivo',
-            'rules' => 'required'
-        ],
-        'data_pedido' => [
-            'label' => 'Data pedido',
-            'rules' => 'required|DATE'
-        ],
-        'statusRegistro' => [
-            'label' => 'Status',
-            'rules' => 'required|int'
-        ]
+    protected $table = 'movimentacao'; // Define a tabela do banco de dados
+    protected $primaryKey = 'id'; // Define a chave primária
+    protected $allowedFields = ['setor_id', 'fornecedor_id', 'tipo', 'motivo', 'data_pedido', 'statusRegistro']; // Campos permitidos para inserção/atualização
+    protected $validationRules = [
+        'setor_id' => 'required|integer',
+        'fornecedor_id' => 'required|integer',
+        'tipo' => 'required|integer',
+        'motivo' => 'required',
+        'data_pedido' => 'required|valid_date',
+        'statusRegistro' => 'required|integer',
     ];
 
     /**
-     * lista
+     * Lista movimentações
      *
      * @param string $orderBy
-     * @return void
+     * @return array
      */
-    public function lista($orderBy = 'id')
+    public function lista($orderBy = 'id'): array
     {
-        if (Session::get('usuarioNivel') == 1) {
-            $rsc = $this->db->dbSelect("SELECT DISTINCT
-                m.id AS id_movimentacao,
-                f.nome AS nome_fornecedor,
-                m.tipo AS tipo_movimentacao,
-                m.data_pedido,
-                m.data_chegada
-            FROM
-                {$this->table} m
-            LEFT JOIN
-                fornecedor f ON f.id = m.id_fornecedor
-            LEFT JOIN
-                movimentacao_item mi ON mi.id_movimentacoes = m.id
-            LEFT JOIN
-                produto p ON p.id = mi.id_produtos");
+        $builder = $this->db->table($this->table)
+            ->select('DISTINCT m.id AS id_movimentacao, f.nome AS nome_fornecedor, m.tipo AS tipo_movimentacao, m.data_pedido, m.data_chegada')
+            ->join('fornecedor f', 'f.id = m.fornecedor_id', 'left')
+            ->join('movimentacao_item mi', 'mi.id_movimentacoes = m.id', 'left')
+            ->join('produto p', 'p.id = mi.id_produtos', 'left');
 
-        } else {
-            $rsc = $this->db->dbSelect("SELECT DISTINCT
-                m.id AS id_movimentacao,
-                f.nome AS nome_fornecedor,
-                m.tipo AS tipo_movimentacao,
-                m.data_pedido,
-                m.data_chegada
-            FROM
-                {$this->table} m
-            LEFT JOIN
-                fornecedor f ON f.id = m.id_fornecedor
-            LEFT JOIN
-                movimentacao_item mi ON mi.id_movimentacoes = m.id
-            LEFT JOIN
-                produto p ON p.id = mi.id_produtos
-            WHERE
-                m.statusRegistro = 1;");
+        // Filtra resultados com base no nível do usuário
+        if (session()->get('usuarioNivel') != 1) {
+            $builder->where('m.statusRegistro', 1);
         }
 
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
-    }
-
-    public function idUltimaMovimentacao()
-    {
-
-        $rsc = $this->db->dbSelect("SELECT MAX(id) AS ultimo_id FROM movimentacao");
-
-        if ($this->db->dbNumeroLinhas($rsc) > 0) {
-            return $this->db->dbBuscaArrayAll($rsc);
-        } else {
-            return [];
-        }
+        return $builder->orderBy($orderBy)->get()->getResultArray();
     }
 
     /**
-     * insertMovimentacao
+     * Retorna o ID da última movimentação
+     *
+     * @return array
+     */
+    public function idUltimaMovimentacao(): array
+    {
+        return $this->selectMax('id', 'ultimo_id')->findAll();
+    }
+
+    /**
+     * Insere uma nova movimentação
      *
      * @param array $movimentacao
      * @param array $aProdutos
-     * @return void
+     * @return bool
      */
-    public function insertMovimentacao($movimentacao, $aProdutos)
+    public function insertMovimentacao(array $movimentacao, array $aProdutos): bool
     {
+        $ultimoRegistro = $this->insert($movimentacao);
 
-        $ultimoRegistro = $this->db->insert($this->table, $movimentacao);
-
-        if ($ultimoRegistro > 0) {
-
-            if($aProdutos[0]['id_produtos'] != '') {
+        if ($ultimoRegistro) {
+            if (!empty($aProdutos[0]['id_produtos'])) {
                 foreach ($aProdutos as $item) {
-
-                    $item["id_movimentacoes"] = $ultimoRegistro;
-
-                    $this->db->insert("movimentacao_item", $item);
+                    $item['id_movimentacoes'] = $ultimoRegistro;
+                    $this->db->table('movimentacao_item')->insert($item);
                 }
             }
-
             return true;
-
-        } else {
-            return false;
         }
+        return false;
     }
 
     /**
-     * updateMovimentacao
+     * Atualiza uma movimentação existente
      *
+     * @param int $idMovimentacao
      * @param array $movimentacao
      * @param array $aProdutos
-     * @return void
+     * @param bool $prod_info_mov_atualizado
+     * @return bool
      */
-    public function updateMovimentacao($idMovimentacao, $movimentacao, $aProdutos, $prod_info_mov_atualizado)
+    public function updateMovimentacao(int $idMovimentacao, array $movimentacao, array $aProdutos, bool $prod_info_mov_atualizado): bool
     {
-
-        $tipo_movimentacao = $movimentacao['tipo'];
-
-        if($idMovimentacao) {
-
-            $condWhere = $idMovimentacao['id_movimentacao'];
-
-            $atualizaInformacoesMovimentacao = $this->db->update($this->table, ['id' => $condWhere], $movimentacao);
-
-            if($atualizaInformacoesMovimentacao || $prod_info_mov_atualizado) {
+        if ($idMovimentacao) {
+            $this->update($idMovimentacao, $movimentacao);
+            if ($prod_info_mov_atualizado) {
                 unset($_SESSION['produto_mov_atualizado']);
                 return true;
             }
-
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public function updateInformacoesProdutoMovimentacao($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao = null)
+    /**
+     * Atualiza informações do produto na movimentação
+     *
+     * @param int $id_movimentacao
+     * @param array $aProdutos
+     * @param array $acao
+     * @param int $quantidade_produto
+     * @param int|null $quantidade_movimentacao
+     * @return bool
+     */
+    public function updateInformacoesProdutoMovimentacao(int $id_movimentacao, array $aProdutos, array $acao, int $quantidade_produto, int $quantidade_movimentacao = null): bool
     {
+        $id_produto = $aProdutos[0]['id_produtos'] ?? '';
 
-        $id_produto = isset($aProdutos[0]['id_produtos']) ? $aProdutos[0]['id_produtos'] : "";
-
-        if($id_movimentacao && $id_produto != "") {
-            $condWhere = $id_movimentacao['id_movimentacao'];
-
+        if ($id_movimentacao && !empty($id_produto)) {
             foreach ($aProdutos as $item) {
-                if($acao['acaoProduto'] == 'update') {
+                if ($acao['acaoProduto'] == 'update') {
                     $item['quantidade'] = $quantidade_movimentacao;
-
-                    $atualizaProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $condWhere, 'id_produtos' => $id_produto], $item);
-
-                    if($atualizaProdutosMovimentacao) {
-                        return true;
-                    }
-                }
-
-                else if($acao['acaoProduto'] == 'insert'){
-
-                    $item['id_movimentacoes'] = $id_movimentacao['id_movimentacao'];
+                    $this->db->table('movimentacao_item')->update($item, [
+                        'id_movimentacoes' => $id_movimentacao,
+                        'id_produtos' => $id_produto
+                    ]);
+                    return true;
+                } elseif ($acao['acaoProduto'] == 'insert') {
+                    $item['id_movimentacoes'] = $id_movimentacao;
                     $item['quantidade'] = $quantidade_movimentacao;
-
-                    $insereProdutosMovimentacao = $this->db->insert("movimentacao_item", $item);
-
-                    if($insereProdutosMovimentacao) {
-                        return true;
-                    }
-                    
-    
-                } else {
-                    echo "erro";
+                    $this->db->table('movimentacao_item')->insert($item);
+                    return true;
                 }
             }
-
-        } else {
-            return false;
         }
+        return false;
     }
 
-    public function deleteInfoProdutoMovimentacao($id_movimentacao, $aProdutos, $tipo_movimentacao, $quantidadeRemover)
+    /**
+     * Remove informações do produto na movimentação
+     *
+     * @param int $id_movimentacao
+     * @param array $aProdutos
+     * @param int $tipo_movimentacao
+     * @param int $quantidadeRemover
+     * @return bool
+     */
+    public function deleteInfoProdutoMovimentacao(int $id_movimentacao, array $aProdutos, int $tipo_movimentacao, int $quantidadeRemover): bool
     {
-        
-        $item_movimentacao = $this->db->select(
-            "movimentacao_item",
-            "all",
-            [
-            "where" => ["id_movimentacoes" => $id_movimentacao, "id_produtos" => $aProdutos[0]["id"]]
-            ]
-        );
+        $item_movimentacao = $this->db->table('movimentacao_item')->where([
+            'id_movimentacoes' => $id_movimentacao,
+            'id_produtos' => $aProdutos[0]['id']
+        ])->get()->getRowArray();
 
         if ($item_movimentacao) {
+            $quantidadeAtual = $item_movimentacao['quantidade'];
 
-            // recupera a quantidade atual do item na movimentação
-            $quantidadeAtual = $item_movimentacao[0]['quantidade'];
-
-            // Verifica se a quantidade a ser removida não ultrapassa a quantidade atual na comanda
             if ($quantidadeRemover <= $quantidadeAtual) {
-                // Subtrai a quantidade a ser removida da quantidade atual na comanda
-                $novaQuantidadeMovimentacao = ($quantidadeAtual - $quantidadeRemover);
+                $novaQuantidadeMovimentacao = $quantidadeAtual - $quantidadeRemover;
+                $this->db->table('movimentacao_item')->update(['quantidade' => $novaQuantidadeMovimentacao], [
+                    'id_movimentacoes' => $id_movimentacao,
+                    'id_produtos' => $item_movimentacao['id_produtos']
+                ]);
 
-                // Atualiza a tabela movimetacao_itens com a nova quantidade
-                $atualizaInfoProdutosMovimentacao = $this->db->update("movimentacao_item", ['id_movimentacoes' => $id_movimentacao, 'id_produtos' => $item_movimentacao[0]['id_produtos']], ['quantidade' => $novaQuantidadeMovimentacao]);
+                // Remove produtos com quantidade igual a zero
+                $this->db->table('movimentacao_item')->delete([
+                    'id_movimentacoes' => $id_movimentacao,
+                    'id_produtos' => $item_movimentacao['id_produtos'],
+                    'quantidade' => 0
+                ]);
 
-                //Verifica se o produto existe
-                if ($atualizaInfoProdutosMovimentacao) {
-                    // Remove os produtos com quantidade igual a zero da movimentação
-                    $qtdZero = $this->db->delete('movimentacao_item', ['id_movimentacoes' => $id_movimentacao, 'id_produtos' =>  $item_movimentacao[0]['id_produtos'], 'quantidade' => 0]);
-                    
-                    return true;
-
-                } else {
-                    exit("msgError Erro ao atualizar produto na movimentação.");
-                    Session::set("msgError", "Erro ao atualizar produto na movimentação.");
-                    return false;
-                }
+                return true;
             } else {
-                exit("msgError Quantidade maior que a da movimentação..");
-                Session::set("msgError", "Quantidade maior que a da movimentação.");
+                session()->set('msgError', 'Quantidade maior que a da movimentação.');
                 return false;
-                
             }
         } else {
-            exit("msgError Item não encontrado na movimentação.");
-            Session::set("msgError", "Item não encontrado na movimentação.");
+            session()->set('msgError', 'Item não encontrado na movimentação.');
             return false;
         }
     }
 
     /**
-     * getProdutoCombobox
+     * Obtém produtos para o combobox
      *
-     * @param int $estado 
+     * @param string $termo
      * @return array
      */
-    public function getProdutoCombobox($termo)
+    public function getProdutoCombobox(string $termo): array
     {
-        // Verifica se foi fornecido um termo de pesquisa válido
         if (!empty($termo)) {
-            // Realiza a consulta no banco de dados
-            $rsc = $this->db->select(
-                "produto",
-                "all",
-                [
-                    'where' => [
-                        'statusRegistro' => 1,
-                        'nome' => ['LIKE', $termo],
-                    ]
-                ]
-            );
+            $produtos = $this->db->table('produto')->where('statusRegistro', 1)
+                ->like('nome', $termo)
+                ->get()->getResultArray();
 
-            // Array para armazenar os resultados
-            $produtos = [];
-            foreach ($rsc as $produto) {
-                $produtos[] = [
+            return array_map(function ($produto) {
+                return [
                     'id' => $produto['id'],
                     'nome' => $produto['nome']
                 ];
-            }
-
-            return $produtos;
+            }, $produtos);
         }
-
         return [];
     }
 }

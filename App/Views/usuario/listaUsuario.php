@@ -1,21 +1,16 @@
-<?php
-    use App\Library\Formulario;
-?>
+<?= $this->extend('layout/layout_default') ?>
+
+<?= $this->section('conteudo') ?>
 
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
             <div class="row">
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgError() ?>
-                </div>
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgSucesso() ?>
-                </div>
+                <!-- mensagem de erro ou sucesso -->
             </div>
             <div class="container mb-3">
-            <?= Formulario::titulo('', true, false); ?>
+            <?= exibeTitulo('Usuario'); ?>
 
             </div>
             <div class="card">
@@ -37,17 +32,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($aDados as $value): ?>
+                                <?php foreach ($usuarios as $value): ?>
                                     <tr role="row" class="odd">
                                         <td class="sorting_1"><?= $value['id'] ?></td>
                                         <td><?= $value['nome'] ?></td>
                                         <td><?= $value['email'] ?></td>
                                         <td><?= ($value['nivel'] == 1 ? "Administrador" : "Usuário") ?></td>
-                                        <td><?= Formulario::getStatusDescricao($value['statusRegistro']) ?></td>
+                                        <td><?= getStatusDescricao($value['statusRegistro']) ?></td>
                                         <td>
-                                            <?= Formulario::botao("view", $value['id']) ?>
-                                            <?= Formulario::botao("update", $value['id']) ?>
-                                            <?= Formulario::botao("delete", $value['id']) ?>
+                                            <a href="/Usuario/form/view/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Visualizar"><i class="fa fa-eye" aria-hidden="true"></i></a>    
+                                            <a href="/Usuario/form/update/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Alterar"><i class="fa fa-file" aria-hidden="true"></i></a>    
+                                            <a href="/Usuario/form/delete/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Excluir"><i class="fa fa-trash" aria-hidden="true"></i></a>   
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -58,6 +53,8 @@
             </div>
         </main>
 
-        <?= Formulario::getDataTables("tbListausuario"); ?>
+        <?= getDataTables("tbListausuario"); ?>
     </div>
 </div>
+
+<?= $this->endSection() ?>
