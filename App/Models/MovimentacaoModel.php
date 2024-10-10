@@ -25,11 +25,17 @@ class MovimentacaoModel extends Model
      * @param string $orderBy
      * @return array
      */
-    public function lista($orderBy = 'id'): array
+    public function getLista($orderBy = 'm.id'): array
     {
-        $builder = $this->db->table($this->table)
-            ->select('DISTINCT m.id AS id_movimentacao, f.nome AS nome_fornecedor, m.tipo AS tipo_movimentacao, m.data_pedido, m.data_chegada')
-            ->join('fornecedor f', 'f.id = m.fornecedor_id', 'left')
+        // Utilizando a tabela base diretamente com o nome armazenado em $this->table
+        $builder = $this->db->table($this->table . ' m')
+            ->select('
+                m.id AS id_movimentacao, 
+                f.nome AS nome_fornecedor, 
+                m.tipo AS tipo_movimentacao, 
+                m.data_pedido, 
+                m.data_chegada')
+            ->join('fornecedor f', 'f.id = m.id_fornecedor', 'left') // Certifique-se de que `fornecedor_id` é a chave correta
             ->join('movimentacao_item mi', 'mi.id_movimentacoes = m.id', 'left')
             ->join('produto p', 'p.id = mi.id_produtos', 'left');
 
@@ -38,6 +44,7 @@ class MovimentacaoModel extends Model
             $builder->where('m.statusRegistro', 1);
         }
 
+        // Retorna os resultados
         return $builder->orderBy($orderBy)->get()->getResultArray();
     }
 

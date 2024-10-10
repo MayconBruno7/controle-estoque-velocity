@@ -1,7 +1,6 @@
-<?php
-    use App\Library\Formulario;
+<?= $this->extend('layout/layout_default') ?>
 
-?>
+<?= $this->section('conteudo') ?>
 
 <div class="loader"></div>
 <div id="app">
@@ -9,16 +8,10 @@
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
             <div class="row">
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgError() ?>
-                </div>
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgSucesso() ?>
-                </div>
+                <!-- mensagens de erro ou sucesso -->
             </div>
 
             <div class="container mb-3">
-                <?= Formulario::titulo(!empty($dados[0]['nome_produto']) ? $dados[0]['nome_produto'] : "Nenhum histórico", true, false); ?>
             </div>
 
             <div class="card">
@@ -49,7 +42,7 @@
                                                 <tr>
                                                     <td> <?= isset($row['id_mov']) ? $row['id_mov'] : 'Nenhuma movimentação encontrada' ?> </td>
                                                     <td> <?= isset($row['nome_fornecedor']) ? $row['nome_fornecedor'] : 'Nenhum fornecedor encontrado' ?> </td>
-                                                    <td> <?= isset($row['tipo']) ? Formulario::getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
+                                                    <td> <?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
                                                     <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
                                                     <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
                                                     <td> <?= isset($row['Quantidade']) ? $row['Quantidade'] : 'Nenhuma '?> </td>
@@ -71,7 +64,7 @@
             </div>
         </main>
 
-<?= Formulario::getDataTables("listaProdutos"); ?>
+<?= getDataTables("listaProdutos"); ?>
 
-
+<?= $this->endSection() ?>
 

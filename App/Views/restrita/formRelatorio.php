@@ -1,20 +1,16 @@
 <?php
-    use App\Library\Formulario;
+    $this->extend('layout/layout_default');
 
-    $page = $this->getOutrosParametros(1);
+    $this->section('conteudo');
+
+    $page = 'relatorioMovimentacoes';
 
     $tituloPage = isset($page) && $page == 'relatorioMovimentacoes' ? 'Relatorio de Movimentações' : 'Relatório de itens por fornecedor';
 ?>
 
 <main class="container" style="margin-top: 100px;">
     <div class="row">
-        <div class="col-12">
-            <?= Formulario::exibeMsgError() ?>
-        </div>
-
-        <div class="col-12 mt-3">
-            <?= Formulario::exibeMsgSucesso() ?>
-        </div>
+        <!-- mensagens de sucesso ou erro -->
     </div>
 
     <div class="card">
@@ -22,7 +18,7 @@
         <div class="card-body">
 
             <?php if ($page == 'relatorioItensPorFornecedor') : ?>
-                <div class="col-12 mt-3">
+            <div class="col-12 mt-3">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
                     <option value="">...</option>
@@ -76,6 +72,7 @@
         </div>
     </div>
 </main>
+<?= $this->endSection() ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -248,7 +245,7 @@
             var id_fornecedor = document.getElementById('fornecedor_id')?.value;
 
             // Montar URL com os parâmetros
-            var url = '<?= baseUrl() ?>Relatorio/getDados/' + tipoRelatorio + '/' + dataInicio;
+            var url = '<?= base_url() ?>Relatorio/getDados/' + tipoRelatorio + '/' + dataInicio;
             url += '/' + (fim || dataInicio); // Substitua 'default_value' pelo valor desejado
             url += '/' + id_fornecedor;
 
@@ -306,7 +303,7 @@
                             const doc = new jsPDF();
 
                             // Adicionar imagem
-                            const imgData = '<?= baseUrl() ?>assets/img/brasao-pmrl.png'; // Substitua com o seu próprio dado de imagem
+                            const imgData = '<?= base_url() ?>assets/img/brasao-pmrl.png'; // Substitua com o seu próprio dado de imagem
                             const imgWidth = 25; // Largura da imagem
                             const imgHeight = 20; // Altura da imagem
                             const marginX = (doc.internal.pageSize.width - imgWidth) / 2; // Centraliza horizontalmente

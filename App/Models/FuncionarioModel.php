@@ -8,8 +8,8 @@ class FuncionarioModel extends Model
 {
     protected $table = 'funcionario'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária
-    protected $returnType = 'array'; // Define o tipo de retorno
-    protected $useSoftDeletes = false; // Defina como true se você usar Soft Deletes
+    // protected $returnType = 'array'; // Define o tipo de retorno
+    // protected $useSoftDeletes = false; // Defina como true se você usar Soft Deletes
 
     protected $allowedFields = [
         'nome',
@@ -38,11 +38,11 @@ class FuncionarioModel extends Model
         ]
     ];
 
-    protected $validationMessages = [
-        // Personalize as mensagens de validação aqui, se necessário
-    ];
+    // protected $validationMessages = [
+    //     // Personalize as mensagens de validação aqui, se necessário
+    // ];
 
-    protected $skipValidation = false; // Mude para true se não quiser validação em determinadas situações
+    // protected $skipValidation = false; // Mude para true se não quiser validação em determinadas situações
 
     /**
      * Lista todos os funcionários, com base no nível de usuário
@@ -50,7 +50,7 @@ class FuncionarioModel extends Model
      * @param string $orderBy
      * @return array
      */
-    public function lista($orderBy = 'id')
+    public function getLista($orderBy = 'id')
     {
         // Consulta com base no nível do usuário
         if (session()->get('usuarioNivel') == 1) {

@@ -40,7 +40,7 @@ class Home extends BaseController
      *
      * @return void
      */
-    public function login(): string
+    public function login()
     {
         return view("usuario/login");
     }

@@ -1,8 +1,9 @@
 <?php
-    use App\Library\Formulario;
-    use App\Library\Session;
 
+    $this->extend('layout/layout_default');
 
+    $this->section('conteudo');
+    
     $nomeImagem  = "";
     $nomeUsuario = "";
 ?>
@@ -31,13 +32,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <?php foreach ($aDados['aLog'] as $value) : ?>   
+                                            <?php foreach ($aLog as $value) : ?>   
                                                 <?php
-                                                    foreach ($aDados['aUsuario'] as $usuario) {         
+                                                    foreach ($aUsuario as $usuario) {         
                                                         if ($usuario['id'] == $value['usuario']) {
                                                             $nomeUsuario = $usuario['nome'];
 
-                                                            foreach ($aDados['aFuncionario'] as $funcionario) {
+                                                            foreach ($aFuncionario as $funcionario) {
                                                                 if ($usuario['id_funcionario'] == $funcionario['id']) {
                                                                     $nomeImagem = $funcionario['imagem'];
                                                                 }
@@ -49,17 +50,17 @@
                                                     <td class="sorting_1"><?= $value['id'] ?></td>
                                                     <td><?= $value['tabela'] ?></td>
                                                     <td class="align-middle"><?= $value['acao'] ?></td>
-                                                    <td><?= Formulario::formatarDataBrasileira($value['data']) ?></td>
+                                                    <td><?= formatarDataBrasileira($value['data']) ?></td>
                                                     <td>
                                                         <div class="container">
-                                                        <?php if ((Session::get('id_funcionario')) && (Session::get('usuarioImagem'))) : ?>
-                                                            <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'uploads/funcionarios/' . $nomeImagem ?>" width="40px" height="40px">
+                                                        <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
+                                                            <img alt="image" class="rounded-circle" src="<?= base_url() . 'uploads/funcionarios/' . $nomeImagem ?>" width="40px" height="40px">
                                                         <?php else : ?>
-                                                            <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
+                                                            <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                                                         <?php endif; ?>
                                                         </div>
                                                     </td>
-                                                    <td><a href="<?= baseUrl() ?>/Log/viewLog/view/<?= $value['id'] ?>" class="btn btn-primary">Detalhes</a></td>
+                                                    <td><a href="<?= base_url() ?>/Log/viewLog/view/<?= $value['id'] ?>" class="btn btn-primary">Detalhes</a></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>
@@ -74,6 +75,6 @@
     </div>    
 </div>
 
-<?= Formulario::getDataTables("tableLog"); ?>
+<?= getDataTables("tableLog"); ?>
 
-
+<?= $this->endSection() ?>

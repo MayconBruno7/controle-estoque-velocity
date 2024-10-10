@@ -8,7 +8,7 @@
 <div class="container">
     
     <div class="container" style="margin-top: 100px;">
-        <?= Formulario::titulo('Produto', false, false) ?>
+        <?= exibeTitulo("Produto", ['acao' => $action]) ?>
     </div>
 
     <?php
@@ -17,14 +17,14 @@
             ?>
             <div class="row">
                 <div class="col-12 d-flex justify-content-start">
-                    <a href="<?= baseUrl() ?>HistoricoProdutoMovimentacao/index/<?= $this->getAcao() ?>/<?= $this->getId() ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
+                    <a href="<?= base_url() ?>HistoricoProdutoMovimentacao/index/<?= $this->getAcao() ?>/<?= $this->getId() ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
                 </div>
             </div>
         <?php
         }
     ?>
 
-    <form method="POST" action="<?= baseUrl() ?>Produto/<?= $this->getAcao() ?>">
+<?= form_open(base_url() . 'Produto/' . ($action == "delete" ? "delete" : "store")) ?>
 
         <div class="row">
 
@@ -32,6 +32,7 @@
                 <label for="nome" class="form-label">Nome</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
                 <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <?= setaMsgErrorCampo('nome', $errors) ?>
             </div>
 
             <div class="col-4">
@@ -39,6 +40,7 @@
                 <!--  verifica se a quantidade está no banco de dados e retorna essa quantidade -->
                 <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade') ?>" disabled >
                 <input type="hidden" name="quantidade" id="hidden" value="<?= setValor('quantidade') ?>" >
+                <?= setaMsgErrorCampo('quantidade', $errors) ?>
             </div>
 
             <div class="mt-3 mb-3 col-6">
@@ -52,6 +54,7 @@
                         <option value="<?= $value['id'] ?>" <?= setValor('fornecedor') == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
+                <?= setaMsgErrorCampo('fornecedor_id', $errors) ?>
             </div>
 
             <div class="col-3 mt-3">
@@ -61,6 +64,7 @@
                     <option value="1" <?= setValor('statusRegistro') == "1" ? "SELECTED": "" ?>>Ativo</option>
                     <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
                 </select>
+                <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
             </div>
 
             <div class="col-3 mt-3">
@@ -71,11 +75,13 @@
                     <option value="1" <?= setValor('condicao') == 1  ? "selected" : ""  ?>>Novo</option>
                     <option value="2" <?= setValor('condicao') == 2  ? "selected" : ""  ?>>Usado</option>
                 </select>
+                <?= setaMsgErrorCampo('condicap', $errors) ?>
             </div>
 
             <div class="col-12 mt-3">
                 <label for="descricao" class="form-label">Descrição</label>
                 <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= setValor('descricao') ?></textarea>
+                <?= setaMsgErrorCampo('descricao', $errors) ?>
             </div>
 
             <!-- se a ação for view não aparece a hora formatada no formprodutos -->
@@ -103,20 +109,21 @@
             <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
             <div class="form-group col-12 mt-5">
-                <?= Formulario::botao('voltar') ?>
                 <?php if ($this->getAcao() != "view"): ?>
                     <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                 <?php endif; ?>
+                <a href="<?= base_url() ?>/Usuario" class="btn btn-secondary">Voltar</a>
             </div>
             
         </div>
 
-    </form>
+        <?= form_close() ?>
+    <?= $this->endSection() ?>
 
 </div>
 
 
-<script src="<?= baseUrl() ?>assets/ckeditor5/ckeditor.js"></script>
+<script src="<?= base_url() ?>assets/ckeditor5/ckeditor.js"></script>
 
 <script type="text/javascript">
 

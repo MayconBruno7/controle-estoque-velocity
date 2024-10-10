@@ -26,7 +26,7 @@ class CargoModel extends Model
      * @param string $orderBy 
      * @return array
      */
-    public function lista($orderBy = 'id')
+    public function getLista($orderBy = 'id')
     {
         // Usar a classe de sessão do CodeIgniter 4
         $session = \Config\Services::session();

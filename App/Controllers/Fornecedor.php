@@ -1,24 +1,24 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class Fornecedor extends ControllerMain
+use App\Models\FornecedorModel;
+use App\Models\EstadoModel;
+use App\Models\CidadeModel;
+use CodeIgniter\Controller;
+use CodeIgniter\HTTP\RedirectResponse;
+
+class Fornecedor extends BaseController
 {
-    /**
-     * construct
-     *
-     * @param array $dados 
-     */
-    public function __construct($dados)
-    {
-        $this->auxiliarConstruct($dados);
+    protected $fornecedorModel;
 
-        // Só acessa se tiver logado
-        if (!$this->getUsuario()) {
-            return Redirect::page("Home");
+    public function __construct()
+    {
+        $this->fornecedorModel = new FornecedorModel();
+
+        // Só acessa se estiver logado
+        if (!$this->getAdministrador()) {
+            return redirect()->to(base_url('home'));
         }
     }
 
@@ -27,154 +27,153 @@ class Fornecedor extends ControllerMain
      *
      * @return void
      */
-    public function index()
+    public function index(): string
     {
-        $this->loadView("restrita/listaFornecedor", $this->model->lista("id"));
+        $data['fornecedores'] = $this->fornecedorModel->orderBy('id', 'ASC')->findAll();
+        return view('restrita/listaFornecedor', $data);
     }
 
     /**
      * form
      *
-     * @return void
+     * @param string|null $acao
+     * @param int|null $id
+     * @return string
      */
-    public function form()
+    public function form(string $acao = 'insert', int $id = null): string
     {
-        $dados = [];
+        $data = [];
 
-        if ($this->getAcao() != "insert") {
-            $dados = $this->model->getById($this->getId());
+        if ($acao !== 'insert') {
+            $data = $this->fornecedorModel->find($id);
         }
 
-        $EstadoModel = $this->loadModel("Estado");
-        $dados['aEstado'] = $EstadoModel->lista('id');
+        $estadoModel = new EstadoModel();
+        $data['aEstado'] = $estadoModel->orderBy('id', 'ASC')->findAll();
 
-        $CidadeModel = $this->loadModel("Cidade");
-        $dados['aCidade'] = $CidadeModel->lista('id');
+        $cidadeModel = new CidadeModel();
+        $data['aCidade'] = $cidadeModel->orderBy('id', 'ASC')->findAll();
 
-        return $this->loadView("restrita/formFornecedor", $dados);
+        return view('restrita/formFornecedor', $data);
     }
 
     /**
      * insert
      *
-     * @return void
+     * @return RedirectResponse
      */
-    public function insert()
+    public function insert(): RedirectResponse
     {
-        $post = $this->getPost();
+        $post = $this->request->getPost();
 
-        if (Validator::make($post, $this->model->validationRules)) {
-            return Redirect::page("Fornecedor/form/insert");     // error
-        } else {
-           
-            if ($this->model->insert([
-                "nome" => $post['nome'],
-                "cnpj" => preg_replace("/[^0-9]/", "", $post['cnpj']),
-                "endereco" => $post['endereco'],
-                "cidade" => $post['cidade'],
-                "estado" => $post['estado'],
-                "bairro" => $post['bairro'],
-                "numero" => $post['numero'],
-                "telefone" => preg_replace("/[^0-9]/", "", $post['telefone']),
-                "statusRegistro" => $post['statusRegistro']
-            ])) {
-                Session::set("msgSuccess", "Fornecedor adicionada com sucesso.");
-            } else {
-                Session::set("msgError", "Falha tentar inserir uma nova Fornecedor.");
-            }
-    
-            Redirect::page("Fornecedor");
+        if (!$this->validate($this->fornecedorModel->getValidationRules())) {
+            return redirect()->to(base_url('fornecedor/form/insert'))->withInput();
         }
+
+        $data = [
+            'nome' => $post['nome'],
+            'cnpj' => preg_replace('/[^0-9]/', '', $post['cnpj']),
+            'endereco' => $post['endereco'],
+            'cidade' => $post['cidade'],
+            'estado' => $post['estado'],
+            'bairro' => $post['bairro'],
+            'numero' => $post['numero'],
+            'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
+            'statusRegistro' => $post['statusRegistro']
+        ];
+
+        if ($this->fornecedorModel->insert($data)) {
+            session()->setFlashdata('msgSuccess', 'Fornecedor adicionada com sucesso.');
+        } else {
+            session()->setFlashdata('msgError', 'Falha ao tentar inserir uma nova Fornecedor.');
+        }
+
+        return redirect()->to(base_url('fornecedor'));
     }
 
     /**
      * update
      *
-     * @return void
+     * @return RedirectResponse
      */
-    public function update()
+    public function update(): RedirectResponse
     {
-        $post = $this->getPost();
+        $post = $this->request->getPost();
 
-        if (Validator::make($post, $this->model->validationRules)) {
-            // error
-            return Redirect::page("Fornecedor/form/update/" . $post['id']);
-        } else {
-
-            if ($this->model->update(
-                [
-                    "id" => $post['id']
-                ], 
-                [
-                    "nome" => $post['nome'],
-                    "cnpj" => preg_replace("/[^0-9]/", "", $post['cnpj']),
-                    "endereco" => $post['endereco'],
-                    "cidade" => $post['cidade'],
-                    "estado" => $post['estado'],
-                    "bairro" => $post['bairro'],
-                    "numero" => $post['numero'],
-                    "telefone" => preg_replace("/[^0-9]/", "", $post['telefone']),
-                    "statusRegistro" => $post['statusRegistro']
-                ]
-            )) {
-                Session::set("msgSuccess", "Fornecedor alterada com sucesso.");
-            } else {
-                Session::set("msgError", "Falha tentar alterar a Fornecedor.");
-            }
-
-            return Redirect::page("Fornecedor");
+        if (!$this->validate($this->fornecedorModel->getValidationRules())) {
+            return redirect()->to(base_url('fornecedor/form/update/' . $post['id']))->withInput();
         }
+
+        $data = [
+            'nome' => $post['nome'],
+            'cnpj' => preg_replace('/[^0-9]/', '', $post['cnpj']),
+            'endereco' => $post['endereco'],
+            'cidade' => $post['cidade'],
+            'estado' => $post['estado'],
+            'bairro' => $post['bairro'],
+            'numero' => $post['numero'],
+            'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
+            'statusRegistro' => $post['statusRegistro']
+        ];
+
+        if ($this->fornecedorModel->update($post['id'], $data)) {
+            session()->setFlashdata('msgSuccess', 'Fornecedor alterada com sucesso.');
+        } else {
+            session()->setFlashdata('msgError', 'Falha ao tentar alterar a Fornecedor.');
+        }
+
+        return redirect()->to(base_url('fornecedor'));
     }
-    
+
     /**
      * delete
      *
-     * @return void
+     * @return RedirectResponse
      */
-    public function delete()
+    public function delete(): RedirectResponse
     {
-        if ($this->model->delete(["id" => $this->getPost('id')])) {
-            Session::set("msgSuccess", "Fornecedor excluída com sucesso.");
+        $id = $this->request->getPost('id');
+
+        if ($this->fornecedorModel->delete($id)) {
+            session()->setFlashdata('msgSuccess', 'Fornecedor excluída com sucesso.');
         } else {
-            Session::set("msgError", "Falha tentar excluir a Fornecedor.");
+            session()->setFlashdata('msgError', 'Falha ao tentar excluir a Fornecedor.');
         }
 
-        Redirect::page("Fornecedor");
+        return redirect()->to(base_url('fornecedor'));
     }
 
     /**
      * requireAPI
      *
+     * @param string|null $cnpj
      * @return void
      */
-    public function requireAPI()
+    public function requireAPI(string $cnpj = null)
     {
-        $cnpj = $this->getOutrosParametros(2);
-
         if ($cnpj) {
-            $data = $this->model->requireAPI($cnpj);
-            header('Content-Type: application/json');
-            echo json_encode($data);
+            $data = $this->fornecedorModel->requireAPI($cnpj);
+            return $this->response->setJSON($data);
         } else {
-            echo json_encode(['error' => 'Parâmetro CNPJ não fornecido na requisição.']);
+            return $this->response->setJSON(['error' => 'Parâmetro CNPJ não fornecido na requisição.']);
         }
     }
 
     /**
      * getCidadeComboBox
      *
-     * @return string
-    */
-    public function getCidadeComboBox()
+     * @param int|null $estadoId
+     * @return void
+     */
+    public function getCidadeComboBox(int $estadoId = null)
     {
-        $dados = $this->model->getCidadeComboBox($this->getId());
+        $cidadeModel = new CidadeModel();
+        $dados = $cidadeModel->where('estado_id', $estadoId)->findAll();
 
-        if (count($dados) == 0) {
-            $dados[] = [
-                "id" => ""
-            ];
+        if (empty($dados)) {
+            $dados[] = ['id' => ''];
         }
 
-        echo json_encode($dados);
+        return $this->response->setJSON($dados);
     }
 }

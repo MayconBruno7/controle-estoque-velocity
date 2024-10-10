@@ -1,50 +1,50 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
+namespace App\Controllers;
 
-use App\Library\Formulario;
+use App\Models\FornecedorModel;
+use App\Models\RelatorioModel;
+use CodeIgniter\Controller;
 
-class Relatorio extends ControllerMain
+class Relatorio extends BaseController
 {
-    public function __construct($dados)
+    protected $fornecedorModel;
+    protected $model;
+
+    public function __construct()
     {
-        $this->auxiliarConstruct($dados);
+        // Instancia o modelo de fornecedor
+        $this->fornecedorModel = new FornecedorModel();
+        $this->model = new RelatorioModel();
 
         // Só acessa se tiver logado
         if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
+            return redirect()->to('/home');
         }
     }
 
     public function index()
     {
-        $this->loadView("restrita/formRelatorio");
+        return view('restrita/formRelatorio');
     }
 
     public function relatorioMovimentacoes()
     {
-        $this->loadView("restrita/formRelatorio");
+        return view('restrita/formRelatorio');
     }
 
     public function relatorioItensPorFornecedor()
     {
-
-        $dados = [];
-
-        $FornecedorModel = $this->loadModel('Fornecedor');
-        $dados = $FornecedorModel->lista('id');
-
-        return $this->loadView("restrita/formRelatorio", $dados);
+        $dados = $this->fornecedorModel->lista('id');
+        return view('restrita/formRelatorio', ['fornecedores' => $dados]);
     }
 
     public function getDados()
     {
-
-        $tipo = $this->getOutrosParametros(2);
-        $dataInicio = $this->getOutrosParametros(3);
-        $dataFinal = $this->getOutrosParametros(4);
-        $id_fornecedor = (int)$this->getOutrosParametros(5);
+        $tipo = $this->request->getVar('tipo');
+        $dataInicio = $this->request->getVar('dataInicio');
+        $dataFinal = $this->request->getVar('dataFinal');
+        $id_fornecedor = (int) $this->request->getVar('id_fornecedor');
 
         $dados = [];
 
@@ -65,7 +65,6 @@ class Relatorio extends ControllerMain
                 default:
                     $dados = [];
             }
-
         } else {
             switch ($tipo) {
                 case 'dia':
@@ -84,14 +83,13 @@ class Relatorio extends ControllerMain
                     $dados = [];
             }
         }
-        
-        header('Content-Type: application/json');
-        echo json_encode($this->formatarDadosParaGrafico($dados));
+
+        return $this->response->setContentType('application/json')
+                              ->setBody(json_encode($this->formatarDadosParaGrafico($dados)));
     }
 
     private function formatarDadosParaGrafico($dados)
     {
-
         $id_movimentacao = [];
         $entradas = [];
         $saidas = [];
@@ -100,11 +98,10 @@ class Relatorio extends ControllerMain
         $valores = [];
 
         foreach ($dados as $dado) {
-
-            $labels[] = Formulario::formatarDataBrasileira($dado['data_pedido']);
+            $labels[] = formatarDataBrasileira($dado['data_pedido']);
             $descricoes[] = $dado['descricao'];
             $valores[] = number_format($dado['valor'], 2, ",", ".");
-            $id_movimentacao[] = isset($dado['id_movimentacoes']) ? $dado['id_movimentacoes'] : $dado['id'];
+            $id_movimentacao[] = $dado['id_movimentacoes'] ?? $dado['id'];
             
             if ($dado['tipo'] == 1) { // Entrada
                 $entradas[] = $dado['quantidade'];
@@ -125,4 +122,3 @@ class Relatorio extends ControllerMain
         ];
     }
 }
-?>

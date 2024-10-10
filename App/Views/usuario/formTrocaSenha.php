@@ -1,11 +1,8 @@
-<?php
+<?= $this->extend('layout/layout_default') ?>
 
-use App\Library\Formulario;
-use App\Library\Session;
+<?= $this->section('conteudo') ?>
 
-?>
-
-<script type="text/javascript" src="<?= baseUrl(); ?>assets/js/usuario.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/js/usuario.js"></script>
 
 <section>
     <div class="container">
@@ -28,12 +25,12 @@ use App\Library\Session;
                 <div class="card-body">
 
                     <form method="POST" id="recuperaSenhaform" class="form-horizontal" role="form" 
-                        action="<?= baseUrl() ?>Usuario/atualizaTrocaSenha">
+                        action="<?= base_url() ?>Usuario/atualizaTrocaSenha">
 
-                        <input type="hidden" name="id" id="id" value="<?= Session::get('usuarioId') ?>">
+                        <input type="hidden" name="id" id="id" value="<?= session()->get('usuarioId') ?>">
                         
                         <div style="margin-bottom: 25px" class="input-group">
-                            <label class="ml-1">Usuário: <b><?= Session::get('usuarioLogin') ?></b></label>                            
+                            <label class="ml-1">Usuário: <b><?= session()->get('usuarioLogin') ?></b></label>                            
                         </div>
 
                         <div style="margin-bottom: 25px" class="control-group">
@@ -70,20 +67,20 @@ use App\Library\Session;
                             <div class="col-xs-10 controls mt-2">
                                 <?php 
 
-                                    if (!empty(Session::get("msgError"))) {
+                                    if (!empty(session()->get("msgError"))) {
                                         ?>
                                         <div class="alert alert-danger" role="alert">
                                             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                            <?= Session::getDestroy("msgError") ?>
+                                            <?= session()->destroy("msgError") ?>
                                         </div>     
                                         <?php
                                     }
 
-                                    if (!empty(Session::get("msgSuccess"))) {
+                                    if (!empty(session()->get("msgSuccess"))) {
                                         ?>                                    
                                         <div class="alert alert-success" role="alert">
                                             <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span>
-                                            <?= Session::getDestroy("msgSuccess") ?>
+                                            <?= session()->destroy("msgSuccess") ?>
                                         </div>      
                                         <?php
                                     }

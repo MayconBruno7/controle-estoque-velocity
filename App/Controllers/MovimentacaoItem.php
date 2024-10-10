@@ -1,36 +1,44 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class MovimentacaoItem extends ControllerMain
+use App\Models\MovimentacaoItemModel;
+use App\Models\SetorModel;
+use App\Models\FornecedorModel;
+use CodeIgniter\Controller;
+
+class MovimentacaoItem extends BaseController
 {
+    protected $movimentacaoItemModel;
+    protected $setorModel;
+    protected $fornecedorModel;
+
+    public function __construct()
+    {
+        // Carregando os modelos
+        $this->movimentacaoItemModel = new MovimentacaoItemModel();
+        $this->setorModel = new SetorModel();
+        $this->fornecedorModel = new FornecedorModel();
+    }
 
     /**
      * form
      *
      * @return void
      */
-    public function form()
+    public function form($id = null)
     {
         $dados = [];
 
-        if ($this->getAcao() != "insert") {
-            $dados = $this->model->getById($this->getId());
+        if ($id !== null) {
+            $dados = $this->movimentacaoItemModel->find($id);
         }
 
-        $MovimentacaoItemModel = $this->loadModel("MovimentacaoItem");
-        $dados['aItemMovimentacao'] = $MovimentacaoItemModel->listaProdutos($this->getId());
+        $dados['aItemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
+        $dados['aSetorMovimentacao'] = $this->setorModel->findAll();
+        $dados['aFornecedorMovimentacao'] = $this->fornecedorModel->findAll();
 
-        $SetorModel = $this->loadModel("Setor");
-        $dados['aSetorMovimentacao'] = $SetorModel->lista('id');
-
-        $FornecedorModel = $this->loadModel("Fornecedor");
-        $dados['aFornecedorMovimentacao'] = $FornecedorModel->lista('id');
-
-        return $this->loadView("restrita/formMovimentacao", $dados);
+        return view("restrita/formMovimentacao", $dados);
     }
 
     /**
@@ -40,30 +48,26 @@ class MovimentacaoItem extends ControllerMain
      */
     public function update()
     {
-        $post = $this->getPost();
+        $request = \Config\Services::request();
+        $post = $request->getPost();
 
-        if (Validator::make($post, $this->model->validationRules)) {
-            // error
-            return Redirect::page("Movimentacao/form/update/" . $post['id']);
+        if (!$this->validate($this->movimentacaoItemModel->validationRules)) {
+            // Redireciona com erro de validação
+            return redirect()->to("Movimentacao/form/update/{$post['id']}")->withInput()->with('errors', $this->validator->getErrors());
         } else {
-
-            if ($this->model->update(
-                [
-                    "id" => $post['id']
-                ], 
-                [
-                    "nome" => $post['nome'],
-                    "statusRegistro" => $post['statusRegistro']
-                ]
-            )) {
-                Session::set("msgSuccess", "Movimentacao alterada com sucesso.");
+            if ($this->movimentacaoItemModel->update($post['id'], [
+                "nome" => $post['nome'],
+                "statusRegistro" => $post['statusRegistro']
+            ])) {
+                session()->setFlashdata('msgSuccess', 'Movimentacao alterada com sucesso.');
             } else {
-                Session::set("msgError", "Falha tentar alterar a Movimentacao.");
+                session()->setFlashdata('msgError', 'Falha ao tentar alterar a Movimentacao.');
             }
 
-            return Redirect::page("Movimentacao");
+            return redirect()->to("Movimentacao");
         }
     }
+
     /**
      * delete
      *
@@ -71,12 +75,14 @@ class MovimentacaoItem extends ControllerMain
      */
     public function delete()
     {
-        if ($this->model->delete(["id" => $this->getPost('id')])) {
-            Session::set("msgSuccess", "Movimentacao excluída com sucesso.");
+        $request = \Config\Services::request();
+
+        if ($this->movimentacaoItemModel->delete($request->getPost('id'))) {
+            session()->setFlashdata('msgSuccess', 'Movimentacao excluída com sucesso.');
         } else {
-            Session::set("msgError", "Falha tentar excluir a Movimentacao.");
+            session()->setFlashdata('msgError', 'Falha ao tentar excluir a Movimentacao.');
         }
 
-        Redirect::page("Movimentacao");
+        return redirect()->to("Movimentacao");
     }
 }

@@ -22,14 +22,21 @@ class SetorModel extends Model
      * @param string $orderBy
      * @return array
      */
-    public function lista($orderBy = 'id')
+    public function getLista($orderBy = 'id')
     {
-        $builder = $this->db->table($this->table);
+        // Define o alias da tabela corretamente
+        $builder = $this->db->table($this->table . ' as s');
         $builder->select('s.*, f.nome as nomeResponsavel');
         $builder->join('funcionario as f', 's.responsavel = f.id', 'left');
 
+        // Verifica o nível do usuário na sessão
         if (session()->get('usuarioNivel') != 1) {
             $builder->where('s.statusRegistro', 1);
+        }
+
+        // Valida o campo de ordenação
+        if (!in_array($orderBy, ['id', 'nomeResponsavel', 'outra_coluna_valida'])) {
+            $orderBy = 'id'; // ou alguma coluna padrão
         }
 
         $builder->orderBy($orderBy);

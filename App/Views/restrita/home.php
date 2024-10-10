@@ -20,7 +20,7 @@ use App\Library\Session;
                         <i class="fas fa-boxes fa-3x mb-3"></i>
                         <h5 class="card-title">Gerenciar Produtos</h5>
                         <p class="card-text">Adicione, edite e visualize os produtos do seu estoque.</p>
-                        <a href="<?= baseUrl() ?>Produto" class="btn btn-primary">Acessar</a>
+                        <a href="<?= base_url() ?>Produto" class="btn btn-primary">Acessar</a>
                     </div>
                 </div>
             </div>
@@ -30,7 +30,7 @@ use App\Library\Session;
                         <i class="fas fa-chart-line fa-3x mb-3"></i>
                         <h5 class="card-title">Movimentações</h5>
                         <p class="card-text">Adicione movimentações de entrada e saida ao seu estoque.</p>
-                        <a href="<?= baseUrl() ?>Movimentacao" class="btn btn-primary">Acessar</a>
+                        <a href="<?= base_url() ?>Movimentacao" class="btn btn-primary">Acessar</a>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@ use App\Library\Session;
                         <i class="fas fa-cogs fa-3x mb-3"></i>
                         <h5 class="card-title">Suporte técnico</h5>
                         <p class="card-text">Envie suas dúvidas e sugestões ao suporte técnico.</p>
-                        <a href="<?= baseUrl() ?>FaleConosco/formularioEmail" class="btn btn-primary">Acessar</a>
+                        <a href="<?= base_url() ?>FaleConosco/formularioEmail" class="btn btn-primary">Acessar</a>
                     </div>
                 </div>
             </div>

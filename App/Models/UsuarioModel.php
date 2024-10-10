@@ -62,22 +62,28 @@ class UsuarioModel extends Model
      */
     public function criaSuperUser()
     {
+     
         $qtd = $this->countAllResults();
-
+      
         if ($qtd == 0) {
             // Cria o super usuário
             $data = [
                 'nome' => 'administrador',
                 'email' => 'administrador@gmail.com',
                 'senha' => password_hash('admin', PASSWORD_DEFAULT),
-                'nivel' => 1
+                'nivel' => 1,
+                'statusRegistro' => 1
             ];
 
             if ($this->insert($data)) {
-                session()->setFlashdata('msgSuccess', 'Super usuário criado com sucesso.');
+
+                session()->set('msgSuccess', 'Super usuário criado com sucesso.');
+                var_dump($qtd, $data);
+                exit('Tamo ai');
                 return 2; // Super usuário criado
             } else {
-                session()->setFlashdata('msgError', 'Falha na inclusão do super usuário, não é possível prosseguir.');
+          
+                session()->set('msgError', 'Falha na inclusão do super usuário, não é possível prosseguir.');
                 return 1; // Erro ao criar super usuário
             }
         }

@@ -33,7 +33,7 @@
 
             <div class="author-box-center text-center">
                 <div class="mb-5">
-                    <?php if ((Session::get('id_funcionario')) && (Session::get('usuarioImagem'))) : ?>
+                    <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
                         <img src="<?= baseUrl() ?>uploads/funcionarios/<?= $nomeImagem ?>" alt="Imagem do Funcionário" class="rounded-circle" width="70" height="70">
                     <?php else : ?>
                         <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
@@ -61,7 +61,7 @@
             <div class="form-group row">
                 <label for="data" class="col-sm-3 col-form-label">Data: </label>
                 <div class="col-sm-9">
-                    <input type="text" id="data" class="form-control" value="<?= Formulario::formatarDataBrasileira($dados['data']) ?>" disabled>
+                    <input type="text" id="data" class="form-control" value="<?= formatarDataBrasileira($dados['data']) ?>" disabled>
                 </div>
             </div>
 

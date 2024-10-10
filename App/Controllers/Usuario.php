@@ -64,8 +64,7 @@ class Usuario extends BaseController
         $data['action'] = $action;
         $data['errors'] = [];
 
-      
-        $data['aFuncionario'] =  $this->FuncionarioModel->Lista();
+        $data['aFuncionario'] =  $this->FuncionarioModel->getLista();
 
         return view('usuario/formUsuario', $data);
     }
@@ -79,8 +78,7 @@ class Usuario extends BaseController
     {
 
         $post = $this->request->getPost();
-        // var_dump($post);
-        // exit;
+
         if ($this->model->save([
             'id'       => ($post['id'] == "" ? null : $post['id']),
             "nivel" => $post['nivel'],

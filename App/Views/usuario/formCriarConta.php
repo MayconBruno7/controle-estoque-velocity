@@ -1,15 +1,13 @@
-<?php
+<?= $this->extend('layout/layout_default') ?>
 
-use App\Library\Formulario;
+<?= $this->section('conteudo') ?>
 
-?>
-
-<script type="text/javascript" src="<?= baseUrl(); ?>assets/js/usuario.js"></script>
+<script type="text/javascript" src="<?= base_url(); ?>assets/js/usuario.js"></script>
 
 <main class="container">
 
     <div style="margin-top: 100px; margin-bottom: 50px;">
-        <?= Formulario::titulo("Criar Conta", false, false) ?>
+        <?= exibeTitulo('Criar conta'); ?>
     </div>
 
     <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
@@ -18,7 +16,7 @@ use App\Library\Formulario;
             <h4>Cadastrar-se</h4>
             </div>
             <div class="card-body">
-            <form method="POST" action="<?= baseUrl() ?>Login/novaContaVisitante">
+            <form method="POST" action="<?= base_url() ?>Login/novaContaVisitante">
                 <div class="row">
                     <div class="form-group col-12">
                         <label for="nome">Nome</label>
@@ -64,9 +62,10 @@ use App\Library\Formulario;
             </form>
             </div>
             <div class="mb-4 text-muted text-center">
-            Já tem conta? <a href="<?= baseUrl() ?>Login/signIn">Login</a>
+            Já tem conta? <a href="<?= base_url() ?>Login/signIn">Login</a>
             </div>
         </div>
         </div>
 
 </main>
+<?= $this->endSection() ?>

@@ -1,6 +1,8 @@
 <?php
-    use App\Library\Formulario;
-    use App\Library\Session;
+
+    $this->extend('layout/layout_default');  
+
+    $this->section('conteudo');
 
     $nomeCargo = 'Nenhum cargo encontrado'; // Valor padrão
 
@@ -23,8 +25,8 @@
             <div class="card author-box">
                 <div class="card-body">
                     <div class="author-box-center">
-                        <?php if ((Session::get('id_funcionario')) && (Session::get('usuarioImagem'))) : ?>
-                            <img alt="image" src="<?= baseUrl() ?>uploads/funcionarios/<?= Session::get('usuarioImagem') ?>" width="200px" height="200px" class="rounded-circle">
+                        <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
+                            <img alt="image" src="<?= baseUrl() ?>uploads/funcionarios/<?= session()->get('usuarioImagem') ?>" width="200px" height="200px" class="rounded-circle">
                         <?php else : ?>
                             <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                         <?php endif; ?>
@@ -50,7 +52,7 @@
                                 <i class="far fa-address-card"> CPF</i>
                             </span>
                             <span class="float-right text-muted">
-                                <?= Formulario::formatarCPF($dados['aFuncionario'][0]['cpf']) ?>
+                                <?= formatarCPF($dados['aFuncionario'][0]['cpf']) ?>
                             </span>
                         </p>
                         <p class="clearfix">
@@ -58,7 +60,7 @@
                                 <i class="fas fa-phone-volume"> Telefone</i>
                             </span>
                             <span class="float-right text-muted">
-                                <?= Formulario::formatarTelefone($dados['aFuncionario'][0]['telefone']) ?>
+                                <?= formatarTelefone($dados['aFuncionario'][0]['telefone']) ?>
                             </span>
                         </p>
                         <p class="clearfix">
@@ -83,3 +85,4 @@
         </div>
     </div>
 </div>
+<?= $this->endSection() ?>

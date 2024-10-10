@@ -1,6 +1,6 @@
-<?php
-    use App\Library\Formulario;
-?>
+<?= $this->extend('layout/layout_default') ?>
+
+<?= $this->section('conteudo') ?>
 
 <div class="row mt-5">
     <div class="col-12 mt-5">
@@ -11,16 +11,10 @@
 <main class="container mt-5 d-flex justify-content-center align-items-center">
 
     <div class="row">
-        <div class="col-12">
-            <?= Formulario::exibeMsgError() ?>
-        </div>
-
-        <div class="col-12 mt-3">
-            <?= Formulario::exibeMsgSucesso() ?>
-        </div>
+        <!-- mensagens de sucesso ou erro  -->
     </div>
 
-    <form class="g-3" action="<?= baseUrl() ?>FaleConosco/enviarEmail" method="POST">
+    <form class="g-3" action="<?= base_url() ?>FaleConosco/enviarEmail" method="POST">
 
         <div class="row">
 
@@ -61,8 +55,9 @@
 
     </form>
 </main>
+<?= $this->endSection() ?>
 
-<script src="<?= baseUrl() ?>assets/ckeditor5/ckeditor.js"></script>
+<script src="<?= base_url() ?>assets/ckeditor5/ckeditor.js"></script>
 
 <script>
     ClassicEditor

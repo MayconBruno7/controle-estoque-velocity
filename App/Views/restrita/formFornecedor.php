@@ -1,7 +1,5 @@
 <?php
 
-    use App\Library\Formulario;
-
     $estadoSelecionado = setValor('estado');
     $cidadeSelecionada = setValor('cidade');
 
@@ -9,14 +7,14 @@
 
 <div class="container">
 
-<a href="<?= baseUrl() ?>Fornecedor/requireAPI/">teste</a>
+<a href="<?= base_url() ?>Fornecedor/requireAPI/">teste</a>
     
         
     <div class="container" style="margin-top: 100px;">
-        <?= Formulario::titulo('Fornecedor', false, false) ?>
+        <?= exibeTitulo("Fornecedor", ['acao' => $action]) ?>
     </div>
 
-    <form method="POST" action="<?= baseUrl() ?>Fornecedor/<?= $this->getAcao() ?>">
+    <?= form_open(base_url() . 'Fornecedor/' . ($action == "delete" ? "delete" : "store")) ?>
 
         <div class="row">
 
@@ -24,8 +22,9 @@
                 <label for="cnpj" class="form-label">CNPJ</label>
                 <input type="text" class="form-control" name="cnpj" id="cnpj" 
                     maxlength="18" oninput="formatarCNPJ(this)" placeholder="Informe o cnpj"
-                    value="<?= Formulario::formatarCNPJInput(setValor('cnpj')) ?>"
+                    value="<?= formatarCNPJInput(setValor('cnpj')) ?>"
                     autofocus <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('cnpj', $errors) ?>
             </div>
 
             <div class="mb-3 col-4">
@@ -34,6 +33,7 @@
                     maxlength="50" placeholder="Informe nome do fornecedor"
                     value="<?= setValor('nome') ?>"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('nome', $errors) ?>
             </div>
 
             <div class="mb-3 col-4">
@@ -43,6 +43,7 @@
                     <option value="1" <?= setValor('statusRegistro') == "1" ? "SELECTED": "" ?>>Ativo</option>
                     <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
                 </select>
+                <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
             </div>
 
             <div class="col-6 mb-3">
@@ -53,6 +54,7 @@
                         <option value="<?= $value['id'] ?>" <?= $estadoSelecionado == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
+                <?= setaMsgErrorCampo('estado', $errors) ?>
             </div>
 
             <div class="col-6 mb-3">
@@ -68,6 +70,7 @@
                     <?php endforeach; ?>
                     <?php endif; ?>
                 </select>
+                <?= setaMsgErrorCampo('cidade', $errors) ?>
             </div>
 
             <div class="mb-3 col-5">
@@ -76,6 +79,7 @@
                     maxlength="50" placeholder="Informe o bairro"
                     value="<?= setValor('bairro') ?>"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('bairro', $errors) ?>
             </div>
 
             <div class="mb-3 col-3">
@@ -84,6 +88,7 @@
                     maxlength="50" placeholder="Informe o endereco"
                     value="<?= setValor('endereco') ?>"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('endereco', $errors) ?>
             </div>
 
             <div class="mb-3 col-2">
@@ -92,24 +97,27 @@
                     maxlength="50" placeholder="Informe o numero"
                     value="<?= setValor('numero') ?>"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('numero', $errors) ?>
             </div>
 
             <div class="mb-3 col-2">
                 <label for="telefone" class="form-label">Telefone</label>
                 <input type="text" class="form-control" name="telefone" id="telefone" 
                     maxlength="50" placeholder="Informe o telefone"
-                    value="<?= Formulario::formatarTelefone(setValor('telefone')) ?>"
+                    value="<?= formatarTelefone(setValor('telefone')) ?>"
                     oninput="formatarTelefone(this)"
                     <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                    <?= setaMsgErrorCampo('telefone', $errors) ?>
             </div>
 
             <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
 
             <div class="form-group col-12 mt-5">
-                <?= Formulario::botao('voltar') ?>
                 <?php if ($this->getAcao() != "view"): ?>
                     <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                 <?php endif; ?>
+                <a href="<?= base_url() ?>/Usuario" class="btn btn-secondary">Voltar</a>
+
             </div>
         </div>
 
@@ -194,7 +202,7 @@
         let cnpjParaAPI = campoCNPJ.value.replace(/\D/g, '');
 
         if (cnpjParaAPI.length === 14) {
-            fetch('<?= baseUrl() ?>Fornecedor/requireAPI/' + cnpjParaAPI)
+            fetch('<?= base_url() ?>Fornecedor/requireAPI/' + cnpjParaAPI)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {

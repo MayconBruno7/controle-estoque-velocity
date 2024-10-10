@@ -1,24 +1,27 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class Log extends ControllerMain
+use App\Models\FuncionarioModel;
+use App\Models\UsuarioModel;
+use App\Models\LogModel;
+use CodeIgniter\Controller;
+
+class Log extends BaseController
 {
-    /**
-     * construct
-     *
-     * @param array $dados  
-     */
-    public function __construct($dados)
-    {
-        $this->auxiliarConstruct($dados);
+    protected $funcionarioModel;
+    protected $usuarioModel;
+    protected $logModel;
 
-        // Somente pode ser acessado por usuários adminsitradores
+    public function __construct()
+    {
+        $this->funcionarioModel = new FuncionarioModel();
+        $this->usuarioModel = new UsuarioModel();
+        $this->logModel = new LogModel();
+
+        // Somente pode ser acessado por usuários administradores
         if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
+            return redirect()->to(base_url('home'));
         }
     }
 
@@ -29,40 +32,33 @@ class Log extends ControllerMain
      */
     public function index()
     {
-        $dados = [];
+        $dados = [
+            'aFuncionario' => $this->funcionarioModel->findAll(),
+            'aUsuario' => $this->usuarioModel->findAll(),
+            'aLog' => $this->logModel->findAll()
+        ];
 
-        $FuncionarioModel = $this->loadModel('Funcionario');
-        $dados['aFuncionario'] = $FuncionarioModel->lista('id');
-
-        $UsuarioModel = $this->loadModel('Usuario');
-        $dados['aUsuario'] = $UsuarioModel->lista('id');
-
-        $dados['aLog'] = $this->model->lista("id");
-
-        $this->loadView("restrita/log", $dados);
+        return view('restrita/log', $dados);
     }
 
     /**
      * viewLog
      *
+     * @param int|null $logId
      * @return void
      */
-    public function viewLog()
+    public function viewLog(int $logId = null)
     {
-        $dados = [];
-    
-        $FuncionarioModel = $this->loadModel('Funcionario');
-        $dados['aFuncionario'] = $FuncionarioModel->lista('id');
-    
-        $UsuarioModel = $this->loadModel('Usuario');
-        $dados['aUsuario'] = $UsuarioModel->lista('id');
-    
-        if ($this->getAcao() != "new") {
-            $registro = $this->model->getById($this->getId());
-            // Mescla os dados de $registro com os dados existentes em $dados
+        $dados = [
+            'aFuncionario' => $this->funcionarioModel->findAll(),
+            'aUsuario' => $this->usuarioModel->findAll(),
+        ];
+
+        if ($logId !== null) {
+            $registro = $this->logModel->find($logId);
             $dados = array_merge($dados, $registro);
         }
-    
-        return $this->loadView("restrita/viewLog", $dados);
+
+        return view('restrita/view_log', $dados);
     }
 }

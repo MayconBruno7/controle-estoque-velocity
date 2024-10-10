@@ -30,24 +30,26 @@ class Login extends BaseController
 
         // Criação de super usuário
         $superUser = $this->usuarioModel->criaSuperUser();
+
         if ($superUser > 0) {
-            return redirect()->to(base_url('home/login'))->with('msgError', 'Falha na criação do super usuário');
+            return redirect()->to(base_url('Home/login'))->with('msgError', 'Falha na criação do super usuário');
         }
 
         // Buscar usuário no banco de dados
         $usuario = $this->usuarioModel->getUserEmail($post['email']);
 
         if ($usuario) {
+
             // Validar a senha
             if (!password_verify(trim($post["senha"]), $usuario['senha'])) {
-                return redirect()->to(base_url('home/login'))->with('msgError', 'Usuário ou senha inválidos.');
-            }
-
+                return redirect()->to(base_url('Home/login'))->with('msgError', 'Usuário ou senha inválidos.');
+            } 
+        
             // Validar status do usuário
             if ($usuario['statusRegistro'] == 2) {
-                return redirect()->to(base_url('home/login'))->with('msgError', 'Usuário inativo.');
-            }
-
+                return redirect()->to(base_url('Home/login'))->with('msgError', 'Usuário inativo.');
+            }   
+       
             // Definir sessão do usuário logado
             session()->set([
                 'usuarioId'    => $usuario['id'],
@@ -57,8 +59,6 @@ class Login extends BaseController
                 'id_funcionario' => $usuario['id_funcionario'],
             ]);
 
-            // Recuperar imagem do funcionário
-            
             // Recuperar imagem do funcionário
             $funcionario = $this->funcionarioModel->recuperaFuncionario($usuario['id_funcionario']);
 
@@ -81,6 +81,9 @@ class Login extends BaseController
                 setcookie('password', $post["senha"], time() + (86400 * 30), "/");
             }
 
+            // Definir o @current_user no MySQL
+            $this->setCurrentUser($usuario['id']);
+
             $redirectUrl = '';
 
             if (session()->get('usuarioNivel') == 1) {
@@ -95,6 +98,31 @@ class Login extends BaseController
         }
     }
 
+    private function setCurrentUser($userId)
+    {
+        // Conectar ao banco de dados
+        $db = db_connect();
+    
+        // Definir a variável de sessão @current_user no MySQL
+        $db->query("SET @current_user = ?", [$userId]);
+    
+        // Verificar se foi definida corretamente
+        $result = $db->query("SELECT @current_user")->getRowArray();
+
+        // var_dump($result);
+        // exit('tamo ai');
+        
+        if ($result) {
+            session()->set(['@current_user'    => $userId]);
+            log_message('info', 'Usuário atual definido como: ' . $result['@current_user']);
+        } else {
+            log_message('error', 'Erro ao definir a variável @current_user');
+        }
+    
+        // Fechar a conexão após o uso
+        $db->close();
+    }
+    
     public function signOut(): RedirectResponse
     {
         session()->destroy();
@@ -127,7 +155,7 @@ class Login extends BaseController
         //     $usuarioRecuperaSenhaModel->desativaChaveAntigas($usuario['id']);
         //     $usuarioRecuperaSenhaModel->insert(['usuario_id' => $usuario['id'], 'chave' => $chave, 'created_at' => $created_at]);
 
-        //     return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Link de recuperação enviado!');
+        //     return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Link de recuperação enviado!');
         // }
 
         return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Falha ao enviar o e-mail.');
@@ -164,7 +192,7 @@ class Login extends BaseController
         if ($usuario) {
             $usuarioRecuperaSenhaModel->update($post['usuariorecuperasenha_id'], ['statusRegistro' => 2]);
             $this->usuarioModel->update($usuario['id'], ['senha' => password_hash($post['NovaSenha'], PASSWORD_DEFAULT)]);
-            return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Senha alterada com sucesso!');
+            return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Senha alterada com sucesso!');
         }
 
         return redirect()->back()->with('msgError', 'Falha ao atualizar senha.');
@@ -175,14 +203,14 @@ class Login extends BaseController
         $post = $this->request->getPost();
 
         if (!$this->validate($this->usuarioModel->validationRules)) {
-            return redirect()->to(base_url('home/criarConta'))->with('msgError', 'Dados inválidos.');
+            return redirect()->to(base_url('Home/criarConta'))->with('msgError', 'Dados inválidos.');
         }
 
         $post['senha'] = password_hash($post['senha'], PASSWORD_DEFAULT);
         if ($this->usuarioModel->insert($post)) {
-            return redirect()->to(base_url('home/login'))->with('msgSuccess', 'Usuário criado com sucesso!');
+            return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Usuário criado com sucesso!');
         }
 
-        return redirect()->to(base_url('home/criarConta'))->with('msgError', 'Falha ao criar usuário.');
+        return redirect()->to(base_url('Home/criarConta'))->with('msgError', 'Falha ao criar usuário.');
     }
 }

@@ -1,34 +1,37 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class HistoricoProduto extends ControllerMain
+use CodeIgniter\Controller;
+use App\Models\HistoricoProdutoModel;
+
+class HistoricoProduto extends BaseController
 {
-    /**
-     * construct
-     *
-     * @param array $dados 
-     */
-    public function __construct($dados)
+    protected $historicoProdutoModel;
+
+    public function __construct()
     {
-        $this->auxiliarConstruct($dados);
+        $this->historicoProdutoModel = new HistoricoProdutoModel();
 
-        // Só acessa se tiver logado
-        if (!$this->getUsuario()) {
-            return Redirect::page("Home");
+        // Só acessa se estiver logado
+        if (!$this->getAdministrador()) {
+            return redirect()->to(base_url('home'));
         }
-
     }
 
-    public function getHistoricoProduto()
+    /**
+     * getHistoricoProduto
+     *
+     * @param int|null $produtoId
+     * @return void
+     */
+    public function getHistoricoProduto(int $produtoId = null)
     {
-
-        $dados = $this->model->getHistoricoProduto($this->getOutrosParametros(2)); 
-    
-        echo json_encode($dados);
-    
+        if ($produtoId) {
+            $dados = $this->historicoProdutoModel->getHistoricoProduto($produtoId);
+            return $this->response->setJSON($dados);
+        } else {
+            return $this->response->setJSON(['error' => 'ID do produto não fornecido.']);
+        }
     }
 }

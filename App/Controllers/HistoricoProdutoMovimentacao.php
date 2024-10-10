@@ -1,37 +1,37 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class HistoricoProdutoMovimentacao extends ControllerMain
+use App\Models\HistoricoProdutoMovimentacaoModel;
+use CodeIgniter\Controller;
+
+class HistoricoProdutoMovimentacao extends BaseController
 {
-    /**
-     * construct
-     *
-     * @param array $dados 
-     */
-    public function __construct($dados)
+    protected $historicoProdutoMovimentacaoModel;
+
+    public function __construct()
     {
-        $this->auxiliarConstruct($dados);
+        $this->historicoProdutoMovimentacaoModel = new HistoricoProdutoMovimentacaoModel();
 
-        // Só acessa se tiver logado
-        if (!$this->getUsuario()) {
-            return Redirect::page("Home");
+        // Só acessa se estiver logado
+        if (!session()->get('usuario')) {
+            return redirect()->to(base_url('home'));
         }
-
     }
 
     /**
      * index
      *
+     * @param int|null $produtoId
      * @return void
      */
-    public function index()
+    public function index(int $produtoId = null)
     {
-        
-        $this->loadView("restrita/HistoricoProdutoMovimentacao", $this->model->historico_produto_movimentacao($this->getId()));
+        if ($produtoId) {
+            $dados = $this->historicoProdutoMovimentacaoModel->historico_produto_movimentacao($produtoId);
+            return view('restrita/historico_produto_movimentacao', ['dados' => $dados]);
+        } else {
+            return redirect()->to(base_url('home'))->with('msgError', 'ID do produto não fornecido.');
+        }
     }
-
 }

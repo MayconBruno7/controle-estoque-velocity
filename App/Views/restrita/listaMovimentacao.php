@@ -1,6 +1,6 @@
-<?php
-    use App\Library\Formulario;
-?>
+<?= $this->extend('layout/layout_default') ?>
+
+<?= $this->section('conteudo') ?>
 
 <div class="loader"></div>
 <div id="app">
@@ -8,16 +8,10 @@
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
             <div class="row">
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgError() ?>
-                </div>
-                <div class="col-12 mt-3">
-                    <?= Formulario::exibeMsgSucesso() ?>
-                </div>
+                <!-- Mensagens de erro ou sucesso -->
             </div>
             <div class="container mb-3">
-            <?= Formulario::titulo('', true, false); ?>
-
+                <?= exibeTitulo('Movimentacao'); ?>
             </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-center">
@@ -38,17 +32,17 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($aDados as $row): ?>
+                                <?php foreach ($movimentacoes as $row): ?>
                                     <tr role="row" class="odd">
                                         <td class="sorting_1"><?= $row['id_movimentacao'] ?></td>
                                         <td><?= $row['nome_fornecedor'] ?></td>
-                                        <td><?= Formulario::getTipo($row['tipo_movimentacao']) ?></td>
-                                        <td><?= Formulario::formatarDataBrasileira($row['data_pedido']) ?></td>
-                                        <td><?= $row['data_chegada'] != '0000-00-00' ? Formulario::formatarDataBrasileira($row['data_chegada']) : 'Nenhuma data encontrada' ?></td>
+                                        <td><?= getTipo($row['tipo_movimentacao']) ?></td>
+                                        <td><?= formatarDataBrasileira($row['data_pedido']) ?></td>
+                                        <td><?= $row['data_chegada'] != '0000-00-00' ? formatarDataBrasileira($row['data_chegada']) : 'Nenhuma data encontrada' ?></td>
                                         <td>
-                                            <?= Formulario::botao("view", $row['id_movimentacao']) ?>
-                                            <?= Formulario::botao("update", $row['id_movimentacao']) ?>
-                                            <?= Formulario::botao("delete", $row['id_movimentacao']) ?>
+                                            <a href="/Movimentacao/form/view/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Visualizar"><i class="fa fa-eye" aria-hidden="true"></i></a>    
+                                            <a href="/Movimentacao/form/update/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Alterar"><i class="fa fa-file" aria-hidden="true"></i></a>    
+                                            <a href="/Movimentacao/form/delete/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Excluir"><i class="fa fa-trash" aria-hidden="true"></i></a>   
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
@@ -59,6 +53,8 @@
             </div>
         </main>
 
-        <?= Formulario::getDataTables("tbListasetor"); ?>
+        <?= getDataTables("tbListasetor"); ?>
     </div>
 </div>
+
+<?= $this->endSection() ?>

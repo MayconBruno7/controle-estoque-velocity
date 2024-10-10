@@ -1,123 +1,108 @@
 <?php
 
-use App\Library\ControllerMain;
-use App\Library\Redirect;
-use App\Library\Validator;
-use App\Library\Session;
+namespace App\Controllers;
 
-class Cargo extends ControllerMain
+use App\Models\CargoModel;
+use CodeIgniter\Controller;
+
+class Cargo extends BaseController
 {
-    /**
-     * construct
-     *
-     * @param array $dados 
-     */
-    public function __construct($dados)
-    {
-        $this->auxiliarConstruct($dados);
+    protected $cargoModel;
 
-        // Somente pode ser acessado por usuários adminsitradores
+    public function __construct()
+    {
+        $this->cargoModel = new CargoModel();
+        
+        // Verifica se o usuário é administrador antes de permitir o acesso
         if (!$this->getAdministrador()) {
-            return Redirect::page("Home");
+            return redirect()->to(site_url("Home"));
         }
     }
 
     /**
-     * index
-     *
-     * @return void
+     * Exibe a lista de cargos
      */
     public function index()
     {
-        $this->loadView("restrita/listaCargo", $this->model->lista("id"));
+        $data['cargos'] = $this->cargoModel->orderBy('id')->findAll();
+        return view('restrita/listaCargo', $data);
     }
 
     /**
-     * form
-     *
-     * @return void
+     * Formulário de inserção/edição de cargos
      */
-    public function form()
+    public function form($action = null, $id = null)
     {
-        $dados = [];
+        $data = [];
 
-        if ($this->getAcao() != "insert") {
-            $dados = $this->model->getById($this->getId());
+        if ($action !== 'insert' && $id !== null) {
+            $data['cargo'] = $this->cargoModel->find($id);
         }
 
-        return $this->loadView("restrita/formCargo", $dados);
+        $data['action'] = $action;
+
+        return view('restrita/formCargo', $data);
     }
 
     /**
-     * insert
-     *
-     * @return void
+     * Insere um novo cargo
      */
     public function insert()
     {
-        $post = $this->getPost();
+        $post = $this->request->getPost();
 
-        if (Validator::make($post, $this->model->validationRules)) {
-            return Redirect::page("Cargo/form/insert");     // error
-        } else {
-
-            if ($this->model->insert([
-                "nome" => $post['nome'],
-                "statusRegistro" => $post['statusRegistro']
-            ])) {
-                Session::set("msgSuccess", "Cargo adicionada com sucesso.");
-            } else {
-                Session::set("msgError", "Falha tentar inserir uma nova Cargo.");
-            }
-    
-            Redirect::page("Cargo");
+        // Validação com regras definidas no model
+        if (!$this->validate($this->cargoModel->getValidationRules())) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
+        if ($this->cargoModel->save([
+            'nome' => $post['nome'],
+            'statusRegistro' => $post['statusRegistro']
+        ])) {
+            session()->set('msgSuccess', 'Cargo adicionada com sucesso.');
+        } else {
+            session()->set('msgError', 'Falha ao tentar inserir uma nova Cargo.');
+        }
+
+        return redirect()->to(site_url('Cargo'));
     }
 
     /**
-     * update
-     *
-     * @return void
+     * Atualiza um cargo existente
      */
-    public function update()
+    public function update($id = null)
     {
-        $post = $this->getPost();
+        $post = $this->request->getPost();
 
-        if (Validator::make($post, $this->model->validationRules)) {
-            // error
-            return Redirect::page("Cargo/form/update/" . $post['id']);
-        } else {
-
-            if ($this->model->update(
-                [
-                    "id" => $post['id']
-                ], 
-                [
-                    "nome" => $post['nome'],
-                    "statusRegistro" => $post['statusRegistro']
-                ]
-            )) {
-                Session::set("msgSuccess", "Cargo alterada com sucesso.");
-            } else {
-                Session::set("msgError", "Falha tentar alterar a Cargo.");
-            }
-
-            return Redirect::page("Cargo");
+        // Validação com regras definidas no model
+        if (!$this->validate($this->cargoModel->getValidationRules())) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
+        if ($this->cargoModel->update($id, [
+            'nome' => $post['nome'],
+            'statusRegistro' => $post['statusRegistro']
+        ])) {
+            session()->set('msgSuccess', 'Cargo alterada com sucesso.');
+        } else {
+            session()->set('msgError', 'Falha ao tentar alterar a Cargo.');
+        }
+
+        return redirect()->to(site_url('Cargo'));
     }
+
     /**
-     * delete
-     *
-     * @return void
+     * Exclui um cargo
      */
-    public function delete()    
+    public function delete($id)
     {
-        if ($this->model->delete(["id" => $this->getPost('id')])) {
-            Session::set("msgSuccess", "Cargo excluída com sucesso.");
+        if ($this->cargoModel->delete($id)) {
+            session()->set('msgSuccess', 'Cargo excluída com sucesso.');
         } else {
-            Session::set("msgError", "Falha tentar excluir a Cargo.");
+            session()->set('msgError', 'Falha ao tentar excluir a Cargo.');
         }
 
-        Redirect::page("Cargo");
+        return redirect()->to(site_url('Cargo'));
     }
 }

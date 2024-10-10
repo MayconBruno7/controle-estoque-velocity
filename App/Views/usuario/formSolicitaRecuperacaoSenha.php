@@ -1,6 +1,6 @@
-<?php
-use App\Library\Session;
-?>
+<?= $this->extend('layout/layout_default') ?>
+
+<?= $this->section('conteudo') ?>
 
 <section>
     <div class="container">
@@ -18,7 +18,7 @@ use App\Library\Session;
         
         <div class="row">
             <div class="col-lg-4">
-                <form class="form-contact contact_form" action="<?= baseUrl() . "Login/gerarLinkRecuperaSenha" ?>" method="POST" id="contactForm" novalidate="novalidate">
+                <form class="form-contact contact_form" action="<?= base_url() . "Login/gerarLinkRecuperaSenha" ?>" method="POST" id="contactForm" novalidate="novalidate">
                 <div class="row">
 
                     <div class="col-sm-12 header-login mb-4">
@@ -37,12 +37,12 @@ use App\Library\Session;
 
             <?php
 
-            if (Session::get('msgError')) {
+            if (session()->get('msgError')) {
                 ?>
                 <div class="row mt-2">
                     <div class="col-12">
                         <div class="alert alert-danger" role="alert">
-                            <?= Session::getDestroy('msgError') ?>
+                            <?= session()->destroy('msgError') ?>
                         </div>
                     </div>
                 </div>
@@ -61,3 +61,4 @@ use App\Library\Session;
 
     </div>
 </section>
+<?= $this->endSection() ?>
