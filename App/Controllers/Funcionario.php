@@ -5,7 +5,6 @@ namespace App\Controllers;
 use App\Models\FuncionarioModel;
 use App\Models\SetorModel;
 use App\Models\CargoModel;
-use CodeIgniter\Controller;
 
 class Funcionario extends BaseController
 {
@@ -36,30 +35,30 @@ class Funcionario extends BaseController
         return view('restrita/listaFuncionario', $data);
     }
 
-    /**
-     * form
-     *
-     * @return void
-     */
-    public function form($action = null, $id = null)
-    {
-        $data['data'] = null;
+   /**
+ * form
+ *
+ * @return void
+ */
+public function form($action = null, $id = null)
+{
+    $data['action'] = $action;
+    $data['data'] = null;
+    $data['errors'] = [];
     
-        if ($action != "new" && $id !== null) {
-            $data['data'] = $this->model->find($id); // Busca o funcionário pelo ID
-        }
-        
-        $data['action'] = $action;
-        $data['errors'] = [];
+    // Carregando as listas de setores e cargos
+    $data['aSetor'] = $this->setorModel->getLista();
+    $data['aCargo'] = $this->cargoModel->getLista(); 
 
-        $data['aSetor'] = $this->setorModel->getLista(); // Obtem a lista de setores
-        $data['aCargo'] = $this->cargoModel->getLista(); // Obtem a lista de cargos
-
-        // var_dump($data['action']);
-        // exit;
-
-        return view('restrita/formFuncionario', $data);
+    // Se não for uma nova entrada e um ID válido for fornecido
+    if ($action != "new" && $id !== null) {
+        $data['data'] = $this->model->find($id); // Busca o funcionário pelo ID
     }
+
+    // Retorna a view com os dados
+    return view('restrita/formFuncionario', $data);
+}
+
 
     /**
      * store
@@ -83,9 +82,13 @@ class Funcionario extends BaseController
         ])) {
             return redirect()->to("/Funcionario")->with('msgSuccess', "Funcionário inserido com sucesso!");
         } else {
+            // var_dump($post);
+            // exit;
             return view("restrita/formFuncionario", [
-                // 'action' => $post['action'],
+                'action' => $post['action'],
                 'data' => $post,
+                'aSetor' => $this->setorModel->getLista(),
+                'aCargo' => $this->cargoModel->getLista(),
                 'errors' => $this->model->errors()
             ]);
         }

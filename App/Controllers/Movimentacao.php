@@ -38,60 +38,64 @@ class Movimentacao extends BaseController
         return view('restrita/listaMovimentacao', $data);
     }
 
-    public function form($id = null)
+    public function form($action, $id = null)
     {
-        $data = [];
+        $data['action'] = $action;
+        $data['data'] = null;
+        $data['errors'] = [];
 
-        if ($id) {
-            $data['movimentacao'] = $this->movimentacaoModel->find($id);
+        if ($action != "new" && $id !== null) {
+            $data['itemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
+            $data['data'] = $this->movimentacaoModel->find($id);
         }
 
-        $data['itemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
-        $data['setores'] = $this->setorModel->findAll();
-        $data['fornecedores'] = $this->fornecedorModel->findAll();
-        $data['produtos'] = $this->produtoModel->findAll();
+        $data['aSetor'] = $this->setorModel->findAll();
+        $data['aFornecedor'] = $this->fornecedorModel->findAll();
+        $data['aProduto'] = $this->produtoModel->findAll();
 
         return view('restrita/formMovimentacao', $data);
     }
 
-    public function insert()
+    public function store()
     {
         $post = $this->request->getPost();
 
-        if ($this->validate('movimentacao')) {
-            $dataMovimentacao = [
-                'fornecedor_id' => (int)$post['fornecedor_id'],
-                'setor_id' => (int)$post['setor_id'],
-                'data_pedido' => $post['data_pedido'],
-                'data_chegada' => $post['data_chegada'],
-                'motivo' => $post['motivo'],
-                'statusRegistro' => (int)$post['statusRegistro'],
-                'tipo' => (int)$post['tipo'],
-            ];
+        // Dados da movimentação
+        $dataMovimentacao = [
+            'id' => !empty($post['id']) ? (int)$post['id'] : null, // Se tiver 'id', será um update, caso contrário será um insert
+            'fornecedor_id' => (int)$post['fornecedor_id'],
+            'setor_id' => (int)$post['setor_id'],
+            'data_pedido' => $post['data_pedido'],
+            'data_chegada' => $post['data_chegada'],
+            'motivo' => $post['motivo'],
+            'statusRegistro' => (int)$post['statusRegistro'],
+            'tipo' => (int)$post['tipo'],
+        ];
 
-            // Verifica se há produtos na sessão
-            if (!session()->get('movimentacao')) {
-                session()->set('movimentacao', []);
-            }
-
-            // Adiciona produtos à sessão
-            $produtos = session()->get('movimentacao');
-            $produtos[] = $dataMovimentacao;
-            session()->set('movimentacao', $produtos);
-
-            // Lógica de inserção na base de dados
-            if ($this->movimentacaoModel->insert($dataMovimentacao)) {
-                session()->setFlashdata('msgSuccess', 'Movimentação adicionada com sucesso.');
-                return redirect()->to(base_url('movimentacao'));
-            } else {
-                session()->setFlashdata('msgError', 'Erro ao adicionar movimentação.');
-            }
-        } else {
-            session()->setFlashdata('msgError', 'Dados do formulário insuficientes.');
+        // Verifica se há produtos na sessão
+        if (!session()->get('movimentacao')) {
+            session()->set('movimentacao', []);
         }
 
-        return redirect()->to(base_url('movimentacao/form'));
+        // Adiciona ou atualiza produtos à sessão
+        $produtos = session()->get('movimentacao');
+        $produtos[] = $dataMovimentacao;
+        session()->set('movimentacao', $produtos);
+
+        // Lógica de inserção ou atualização na base de dados
+        if ($this->movimentacaoModel->save($dataMovimentacao)) {
+            // Mensagem de sucesso dependendo se é inserção ou atualização
+            $message = !empty($post['id']) ? 'Movimentação atualizada com sucesso.' : 'Movimentação inserida com sucesso.';
+            session()->setFlashdata('msgSuccess', $message);
+
+            // Redireciona para a lista de movimentações
+            return redirect()->to(base_url('movimentacao'));
+        } else {
+            session()->setFlashdata('msgError', 'Erro ao salvar movimentação.');
+            return redirect()->to(base_url('movimentacao/form'));
+        }
     }
+
 
     public function insertProdutoMovimentacao()
     {
@@ -168,7 +172,7 @@ class Movimentacao extends BaseController
      *
      * @return void
      */
-    public function update()
+    public function update($action = null)
     {
         $post = $this->request->getPost();
 
@@ -241,7 +245,7 @@ class Movimentacao extends BaseController
                 $verificaQuantidadeEstoqueNegativa = true;
             }
 
-            if ($this->getAcao() != 'updateProdutoMovimentacao') {
+            if ($action != 'updateProdutoMovimentacao') {
                 $atualizandoMovimentacaoEProdutos = $this->movimentacaoModel->updateMovimentacao(
                     [
                         "id_movimentacao" => $id_movimentacao
@@ -273,7 +277,7 @@ class Movimentacao extends BaseController
                 } else {
                     session()->setFlashdata("msgError", "Falha ao tentar alterar a movimentação.");
                 }
-            } else if ($this->getAcao() == 'updateProdutoMovimentacao') {
+            } else if ($action == 'updateProdutoMovimentacao') {
                 if ($verificaQuantidadeEstoqueNegativa) {
                     $atualizandoInfoProdutoMovimentacao = $this->movimentacaoModel->updateInformacoesProdutoMovimentacao(
                         [

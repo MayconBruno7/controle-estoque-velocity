@@ -1,9 +1,8 @@
-<?php
+<?= $this->extend('layout/layout_default') ?>
 
-    use App\Library\Formulario;
+<?= $this->section('conteudo') ?>
 
-    // var_dump($dados);
-?>
+
 
 <div class="container">
     
@@ -13,11 +12,11 @@
 
     <?php
 
-        if ($this->getAcao() != 'insert') {
+        if (isset($action) && $action != 'insert') {
             ?>
             <div class="row">
                 <div class="col-12 d-flex justify-content-start">
-                    <a href="<?= base_url() ?>HistoricoProdutoMovimentacao/index/<?= $this->getAcao() ?>/<?= $this->getId() ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
+                    <a href="<?= base_url() ?>HistoricoProdutoMovimentacao/index/<?= setValor('id', $data) ?>/<?= $action ?>" class="btn btn-outline-primary btn-sm mt-3 mb-3 m-0 styleButton" title="Visualizar">Visualizar Histórico de Movimentações</a>
                 </div>
             </div>
         <?php
@@ -31,14 +30,14 @@
             <div class="col-8">
                 <label for="nome" class="form-label">Nome</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('nome', $errors) ?>
             </div>
 
             <div class="col-4">
                 <label for="quantidade" class="form-label">Quantidade</label>
                 <!--  verifica se a quantidade está no banco de dados e retorna essa quantidade -->
-                <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade') ?>" disabled >
+                <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade', $data) ?>" disabled >
                 <input type="hidden" name="quantidade" id="hidden" value="<?= setValor('quantidade') ?>" >
                 <?= setaMsgErrorCampo('quantidade', $errors) ?>
             </div>
@@ -46,12 +45,12 @@
             <div class="mt-3 mb-3 col-6">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
                 <select class="form-control" name="fornecedor_id" id="fornecedor_id"  
-                <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>
-                <?= !empty($aDados['aFornecedor']) ? 'required' : '' ?>                
+                <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>
+                <?= !empty($aFornecedor) ? 'required' : '' ?>                
                 >
                     <option value="" <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
-                    <?php foreach ($aDados['aFornecedor'] as $value) : ?>
-                        <option value="<?= $value['id'] ?>" <?= setValor('fornecedor') == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
+                    <?php foreach ($aFornecedor as $value) : ?>
+                        <option value="<?= $value['id'] ?>" <?= setValor('fornecedor', $data) == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?= setaMsgErrorCampo('fornecedor_id', $errors) ?>
@@ -59,66 +58,65 @@
 
             <div class="col-3 mt-3">
                 <label for="statusRegistro" class="form-label">Status</label>
-                <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
-                    <option value=""  <?= setValor('statusRegistro') == ""  ? "SELECTED": "" ?>>...</option>
-                    <option value="1" <?= setValor('statusRegistro') == "1" ? "SELECTED": "" ?>>Ativo</option>
-                    <option value="2" <?= setValor('statusRegistro') == "2" ? "SELECTED": "" ?>>Inativo</option>
+                <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                    <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
+                    <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
+                    <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
                 </select>
                 <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
             </div>
 
             <div class="col-3 mt-3">
                 <label for="condicao" class="form-label">Estado do item</label>
-                <select name="condicao" id="condicao" class="form-control" required <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= setValor('condicao') ?>>
+                <select name="condicao" id="condicao" class="form-control" required <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>><?= setValor('condicao', $data) ?>>
                     <!--  verifica se o statusItem está no banco de dados e retorna esse status -->
-                    <option value=""  <?= setValor('condicao') == "" ? "selected" : ""  ?>>...</option>
-                    <option value="1" <?= setValor('condicao') == 1  ? "selected" : ""  ?>>Novo</option>
-                    <option value="2" <?= setValor('condicao') == 2  ? "selected" : ""  ?>>Usado</option>
+                    <option value=""  <?= setValor('condicao', $data) == "" ? "selected" : ""  ?>>...</option>
+                    <option value="1" <?= setValor('condicao', $data) == 1  ? "selected" : ""  ?>>Novo</option>
+                    <option value="2" <?= setValor('condicao', $data) == 2  ? "selected" : ""  ?>>Usado</option>
                 </select>
-                <?= setaMsgErrorCampo('condicap', $errors) ?>
+                <?= setaMsgErrorCampo('condicao', $errors) ?>
             </div>
 
             <div class="col-12 mt-3">
                 <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $this->getAcao() == 'delete' || $this->getAcao() == 'view' ? 'disabled' : '' ?>><?= setValor('descricao') ?></textarea>
+                <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>><?= setValor('descricao', $data) ?></textarea>
                 <?= setaMsgErrorCampo('descricao', $errors) ?>
             </div>
 
             <!-- se a ação for view não aparece a hora formatada no formprodutos -->
-            <?php  if ($this->getAcao() == 'view' || $this->getAcao() == 'delete' || $this->getAcao() == 'update') { ?>
+            <?php  if ($action == 'view' || $action == 'delete' || $action == 'update') { ?>
             <div class="col-6 mt-3">
                 <label for="dataMod" class="form-label">Data da ultima modificação</label>
-                <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod') ?>" disabled>
+                <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>" disabled>
 
-                <input type="hidden" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod') ?>">
+                <input type="hidden" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>">
             </div>
             <?php 
             } 
             ?>
 
-            <?php if ($this->getAcao() != 'insert' && $this->getAcao() != 'delete' && $this->getAcao() != 'view') : ?>
+            <?php if ($action != 'insert' && $action != 'delete' && $action != 'view') : ?>
             <div class="col-6 mt-3">
                 <label for="historico" class="form-label">Histórico de Alterações</label>
-                <input type="date" class="form-control" name="historico" id="search_historico" placeholder="Data do histórico" autofocus value="" max="<?= date('Y-m-d') ?>" <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <input type="date" class="form-control" name="historico" id="search_historico" placeholder="Data do histórico" autofocus value="" max="<?= date('Y-m-d') ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <select id="id_produto" class="form-control" style="display:none;">
                     <option value="" selected disabled>Escolha a data</option>
                 </select>
             </div>
             <?php endif; ?>
 
-            <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
+            <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
 
             <div class="form-group col-12 mt-5">
-                <?php if ($this->getAcao() != "view"): ?>
+                <?php if ($action != "view"): ?>
                     <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                 <?php endif; ?>
-                <a href="<?= base_url() ?>/Usuario" class="btn btn-secondary">Voltar</a>
+                <a href="<?= base_url() ?>/Produto" class="btn btn-secondary">Voltar</a>
             </div>
             
         </div>
 
         <?= form_close() ?>
-    <?= $this->endSection() ?>
 
 </div>
 
@@ -158,7 +156,7 @@
             if (termo.length > 0) {
                 $('.carregando').show();
 
-                $.getJSON('/HistoricoProduto/getHistoricoProduto/' + termo, function(data) {
+                $.getJSON('/HistoricoProduto/getHistoricoProduto?dataMod=' + termo, function(data) {
                     console.log(data);
                     var options = '<option value="" selected disabled>Escolha a data</option>';
                     if (data.length > 0) {
@@ -207,3 +205,4 @@
     });
 
 </script>
+<?= $this->endSection() ?>

@@ -25,7 +25,7 @@
                                     <th class="sorting_asc" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome Produto</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Quantidade</th>
-                                    <?php if (!"") : ?>
+                                    <?php if (isset($action) && $action !== null) : ?>
                                         <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Valor</th>
 
                                     <?php endif; ?>
@@ -40,7 +40,7 @@
                                         <td class="sorting_1"><?= $value['id'] ?></td>
                                         <td><?= $value['nome'] ?></td>
                                         <td><?= !empty($value['quantidade']) ? $value['quantidade'] : 'Não encontrado' ?></td>
-                                        <?php if (!"") : ?>
+                                        <?php if (isset($action) && $action !== null) : ?>
                                             <td>
                                                 <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Não encontrado" ?>
                                             </td>
@@ -48,7 +48,7 @@
                                         <td><?= getCondicao($value['condicao']) ?></td>
                                         <td><?= getStatusDescricao($value['statusRegistro']) ?></td>
                                         <td>
-                                        <?php if ("" == 'delete') : ?>
+                                        <?php if (isset($action) && $action == 'delete') : ?>
                                             <form class="g-3" action="<?= baseUrl() ?>Movimentacao/deleteProdutoMovimentacao/<?= "" ?>" method="post">
                                                 <p>Quantidade atual: <?= $this->getOutrosParametros(5) ?></p>
                                                 <label for="quantidadeRemover" class="form-label">Quantidade</label>
@@ -60,7 +60,7 @@
                                             </form>
                                         <?php endif; ?>
 
-                                        <?php if ("") : ?>
+                                        <?php if (!isset($action)) : ?>
                                             <a href="/Produto/form/view/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Visualizar"><i class="fa fa-eye" aria-hidden="true"></i></a>    
                                             <a href="/Produto/form/update/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Alterar"><i class="fa fa-file" aria-hidden="true"></i></a>    
                                             <a href="/Produto/form/delete/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Excluir"><i class="fa fa-trash" aria-hidden="true"></i></a>   

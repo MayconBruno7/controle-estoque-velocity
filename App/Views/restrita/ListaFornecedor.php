@@ -11,7 +11,7 @@
                 <!-- mensagens de erro ou sucesso -->
             </div>
             <div class="container mb-3">
-                <?= exibeTitulo('Usuario'); ?>
+                <?= exibeTitulo('Fornecedor'); ?>
             </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-center">
@@ -20,15 +20,15 @@
                 
                 <div class="card-body">
                     <div class="table-responsive">
-                        <table id="tbListasetor" class="table table-striped table-hover dataTable no-footer" style="width: 100%;" role="grid">
+                        <table id="tbListafornecedor" class="table table-striped table-hover dataTable no-footer" style="width: 100%;" role="grid">
                             <thead>
                                 <tr role="row">
-                                    <th class="sorting_asc" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">CNPJ</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Telefone</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Status do produto</th>
-                                    <th class="sorting" tabindex="0" aria-controls="tbListasetor" rowspan="1" colspan="1" style="width: 79.875px;" aria-label="Opções: activate to sort column ascending">Opções</th>
+                                    <th class="sorting_asc" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">CNPJ</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Telefone</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Status</th>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListafornecedor" rowspan="1" colspan="1" style="width: 79.875px;" aria-label="Opções: activate to sort column ascending">Opções</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -38,7 +38,7 @@
                                         <td><?= $value['nome'] ?></td>
                                         <td><?= formatarCNPJInput($value['cnpj']) ?></td>
                                         <td><?= formatarTelefone($value['telefone']) ?></td>
-                                        <td><?= $value['statusRegistro'] ?></td>
+                                        <td><?= getStatusDescricao($value['statusRegistro']) ?></td>
                                         <td>
                                             <a href="/Fornecedor/form/view/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Visualizar"><i class="fa fa-eye" aria-hidden="true"></i></a>    
                                             <a href="/Fornecedor/form/update/<?= $value['id'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Alterar"><i class="fa fa-file" aria-hidden="true"></i></a>    
@@ -53,7 +53,7 @@
             </div>
         </main>
 
-        <?= getDataTables("tbListasetor"); ?>
+        <?= getDataTables("tbListafornecedor"); ?>
     </div>
 </div>
 <?= $this->endSection() ?>

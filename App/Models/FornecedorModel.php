@@ -5,12 +5,12 @@ namespace App\Models; // Certifique-se de que o namespace está correto
 use CodeIgniter\Model;
 use Config\Services;
 
-class FornecedorModel extends Model
+class FornecedorModel extends CustomModel
 {
     protected $table = 'fornecedor';
     protected $primaryKey = 'id';
     
-    protected $allowedFields = ['nome', 'telefone', 'statusRegistro']; // Campos permitidos para inserção/atualização
+    protected $allowedFields = ['cnpj', 'nome', 'telefone', 'statusRegistro', 'estado', 'cidade', 'bairro', 'endereco', 'numero', 'telefone']; 
     
     protected $validationRules = [
         'nome' => [

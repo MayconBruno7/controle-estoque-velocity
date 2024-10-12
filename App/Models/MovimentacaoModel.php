@@ -5,7 +5,7 @@ namespace App\Models;
 use CodeIgniter\Model;
 use CodeIgniter\Session\Session;
 
-class MovimentacaoModel extends Model
+class MovimentacaoModel extends CustomModel
 {
     protected $table = 'movimentacao'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária

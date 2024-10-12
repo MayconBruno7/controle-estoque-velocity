@@ -24,7 +24,7 @@ class Login extends BaseController
         $this->funcionarioModel = new FuncionarioModel();
     }
 
-    public function signIn(): RedirectResponse
+    public function signIn()
     {
         $post = $this->request->getPost();
 
@@ -57,6 +57,7 @@ class Login extends BaseController
                 'usuarioEmail' => $usuario['email'],
                 'usuarioNivel' => $usuario['nivel'],
                 'id_funcionario' => $usuario['id_funcionario'],
+                "current_user" => $usuario['id']
             ]);
 
             // Recuperar imagem do funcionário
@@ -81,8 +82,8 @@ class Login extends BaseController
                 setcookie('password', $post["senha"], time() + (86400 * 30), "/");
             }
 
-            // Definir o @current_user no MySQL
-            $this->setCurrentUser($usuario['id']);
+            // // Definir o @current_user no MySQL
+            // $this->setCurrentUser($usuario['id']);
 
             $redirectUrl = '';
 
@@ -98,35 +99,35 @@ class Login extends BaseController
         }
     }
 
-    private function setCurrentUser($userId)
-    {
-        // Conectar ao banco de dados
-        $db = db_connect();
-    
-        // Definir a variável de sessão @current_user no MySQL
-        $db->query("SET @current_user = ?", [$userId]);
-    
-        // Verificar se foi definida corretamente
-        $result = $db->query("SELECT @current_user")->getRowArray();
-
-        // var_dump($result);
-        // exit('tamo ai');
+    // private function setCurrentUser($userId)
+    // {
         
-        if ($result) {
-            session()->set(['@current_user'    => $userId]);
-            log_message('info', 'Usuário atual definido como: ' . $result['@current_user']);
-        } else {
-            log_message('error', 'Erro ao definir a variável @current_user');
-        }
-    
-        // Fechar a conexão após o uso
-        $db->close();
-    }
+    //     // Conectar ao banco de dados
+    //     $db = db_connect();
+
+    //     // Definir a variável de sessão @current_user no MySQL
+    //     $db->query("SET @current_user = ?", [$userId]);
+
+    //     // Verificar se foi definida corretamente
+    //     $result = $db->query("SELECT @current_user")->getRowArray();
+    //     // var_dump($result); // Para verificar se o valor está correto
+
+    //     if ($result) {
+    //         session()->set(['@current_user' => $userId]);
+    //         log_message('info', 'Usuário atual definido como: ' . $result['@current_user']);
+    //     } else {
+    //         log_message('error', 'Erro ao definir a variável @current_user');
+    //     }
+
+    //     // Fechar a conexão após o uso
+    //     $db->close();
+    // }
+
     
     public function signOut(): RedirectResponse
     {
         session()->destroy();
-        return redirect()->to(base_url('Home'));
+        return redirect()->to(base_url('Home/home'));
     }
 
     public function solicitaRecuperacaoSenha()

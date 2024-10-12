@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class SetorModel extends Model
+class SetorModel extends CustomModel
 {
     protected $table = 'setor';
     protected $primaryKey = 'id';

@@ -4,7 +4,7 @@
 
 <div class="loader"></div>
 <div id="app">
-    <div class="main-wrapper main-wrapper-1">
+    <div class="main-wrapper main-wrapper-1 "  style="margin-top: 200px;">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
             <div class="row">

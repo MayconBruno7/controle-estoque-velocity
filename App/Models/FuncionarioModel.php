@@ -4,11 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class FuncionarioModel extends Model
+class FuncionarioModel extends CustomModel
 {
     protected $table = 'funcionario'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária
-    // protected $returnType = 'array'; // Define o tipo de retorno
+    protected $returnType = 'array'; // Define o tipo de retorno
     // protected $useSoftDeletes = false; // Defina como true se você usar Soft Deletes
 
     protected $allowedFields = [
@@ -16,7 +16,10 @@ class FuncionarioModel extends Model
         'cpf',
         'setor',
         'salario',
-        'statusRegistro'
+        'statusRegistro', 
+        'telefone',
+        'cargo', 
+        'imagem'
     ]; // Campos permitidos para inserção e atualização
 
     protected $validationRules = [
@@ -26,11 +29,11 @@ class FuncionarioModel extends Model
         ],
         'cpf' => [
             'label' => 'CPF',
-            'rules' => 'required|min_length[14]'
+            'rules' => 'required|min_length[11]'
         ],
         'salario' => [
             'label' => 'Salário',
-            'rules' => 'required|decimal'
+            'rules' => 'required'
         ],
         'statusRegistro' => [
             'label' => 'Status',

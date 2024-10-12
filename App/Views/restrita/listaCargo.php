@@ -11,7 +11,7 @@
                <!-- mensagens de erro ou sucesso -->
             </div>
             <div class="container mb-3">
-                <?= exibeTitulo("Cargo", ['acao' => $action]) ?>
+                <?= exibeTitulo("Cargo") ?>
             </div>
             <div class="card">
                 <div class="card-header d-flex justify-content-center">
@@ -30,7 +30,7 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <?php foreach ($aDados as $value): ?>
+                                <?php foreach ($cargos as $value): ?>
                                     <tr role="row" class="odd">
                                         <td class="sorting_1"><?= $value['id'] ?></td>
                                         <td><?= $value['nome'] ?></td>

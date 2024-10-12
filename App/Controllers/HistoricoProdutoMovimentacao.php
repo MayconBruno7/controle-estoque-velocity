@@ -3,7 +3,6 @@
 namespace App\Controllers;
 
 use App\Models\HistoricoProdutoMovimentacaoModel;
-use CodeIgniter\Controller;
 
 class HistoricoProdutoMovimentacao extends BaseController
 {
@@ -25,13 +24,23 @@ class HistoricoProdutoMovimentacao extends BaseController
      * @param int|null $produtoId
      * @return void
      */
-    public function index(int $produtoId = null)
+    public function index($produtoId, $action = null)
     {
         if ($produtoId) {
-            $dados = $this->historicoProdutoMovimentacaoModel->historico_produto_movimentacao($produtoId);
-            return view('restrita/historico_produto_movimentacao', ['dados' => $dados]);
+            // Verifica se $produtoId é um número e não um array
+            if (!is_array($produtoId)) {
+                $dados = $this->historicoProdutoMovimentacaoModel->historicoProdutoMovimentacao((int)$produtoId);
+                return view('restrita/HistoricoProdutoMovimentacao', [
+                    'dados' => $dados,
+                    'action' => $action
+                ]);
+            } else {
+                return redirect()->to(base_url('home'))->with('msgError', 'ID do produto é inválido.');
+            }
         } else {
             return redirect()->to(base_url('home'))->with('msgError', 'ID do produto não fornecido.');
         }
     }
+    
+    
 }

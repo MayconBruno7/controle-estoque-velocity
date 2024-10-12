@@ -40,15 +40,16 @@ class HistoricoProdutoModel extends Model
      * @param string $termo
      * @return array
      */
-    public function getHistoricoProduto(string $termo): array
+    public function getHistoricoProduto($dataMod): array
     {
-        // Verifica se foi fornecido um termo de pesquisa válido
-        if (!empty($termo) && strlen($termo) >= 3) { // Adiciona um comprimento mínimo
-            // Realiza a consulta no banco de dados
-            return $this->like('dataMod', $termo)
+      
+        if (!empty($dataMod)) {
+            // Seleciona apenas as colunas necessárias
+            return $this->select('id, id_produtos, fornecedor_id, nome_produtos, descricao_anterior, quantidade_anterior, status_anterior, statusItem_anterior, dataMod')
+                        ->like('dataMod', $dataMod)
                         ->findAll();
         }
-
+    
         return [];
     }
 }

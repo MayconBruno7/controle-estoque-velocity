@@ -9,14 +9,14 @@ use CodeIgniter\Controller;
 
 class Produto extends BaseController
 {
-    protected $produtoModel;
+    protected $model;
     protected $historicoProdutoModel;
     protected $fornecedorModel;
 
     public function __construct()
     {
         // Carregando os modelos
-        $this->produtoModel = new ProdutoModel();
+        $this->model = new ProdutoModel();
         $this->historicoProdutoModel = new HistoricoProdutoModel();
         $this->fornecedorModel = new FornecedorModel();
 
@@ -36,9 +36,9 @@ class Produto extends BaseController
         $acao = $this->request->getVar('acao');
         
         if ($acao != 'delete') {
-            $data['produtos'] = $this->produtoModel->getLista("id", $acao);
+            $data['produtos'] = $this->model->getLista("id", $acao);
         } else {
-            $data['produtos'] = $this->produtoModel->listaDeleteProduto($this->request->getVar('parametro'));
+            $data['produtos'] = $this->model->listaDeleteProduto($this->request->getVar('parametro'));
         }
 
         return view("restrita/listaProduto", $data);
@@ -49,16 +49,18 @@ class Produto extends BaseController
      *
      * @return void
      */
-    public function form($id = null)
+    public function form($action = null, $id = null)
     {
-        $data = [];
-
-        if ($id !== null) {
-            $data = $this->produtoModel->find($id);
-        }
+        $data['action'] = $action;
+        $data['data'] = null;
+        $data['errors'] = [];
 
         $data['aFornecedor'] = $this->fornecedorModel->findAll();
         $data['aHistoricoProduto'] = $this->historicoProdutoModel->historicoProduto($id, 'id');
+
+        if ($action != "new" && $id !== null) {
+            $data['data'] = $this->model->find($id);
+        }
 
         return view("restrita/formProduto", $data);
     }
@@ -68,71 +70,32 @@ class Produto extends BaseController
      *
      * @return void
      */
-    public function insert()
+    public function store()
     {
         $post = $this->request->getPost();
 
-        if (!$this->validate($this->produtoModel->validationRules)) {
-            return redirect()->to("Produto/form/insert")->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        if ($this->produtoModel->insert([
-            "nome" => $post['nome'],
-            "quantidade" => $post['quantidade'],
-            "fornecedor" => $post['fornecedor_id'],
-            "statusRegistro" => $post['statusRegistro'],
-            "condicao" => $post['condicao'],
-            "descricao" => $post['descricao']
-        ])) {
-            session()->setFlashdata('msgSuccess', "Produto adicionada com sucesso.");
-        } else {
-            session()->setFlashdata('msgError', "Falha ao tentar inserir uma nova Produto.");
-        }
-
-        return redirect()->to("Produto");
-    }
-
-    /**
-     * update
-     *
-     * @return void
-     */
-    public function update()
-    {
-        $post = $this->request->getPost();
-
-        if (!$this->validate($this->produtoModel->validationRules)) {
-            return redirect()->to("Produto/form/update/" . $post['id'])->withInput()->with('errors', $this->validator->getErrors());
-        }
-
-        $updateProduto = $this->produtoModel->update($post['id'], [
+        if ($this->model->save([
+            'id' => ($post['id'] == "" ? null : $post['id']),
             "nome" => $post['nome'],
             "quantidade" => $post['quantidade'],
             "fornecedor" => $post['fornecedor_id'],
             "statusRegistro" => $post['statusRegistro'],
             "condicao" => $post['condicao'],
             "descricao" => $post['descricao'],
-        ]);
-
-        $insertHistoricoProduto = $this->historicoProdutoModel->insert([
-            "id_produtos" => $post['id'],
-            "nome_produtos" => $post['nome'],
-            "descricao_anterior" => $post['descricao'],
-            "quantidade_anterior" => $post['quantidade'],
-            "fornecedor_id" => $post['fornecedor_id'],
-            "status_anterior" => $post['statusRegistro'],
-            "statusItem_anterior" => $post['condicao'],
-            "dataMod" => $post['dataMod'],
-        ]);
-
-        if ($updateProduto) {
-            session()->setFlashdata('msgSuccess', "Produto alterada com sucesso.");
+            "dataMod" => date('Y-m-d H:i:s')  
+        ])) {
+            return redirect()->to("/Produto")->with('msgSuccess', "Dado inserido com sucesso!");
         } else {
-            session()->setFlashdata('msgError', "Falha ao tentar alterar a Produto.");
+            return view("restrita/formProduto", [
+                'action' => $post['action'],
+                'data' => $post,
+                'errors' => $this->model->errors()
+            ]);
         }
 
         return redirect()->to("Produto");
     }
+
 
     /**
      * delete
@@ -143,7 +106,7 @@ class Produto extends BaseController
     {
         $id = $this->request->getPost('id');
 
-        if ($this->produtoModel->delete($id)) {
+        if ($this->model->delete($id)) {
             session()->setFlashdata('msgSuccess', "Produto excluída com sucesso.");
         } else {
             session()->setFlashdata('msgError', "Falha ao tentar excluir a Produto.");

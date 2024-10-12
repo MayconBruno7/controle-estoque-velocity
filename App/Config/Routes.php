@@ -7,6 +7,7 @@ use CodeIgniter\Router\RouteCollection;
  */
 
 $routes->get('/', 'Home::index');
+
 $routes->group('Home', function($routes) {
     $routes->get('home', 'Home::index');
     $routes->get('login', 'Home::login');
@@ -63,6 +64,16 @@ $routes->group('Produto', function($routes) {
     $routes->post('delete', "Produto::delete");
 });
 
+// $routes->group('HistoricoProdutoMovimentacao', function($routes) {
+$routes->get("HistoricoProdutoMovimentacao/index/(:num)/(:segment)", 'HistoricoProdutoMovimentacao::index/$1/$2');
+$routes->get("HistoricoProduto/getHistoricoProduto", 'HistoricoProduto::getHistoricoProduto');
+
+    // $routes->get("lista", 'Produto::index');
+    // $routes->get("form/(:segment)/(:num)", 'Produto::form/$1/$2');
+    // $routes->post("store", 'Produto::store');
+    // $routes->post('delete', "Produto::delete");
+// });
+
 $routes->group('Setor', function($routes) {
     $routes->get("/", 'Setor::index');
     $routes->get("lista", 'Setor::index');
@@ -77,6 +88,9 @@ $routes->group('Fornecedor', function($routes) {
     $routes->get("form/(:segment)/(:num)", 'Fornecedor::form/$1/$2');
     $routes->post("store", 'Fornecedor::store');
     $routes->post('delete', "Fornecedor::delete");
+
+    $routes->get("getCidadeComboBox", 'Fornecedor::getCidadeComboBox');
+    $routes->get("requireAPI", 'Fornecedor::requireAPI');
 });
 
 $routes->group('Movimentacao', function($routes) {

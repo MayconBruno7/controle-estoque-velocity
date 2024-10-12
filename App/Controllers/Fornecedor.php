@@ -6,19 +6,22 @@ use App\Models\FornecedorModel;
 use App\Models\EstadoModel;
 use App\Models\CidadeModel;
 use CodeIgniter\Controller;
-use CodeIgniter\HTTP\RedirectResponse;
 
 class Fornecedor extends BaseController
 {
     protected $fornecedorModel;
+    protected $estadoModel;
+    protected $cidadeModel;
 
     public function __construct()
     {
         $this->fornecedorModel = new FornecedorModel();
+        $this->estadoModel = new EstadoModel();
+        $this->cidadeModel = new CidadeModel();
 
         // Só acessa se estiver logado
         if (!$this->getAdministrador()) {
-            return redirect()->to(base_url('home'));
+            return redirect()->to('home');
         }
     }
 
@@ -27,7 +30,7 @@ class Fornecedor extends BaseController
      *
      * @return void
      */
-    public function index(): string
+    public function index()
     {
         $data['fornecedores'] = $this->fornecedorModel->orderBy('id', 'ASC')->findAll();
         return view('restrita/listaFornecedor', $data);
@@ -36,41 +39,38 @@ class Fornecedor extends BaseController
     /**
      * form
      *
-     * @param string|null $acao
+     * @param string|null $action
      * @param int|null $id
      * @return string
      */
-    public function form(string $acao = 'insert', int $id = null): string
+    public function form(string $action = null, int $id = null)
     {
-        $data = [];
+        $data['action'] = $action;
+        $data['data']   = null;
+        $data['errors'] = [];
 
-        if ($acao !== 'insert') {
-            $data = $this->fornecedorModel->find($id);
+        $data['aEstado'] = $this->estadoModel->orderBy('id', 'ASC')->findAll();
+
+        $data['aCidade'] = $this->cidadeModel->orderBy('id', 'ASC')->findAll();
+
+        if ($action !== 'insert') {
+            $data['data'] = $this->fornecedorModel->find($id);
         }
-
-        $estadoModel = new EstadoModel();
-        $data['aEstado'] = $estadoModel->orderBy('id', 'ASC')->findAll();
-
-        $cidadeModel = new CidadeModel();
-        $data['aCidade'] = $cidadeModel->orderBy('id', 'ASC')->findAll();
 
         return view('restrita/formFornecedor', $data);
     }
 
     /**
-     * insert
+     * store
      *
-     * @return RedirectResponse
+     * @return void
      */
-    public function insert(): RedirectResponse
+    public function store()
     {
         $post = $this->request->getPost();
 
-        if (!$this->validate($this->fornecedorModel->getValidationRules())) {
-            return redirect()->to(base_url('fornecedor/form/insert'))->withInput();
-        }
-
-        $data = [
+        if ($this->fornecedorModel->save([
+            'id' => ($post['id'] == "" ? null : $post['id']),
             'nome' => $post['nome'],
             'cnpj' => preg_replace('/[^0-9]/', '', $post['cnpj']),
             'endereco' => $post['endereco'],
@@ -80,57 +80,25 @@ class Fornecedor extends BaseController
             'numero' => $post['numero'],
             'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
             'statusRegistro' => $post['statusRegistro']
-        ];
-
-        if ($this->fornecedorModel->insert($data)) {
-            session()->setFlashdata('msgSuccess', 'Fornecedor adicionada com sucesso.');
-        } else {
-            session()->setFlashdata('msgError', 'Falha ao tentar inserir uma nova Fornecedor.');
+        ])) {
+            return redirect()->to("/Fornecedor")->with('msgSucess', "Dados atualizados com sucesso.");
+        }else {
+            return view("restrita/formFornecedor", [
+                "action"    => $post['action'],
+                'data'      => $post,
+                'errors'    => $this->fornecedorModel->errors()
+            ]);
         }
-
-        return redirect()->to(base_url('fornecedor'));
-    }
-
-    /**
-     * update
-     *
-     * @return RedirectResponse
-     */
-    public function update(): RedirectResponse
-    {
-        $post = $this->request->getPost();
-
-        if (!$this->validate($this->fornecedorModel->getValidationRules())) {
-            return redirect()->to(base_url('fornecedor/form/update/' . $post['id']))->withInput();
-        }
-
-        $data = [
-            'nome' => $post['nome'],
-            'cnpj' => preg_replace('/[^0-9]/', '', $post['cnpj']),
-            'endereco' => $post['endereco'],
-            'cidade' => $post['cidade'],
-            'estado' => $post['estado'],
-            'bairro' => $post['bairro'],
-            'numero' => $post['numero'],
-            'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
-            'statusRegistro' => $post['statusRegistro']
-        ];
-
-        if ($this->fornecedorModel->update($post['id'], $data)) {
-            session()->setFlashdata('msgSuccess', 'Fornecedor alterada com sucesso.');
-        } else {
-            session()->setFlashdata('msgError', 'Falha ao tentar alterar a Fornecedor.');
-        }
-
-        return redirect()->to(base_url('fornecedor'));
+        
+        return redirect()->to(base_url('Fornecedor'));
     }
 
     /**
      * delete
      *
-     * @return RedirectResponse
+     * @return void
      */
-    public function delete(): RedirectResponse
+    public function delete()
     {
         $id = $this->request->getPost('id');
 
@@ -140,7 +108,7 @@ class Fornecedor extends BaseController
             session()->setFlashdata('msgError', 'Falha ao tentar excluir a Fornecedor.');
         }
 
-        return redirect()->to(base_url('fornecedor'));
+        return redirect()->to(base_url('Fornecedor'));
     }
 
     /**
@@ -149,8 +117,11 @@ class Fornecedor extends BaseController
      * @param string|null $cnpj
      * @return void
      */
-    public function requireAPI(string $cnpj = null)
+    public function requireAPI()
     {
+
+        $cnpj = $this->request->getVar('cnpj'); 
+
         if ($cnpj) {
             $data = $this->fornecedorModel->requireAPI($cnpj);
             return $this->response->setJSON($data);
@@ -165,11 +136,17 @@ class Fornecedor extends BaseController
      * @param int|null $estadoId
      * @return void
      */
-    public function getCidadeComboBox(int $estadoId = null)
+    public function getCidadeComboBox()
     {
-        $cidadeModel = new CidadeModel();
-        $dados = $cidadeModel->where('estado_id', $estadoId)->findAll();
 
+        // Recupera o ID do estado da URL
+        $estadoId = $this->request->getVar('estadoId'); // Supondo que você está passando o parâmetro como "estadoId"
+
+        $cidadeModel = new CidadeModel();
+
+        $dados = $cidadeModel->where('estado', $estadoId)->findAll();
+        // var_dump($dados);
+        // exit;
         if (empty($dados)) {
             $dados[] = ['id' => ''];
         }

@@ -25,10 +25,13 @@ class HistoricoProduto extends BaseController
      * @param int|null $produtoId
      * @return void
      */
-    public function getHistoricoProduto(int $produtoId = null)
+    public function getHistoricoProduto()
     {
-        if ($produtoId) {
-            $dados = $this->historicoProdutoModel->getHistoricoProduto($produtoId);
+
+        $dataMod = $this->request->getVar('dataMod');
+
+        if ($dataMod) {
+            $dados = $this->historicoProdutoModel->getHistoricoProduto($dataMod);
             return $this->response->setJSON($dados);
         } else {
             return $this->response->setJSON(['error' => 'ID do produto não fornecido.']);

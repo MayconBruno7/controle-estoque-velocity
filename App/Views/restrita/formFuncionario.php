@@ -1,3 +1,8 @@
+<?php 
+    // var_dump($data);
+    // exit;
+?>
+
 <?= $this->extend('layout/layout_default') ?>
 
 <?= $this->section('conteudo') ?>
@@ -105,6 +110,7 @@
         <?php endif; ?>
 
         <input type="hidden" name="id" value="<?= setValor('id', $data) ?>">
+        <input type="hidden" name="action" value="<?= $action ?>">
         <input type="hidden" name="nomeImagem" value="<?= setValor('imagem', $data) ?>">
 
         <div class="form-group col-12 mt-5">

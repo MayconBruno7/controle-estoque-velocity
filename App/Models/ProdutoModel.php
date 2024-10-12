@@ -4,11 +4,11 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class ProdutoModel extends Model
+class ProdutoModel extends CustomModel
 {
     protected $table = 'produto';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['descricao', 'condicao', 'nome', 'statusRegistro', 'quantidade'];
+    protected $allowedFields = ['descricao', 'condicao', 'nome', 'statusRegistro', 'quantidade', 'dataMod', 'fornecedor', 'tipo_produto'];
 
     protected $validationRules = [
         'descricao' => 'required|min_length[3]|max_length[50]',

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class UsuarioModel extends Model
+class UsuarioModel extends CustomModel
 {
     protected $table = 'usuario';
     protected $primaryKey = 'id';
@@ -76,10 +76,7 @@ class UsuarioModel extends Model
             ];
 
             if ($this->insert($data)) {
-
                 session()->set('msgSuccess', 'Super usuário criado com sucesso.');
-                var_dump($qtd, $data);
-                exit('Tamo ai');
                 return 2; // Super usuário criado
             } else {
           

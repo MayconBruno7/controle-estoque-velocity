@@ -36,7 +36,7 @@
     <link rel="stylesheet" href="<?= base_url("assets/css/app.min.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/style.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/components.css") ?>">
-    <link rel="stylesheet" href="<?= base_url("assets/css/custom.css") ?>">
+    <!-- <link rel="stylesheet" href="<?= base_url("assets/css/custom.css") ?>"> -->
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="<?= base_url("assets/js/jquery-3.3.1.js") ?>"></script>

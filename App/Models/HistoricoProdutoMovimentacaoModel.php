@@ -22,7 +22,7 @@ class HistoricoProdutoMovimentacaoModel extends Model
      * @param int $id_produto
      * @return array
      */
-    public function historicoProdutoMovimentacao(int $id_produto): array
+    public function historicoProdutoMovimentacao(int $id_produto)
     {
         return $this->select('m.id AS id_mov, f.nome AS nome_fornecedor, m.tipo, m.data_pedido, m.data_chegada, p.nome AS nome_produto, SUM(movi.quantidade) AS Quantidade, SUM(movi.valor) AS Valor')
             ->from('movimentacao m')
