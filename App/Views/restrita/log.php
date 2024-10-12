@@ -60,7 +60,7 @@
                                                         <?php endif; ?>
                                                         </div>
                                                     </td>
-                                                    <td><a href="<?= base_url() ?>/Log/viewLog/view/<?= $value['id'] ?>" class="btn btn-primary">Detalhes</a></td>
+                                                    <td><a href="<?= base_url() ?>Log/viewLog/view/<?= $value['id'] ?>" class="btn btn-primary">Detalhes</a></td>
                                                 </tr>
                                             <?php endforeach; ?>
                                         </tbody>

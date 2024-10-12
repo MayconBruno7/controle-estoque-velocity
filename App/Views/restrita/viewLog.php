@@ -1,7 +1,8 @@
 <?php 
 
-    use App\Library\Session;
-    use App\Library\Formulario;
+    $this->extend('layout/layout_default');
+
+    $this->section('conteudo');
 
     $nomeImagem = "";
     $nomeUsuario = "";
@@ -81,3 +82,5 @@
         </div>
  
     </div>
+
+<?= $this->endSection() ?>

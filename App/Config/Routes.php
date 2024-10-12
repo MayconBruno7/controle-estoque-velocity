@@ -53,6 +53,7 @@ $routes->group('Relatorio', function($routes) {
 
 $routes->group('Log', function($routes) {
     $routes->get("/", 'Log::index');
+    $routes->get('viewLog/view/(:num)', 'Log::viewLog');
 
 });
 
