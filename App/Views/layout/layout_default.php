@@ -408,7 +408,7 @@
         <script src="<?= base_url("assets/bundles/jquery-ui/jquery-ui.min.js") ?>"></script>
         <script src="<?= base_url("assets/js/page/datatables.js") ?>"></script>
 
-        <!-- verifica a quantidade limite do estoque para alerta disparado por email -->
+        <!-- verifica a quantidade limite do estoque para alerta disparado por email
         <script>
             // Verificar a cada 24 horas (86400000 ms)
             // Verificar a cada 3 minutos (180000)
@@ -491,7 +491,7 @@
                 $('#modalGlobal').modal('show');
             }
 
-        </script>
+        </script> -->
 
         <style>
             footer {
@@ -507,7 +507,6 @@
             <span>© 2024 Company, Inc</span>
 
             <?php 
-                use App\Library\Session;
 
                 $redirectUrl = '';
 

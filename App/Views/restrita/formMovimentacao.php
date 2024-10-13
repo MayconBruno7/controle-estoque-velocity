@@ -14,28 +14,16 @@
         session()->get('produtos');
     }
 
-    if ($action == 'new') {
-        if ($_SERVER["REQUEST_METHOD"] == "POST") {
-            // Decodifica os dados recebidos do JavaScript
-            $movimentacao = json_decode(file_get_contents("php://input"), true);
-    
-            // Verificar se há produtos a serem adicionados
-            if (session()->get('produtos') && count(session()->get('produtos')) > 0) {
-                // Adicionar os produtos à sessão de movimentação
-                $movimentacao['produtos'] = session()->get('produtos');
-            }
-    
-            // Adiciona os dados à sessão
-            if (isset($movimentacao)) {
-                $_SESSION['movimentacao'][] = $movimentacao;
-            }
-    
-            // Limpar a sessão de produtos
-            session()->destroy('produtos');
-        }
-    }
-    
-    $dadosMovimentacao = isset($_SESSION['movimentacao'][0]) ? $_SESSION['movimentacao'][0] : [];
+    // session()->destroy('movimentacao');
+    // session()->destroy('produtos');
+
+    $dadosMovimentacao = session()->get('movimentacao');
+
+    // foreach ($dadosMovimentacao['produtos'] as $produto) {
+    //     echo $produto['id_produto'];
+    // }
+    // var_dump($dadosMovimentacao['produtos'][0]);
+    // exit;
     $total = 0;
 
 ?>
@@ -50,7 +38,10 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form action="<?= ($action == 'update') ? base_url('Movimentacao/update/updateProdutoMovimentacao/' . setValor('id', $data)) : base_url('Movimentacao/newProdutoMovimentacao/' . $action) ?>" id="formAdicionarProduto" method="POST">
+                <?= form_open(
+                        base_url('Movimentacao/' . ($action == 'update' ? 'update/updateProdutoMovimentacao/' . setValor('id', $data) : 'newProdutoMovimentacao/' . $action)),
+                        ['id' => 'formAdicionarProduto', 'method' => 'POST']
+                    ) ?>
                         <div class="mb-3">
                             <div class="mb-3">
                                 <label for="id_produto" class="form-label">Produto</label>
@@ -72,7 +63,7 @@
                         <input type="hidden" name="id_movimentacao" value="<?= setValor('id', $data) ?>">
                         <input type="hidden" name="tipo" value="<?= setValor('tipo', $data) ?>">
                         <button type="submit" class="btn btn-primary">Adicionar</button>
-                    </form>
+                        <?= form_close() ?>
                 </div>
             </div>
         </div>
@@ -88,7 +79,7 @@
 
     <?= form_open(base_url() . 'Movimentacao/' . ($action == "delete" ? "delete" : "store")) ?>
        <!--  verifica se o id está no banco de dados e retorna esse id -->
-       <input type="hidden" name="id" id="id" value="<?= setValor('id') ?>">
+       <input type="hidden" name="id" id="id" value="<?= setValor('id', $data, $data) ?>">
 
     <?php if ($action == 'new') : ?>
     <div class="row justify-content-center">
@@ -143,7 +134,7 @@
         <div class="col-2 mt-3">
             <label for="data_chegada" class="form-label">Data de Chegada</label>
             <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
-            <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido') ?>" <?=$action && ($action == 'delete' || $action == 'view') ? 'disabled' : '' ?>>
+            <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido', $data) ?>" <?=$action && ($action == 'delete' || $action == 'view') ? 'disabled' : '' ?>>
         </div>
 
         <div class="col-12 mt-3">
@@ -160,7 +151,7 @@
             <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
                 <?php foreach($aFornecedor as $fornecedor) : ?>
-                    <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor') == $fornecedor['id'] ? 'selected' : '' ?>>
+                    <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor', $data) == $fornecedor['id'] ? 'selected' : '' ?>>
                         <?= $fornecedor['nome'] ?>
                     </option>
                 <?php endforeach; ?>
@@ -171,8 +162,8 @@
             <label for="tipo" class="form-label">Tipo de Movimentação</label>
             <select name="tipo" id="tipo" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
-                <option value="1" <?= setValor('tipo') == 1 ? 'selected' : '' ?>>Entrada</option>
-                <option value="2" <?= setValor('tipo') == 2 ? 'selected' : '' ?>>Saída</option>
+                <option value="1" <?= setValor('tipo', $data) == 1 ? 'selected' : '' ?>>Entrada</option>
+                <option value="2" <?= setValor('tipo', $data) == 2 ? 'selected' : '' ?>>Saída</option>
             </select>
         </div>
 
@@ -180,8 +171,8 @@
             <label for="statusRegistro" class="form-label">Status da Movimentação</label>
             <select name="statusRegistro" id="statusRegistro" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
-                <option value="1" <?= setValor('statusRegistro') == 1 ? 'selected' : '' ?>>Ativo</option>
-                <option value="2" <?= setValor('statusRegistro') == 2 ? 'selected' : '' ?>>Inativo</option>
+                <option value="1" <?= setValor('statusRegistro', $data) == 1 ? 'selected' : '' ?>>Ativo</option>
+                <option value="2" <?= setValor('statusRegistro', $data) == 2 ? 'selected' : '' ?>>Inativo</option>
             </select>
         </div>
 
@@ -190,7 +181,7 @@
             <select name="setor_id" id="setor_id" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
                 <?php foreach ($aSetor as $setor): ?>
-                    <option value="<?= $setor['id'] ?>" <?= setValor('id_setor') ? 'selected' : '' ?>>
+                    <option value="<?= $setor['id'] ?>" <?= setValor('id_setor', $data) ? 'selected' : '' ?>>
                         <?= $setor['nome'] ?>
                     </option>
                 <?php endforeach; ?>
@@ -200,19 +191,19 @@
         <div class="col-2 mt-3">
             <label for="data_pedido" class="form-label">Data do Pedido</label>
             <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-            <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
+            <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido', $data) ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
         </div>
 
         <div class="col-2 mt-3">
             <label for="data_chegada" class="form-label">Data de Chegada</label>
             <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-            <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada') ?>" min="<?= setValor('data_pedido') ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
+            <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada', $data) ?>" min="<?= setValor('data_pedido', $data) ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
         </div>
 
 
         <div class="col-12 mt-3">
             <label for="motivo" class="form-label">Motivo</label>
-            <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>><?= setValor('motivo') ?></textarea>
+            <textarea class="form-control" name="motivo" id="motivo" placeholder="Detalhe o motivo" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>><?= setValor('motivo', $data) ?></textarea>
         </div>
         <?php endif; ?>
 
@@ -244,8 +235,8 @@
             </tr>
         </thead>
         <tbody>
-            <?php if(isset($_SESSION['movimentacao']) && isset($_SESSION['movimentacao'][0]['produtos']) &&$action == 'new' ?$action : "") : "" ?>
-                <?php foreach ($_SESSION['movimentacao'][0]['produtos'] as $produto) : ?>
+            <?php if (isset(session()->get('movimentacao')['produtos']) && $action == 'new'): ?>
+                <?php foreach ($dadosMovimentacao['produtos'][0] as $produto) : ?>
                     <tr>
                         <td><?= $produto['id_produto'] ?></td>
                         <td><?= $produto['nome_produto'] ?></td>
@@ -254,10 +245,10 @@
                         <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                         <td>
                             <?php if($action != 'delete' &&$action != 'view') : ?>
-                                <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $produto['id_produto'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                                <a href="<?= base_url() ?>Produto/index/delete/<?= $produto['id_produto'] ?>/<?= $produto['quantidade'] ?>/<?= setValor('tipo', $data) ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                                 <!-- <a href="viewEstoque.php?acao=delete&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>&qtd_produto=<?=  isset($produto['quantidade']) ? $produto['quantidade'] : '' ?>&tipo=<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                             <?php endif; ?>
-                                <a href="formProdutos.php?acao=view&id=<?= $produto['id_produto'] ?>&id_movimentacoes=<?= isset($idMovimentacaoAtual) ? $idMovimentacaoAtual : "" ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                                <a href="<?= base_url() ?>Produto/form/view/<?= $produto['id_produto'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                         </td>
                     </tr>
 
@@ -285,10 +276,10 @@
                         <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                         <td>
                         <?php if($action != 'delete' &&$action != 'view') : ?>
-                            <a href="<?= baseUrl() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo') ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                            <a href="<?= base_url() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo', $data) ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                             <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                         <?php endif; ?>
-                            <a href="<?= baseUrl() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
+                            <a href="<?= base_url() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
                             <!-- <a href="formProdutos.php?acao=view&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a> -->
                         </td>
                     </tr>
@@ -319,7 +310,7 @@
         <div class="col-6 d-flex justify-content-center mt-3">
 
         <?php //if ($this->getOutrosParametros(4) == "home"): ?>
-            <!-- <a href=" //baseUrl() . Formulario::retornaHomeAdminOuHome() " class="btn btn-primary btn-sm">Voltar</a> -->
+            <!-- <a href=" //base_url() . Formulario::retornaHomeAdminOuHome() " class="btn btn-primary btn-sm">Voltar</a> -->
         <?php //endif; ?>
 
         <?php if ($action != "view"): ?>
@@ -331,116 +322,129 @@
     </form>
 
     <!-- <button onclick="capturarValores()">Salvar na Sessão</button> -->
+    <!-- <a href="<?= base_url() ?>Movimentacao/getProdutoComboBox?termo=a">teste</a> -->
     </main>
 
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
     <script>
 
-    $(function() {
-    $('#search_produto').keyup(function() {
-        var termo = $(this).val().trim();
+        $(function() {
+            $('#search_produto').keyup(function() {
+                var termo = $(this).val().trim();
 
-        if (termo.length > 0) {
-            $('#id_produto').hide();
-            $('.carregando').show();
+                if (termo.length > 0) {
+                    $('#id_produto').hide();
+                    $('.carregando').show();
 
-            $.getJSON('/Movimentacao/getProdutoComboBox/' + termo, 
-            function(data) {
-                console.log(data);
-                var options = '<option value="" selected disabled>Escolha o produto</option>';
-                if (data.length > 0) {
-                    for (var i = 0; i < data.length; i++) {
-                        options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
-                    }
+                    
+                    $.getJSON('<?= base_url() ?>Movimentacao/getProdutoComboBox?termo=' + termo, 
+                    function(data) {
+                        console.log(data);
+                        var options = '<option value="" selected disabled>Escolha o produto</option>';
+                        if (data.length > 0) {
+                            for (var i = 0; i < data.length; i++) {
+                                options += '<option value="' + data[i].id + '">' + data[i].id + ' - ' + data[i].nome + '</option>';
+                            }
+                        } else {
+                            options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
+                        }
+                        $('#id_produto').html(options).show();
+                    })
+                    .fail(function() {
+                        console.error("Erro ao carregar produtos.");
+                        $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
+                    })
+                    .always(function() {
+                        $('.carregando').hide();
+                    });
                 } else {
-                    options = '<option value="" selected disabled>Nenhum produto encontrado</option>';
+                    $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
                 }
-                $('#id_produto').html(options).show();
-            })
-            .fail(function() {
-                console.error("Erro ao carregar produtos.");
-                $('#id_produto').html('<option value="" selected disabled>Erro ao carregar produtos</option>').show();
-            })
-            .always(function() {
-                $('.carregando').hide();
-            });
-        } else {
-            $('#id_produto').html('<option value="" selected disabled>Escolha um produto</option>').show();
-        }
-    });
-    });
-
-    document.addEventListener("DOMContentLoaded", function() {
-
-    // Chama a função capturarValores quando o link for clicado
-    document.getElementById('btnSalvar').addEventListener('click', function(event) {
-        event.preventDefault(); // Previne o comportamento padrão de redirecionamento do link
-        capturarValores();
-    });
-
-    function capturarValores() {
-        var fornecedor_id = document.getElementById('fornecedor_id').value;
-        var tipo_movimentacao = document.getElementById('tipo').value;
-        var statusRegistro = document.getElementById('statusRegistro').value;
-        var setor_id = document.getElementById('setor_id').value;
-        var data_pedido = document.getElementById('data_pedido').value;
-        var data_chegada = document.getElementById('data_chegada').value;
-        var motivo = document.getElementById('motivo').value;
-
-        // Array para armazenar os produtos
-        var produtos = [];
-
-        // Iterar sobre os campos de produto e capturar seus valores
-        var produtosCampos = document.querySelectorAll('.produto-campo');
-        produtosCampos.forEach(function(campo) {
-            var id_produto = campo.querySelector('.id_produto').value;
-            var nome_produto = campo.querySelector('.nome_produto').value;
-            var valor = campo.querySelector('.valor').value;
-            var quantidade = campo.querySelector('.quantidade').value;
-
-            produtos.push({
-                'id_produto': id_produto,
-                'nome_produto': nome_produto,
-                'valor': valor,
-                'quantidade': quantidade
             });
         });
 
-        // Criação do objeto movimentacao
-        var movimentacao = {
-            'fornecedor_id': fornecedor_id,
-            'tipo_movimentacao': tipo_movimentacao,
-            'statusRegistro': statusRegistro,
-            'setor_id': setor_id,
-            'data_pedido': data_pedido,
-            'data_chegada': data_chegada,
-            'motivo': motivo,
-            'produtos': produtos 
-        };
+        document.addEventListener("DOMContentLoaded", function() {
 
-        // Função para abrir o modal
-        function abrirModal() {
-            var modal = new bootstrap.Modal(document.getElementById('modalAdicionarProduto'));
-            modal.show();
-        }
+            // Chama a função capturarValores quando o link for clicado
+            document.getElementById('btnSalvar').addEventListener('click', function(event) {
+                event.preventDefault(); // Previne o comportamento padrão de redirecionamento do botão
 
-        // Envia os dados para o PHP usando AJAX
-        var xhr = new XMLHttpRequest();
-        xhr.open('POST', 'formMovimentacoes.php?acao=new', true);
-        xhr.setRequestHeader('Content-Type', 'application/json');
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var idMovimentacoes = ''; // Defina o valor corretamente
-                var tipo = tipo_movimentacao;
-                abrirModal();
-            } else {
-                console.log('Erro ao salvar informações');
+                // Captura os valores e envia os dados
+                capturarValores();
+                
+                // Abre o modal manualmente
+                abrirModal(); // Certifique-se que a função está definida corretamente
+            });
+
+            function capturarValores() {
+                var fornecedor_id = document.getElementById('fornecedor_id').value;
+                var tipo_movimentacao = document.getElementById('tipo').value;
+                var statusRegistro = document.getElementById('statusRegistro').value;
+                var setor_id = document.getElementById('setor_id').value;
+                var data_pedido = document.getElementById('data_pedido').value;
+                var data_chegada = document.getElementById('data_chegada').value;
+                var motivo = document.getElementById('motivo').value;
+
+                // Array para armazenar os produtos
+                var produtos = [];
+
+                // Iterar sobre os campos de produto e capturar seus valores
+                var produtosCampos = document.querySelectorAll('.produto-campo');
+                produtosCampos.forEach(function(campo) {
+                    var id_produto = campo.querySelector('.id_produto').value;
+                    var nome_produto = campo.querySelector('.nome_produto').value;
+                    var valor = campo.querySelector('.valor').value;
+                    var quantidade = campo.querySelector('.quantidade').value;
+
+                    produtos.push({
+                        'id_produto': id_produto,
+                        'nome_produto': nome_produto,
+                        'valor': valor,
+                        'quantidade': quantidade
+                    });
+                });
+
+                // Criação do objeto movimentacao
+                var movimentacao = {
+                    'fornecedor_id': fornecedor_id,
+                    'tipo_movimentacao': tipo_movimentacao,
+                    'statusRegistro': statusRegistro,
+                    'setor_id': setor_id,
+                    'data_pedido': data_pedido,
+                    'data_chegada': data_chegada,
+                    'motivo': motivo,
+                    'produtos': produtos 
+                };
+
+                console.log(movimentacao)
+                console.log(produtos)            
+
+                fetch('<?= base_url('Movimentacao/salvarSessao/' . $action . '/0') ?>', {                    
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(movimentacao)
+                })
+                .then(response => {
+                    // Logue a resposta como texto antes de converter para JSON
+                    console.log('Resposta recebida:', response);
+                    return response.json(); // Isso pode falhar se a resposta não for JSON
+                })
+                .then(data => {
+                    console.log('Dados enviados com sucesso:', data);
+                })
+                .catch(error => {
+                    console.log('Erro ao enviar dados:', error);
+                });
             }
-        };
-        xhr.send(JSON.stringify(movimentacao));
-    }
-    });
+
+            function abrirModal() {
+                var modal = new bootstrap.Modal(document.getElementById('modalAdicionarProduto'));
+                modal.show();
+            }
+        });
 
     </script>
 

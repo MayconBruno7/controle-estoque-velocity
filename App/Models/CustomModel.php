@@ -11,12 +11,11 @@ class CustomModel extends Model
     public function __construct()
     {
         parent::__construct();
-        $this->currentUser = session()->get('current_user'); // Altere para a chave correta do usuário
-    
-        // Verificação de depuração
-        if ($this->currentUser === null) {
-            throw new \Exception('Current user is not set in the session.');
-        }
+        $this->currentUser = session()->has('current_user') ? session()->get('current_user') : null;
+        // // Verificação de depuração
+        // if ($this->currentUser === null) {
+        //     throw new \Exception('Current user is not set in the session.');
+        // }
     }
     
     public function insert($row = null, bool $returnID = true) // Alterado aqui

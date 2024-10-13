@@ -145,11 +145,11 @@ class MovimentacaoModel extends CustomModel
      * @param int $quantidadeRemover
      * @return bool
      */
-    public function deleteInfoProdutoMovimentacao(int $id_movimentacao, array $aProdutos, int $tipo_movimentacao, int $quantidadeRemover): bool
+    public function deleteInfoProdutoMovimentacao(int $id_movimentacao, array $aProdutos, int $tipo_movimentacao, int $quantidadeRemover)
     {
         $item_movimentacao = $this->db->table('movimentacao_item')->where([
             'id_movimentacoes' => $id_movimentacao,
-            'id_produtos' => $aProdutos[0]['id']
+            'id_produtos' => $aProdutos['id']
         ])->get()->getRowArray();
 
         if ($item_movimentacao) {
@@ -186,7 +186,7 @@ class MovimentacaoModel extends CustomModel
      * @param string $termo
      * @return array
      */
-    public function getProdutoCombobox(string $termo): array
+    public function getProdutoCombobox(string $termo)
     {
         if (!empty($termo)) {
             $produtos = $this->db->table('produto')->where('statusRegistro', 1)

@@ -19,9 +19,9 @@
 
         <div class="card-body">
             <?php 
-                foreach ($aDados['aUsuario'] as $usuario) {         
+                foreach ($aUsuario as $usuario) {         
                     if ($usuario['id'] == $dados['usuario']) {
-                        foreach ($aDados['aFuncionario'] as $funcionario) {
+                        foreach ($aFuncionario as $funcionario) {
                             if ($usuario['id_funcionario'] == $funcionario['id']) {
                                 $nomeImagem = $funcionario['imagem'];
                                 $nomeUsuario = $usuario['nome'];
@@ -35,9 +35,9 @@
             <div class="author-box-center text-center">
                 <div class="mb-5">
                     <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
-                        <img src="<?= baseUrl() ?>uploads/funcionarios/<?= $nomeImagem ?>" alt="Imagem do Funcionário" class="rounded-circle" width="70" height="70">
+                        <img src="<?= base_url() ?>uploads/funcionarios/<?= $nomeImagem ?>" alt="Imagem do Funcionário" class="rounded-circle" width="70" height="70">
                     <?php else : ?>
-                        <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
+                        <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                     <?php endif; ?>
                     <div class="container mt-2">
                         <span class="ml-3"><?= $nomeUsuario ?></span>

@@ -50,24 +50,23 @@ class Log extends BaseController
     public function viewLog()
     {
         // Recuperando todos os segmentos da URL
-        $segmentos = $this->request->getURI()->getSegments(4);
+        $segmentos = $this->request->getURI()->getSegments(3);
 
         // Acessando o primeiro segmento
-        $logId = $segmentos[0] ?? null; // Use o índice apropriado para o segmento desejado
-
-        var_dump($logId);
-        exit;
+        $logId = $segmentos[3] ?? null; 
 
         $dados = [
             'aFuncionario' => $this->funcionarioModel->findAll(),
             'aUsuario' => $this->usuarioModel->findAll(),
         ];
 
+  
         if ($logId !== null) {
             $registro = $this->logModel->find($logId);
-            $dados = array_merge($dados, $registro);
+            $dados['dados'] = array_merge($dados, $registro);
         }
 
-        return view('restrita/view_log', $dados);
+        
+        return view('restrita/viewLog', $dados);
     }
 }

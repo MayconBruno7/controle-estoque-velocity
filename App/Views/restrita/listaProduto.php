@@ -2,6 +2,21 @@
 
 <?= $this->section('conteudo') ?>
 
+<?php
+
+    if (empty($action)) {
+        // Recuperando todos os segmentos da URL
+        $segmentos = service('request')->getURI()->getSegments();
+
+        // Acessando o terceiro segmento (index 2, já que começa em 0)
+        $action = $segmentos[2] ?? null; 
+        $id_produto = $segmentos[3] ?? null; 
+        $quantidade_atual = $segmentos[4] ?? null; 
+        $tipo = $segmentos[5] ?? null; 
+    }
+
+?>
+
 <div class="loader"></div>
 <div id="app">
     <div class="main-wrapper main-wrapper-1">
@@ -49,13 +64,14 @@
                                         <td><?= getStatusDescricao($value['statusRegistro']) ?></td>
                                         <td>
                                         <?php if (isset($action) && $action == 'delete') : ?>
-                                            <form class="g-3" action="<?= baseUrl() ?>Movimentacao/deleteProdutoMovimentacao/<?= "" ?>" method="post">
-                                                <p>Quantidade atual: <?= $this->getOutrosParametros(5) ?></p>
+                                            <?= form_open(base_url('Movimentacao/deleteProdutoMovimentacao/' . $action), ['method' => 'post']) ?>
+                                            <p>Quantidade atual: <?= $quantidade_atual ?></p>
                                                 <label for="quantidadeRemover" class="form-label">Quantidade</label>
                                                 <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
-                                                <input type="hidden" name="id_produto" value="<?= $this->getOutrosParametros(4) ?>">
-                                                <input type="hidden" name="id_movimentacao" value="<?= $this->getId() ?>">
-                                                <input type="hidden" name="tipo" value="<?= $this->getOutrosParametros(6) ?>">
+
+                                                <input type="hidden" name="id_produto" value="<?= $id_produto ?>">
+                                                <input type="hidden" name="id_movimentacao" value="<?= $id_produto ?>">
+                                                <input type="hidden" name="tipo" value="<?= $tipo ?>">
                                                 <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
                                             </form>
                                         <?php endif; ?>

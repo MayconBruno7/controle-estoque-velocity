@@ -33,12 +33,19 @@ class Produto extends BaseController
      */
     public function index()
     {
-        $acao = $this->request->getVar('acao');
+        if (empty($action)) {
+            // Recuperando todos os segmentos da URL
+            $segmentos = service('request')->getURI()->getSegments();
+    
+            // Acessando o terceiro segmento (index 2, já que começa em 0)
+            $action = $segmentos[2] ?? null;
+            $id_produto = $segmentos[3] ?? null;            
+        }
         
-        if ($acao != 'delete') {
-            $data['produtos'] = $this->model->getLista("id", $acao);
+        if ($action != 'delete') {
+            $data['produtos'] = $this->model->getLista("id", $action);
         } else {
-            $data['produtos'] = $this->model->listaDeleteProduto($this->request->getVar('parametro'));
+            $data['produtos'] = $this->model->listaDeleteProduto($id_produto);
         }
 
         return view("restrita/listaProduto", $data);

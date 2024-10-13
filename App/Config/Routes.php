@@ -63,6 +63,10 @@ $routes->group('Produto', function($routes) {
     $routes->get("form/(:segment)/(:num)", 'Produto::form/$1/$2');
     $routes->post("store", 'Produto::store');
     $routes->post('delete', "Produto::delete");
+
+    // exclui o produto da movimentacao
+    $routes->get("index/(:segment)/(:num)/(:num)", 'Produto::index/$1/$2/$3');
+
 });
 
 // $routes->group('HistoricoProdutoMovimentacao', function($routes) {
@@ -98,6 +102,20 @@ $routes->group('Movimentacao', function($routes) {
     $routes->get("/", 'Movimentacao::index');
     $routes->get("lista", 'Movimentacao::index');
     $routes->get("form/(:segment)/(:num)", 'Movimentacao::form/$1/$2');
+
+    // adiciona a seção na movimentação quando é insert
+    $routes->post("salvarSessao/(:segment)/(:num)", 'Movimentacao::salvarSessao/$1/$2');
+
+    // exclui o produto da movimentação
+    $routes->post("deleteProdutoMovimentacao/(:segment)", 'Movimentacao::deleteProdutoMovimentacao/$1');
+
+
+    // recupera o produto no modal
+    $routes->get("getProdutoComboBox", 'Movimentacao::getProdutoComboBox');
+
+    
+    $routes->post("newProdutoMovimentacao/(:segment)", 'Movimentacao::newProdutoMovimentacao/$1');
+
     $routes->post("store", 'Movimentacao::store');
     $routes->post('delete', "Movimentacao::delete");
 });
