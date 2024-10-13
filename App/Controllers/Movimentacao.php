@@ -153,20 +153,24 @@ class Movimentacao extends BaseController
         $dadosProduto['aProduto'] = $this->produtoModel->recuperaProduto($id_produto);
     
         // Verificar se há uma sessão de movimentação
-        if (!session()->get('movimentacao')) {
+        if (!session()->has('movimentacao')) {
             session()->set('movimentacao', ['produtos' => []]); // Inicializa com um array vazio para produtos
         }
     
         // Obter produtos da sessão
-        $produtos = session()->get('movimentacao')['produtos'];
+        $produtos = session()->get('movimentacao');
+
         $produtoEncontrado = false;
-    
         // Acesse os produtos e verifique se o produto já está na sessão
         foreach ($produtos as &$produto_sessao) {
-            if ($produto_sessao['id_produto'] == $id_produto) {
+            if ((int)$produto_sessao['id_produto'] == $id_produto) {
+                // Converter a quantidade para um inteiro para evitar problemas com strings
+                $quantidadeAtual = (int)$produto_sessao['quantidade'];
+                $quantidadeNova = $quantidadeAtual + $quantidade;
+        
                 // Atualizar a quantidade do produto na sessão
-                $produto_sessao['quantidade'] += $quantidade;
-                $produtoEncontrado = true;
+                $produto_sessao['quantidade'] = $quantidadeNova;
+        
                 break; // Saia do loop se o produto foi encontrado e atualizado
             }
         }
@@ -184,7 +188,7 @@ class Movimentacao extends BaseController
     
         // Atualiza a sessão mantendo as outras informações da movimentação
         $movimentacaoAtual = session()->get('movimentacao'); // Obtém a movimentação atual
-        $movimentacaoAtual['produtos'] = [$produtos]; // Atualiza apenas a parte dos produtos
+        $movimentacaoAtual['produtos'] = $produtos; // Atualiza apenas a parte dos produtos
 
         session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
     
@@ -194,9 +198,6 @@ class Movimentacao extends BaseController
         return redirect()->to(base_url('Movimentacao/form/new/0'));
     }
     
-    
-    
-
     public function deleteProdutoMovimentacao()
     {
         $post = $this->request->getPost();
@@ -217,7 +218,9 @@ class Movimentacao extends BaseController
             // Percorre os produtos na sessão de movimentação
             foreach (session('movimentacao')['produtos'] as $key => &$produto_sessao) { // Usando referência (&)
     
-                if ($produto_sessao['id_produto'] == $id_produto) {
+                // var_dump($produto_sessao);
+                // exit;
+                if ($produto_sessao[0]['id_produto'] == $id_produto) {
                     // Verifica se a quantidade a ser removida é válida
                     if ($quantidadeRemover <= 0) {
                         session()->setFlashdata('msgError', "Quantidade a ser removida deve ser maior que zero.");
@@ -225,27 +228,23 @@ class Movimentacao extends BaseController
                     }
     
                     // Atualiza a quantidade do produto na sessão
-                    $produto_sessao['quantidade'] -= $quantidadeRemover;
+                    $produto_sessao[0]['quantidade'] -= $quantidadeRemover;
     
                     // Se a quantidade for menor ou igual a zero, remove o produto da sessão
-                    if ($produto_sessao['quantidade'] <= 0) {
+                    if ($produto_sessao[0]['quantidade'] <= 0) {
                         unset($_SESSION['movimentacao']['produtos'][$key]);
                     }
     
                     $produtoEncontrado = true;
-    
 
                     // Atualiza a sessão mantendo as outras informações da movimentação
                     $movimentacaoAtual = session()->get('movimentacao'); // Obtém a movimentação atual
                     $movimentacaoAtual['produtos'] = [$produto_sessao]; // Atualiza apenas a parte dos produtos
 
                     session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
-
-
     
                     session()->setFlashdata('msgSuccess', "Produto excluído da movimentação.");
-                    // var_dump(session('movimentacao'), $id_produto, $produto_sessao);
-                    // exit; // Mantenha o exit aqui apenas para depuração
+
                     return redirect()->to('Movimentacao/form/new/0');
                 }
             }
