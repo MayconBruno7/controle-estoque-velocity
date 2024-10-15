@@ -112,8 +112,6 @@ class MovimentacaoModel extends CustomModel
                 throw new \Exception("O array 'movimentacao' está vazio."); // Levanta uma exceção se estiver vazio
             }
     
-            $movimentacao['id'] = $idMovimentacao;
-
             // Atualiza a movimentação na tabela
             $updated = $this->update($idMovimentacao, $movimentacao); // Chamada correta do método update
     
