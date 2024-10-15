@@ -4,7 +4,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-class HistoricoProdutoMovimentacaoModel extends Model
+class HistoricoProdutoMovimentacaoModel extends CustomModel
 {
     protected $table = 'movimentacao_item'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária

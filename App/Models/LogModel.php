@@ -5,7 +5,7 @@ namespace App\Models;
 use CodeIgniter\Model;
 use App\Library\Session;
 
-class LogModel extends Model
+class LogModel extends CustomModel
 {
     protected $table = 'logs'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária

@@ -5,7 +5,7 @@ namespace App\Models;
 
 use CodeIgniter\Model;
 
-Class RelatorioModel extends Model
+Class RelatorioModel extends CustomModel
 {
     public $table = "movimentacao_item";
 

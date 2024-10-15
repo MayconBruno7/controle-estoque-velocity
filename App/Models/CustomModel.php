@@ -17,6 +17,61 @@ class CustomModel extends Model
         //     throw new \Exception('Current user is not set in the session.');
         // }
     }
+
+    // metodos especificos para as ações das tabelas movimentação e movimentação item
+    public function inserirMovimentacao($row = null, bool $returnID = true)
+    {
+        // Define a variável de usuário atual na sessão
+        $currentUser = $this->currentUser;
+
+        // Define a variável no MySQL
+        $this->db->query("SET @current_user = '{$currentUser}'");
+
+        // Chama o método parent para inserir os dados
+        return $this->db->table('movimentacao')->insert($row, $returnID);
+    }
+
+    public function insertMovimentacaoItem($row = null)
+    {
+        // Define a variável de usuário atual na sessão
+        $currentUser = $this->currentUser;
+
+        // Define a variável no MySQL
+        $this->db->query("SET @current_user = '{$currentUser}'");
+
+        // Chama o método parent para inserir os dados
+        return $this->db->table('movimentacao_item')->insert($row);
+    }
+
+    // Atualiza a quantidade de itens na movimentação
+    public function updateMovimentacaoQuantidade($id_movimentacao, $id_produto, $novaQuantidade)
+    {
+        // Define a variável de usuário atual no MySQL
+        $this->db->query("SET @current_user = '{$this->currentUser}'");
+
+        // Executa a atualização da quantidade
+        return $this->db->table('movimentacao_item')->update(
+            ['quantidade' => $novaQuantidade],
+            [
+                'id_movimentacoes' => $id_movimentacao,
+                'id_produtos' => $id_produto
+            ]
+        );
+    }
+
+    // Deleta itens da movimentação com quantidade igual a zero
+    public function deleteMovimentacaoItemComQuantidadeZero($id_movimentacao, $id_produto)
+    {
+        // Define a variável de usuário atual no MySQL
+        $this->db->query("SET @current_user = '{$this->currentUser}'");
+
+        // Executa a exclusão do item com quantidade zero
+        return $this->db->table('movimentacao_item')->delete([
+            'id_movimentacoes' => $id_movimentacao,
+            'id_produtos' => $id_produto,
+            'quantidade' => 0
+        ]);
+    }
     
     public function insert($row = null, bool $returnID = true) // Alterado aqui
     {
@@ -38,6 +93,8 @@ class CustomModel extends Model
         // Execute a atualização no banco de dados
         $this->db->query("SET @current_user = '{$currentUser}'"); // Define a variável no MySQL
 
+        // var_dump($id, $data);
+        // exit;
         // Chama o método parent para atualizar os dados
         return parent::update($id, $data);
     }

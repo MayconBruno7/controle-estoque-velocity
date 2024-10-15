@@ -47,7 +47,7 @@ class Produto extends BaseController
         } else {
             $data['produtos'] = $this->model->listaDeleteProduto($id_produto);
         }
-
+        
         return view("restrita/listaProduto", $data);
     }
 

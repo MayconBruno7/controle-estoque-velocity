@@ -10,19 +10,21 @@
     }
 
     // Verificar se há uma sessão de produtos
-    if (!session()->get('produtos')) {
-        session()->get('produtos');
-    }
+    // if (!session()->get('produtos')) {
+    //     session()->get('produtos');
+    // }
 
     // session()->destroy('movimentacao');
     // session()->destroy('produtos');
 
     $dadosMovimentacao = session()->get('movimentacao');
-
+    // var_dump($dadosMovimentacao['produtos']);
+    // var_dump($action);
+    // exit;
     // foreach ($dadosMovimentacao['produtos'] as $produto) {
     //     echo $produto['id_produto'];
     // }
-    // var_dump($dadosMovimentacao['produtos'][0]);
+
     // exit;
     $total = 0;
 
@@ -77,9 +79,10 @@
        <!-- Mensagens de erro ou sucesso -->
     </div>
 
-    <?= form_open(base_url() . 'Movimentacao/' . ($action == "delete" ? "delete" : "store")) ?>
-       <!--  verifica se o id está no banco de dados e retorna esse id -->
-       <input type="hidden" name="id" id="id" value="<?= setValor('id', $data, $data) ?>">
+    <?= form_open(base_url() . 'Movimentacao/' . ($action), ['method' => 'post']) ?>
+
+    <!--  verifica se o id está no banco de dados e retorna esse id -->
+    <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
 
     <?php if ($action == 'new') : ?>
     <div class="row justify-content-center">
@@ -207,6 +210,8 @@
         </div>
         <?php endif; ?>
 
+        <!-- <a href="<?= base_url() ?>Movimentacao/salvarSessao/new/0">teste</a>     -->
+
         <div class="col mt-4">
             <div class="col-md-8">
                 <h3 class="d-inline">Produtos do pedido</h3>
@@ -216,7 +221,7 @@
         <div class="col mt-4">
             <div class="col-auto text-end ml-2">
             <?php if ($action != "view" && $action != "delete"): ?>
-                <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($action == 'new') ? 'btnSalvar' : '' ?>" <?= ($action != 'new') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
+                <button type="button" class="btn btn-outline-primary btn-sm" id="<?= ($action == 'new') ? 'btnAdicionaProdutoInsert' : 'btnAdicionaProdutoUpdate' ?>" <?= ($action == 'update') ? 'data-bs-toggle="modal" data-bs-target="#modalAdicionarProduto"' : '' ?>>
                     Adicionar Produtos
                 </button>
             <?php endif; ?>
@@ -236,7 +241,7 @@
         </thead>
         <tbody>
             <?php if (isset(session()->get('movimentacao')['produtos']) && $action == 'new'): ?>
-                <?php foreach ($dadosMovimentacao['produtos'][0] as $produto) : ?>
+                <?php foreach ($dadosMovimentacao['produtos'] as $produto) : ?>
                     <tr>
                         <td><?= $produto['id_produto'] ?></td>
                         <td><?= $produto['nome_produto'] ?></td>
@@ -252,10 +257,13 @@
                         </td>
                     </tr>
 
-                    <input type="hidden" name="quantidade" id="quantidade" value="<?= $produto['quantidade'] ?>">
-                    <input type="hidden" name="id_produto" id="id_produto" value="<?= $produto['id_produto'] ?>">
-                    <input type="hidden" name="valor" id="valor" value="<?= $produto['valor'] ?>">
-                    <!-- <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>"> -->
+                    <div class="produto-campo">
+                        <input type="hidden" name="quantidade" id="quantidade_value" value="<?= $produto['quantidade'] ?>">
+                        <input type="hidden" name="id_produto" id="id_produto_value" value="<?= $produto['id_produto'] ?>">
+                        <input type="hidden" name="valor" id="valor_value" value="<?= $produto['valor'] ?>">
+                        <input type="hidden" name="nome_produto" id="nome_produto_value" value="<?= $produto['nome_produto'] ?>">
+                        <!-- <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>"> -->
+                    </div>
 
                     <?php
                         $total += $produto['quantidade'] * $produto['valor'];
@@ -275,8 +283,8 @@
                         <td><?= $row['mov_itens_quantidade'] ?></td>
                         <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                         <td>
-                        <?php if($action != 'delete' &&$action != 'view') : ?>
-                            <a href="<?= base_url() ?>Produto/index/delete/<?= $this->getId() ?>/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo', $data) ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                        <?php if($action != 'delete' && $action != 'view') : ?>
+                            <a href="<?= base_url() ?>Produto/index/delete/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo', $data) ?>/<?= setValor('id', $data) ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                             <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                         <?php endif; ?>
                             <a href="<?= base_url() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
@@ -287,7 +295,7 @@
                     <input type="hidden" name="quantidade" id="quantidade" value="<?= $row['mov_itens_quantidade'] ?>">
                     <input type="hidden" name="id_produto" id="id_produto" value="<?= $row['id_prod_mov_itens'] ?>">
                     <input type="hidden" name="valor" id="valor" value="<?= $row['valor'] ?>">
-                    <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>">
+                    <!-- <input type="hidden" name="tipo_movimentacoes" id="tipo_movimentacoes" value="<?= isset($dadosMovimentacao['tipo_movimentacao']) ? $dadosMovimentacao['tipo_movimentacao'] : '' ?>"> -->
 
                     <?php
 
@@ -319,7 +327,7 @@
         <?php endif; ?>
         </div>
     </div>
-    </form>
+    <?= form_close() ?>
 
     <!-- <button onclick="capturarValores()">Salvar na Sessão</button> -->
     <!-- <a href="<?= base_url() ?>Movimentacao/getProdutoComboBox?termo=a">teste</a> -->
@@ -328,6 +336,9 @@
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
     <script>
+
+        campo_produto = document.getElementById('id_produto_value');
+        console.log(campo_produto)
 
         $(function() {
             $('#search_produto').keyup(function() {
@@ -366,16 +377,23 @@
 
         document.addEventListener("DOMContentLoaded", function() {
 
-            // Chama a função capturarValores quando o link for clicado
-            document.getElementById('btnSalvar').addEventListener('click', function(event) {
-                event.preventDefault(); // Previne o comportamento padrão de redirecionamento do botão
+            // Verifica se o botão existe antes de adicionar o evento
+            var btnAdicionaProdutoUpdate = document.getElementById('btnAdicionaProdutoUpdate');
+            if (btnAdicionaProdutoUpdate) {
+                btnAdicionaProdutoUpdate.addEventListener('click', function(event) {
+                    event.preventDefault(); // Previne o comportamento padrão de redirecionamento do botão
+                    abrirModal(); // Certifique-se que a função está definida corretamente
+                });
+            }
 
-                // Captura os valores e envia os dados
-                capturarValores();
-                
-                // Abre o modal manualmente
-                abrirModal(); // Certifique-se que a função está definida corretamente
-            });
+            var btnSalvar = document.getElementById('btnAdicionaProdutoInsert');
+            if (btnSalvar) {
+                btnSalvar.addEventListener('click', function(event) {
+                    event.preventDefault(); // Previne o comportamento padrão de redirecionamento do botão
+                    capturarValores(); // Certifique-se que a função está definida corretamente
+                    abrirModal(); // Certifique-se que a função está definida corretamente
+                });
+            }
 
             function capturarValores() {
                 var fornecedor_id = document.getElementById('fornecedor_id').value;
@@ -392,10 +410,10 @@
                 // Iterar sobre os campos de produto e capturar seus valores
                 var produtosCampos = document.querySelectorAll('.produto-campo');
                 produtosCampos.forEach(function(campo) {
-                    var id_produto = campo.querySelector('.id_produto').value;
-                    var nome_produto = campo.querySelector('.nome_produto').value;
-                    var valor = campo.querySelector('.valor').value;
-                    var quantidade = campo.querySelector('.quantidade').value;
+                    var id_produto = campo.querySelector('#id_produto_value').value;
+                    var nome_produto = campo.querySelector('#nome_produto_value').value;
+                    var valor = campo.querySelector('#valor_value').value;
+                    var quantidade = campo.querySelector('#quantidade_value').value;
 
                     produtos.push({
                         'id_produto': id_produto,
@@ -417,7 +435,7 @@
                     'produtos': produtos 
                 };
 
-                console.log(movimentacao)
+                //console.log(movimentacao)
                 console.log(produtos)            
 
                 fetch('<?= base_url('Movimentacao/salvarSessao/' . $action . '/0') ?>', {                    
@@ -429,14 +447,14 @@
                 })
                 .then(response => {
                     // Logue a resposta como texto antes de converter para JSON
-                    console.log('Resposta recebida:', response);
+                    // console.log('Resposta recebida:', response);
                     return response.json(); // Isso pode falhar se a resposta não for JSON
                 })
                 .then(data => {
-                    console.log('Dados enviados com sucesso:', data);
+                    // console.log('Dados enviados com sucesso:', data);
                 })
                 .catch(error => {
-                    console.log('Erro ao enviar dados:', error);
+                    // console.log('Erro ao enviar dados:', error);
                 });
             }
 

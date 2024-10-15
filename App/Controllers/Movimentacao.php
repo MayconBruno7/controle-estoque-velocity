@@ -15,12 +15,12 @@ class Movimentacao extends BaseController
     protected $movimentacaoItemModel;
     protected $setorModel;
     protected $fornecedorModel;
-    protected $produtoModel;     
+    protected $produtoModel;
 
 
     public function __construct()
     {
-    
+
         // Injeção de dependência dos modelos
         $this->model = new MovimentacaoModel();
         $this->movimentacaoItemModel = new MovimentacaoItemModel();
@@ -29,9 +29,9 @@ class Movimentacao extends BaseController
         $this->produtoModel = new ProdutoModel();
 
         // Redirecionar se o usuário não estiver logado
-        if (!$this->getAdministrador()) {
-            return redirect()->to(base_url('home'));
-        }
+        // if (!$this->getAdministrador()) {
+        //     return redirect()->to(base_url('home'));
+        // }
     }
 
     public function index()
@@ -45,9 +45,9 @@ class Movimentacao extends BaseController
         $data['action'] = $action;
         $data['data'] = null;
         $data['errors'] = [];
-      
+
         if ($action != "new" && $id !== null) {
-            $data['itemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
+            $data['aItemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
             $data['data'] = $this->model->find($id);
         }
 
@@ -55,10 +55,12 @@ class Movimentacao extends BaseController
         $data['aFornecedor'] = $this->fornecedorModel->findAll();
         $data['aProduto'] = $this->produtoModel->findAll();
 
+        // var_dump($data);
+        // exit;
         return view('restrita/formMovimentacao', $data);
     }
 
-    public function salvarSessao() 
+    public function salvarSessao()
     {
 
         // Receber dados em JSON da requisição
@@ -68,22 +70,30 @@ class Movimentacao extends BaseController
         if ($movimentacao) {
             // Aqui você pode salvar os dados no banco ou processar conforme necessário
             // Exemplo de como acessar os valores:
-            $fornecedor_id = $movimentacao->fornecedor_id;
-            $tipo_movimentacao = $movimentacao->tipo_movimentacao;
-            $statusRegistro = $movimentacao->statusRegistro;
-            $setor_id = $movimentacao->setor_id;
-            $data_pedido = $movimentacao->data_pedido;
-            $data_chegada = $movimentacao->data_chegada;
-            $motivo = $movimentacao->motivo;
-            $produtos = $movimentacao->produtos;
+            // $fornecedor_id = $movimentacao->fornecedor_id;
+            // $tipo_movimentacao = $movimentacao->tipo_movimentacao;
+            // $statusRegistro = $movimentacao->statusRegistro;
+            // $setor_id = $movimentacao->setor_id;
+            // $data_pedido = $movimentacao->data_pedido;
+            // $data_chegada = $movimentacao->data_chegada;
+            // $motivo = $movimentacao->motivo;
+            // $produtos = $movimentacao->produtos;
 
-            // Se $movimentacao é um objeto
-            session()->set('movimentacao', (array)$movimentacao);
+            session()->set('movimentacao', [
+                'fornecedor_id' => $movimentacao->fornecedor_id,
+                'tipo_movimentacao' => $movimentacao->tipo_movimentacao,
+                'statusRegistro' => $movimentacao->statusRegistro,
+                'setor_id' => $movimentacao->setor_id,
+                'data_pedido' => $movimentacao->data_pedido,
+                'data_chegada' => $movimentacao->data_chegada,
+                'motivo' => $movimentacao->motivo,
+                'produtos' => $movimentacao->produtos // Atualiza apenas a parte dos produtos
+            ]);
 
             // Retornar uma resposta JSON de sucesso
             return $this->response->setJSON([
                 // Salva os dados na sessão
-                'status' => 'success', 
+                'status' => 'success',
                 'message' => 'Movimentação salva com sucesso'
             ]);
 
@@ -98,143 +108,244 @@ class Movimentacao extends BaseController
 
     }
 
-    public function store()
+    public function new()
     {
-        $post = $this->request->getPost();
+        $post = $this->request->getPost(); // Obtendo dados do POST
 
-        // Dados da movimentação
-        $dataMovimentacao = [
-            'id' => !empty($post['id']) ? (int)$post['id'] : null, // Se tiver 'id', será um update, caso contrário será um new
-            'fornecedor_id' => (int)$post['fornecedor_id'],
-            'setor_id' => (int)$post['setor_id'],
-            'data_pedido' => $post['data_pedido'],
-            'data_chegada' => $post['data_chegada'],
-            'motivo' => $post['motivo'],
-            'statusRegistro' => (int)$post['statusRegistro'],
-            'tipo' => (int)$post['tipo'],
-        ];
+        // Verifica se todos os campos necessários do formulário foram enviados
+        if (isset($post['fornecedor_id'],
+            $post['tipo'],
+            $post['statusRegistro'],
+            $post['setor_id'],
+            $post['data_pedido'],
+            $post['motivo']))
+        {
 
-        // Verifica se há produtos na sessão
-        if (!session()->get('movimentacao')) {
-            session()->set('movimentacao', []);
-        }
+            // Dados da movimentação
+            $fornecedor_id = (int)$post['fornecedor_id'];
+            $setor_id = (int)$post['setor_id'];
+            $data_pedido = $post['data_pedido'];
+            $data_chegada = $post['data_chegada'];
+            $motivo = $post['motivo'];
+            $statusRegistro = (int)$post['statusRegistro'];
+            $tipo_movimentacao = (int)$post['tipo'];
 
-        // Adiciona ou atualiza produtos à sessão
-        $produtos = session()->get('movimentacao');
-        $produtos[] = $dataMovimentacao;
-        session()->set('movimentacao', $produtos);
+            // Dados do produto
+            $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
+            $id_produto = isset($post['id_produto']) ? (int)$post['id_produto'] : '';
+            $valor_produto = isset($post['valor']) ? (float)$post['valor'] : '';
 
-        // Lógica de inserção ou atualização na base de dados
-        if ($this->model->save($dataMovimentacao)) {
-            // Mensagem de sucesso dependendo se é inserção ou atualização
-            $message = !empty($post['id']) ? 'Movimentação atualizada com sucesso.' : 'Movimentação inserida com sucesso.';
-            session()->setFlashdata('msgSuccess', $message);
+            // Carregar o model de Produto
+            $ProdutoModel = new ProdutoModel(); // Não precisamos mais de `loadModel()`
+            $dadosProduto = $ProdutoModel->recuperaProduto($id_produto);
 
-            // Redireciona para a lista de movimentações
-            return redirect()->to(base_url('movimentacao'));
+            // Recuperando todos os segmentos da URL
+            $segmentos = $this->request->getURI()->getSegments(3);
+
+            // Acessando o primeiro segmento
+            $action = $segmentos[1] ?? null;
+
+            // Se estamos em modo de atualização
+            if ($action == 'update') {
+                // Verificar se a sessão de movimentação existe
+                $session = session();
+                if (!$session->has('movimentacao')) {
+                    $session->set('movimentacao', ['produtos' => []]);
+                }
+
+                $movimentacao = $session->get('movimentacao');
+                $produtos = isset($movimentacao['produtos']) ? $movimentacao['produtos'] : [];
+
+                // Verificar se o produto já está na sessão de movimentação
+                $produtoEncontrado = false;
+                foreach ($produtos as &$produto_sessao) {
+                    if ($produto_sessao['id_produto'] == $id_produto) {
+                        // Atualiza a quantidade do produto na sessão
+                        $produto_sessao['quantidade'] += $quantidade;
+                        $produtoEncontrado = true;
+                        break;
+                    }
+                }
+
+                // Caso o produto não tenha sido encontrado, adiciona-o à sessão
+                if (!$produtoEncontrado) {
+
+                    $produtos[] = [
+                        'id_produto' => $id_produto,
+                        'quantidade' => $quantidade,
+                        'valor' => $valor_produto
+                    ];
+                }
+
+                // Atualiza a sessão com os produtos modificados
+                $movimentacao['produtos'] = $produtos;
+                $session->set('movimentacao', $movimentacao);
+            }
+
+            // Verificação de estoque
+            $verificaQuantidadeEstoqueNegativa = false;
+            if (isset($id_produto) && $id_produto != '') {
+
+                if ($dadosProduto['quantidade'] >= $quantidade && $tipo_movimentacao == '2') {
+                    $verificaQuantidadeEstoqueNegativa = true;
+
+                } elseif ($dadosProduto['quantidade'] < $quantidade && $tipo_movimentacao == '2') {
+                    $verificaQuantidadeEstoqueNegativa = false;
+                  
+                }
+            }
+
+            // Se for movimentação de entrada, estoque negativo não importa
+            if ($tipo_movimentacao == '1') {
+                $verificaQuantidadeEstoqueNegativa = true;
+            }
+
+            // Se a verificação de estoque for bem-sucedida
+            if ($verificaQuantidadeEstoqueNegativa) {
+                // Inserir movimentação e produtos
+                $inserir = $this->model->insertMovimentacao([
+                    'id_fornecedor'    => $fornecedor_id,
+                    'tipo'             => $tipo_movimentacao,
+                    'statusRegistro'   => $statusRegistro,
+                    'id_setor'         => $setor_id,
+                    'data_pedido'      => $data_pedido,
+                    'data_chegada'     => $data_chegada,
+                    'motivo'           => $motivo
+                ], [
+                    [
+                        'id_produtos'      => $id_produto,
+                        'quantidade'       => $quantidade,
+                        'valor'            => $valor_produto
+                    ]
+                ]);
+
+                // var_dump($inserir);
+                // var_dump($id_produto, $quantidade, $valor_produto);
+                // exit('dentro do if');
+
+                // Limpa a sessão e redireciona
+                session()->destroy(['movimentacao', 'produtos']);
+                session()->setFlashdata('msgSuccess', 'Movimentação adicionada com sucesso.');
+                return redirect()->to(base_url('Movimentacao'));
+            } else {
+                session()->setFlashdata('msgError', 'Quantidade da movimentação de saída maior que a do produto em estoque.');
+                return redirect()->to(base_url('Movimentacao/form/insert/0'));
+            }
         } else {
-            session()->setFlashdata('msgError', 'Erro ao salvar movimentação.');
-            return redirect()->to(base_url('movimentacao/form'));
+            session()->setFlashdata('msgError', 'Dados do formulário insuficientes.');
+            return redirect()->to(base_url('Movimentacao/form/insert/0'));
         }
     }
-
 
     public function newProdutoMovimentacao()
     {
         $post = $this->request->getPost();
-    
+
         // Obtenha os dados do produto do POST
         $id_movimentacao = isset($post['id_movimentacoes']) ? (int)$post['id_movimentacoes'] : "";
         $quantidade = (int)$post['quantidade'];
         $id_produto = (int)$post['id_produto'];
         $valor_produto = (float)$post['valor'];
-    
-        // Recuperar produto
-        $dadosProduto['aProduto'] = $this->produtoModel->recuperaProduto($id_produto);
-    
-        // Verificar se há uma sessão de movimentação
-        if (!session()->has('movimentacao')) {
-            session()->set('movimentacao', ['produtos' => []]); // Inicializa com um array vazio para produtos
-        }
-    
-        // Obter produtos da sessão
-        $produtos = session()->get('movimentacao');
 
         $produtoEncontrado = false;
+
+        // Recuperar produto e garantir que o resultado seja um array
+        $dadosProduto['aProduto'] = (array) $this->produtoModel->recuperaProduto($id_produto);
+
+        // Verificar se há uma sessão de movimentação
+        if (!session()->has('movimentacao')) {
+            // Inicializa a movimentação com um array vazio para produtos
+            session()->set('movimentacao', [
+                'produtos' => [] // Corrigido para garantir que seja um array
+            ]);
+        }
+
+        // Obter produtos da sessão e garantir que seja um array
+        $movimentacao = session()->get('movimentacao');
+        $produtos = isset($movimentacao['produtos']) ? (array) $movimentacao['produtos'] : [];
+
         // Acesse os produtos e verifique se o produto já está na sessão
         foreach ($produtos as &$produto_sessao) {
-            if ((int)$produto_sessao['id_produto'] == $id_produto) {
+            // Se o produto na sessão for um objeto, converta para array
+            if (is_object($produto_sessao)) {
+                $produto_sessao = (array) $produto_sessao;
+            }
+
+            if (isset($produto_sessao['id_produto']) && $produto_sessao['id_produto'] == $id_produto) {
+                $produtoEncontrado = true;
+
                 // Converter a quantidade para um inteiro para evitar problemas com strings
                 $quantidadeAtual = (int)$produto_sessao['quantidade'];
                 $quantidadeNova = $quantidadeAtual + $quantidade;
-        
+
                 // Atualizar a quantidade do produto na sessão
                 $produto_sessao['quantidade'] = $quantidadeNova;
-        
+
                 break; // Saia do loop se o produto foi encontrado e atualizado
             }
         }
-    
+
         // Se o produto não estiver na sessão de movimentação, adicioná-lo
         if (!$produtoEncontrado) {
             // Adiciona o novo produto ao array de produtos
-            $produtos[] = array(
+            $produtos[] = [
                 'nome_produto' => $dadosProduto['aProduto']['nome'],
                 'id_produto' => $id_produto,
                 'quantidade' => $quantidade,
                 'valor' => $valor_produto
-            );
+            ];
         }
-    
+
         // Atualiza a sessão mantendo as outras informações da movimentação
         $movimentacaoAtual = session()->get('movimentacao'); // Obtém a movimentação atual
         $movimentacaoAtual['produtos'] = $produtos; // Atualiza apenas a parte dos produtos
 
         session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
-    
+
         // Mensagem de sucesso
         session()->setFlashdata('msgSuccess', 'Produto adicionado à movimentação.');
-    
+
         return redirect()->to(base_url('Movimentacao/form/new/0'));
     }
-    
+
     public function deleteProdutoMovimentacao()
     {
         $post = $this->request->getPost();
-    
-        $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : ""; 
+
+        // var_dump($post);
+        // exit;
+
+        $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : "";
         $quantidadeRemover = (int)$post['quantidadeRemover'];
         $id_produto = (int)$post['id_produto'];
         $tipo_movimentacao = (int)$post['tipo'];
-    
+
         // Recuperando todos os segmentos da URL
         $segmentos = service('request')->getURI()->getSegments();
-        $action = $segmentos[2] ?? null; 
-    
+        $action = $segmentos[2] ?? null;
+
+        $produtoEncontrado = false;
+
         // Verifica se a sessão de movimentação e os produtos estão definidos
         if (session()->has('movimentacao') && isset(session('movimentacao')['produtos']) && $action === 'delete') {
-            $produtoEncontrado = false;
-    
             // Percorre os produtos na sessão de movimentação
             foreach (session('movimentacao')['produtos'] as $key => &$produto_sessao) { // Usando referência (&)
-    
-                // var_dump($produto_sessao);
-                // exit;
-                if ($produto_sessao[0]['id_produto'] == $id_produto) {
+
+                if ($produto_sessao['id_produto'] == $id_produto) {
                     // Verifica se a quantidade a ser removida é válida
                     if ($quantidadeRemover <= 0) {
                         session()->setFlashdata('msgError', "Quantidade a ser removida deve ser maior que zero.");
                         return redirect()->to('Movimentacao/form/new/0');
                     }
-    
+
                     // Atualiza a quantidade do produto na sessão
-                    $produto_sessao[0]['quantidade'] -= $quantidadeRemover;
-    
+                    $produto_sessao['quantidade'] -= $quantidadeRemover;
+
                     // Se a quantidade for menor ou igual a zero, remove o produto da sessão
-                    if ($produto_sessao[0]['quantidade'] <= 0) {
+                    if ($produto_sessao['quantidade'] <= 0) {
                         unset($_SESSION['movimentacao']['produtos'][$key]);
                     }
-    
+
                     $produtoEncontrado = true;
 
                     // Atualiza a sessão mantendo as outras informações da movimentação
@@ -242,29 +353,36 @@ class Movimentacao extends BaseController
                     $movimentacaoAtual['produtos'] = [$produto_sessao]; // Atualiza apenas a parte dos produtos
 
                     session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
-    
+
                     session()->setFlashdata('msgSuccess', "Produto excluído da movimentação.");
 
                     return redirect()->to('Movimentacao/form/new/0');
                 }
-            }
+            }   
+        }
+   
+            
+        // var_dump($post);
+        // exit;
+
+        // Caso o produto não seja encontrado na sessão, verifique no banco de dados
+        if(!session()->has('movimentacao') && $action == 'delete') {
+            $dadosProduto = $this->produtoModel->recuperaProduto($id_produto);
+            // var_dump($post);
+            // exit;
     
-            // Caso o produto não seja encontrado na sessão, verifique no banco de dados
-            if (!$produtoEncontrado) {
-                $dadosProduto = $this->produtoModel->recuperaProduto($id_produto);
-                $deletaProduto = $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
-    
-                if ($deletaProduto) {
-                    session()->setFlashdata('msgSuccess', "Item deletado da movimentação.");
-                    return redirect()->to('Movimentacao/form/update/' . $id_movimentacao);
-                }
+            $deletaProduto = $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
+
+            if ($deletaProduto) {
+                session()->setFlashdata('msgSuccess', "Item deletado da movimentação.");
+                return redirect()->to('Movimentacao/form/update/' . $id_movimentacao);
             }
         }
-    
+
         return redirect()->to(base_url('Movimentacao/form/new/0'));
     }
-    
-    
+
+
 
 
 //     public function delete($id)
@@ -285,22 +403,27 @@ class Movimentacao extends BaseController
      *
      * @return void
      */
-    public function update($action = null)
+    public function update()
     {
         $post = $this->request->getPost();
 
         if (
-            isset($post['id']) || 
-            isset($post['id_movimentacao']) || 
-            isset($post['id_produto']) || 
-            isset($post['fornecedor_id']) || 
-            isset($post['tipo']) || 
-            isset($post['statusRegistro']) || 
-            isset($post['setor_id']) || 
-            isset($post['data_pedido']) || 
-            isset($post['data_chegada']) || 
+            isset($post['id']) ||
+            isset($post['id_movimentacao']) ||
+            isset($post['id_produto']) ||
+            isset($post['fornecedor_id']) ||
+            isset($post['tipo']) ||
+            isset($post['statusRegistro']) ||
+            isset($post['setor_id']) ||
+            isset($post['data_pedido']) ||
+            isset($post['data_chegada']) ||
             isset($post['motivo'])
         ) {
+
+            // Recuperando todos os segmentos da URL
+            $segmentos = service('request')->getURI()->getSegments();
+            $action = $segmentos[2] ?? null;
+
             // Dados da movimentação
             $id_movimentacao = $post['id'] ?? $post['id_movimentacao'] ?? "";
             $fornecedor_id = (int)($post['fornecedor_id'] ?? '');
@@ -345,11 +468,11 @@ class Movimentacao extends BaseController
             $acaoProduto = $found ? 'update' : 'new';
 
             // Validação de quantidade em estoque
-            $dadosProduto = $this->model->getProduto($id_produto); // Método para obter dados do produto
+            $dadosProduto = $this->produtoModel->recuperaProduto($id_produto); // Método para obter dados do produto
             $verificaQuantidadeEstoqueNegativa = true;
 
             if (!empty($dadosProduto)) {
-                if ($dadosProduto[0]['quantidade'] < $quantidade && $tipo_movimentacao == 2) {
+                if ($dadosProduto['quantidade'] < $quantidade && $tipo_movimentacao == 2) {
                     $verificaQuantidadeEstoqueNegativa = false;
                 }
             }
@@ -359,10 +482,10 @@ class Movimentacao extends BaseController
             }
 
             if ($action != 'updateProdutoMovimentacao') {
+                
+           
                 $atualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
-                    [
-                        "id_movimentacao" => $id_movimentacao
-                    ],
+                    $id_movimentacao,
                     [
                         "id_fornecedor" => $fornecedor_id,
                         "tipo" => $tipo_movimentacao,
@@ -372,15 +495,11 @@ class Movimentacao extends BaseController
                         "data_chegada" => $data_chegada,
                         "motivo" => $motivo
                     ],
-                    [
-                        [
-                            "id_produtos" => $id_produto,
-                            "quantidade" => $quantidade, 
-                            "valor" => $valores_produtos
-                        ]
-                    ],
-                    [$produtoMovAtualizado]
+                    $produtoMovAtualizado
                 );
+                
+                var_dump($atualizandoMovimentacaoEProdutos, $post, $action);
+                exit;
 
                 if ($atualizandoMovimentacaoEProdutos) {
                     session()->destroy('movimentacao');
@@ -393,9 +512,7 @@ class Movimentacao extends BaseController
             } else if ($action == 'updateProdutoMovimentacao') {
                 if ($verificaQuantidadeEstoqueNegativa) {
                     $atualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
-                        [
-                            "id_movimentacao" => $id_movimentacao
-                        ],
+                        $id_movimentacao,
                         [
                             [
                                 "id_produtos" => $id_produto,
@@ -410,23 +527,23 @@ class Movimentacao extends BaseController
                     );
 
                     if ($atualizandoInfoProdutoMovimentacao) {
-                        session()->set('produto_mov_atualizado', true);
-                        session()->destroy('movimentacao');
-                        session()->destroy('produtos');
+                        session()->has('prod_mov_atualizado') ? session()->set('produto_mov_atualizado', true) : "";
+                        session()->has('movimentacao') ? session()->destroy('movimentacao') : "";
+                        session()->has('produtos') ? session()->destroy('produtos') : "";
                         session()->setFlashdata("msgSuccess", "Movimentação alterada com sucesso.");
-                        return redirect()->to("/movimentacao/form/update/" . $id_movimentacao);
+                        return redirect()->to("/Movimentacao/form/update/" . $id_movimentacao);
                     }
                 } else {
                     session()->setFlashdata("msgError", "Quantidade da movimentação de saída maior que a do produto em estoque.");
-                    return redirect()->to("/movimentacao/form/update/" . $id_movimentacao);
+                    return redirect()->to("/Movimentacao/form/update/" . $id_movimentacao);
                 }
             } else {
                 session()->setFlashdata("msgError", "Falha ao tentar alterar a movimentação.");
-                return redirect()->to("/movimentacao");
+                return redirect()->to("/Movimentacao");
             }
         }
     }
-    
+
 
     /**
      * delete
@@ -474,9 +591,7 @@ class Movimentacao extends BaseController
             // Atualizar informações do produto, se necessário
             if (!empty($id_produto) || $quantidade_produto) {
                 $this->model->updateInformacoesProdutoMovimentacao(
-                    [
-                        'id_movimentacao' => $post['id']
-                    ],
+                    $post['id'],
                     [
                         [
                             'id_produtos' => $id_produto,
@@ -504,9 +619,9 @@ class Movimentacao extends BaseController
     public function getProdutoComboBox()
     {
 
-        $termo = $this->request->getVar('termo'); 
+        $termo = $this->request->getVar('termo');
 
-        $dados = $this->model->getProdutoCombobox($termo); 
+        $dados = $this->model->getProdutoCombobox($termo);
 
         echo json_encode($dados);
 

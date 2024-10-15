@@ -5,7 +5,7 @@ namespace App\Models; // Certifique-se de que o namespace está correto
 use CodeIgniter\Model;
 use Config\Services; // Para acessar o serviço de sessão
 
-class CidadeModel extends Model
+class CidadeModel extends CustomModel
 {
     protected $table = 'cidade'; // Usar 'protected' para que seja acessível em subclasses
     protected $primaryKey = 'id'; // Defina a chave primária

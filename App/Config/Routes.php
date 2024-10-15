@@ -64,20 +64,19 @@ $routes->group('Produto', function($routes) {
     $routes->post("store", 'Produto::store');
     $routes->post('delete', "Produto::delete");
 
-    // exclui o produto da movimentacao
+    // exclui o produto da movimentacao na parte de inserção 
     $routes->get("index/(:segment)/(:num)/(:num)", 'Produto::index/$1/$2/$3');
 
+    // exclui o produto da movimentação na parte de update 
+    $routes->get('index/(:segment)/(:num)/(:num)/(:num)/(:num)', 'Produto::index/$1/$2/$3/$4/$5');
+
 });
+
 
 // $routes->group('HistoricoProdutoMovimentacao', function($routes) {
 $routes->get("HistoricoProdutoMovimentacao/index/(:num)/(:segment)", 'HistoricoProdutoMovimentacao::index/$1/$2');
 $routes->get("HistoricoProduto/getHistoricoProduto", 'HistoricoProduto::getHistoricoProduto');
 
-    // $routes->get("lista", 'Produto::index');
-    // $routes->get("form/(:segment)/(:num)", 'Produto::form/$1/$2');
-    // $routes->post("store", 'Produto::store');
-    // $routes->post('delete', "Produto::delete");
-// });
 
 $routes->group('Setor', function($routes) {
     $routes->get("/", 'Setor::index');
@@ -106,15 +105,22 @@ $routes->group('Movimentacao', function($routes) {
     // adiciona a seção na movimentação quando é insert
     $routes->post("salvarSessao/(:segment)/(:num)", 'Movimentacao::salvarSessao/$1/$2');
 
-    // exclui o produto da movimentação
+    // exclui o produto da movimentação na parte de inserção 
     $routes->post("deleteProdutoMovimentacao/(:segment)", 'Movimentacao::deleteProdutoMovimentacao/$1');
-
 
     // recupera o produto no modal
     $routes->get("getProdutoComboBox", 'Movimentacao::getProdutoComboBox');
 
-    
+    // adiciona produtos a movimentação no insert
     $routes->post("newProdutoMovimentacao/(:segment)", 'Movimentacao::newProdutoMovimentacao/$1');
+
+    $routes->post("update/updateProdutoMovimentacao/(:num)", 'Movimentacao::update/updateProdutoMovimentacao/$1');
+    // adiciona o insert da movimentação e limpa as sessões
+    $routes->post("new", 'Movimentacao::new');
+
+    // rota para o update da movimentação
+    $routes->post("update", 'Movimentacao::update');
+
 
     $routes->post("store", 'Movimentacao::store');
     $routes->post('delete', "Movimentacao::delete");
@@ -122,41 +128,6 @@ $routes->group('Movimentacao', function($routes) {
 
 $routes->group('FaleConosco', function($routes) {
     $routes->get("formularioEmail", 'FaleConosco::formularioEmail');
-    // $routes->get("lista", 'Movimentacao::index');
-    // $routes->get("form/(:segment)/(:num)", 'Movimentacao::form/$1/$2');
-    // $routes->post("store", 'Movimentacao::store');
-    // $routes->post('delete', "Movimentacao::delete");
+
 });
 
-
-
-// $routes->get('Usuario', 'Usuario::index');
-
-
-// $routes->get('sobrenos', 'Home::sobrenos');
-// $routes->get('contato', 'Home::contato');
-// $routes->post('contatoEnviaEmail', 'Home::contatoEnviaEmail');
-// $routes->get('login', 'Home::login');
-// $routes->get('criarNovaConta', 'Home::criarNovaConta');
-// $routes->get('carrinhoCompras', 'Home::carrinhoCompras');
-// $routes->get('carrinhoPagamento', 'Home::carrinhoPagamento');
-// $routes->get('carrinhoConfirmacao', 'Home::carrinhoConfirmacao');
-// $routes->get('produtoDetalhe/(:num)', 'Home::produtoDetalhe/$1');
-
-// Crud Departamento
-// $routes->group('Departamento', function($routes) {
-//     $routes->get("/", 'Departamento::index');
-//     $routes->get("lista", 'Departamento::index');
-//     $routes->get("form/(:segment)/(:num)", 'Departamento::form/$1/$2');
-//     $routes->post("store", 'Departamento::store');
-//     $routes->post('delete', "Departamento::delete");
-// });
-
-// Crud Login
-// $routes->group('Login', function($routes) {
-    
-//     $routes->get("lista", 'Departamento::index');
-//     $routes->get("form/(:segment)/(:num)", 'Departamento::form/$1/$2');
-//     $routes->post("store", 'Departamento::store');
-//     $routes->post('delete', "Departamento::delete");
-// });

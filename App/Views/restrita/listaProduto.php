@@ -13,7 +13,11 @@
         $id_produto = $segmentos[3] ?? null; 
         $quantidade_atual = $segmentos[4] ?? null; 
         $tipo = $segmentos[5] ?? null; 
+        $id_movimentacao = $segmentos[6] ?? null; 
     }
+
+    // var_dump($action, $id_produto, $quantidade_atual, $tipo, $id_movimentacao);
+    // exit;
 
 ?>
 
@@ -70,7 +74,7 @@
                                                 <input type="number" name="quantidadeRemover" id="quantidadeRemover" class="form-control" required></input>
 
                                                 <input type="hidden" name="id_produto" value="<?= $id_produto ?>">
-                                                <input type="hidden" name="id_movimentacao" value="<?= $id_produto ?>">
+                                                <input type="hidden" name="id_movimentacao" value="<?= $id_movimentacao ?>">
                                                 <input type="hidden" name="tipo" value="<?= $tipo ?>">
                                                 <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
                                             </form>
