@@ -9,7 +9,7 @@ class MovimentacaoModel extends CustomModel
 {
     protected $table = 'movimentacao'; // Define a tabela do banco de dados
     protected $primaryKey = 'id'; // Define a chave primária
-    protected $allowedFields = ['*']; // Campos permitidos para inserção/atualização
+    protected $allowedFields = ['id_fornecedor', 'tipo', 'statusRegistro', 'id_setor', 'data_pedido', 'data_chegada', 'motivo'];
     protected $validationRules = [
         'setor_id' => 'required|integer',
         'fornecedor_id' => 'required|integer',
@@ -105,6 +105,8 @@ class MovimentacaoModel extends CustomModel
      */
     public function updateMovimentacao(int $idMovimentacao, $movimentacao, $prod_info_mov_atualizado): bool
     {
+
+    
         // Verifica se a movimentação é válida
         if ($idMovimentacao) {
             // Debug: Verifica se $movimentacao contém dados
@@ -114,10 +116,12 @@ class MovimentacaoModel extends CustomModel
     
             // Atualiza a movimentação na tabela
             $updated = $this->update($idMovimentacao, $movimentacao); // Chamada correta do método update
-    
+
             // Debug: Verifica se a atualização foi bem-sucedida
             if (!$updated) {
                 throw new \Exception("Falha na atualização da movimentação."); // Mensagem de erro se a atualização falhar
+            } else {
+                return true;
             }
     
             // Se as informações do produto foram atualizadas, faça a limpeza da sessão
@@ -125,6 +129,10 @@ class MovimentacaoModel extends CustomModel
                 if (isset($_SESSION['produto_mov_atualizado'])) { // Verifica se a variável existe
                     unset($_SESSION['produto_mov_atualizado']);
                 }
+                // var_dump($idMovimentacao);
+                // var_dump($movimentacao);
+                // var_dump($updated);
+                // exit;
                 return true; // Retorna verdadeiro se tudo ocorreu bem
             }
         }
@@ -147,25 +155,40 @@ class MovimentacaoModel extends CustomModel
     {
         $id_produto = $aProdutos[0]['id_produtos'] ?? '';
 
+        // var_dump($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao);
+        // exit;
       
         if ($id_movimentacao && !empty($id_produto)) {
             foreach ($aProdutos as $item) {
                 
                 if ($acao['acaoProduto'] == 'update') {
                     $item['quantidade'] = $quantidade_movimentacao;
-                //     var_dump($item['quantidade']);
-                // exit;
-                    $this->updateMovimentacaoQuantidade(
+
+                    $produto_atualizado = $this->updateMovimentacaoQuantidade(
                         $id_movimentacao,
                         $id_produto,
                         $item['quantidade']
                     );
-                    return true;
+
+                    if($produto_atualizado){
+                        session()->set('produto_mov_atualizado');
+                        return true;
+                    } else {
+                        return false;
+                    }
+
                 } elseif ($acao['acaoProduto'] == 'new') {
                     $item['id_movimentacoes'] = $id_movimentacao;
                     $item['quantidade'] = $quantidade_movimentacao;
                     // Inserir o item de produto na tabela movimentacao_item usando o método insertMovimentacaoItem do CustomModel
-                    $this->insertMovimentacaoItem($item);
+                    $produto_inserido = $this->insertMovimentacaoItem($item);
+
+                    if($produto_inserido){
+                        session()->set('produto_mov_atualizado');
+                        return true;
+                    } else {
+                        return false;
+                    }
                     return true;
                 }
             }

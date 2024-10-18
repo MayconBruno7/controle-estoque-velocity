@@ -312,6 +312,7 @@
             Valor Total: R$ <?= number_format($total, 2, ',', '.')?>
         </h2>
     </p>
+    
     </div>
 
     <div class="row justify-content-center">
