@@ -3,7 +3,11 @@
 
     $this->section('conteudo');
 
-    $page = 'relatorioMovimentacoes';
+    // Recuperando todos os segmentos da URL
+    $segmentos = $request->getURI()->getSegments(3);
+
+    // Acessando o primeiro segmento
+    $page = $segmentos[1] ?? null;;
 
     $tituloPage = isset($page) && $page == 'relatorioMovimentacoes' ? 'Relatorio de Movimentações' : 'Relatório de itens por fornecedor';
 ?>
@@ -15,14 +19,14 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-center"><?= $tituloPage ?></div>
-        <div class="card-body">
 
+        <div class="card-body">
             <?php if ($page == 'relatorioItensPorFornecedor') : ?>
-            <div class="col-12 mt-3">
+            <div class="mt-3 mb-2">
                 <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $this->getAcao() == 'view' || $this->getAcao() == 'delete' ? 'disabled' : '' ?>>
+                <select name="fornecedor_id" id="fornecedor_id" class="form-control" required>
                     <option value="">...</option>
-                    <?php foreach($dados as $fornecedor) : ?>
+                    <?php foreach($fornecedores as $fornecedor) : ?>
                         <option value="<?= $fornecedor['id'] ?>" <?= setValor('id_fornecedor') == $fornecedor['id'] ? 'selected' : '' ?>>
                             <?= $fornecedor['nome'] ?>
                         </option>
@@ -72,7 +76,6 @@
         </div>
     </div>
 </main>
-<?= $this->endSection() ?>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
@@ -84,7 +87,6 @@
 
 <!-- parte do csv -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
-
 
 <script>
     // Função para mostrar/esconder calendários baseado no tipo de relatório selecionado
@@ -472,3 +474,4 @@
         }
     }
 </style>
+<?= $this->endSection() ?>

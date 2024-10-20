@@ -20,7 +20,7 @@ class Fornecedor extends BaseController
         $this->cidadeModel = new CidadeModel();
 
         // Só acessa se estiver logado
-        if (!$this->getAdministrador()) {
+        if (!$this->getUsuario()) {
             return redirect()->to('home');
         }
     }

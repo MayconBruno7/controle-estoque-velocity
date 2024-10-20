@@ -36,19 +36,22 @@ class Relatorio extends BaseController
     public function relatorioItensPorFornecedor()
     {
         $dados = $this->fornecedorModel->lista('id');
-        return view('restrita/formRelatorio', ['fornecedores' => $dados]);
+        return view('restrita/formRelatorio', ['fornecedores' => $dados, 'request' => $this->request]);
     }
 
     public function getDados()
     {
-        $tipo = $this->request->getVar('tipo');
-        $dataInicio = $this->request->getVar('dataInicio');
-        $dataFinal = $this->request->getVar('dataFinal');
-        $id_fornecedor = (int) $this->request->getVar('id_fornecedor');
+
+        $segmentos = $this->request->getURI()->getSegments(3);
+
+        $tipo = $segmentos[2]  ?? null;
+        $dataInicio = $segmentos[3]  ?? null;
+        $dataFinal = $segmentos[4]  ?? null;
+        $id_fornecedor = $segmentos[5]  ?? null;
 
         $dados = [];
 
-        if (!empty($id_fornecedor)) {
+        if (!empty($id_fornecedor) && $id_fornecedor !== 'null' && $id_fornecedor !== 'undefined') {
             switch ($tipo) {
                 case 'dia':
                     $dados = $this->model->RelatorioDiaItemFornecedor($dataInicio, $id_fornecedor);
@@ -66,6 +69,7 @@ class Relatorio extends BaseController
                     $dados = [];
             }
         } else {
+
             switch ($tipo) {
                 case 'dia':
                     $dados = $this->model->RelatorioDia($dataInicio);
@@ -84,12 +88,12 @@ class Relatorio extends BaseController
             }
         }
 
-        return $this->response->setContentType('application/json')
-                              ->setBody(json_encode($this->formatarDadosParaGrafico($dados)));
+        return $this->response->setContentType('application/json')->setBody(json_encode($this->formatarDadosParaGrafico($dados)));
     }
 
     private function formatarDadosParaGrafico($dados)
     {
+        
         $id_movimentacao = [];
         $entradas = [];
         $saidas = [];

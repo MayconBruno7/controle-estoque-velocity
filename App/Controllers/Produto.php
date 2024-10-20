@@ -21,7 +21,7 @@ class Produto extends BaseController
         $this->fornecedorModel = new FornecedorModel();
 
         // Verifica se o usuário está logado
-        if (!$this->getAdministrador()) {
+        if (!$this->getUsuario()) {
             return redirect()->to("Home/login");
         }
     }

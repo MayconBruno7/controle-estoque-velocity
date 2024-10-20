@@ -2,12 +2,13 @@
 
 <?= $this->section('conteudo') ?>
 
-
 <!-- Main Content -->
 <div class="main-content">
     <div class="row mb-2">
         <!-- Mensagens de erro -->
     </div>
+
+    <!-- <a href="<?= base_url() ?>Relatorio/getDados?tipo=dia&dataInicio=2024-10-18">Testar</a> -->
     <section class="section">
         <div class="row ">
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -32,11 +33,6 @@
                                             Produtos
                                         </h2>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-circle col-green"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                    <div class="banner-img">
-                                        <img src="assets/img/banner/1.png" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -68,11 +64,6 @@
 
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                    <div class="banner-img">
-                                        <img src="assets/img/banner/2.png" alt="">
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -99,11 +90,6 @@
                                             Produtos
                                         </h2>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-circle col-green"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg>
-                                    </div>
-                                </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                    <div class="banner-img">
-                                        <img src="assets/img/banner/3.png" alt="">
                                     </div>
                                 </div>
                             </div>
@@ -134,17 +120,13 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-arrow-up-circle col-green"><circle cx="12" cy="12" r="10"></circle><polyline points="16 12 12 8 8 12"></polyline><line x1="12" y1="16" x2="12" y2="8"></line></svg>
                                     </div>
                                 </div>
-                                <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 pl-0">
-                                    <div class="banner-img">
-                                        <img src="assets/img/banner/4.png" alt="">
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+   
         <div class="row">
             <div class="col-12 col-sm-12 col-lg-12">
                 <div class="card ">
@@ -161,6 +143,7 @@
     </div>
 </div>
 </div>
+
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 

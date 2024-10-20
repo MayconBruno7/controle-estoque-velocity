@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 23/07/2024 às 20:40
+-- Tempo de geração: 20/10/2024 às 19:08
 -- Versão do servidor: 8.3.0
--- Versão do PHP: 8.2.18
+-- Versão do PHP: 8.3.6
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -20,12 +20,11 @@ SET time_zone = "+00:00";
 --
 -- Banco de dados: `controle_estoque`
 --
+DROP DATABASE IF EXISTS `controle_estoque`;
 CREATE DATABASE IF NOT EXISTS `controle_estoque` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;
 USE `controle_estoque`;
 
 -- --------------------------------------------------------
-
-SET FOREIGN_KEY_CHECKS = 0;
 
 --
 -- Estrutura para tabela `cargo`
@@ -37,16 +36,63 @@ CREATE TABLE IF NOT EXISTS `cargo` (
   `nome` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
   `statusRegistro` int DEFAULT '1' COMMENT '1 - Ativo    2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `cargo`
 --
 
 INSERT INTO `cargo` (`id`, `nome`, `statusRegistro`) VALUES
-(1, 'Técnico em Informática', 1);
+(1, 'Atendentesda', 1);
+
+--
+-- Acionadores `cargo`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_info_cargo`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_info_cargo` AFTER DELETE ON `cargo` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'cargo',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
+        CONCAT('{"id":', OLD.id, ', "nome":"', OLD.nome, '", "statusRegistro":', OLD.statusRegistro, '}')
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_cargo`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_cargo` AFTER INSERT ON `cargo` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
+    VALUES (
+        'cargo',
+        'INSERT',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
+        CONCAT('{"id":', NEW.id, ', "nome":"', NEW.nome, '", "statusRegistro":', NEW.statusRegistro, '}')
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_log_info_cargo`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_cargo` AFTER UPDATE ON `cargo` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
+    VALUES (
+        'cargo',
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
+        CONCAT('{"id":', OLD.id, ', "nome":"', OLD.nome, '", "statusRegistro":', OLD.statusRegistro, '}'),
+        CONCAT('{"id":', NEW.id, ', "nome":"', NEW.nome, '", "statusRegistro":', NEW.statusRegistro, '}')
+    );
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `cidade`
@@ -60,9 +106,7 @@ CREATE TABLE IF NOT EXISTS `cidade` (
   `estado` int NOT NULL,
   PRIMARY KEY (`id`),
   KEY `estado` (`estado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=6120 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `cidade`
@@ -5699,6 +5743,8 @@ INSERT INTO `cidade` (`id`, `nome`, `codigo_municipio`, `estado`) VALUES
 (6118, 'NOVA SANTA HELENA', '5106190', 11),
 (6119, 'SANTO ANTONIO DO LESTE', '5107792', 11);
 
+-- --------------------------------------------------------
+
 --
 -- Estrutura para tabela `estado`
 --
@@ -5710,9 +5756,7 @@ CREATE TABLE IF NOT EXISTS `estado` (
   `sigla` varchar(2) NOT NULL,
   `regiao` varchar(50) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=28 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `estado`
@@ -5747,6 +5791,8 @@ INSERT INTO `estado` (`id`, `nome`, `sigla`, `regiao`) VALUES
 (26, 'SERGIPE', 'SE', 'NORDESTE'),
 (27, 'TOCANTINS', 'TO', 'NORTE');
 
+-- --------------------------------------------------------
+
 --
 -- Estrutura para tabela `fornecedor`
 --
@@ -5766,16 +5812,107 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `cidade` (`cidade`),
   KEY `estado` (`estado`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `fornecedor`
 --
 
 INSERT INTO `fornecedor` (`id`, `nome`, `cnpj`, `endereco`, `cidade`, `estado`, `bairro`, `numero`, `telefone`, `statusRegistro`) VALUES
-(1, 'MD COPIADORA LTDA', '44556350000104', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '3299197525', 1);
+(1, 'WEG', '44556350000104', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '4732764000', 1);
+
+--
+-- Acionadores `fornecedor`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_info_fornecedor`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_info_fornecedor` AFTER DELETE ON `fornecedor` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'fornecedor',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"nome":"', OLD.nome, '", ',
+            '"cnpj":"', OLD.cnpj, '", ',
+            '"endereco":"', OLD.endereco, '", ',
+            '"cidade":', OLD.cidade, ', ',
+            '"estado":', OLD.estado, ', ',
+            '"bairro":"', OLD.bairro, '", ',
+            '"numero":"', OLD.numero, '", ',
+            '"telefone":"', OLD.telefone, '", ',
+            '"statusRegistro":', OLD.statusRegistro, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_fornecedor`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_fornecedor` AFTER INSERT ON `fornecedor` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
+    VALUES (
+        'fornecedor',
+        'INSERT',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"nome":"', NEW.nome, '", ',
+            '"cnpj":"', NEW.cnpj, '", ',
+            '"endereco":"', NEW.endereco, '", ',
+            '"cidade":', NEW.cidade, ', ',
+            '"estado":', NEW.estado, ', ',
+            '"bairro":"', NEW.bairro, '", ',
+            '"numero":"', NEW.numero, '", ',
+            '"telefone":"', NEW.telefone, '", ',
+            '"statusRegistro":', NEW.statusRegistro, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_log_info_fornecedor`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_fornecedor` AFTER UPDATE ON `fornecedor` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
+    VALUES (
+        'fornecedor',
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"nome":"', OLD.nome, '", ',
+            '"cnpj":"', OLD.cnpj, '", ',
+            '"endereco":"', OLD.endereco, '", ',
+            '"cidade":', OLD.cidade, ', ',
+            '"estado":', OLD.estado, ', ',
+            '"bairro":"', OLD.bairro, '", ',
+            '"numero":"', OLD.numero, '", ',
+            '"telefone":"', OLD.telefone, '", ',
+            '"statusRegistro":', OLD.statusRegistro, '}'
+        ),
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"nome":"', NEW.nome, '", ',
+            '"cnpj":"', NEW.cnpj, '", ',
+            '"endereco":"', NEW.endereco, '", ',
+            '"cidade":', NEW.cidade, ', ',
+            '"estado":', NEW.estado, ', ',
+            '"bairro":"', NEW.bairro, '", ',
+            '"numero":"', NEW.numero, '", ',
+            '"telefone":"', NEW.telefone, '", ',
+            '"statusRegistro":', NEW.statusRegistro, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `funcionario`
@@ -5795,16 +5932,103 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `setor_funcionarios` (`setor`) USING BTREE,
   KEY `cargo` (`cargo`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `funcionario`
 --
 
-INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`) VALUES
-(1, 'Maycon Bruno', '09068888867', '32984924071', 1, 1412.000000, 1, 1);
+INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`, `imagem`) VALUES
+(1, 'Weberty', '49498498498', '32984927895', 1, 1.000000, 1, 1, NULL);
+
+--
+-- Acionadores `funcionario`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_info_funcionario`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_info_funcionario` AFTER DELETE ON `funcionario` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'funcionario',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"nome":"', OLD.nome, '", ',
+            '"cpf":"', OLD.cpf, '", ',
+            '"telefone":"', OLD.telefone, '", ',
+            '"setor":', OLD.setor, ', ',
+            '"salario":', OLD.salario, ', ',
+            '"statusRegistro":', OLD.statusRegistro, ', ',
+            '"cargo":', OLD.cargo, ', ',
+            '"imagem":"', OLD.imagem, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_funcionario`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_funcionario` AFTER INSERT ON `funcionario` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
+    VALUES (
+        'funcionario',
+        'INSERT',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"nome":"', NEW.nome, '", ',
+            '"cpf":"', NEW.cpf, '", ',
+            '"telefone":"', NEW.telefone, '", ',
+            '"setor":', NEW.setor, ', ',
+            '"salario":', NEW.salario, ', ',
+            '"statusRegistro":', NEW.statusRegistro, ', ',
+            '"cargo":', NEW.cargo, ', ',
+            '"imagem":"', NEW.imagem, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_log_info_funcionario`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_funcionario` AFTER UPDATE ON `funcionario` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
+    VALUES (
+        'funcionario',
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"nome":"', OLD.nome, '", ',
+            '"cpf":"', OLD.cpf, '", ',
+            '"telefone":"', OLD.telefone, '", ',
+            '"setor":', OLD.setor, ', ',
+            '"salario":', OLD.salario, ', ',
+            '"statusRegistro":', OLD.statusRegistro, ', ',
+            '"cargo":', OLD.cargo, ', ',
+            '"imagem":"', OLD.imagem, '"}'
+        ),
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"nome":"', NEW.nome, '", ',
+            '"cpf":"', NEW.cpf, '", ',
+            '"telefone":"', NEW.telefone, '", ',
+            '"setor":', NEW.setor, ', ',
+            '"salario":', NEW.salario, ', ',
+            '"statusRegistro":', NEW.statusRegistro, ', ',
+            '"cargo":', NEW.cargo, ', ',
+            '"imagem":"', NEW.imagem, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `historico_produto`
@@ -5824,16 +6048,42 @@ CREATE TABLE IF NOT EXISTS `historico_produto` (
   PRIMARY KEY (`id`),
   KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE,
   KEY `fornecedor_id` (`fornecedor_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `historico_produto`
 --
 
 INSERT INTO `historico_produto` (`id`, `id_produtos`, `fornecedor_id`, `nome_produtos`, `descricao_anterior`, `quantidade_anterior`, `status_anterior`, `statusItem_anterior`, `dataMod`) VALUES
-(1, 1, 1, 'Fonte de alimentação ', '<p>Fonte de alimentação de 450W</p>', 0, 2, 1, '0000-00-00 00:00:00');
+(1, 4, 1, 'Gabinete gamer', '<p>asds</p>', 0, 1, 1, '2024-10-20 18:37:19');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `logs`
+--
+
+DROP TABLE IF EXISTS `logs`;
+CREATE TABLE IF NOT EXISTS `logs` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `tabela` varchar(255) NOT NULL,
+  `acao` varchar(50) NOT NULL,
+  `data` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usuario` varchar(255) NOT NULL,
+  `dados_antigos` text,
+  `dados_novos` text,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `logs`
+--
+
+INSERT INTO `logs` (`id`, `tabela`, `acao`, `data`, `usuario`, `dados_antigos`, `dados_novos`) VALUES
+(3, 'funcionario', 'DELETE', '2024-10-20 19:07:38', '1', NULL, NULL),
+(4, 'fornecedor', 'DELETE', '2024-10-20 19:07:48', '1', '{\"id\":5, \"nome\":\"WEG\", \"cnpj\":\"84429695000111\", \"endereco\":\"AVENIDA PREFEITO WALDEMAR GRUBBA\", \"cidade\":24, \"estado\":2, \"bairro\":\"VILA LALAU\", \"numero\":\"3300\", \"telefone\":\"4732764000\", \"statusRegistro\":1}', NULL);
+
+-- --------------------------------------------------------
 
 --
 -- Estrutura para tabela `movimentacao`
@@ -5849,10 +6099,154 @@ CREATE TABLE IF NOT EXISTS `movimentacao` (
   `motivo` varchar(100) NOT NULL,
   `data_pedido` date NOT NULL,
   `data_chegada` date DEFAULT NULL,
+  `tipo_produto` int NOT NULL DEFAULT '1' COMMENT '1 - Produto\r\n2 - Peça',
   PRIMARY KEY (`id`),
   KEY `id_fornecedor` (`id_fornecedor`),
   KEY `id_setor` (`id_setor`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Acionadores `movimentacao`
+--
+DROP TRIGGER IF EXISTS `tg_before_delete_movimentacao`;
+DELIMITER $$
+CREATE TRIGGER `tg_before_delete_movimentacao` BEFORE DELETE ON `movimentacao` FOR EACH ROW BEGIN
+    DECLARE v_tipo INT;
+
+    -- Verifica se o tipo da movimentação excluída era 1 (Entrada) ou 2 (Saída)
+    SET v_tipo = OLD.tipo;
+
+    -- Atualiza a quantidade de produtos na tabela produto
+    -- Para cada item associado à movimentação excluída
+    UPDATE produto p
+    JOIN movimentacao_item mi ON p.id = mi.id_produtos
+    SET p.quantidade = CASE
+        WHEN v_tipo = 1 THEN p.quantidade - mi.quantidade
+        WHEN v_tipo = 2 THEN p.quantidade + mi.quantidade
+    END
+    WHERE mi.id_movimentacoes = OLD.id;
+    
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_delete_bloqueia_movimentacao_final_semana`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_bloqueia_movimentacao_final_semana` BEFORE DELETE ON `movimentacao` FOR EACH ROW BEGIN
+   DECLARE dia_semana INT;
+   SET dia_semana = DAYOFWEEK(CURDATE());
+
+   IF dia_semana NOT IN (1, 7) THEN
+      SIGNAL SQLSTATE '45000' 
+      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
+   END IF;
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_delete_log_info_movimentacao`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_info_movimentacao` AFTER DELETE ON `movimentacao` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'movimentacao',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"id_setor":', OLD.id_setor, ', ',
+            '"id_fornecedor":', OLD.id_fornecedor, ', ',
+            '"statusRegistro":', OLD.statusRegistro, ', ',
+            '"tipo":', OLD.tipo, ', ',
+            '"motivo":"', OLD.motivo, '", ',
+            '"data_pedido":"', OLD.data_pedido, '", ',
+            '"data_chegada":"', OLD.data_chegada, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_bloqueia_movimentacao_final_semana`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_bloqueia_movimentacao_final_semana` BEFORE INSERT ON `movimentacao` FOR EACH ROW BEGIN
+   DECLARE dia_semana INT;
+   SET dia_semana = DAYOFWEEK(CURDATE());
+
+   IF dia_semana NOT IN (1, 7) THEN
+      SIGNAL SQLSTATE '45000' 
+      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
+   END IF;
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_movimentacao`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_movimentacao` AFTER INSERT ON `movimentacao` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
+    VALUES (
+        'movimentacao',
+        'INSERT',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"id_setor":', NEW.id_setor, ', ',
+            '"id_fornecedor":', NEW.id_fornecedor, ', ',
+            '"statusRegistro":', NEW.statusRegistro, ', ',
+            '"tipo":', NEW.tipo, ', ',
+            '"motivo":"', NEW.motivo, '", ',
+            '"data_pedido":"', NEW.data_pedido, '", ',
+            '"data_chegada":"', NEW.data_chegada, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_bloqueia_movimentacao_final_semana`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_bloqueia_movimentacao_final_semana` BEFORE UPDATE ON `movimentacao` FOR EACH ROW BEGIN
+   DECLARE dia_semana INT;
+   SET dia_semana = DAYOFWEEK(CURDATE());
+
+   IF dia_semana NOT IN (1, 7) THEN
+      SIGNAL SQLSTATE '45000' 
+      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
+   END IF;
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_log_info_movimentacao`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_movimentacao` AFTER UPDATE ON `movimentacao` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
+    VALUES (
+        'movimentacao',
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"id_setor":', OLD.id_setor, ', ',
+            '"id_fornecedor":', OLD.id_fornecedor, ', ',
+            '"statusRegistro":', OLD.statusRegistro, ', ',
+            '"tipo":', OLD.tipo, ', ',
+            '"motivo":"', OLD.motivo, '", ',
+            '"data_pedido":"', OLD.data_pedido, '", ',
+            '"data_chegada":"', OLD.data_chegada, '"}'
+        ),
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"id_setor":', NEW.id_setor, ', ',
+            '"id_fornecedor":', NEW.id_fornecedor, ', ',
+            '"statusRegistro":', NEW.statusRegistro, ', ',
+            '"tipo":', NEW.tipo, ', ',
+            '"motivo":"', NEW.motivo, '", ',
+            '"data_pedido":"', NEW.data_pedido, '", ',
+            '"data_chegada":"', NEW.data_chegada, '"}'
+        )
+    );
+END
+$$
+DELIMITER ;
 
 -- --------------------------------------------------------
 
@@ -5870,163 +6264,14 @@ CREATE TABLE IF NOT EXISTS `movimentacao_item` (
   PRIMARY KEY (`id`),
   KEY `id_movimentacoes` (`id_movimentacoes`) USING BTREE,
   KEY `id_produtos` (`id_produtos`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
+) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
--- Estrutura para tabela `produto`
+-- Acionadores `movimentacao_item`
 --
-
-DROP TABLE IF EXISTS `produto`;
-CREATE TABLE IF NOT EXISTS `produto` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `descricao` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `quantidade` int DEFAULT NULL,
-  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
-  `condicao` int DEFAULT '1' COMMENT '1=Novo; 2=Usado',
-  `dataMod` timestamp NULL DEFAULT NULL,
-  `nome` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
-  `fornecedor` int DEFAULT NULL,
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `fk_itens_fornecedor` (`fornecedor`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
-
--- --------------------------------------------------------
-
---
--- Despejando dados para a tabela `produto`
---
-
-INSERT INTO `produto` (`id`, `descricao`, `quantidade`, `statusRegistro`, `condicao`, `dataMod`, `nome`, `fornecedor`) VALUES
-(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-06-25 13:11:02', 'Fonte de alimentação ', 1),
-(2, '<p>SSD de 480GB</p>', 0, 1, 1, NULL, 'SSD', 1),
-(3, '<p>Teclado USB&nbsp;</p>', 0, 1, 1, NULL, 'Teclado', 1),
-(4, '<p>Mouse óptico</p>', 0, 1, 1, NULL, 'Mouse', 1);
-
-
---
--- Estrutura para tabela `setor`
---
-
-DROP TABLE IF EXISTS `setor`;
-CREATE TABLE IF NOT EXISTS `setor` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `responsavel` int DEFAULT '0',
-  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `responsavel_setor` (`responsavel`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Despejando dados para a tabela `setor`
---
-
-INSERT INTO `setor` (`id`, `nome`, `responsavel`, `statusRegistro`) VALUES
-(1, 'Departamento de informática', 1, 1);
-
---
--- Estrutura para tabela `usuario`
---
-
-DROP TABLE IF EXISTS `usuario`;
-CREATE TABLE IF NOT EXISTS `usuario` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `nivel` varchar(150) NOT NULL,
-  `statusRegistro` int NOT NULL,
-  `nome` varchar(150) NOT NULL,
-  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `email` varchar(150) NOT NULL,
-  `primeiroLogin` int DEFAULT '1',
-  `id_funcionario` int DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `id_funcionario` (`id_funcionario`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `usuariorecuperasenha`
---
-
-DROP TABLE IF EXISTS `usuariorecuperasenha`;
-CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `usuario_id` int NOT NULL,
-  `chave` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
-  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
-  `created_at` datetime NOT NULL DEFAULT (concat(curdate(),_utf8mb4' ',curtime())),
-  PRIMARY KEY (`id`) USING BTREE,
-  KEY `FK1_usuariorecuperacaosenha` (`usuario_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
--- --------------------------------------------------------
-
-CREATE TABLE IF NOT EXISTS `logs` (
-  `id` int NOT NULL AUTO_INCREMENT,
-  `tabela` varchar(255) NOT NULL,
-  `acao` varchar(50) NOT NULL,
-  `data` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `usuario` varchar(255) NOT NULL,
-  `dados_antigos` text,
-  `dados_novos` text,
-  PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci
-
---
--- Triggers
---
-
+DROP TRIGGER IF EXISTS `tg_delete_adiciona_historico_atualiza_quantidade_produto`;
 DELIMITER $$
-CREATE TRIGGER `tg_delete_bloqueia_movimentacao_final_semana` BEFORE DELETE ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
-
-   IF dia_semana IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
-END
-$$
-DELIMITER ;
-
-
-DELIMITER $$
-CREATE TRIGGER `tg_insert_bloqueia_movimentacao_final_semana` BEFORE INSERT ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
-
-   IF dia_semana IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
-END
-$$
-DELIMITER ;
-
-
-DELIMITER $$
-CREATE TRIGGER `tg_update_bloqueia_movimentacao_final_semana` BEFORE UPDATE ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
-
-   IF dia_semana IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
-END
-$$
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER `tg_delete_adiciona_historico_atualiza_quantidade_produto`
-AFTER DELETE ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
+CREATE TRIGGER `tg_delete_adiciona_historico_atualiza_quantidade_produto` AFTER DELETE ON `movimentacao_item` FOR EACH ROW BEGIN
     DECLARE nova_quantidade INT;
     DECLARE tipo_movimentacao INT;
     DECLARE quantidade_anterior INT;
@@ -6071,16 +6316,32 @@ BEGIN
     UPDATE `produto`
     SET `quantidade` = nova_quantidade
     WHERE `id` = OLD.`id_produtos`;
-END$$
-
+END
+$$
 DELIMITER ;
-
+DROP TRIGGER IF EXISTS `tg_delete_log_info_movimentacao_item`;
 DELIMITER $$
-
-CREATE TRIGGER `tg_insert_adiciona_historico_atualiza_quantidade_produto`
-AFTER INSERT ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
+CREATE TRIGGER `tg_delete_log_info_movimentacao_item` AFTER DELETE ON `movimentacao_item` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'movimentacao_item',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"id_movimentacoes":', OLD.id_movimentacoes, ', ',
+            '"id_produtos":', OLD.id_produtos, ', ',
+            '"quantidade":', OLD.quantidade, ', ',
+            '"valor":', OLD.valor, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_adiciona_historico_atualiza_quantidade_produto`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_adiciona_historico_atualiza_quantidade_produto` AFTER INSERT ON `movimentacao_item` FOR EACH ROW BEGIN
     DECLARE nova_quantidade INT;
     DECLARE tipo_movimentacao INT;
     DECLARE quantidade_anterior INT;
@@ -6125,16 +6386,32 @@ BEGIN
     UPDATE `produto`
     SET `quantidade` = nova_quantidade
     WHERE `id` = NEW.`id_produtos`;
-END$$
-
+END
+$$
 DELIMITER ;
-
+DROP TRIGGER IF EXISTS `tg_insert_log_info_movimentacao_item`;
 DELIMITER $$
-
-CREATE TRIGGER `tg_update_adiciona_historico_atualiza_quantidade_produto`
-AFTER UPDATE ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
+CREATE TRIGGER `tg_insert_log_info_movimentacao_item` AFTER INSERT ON `movimentacao_item` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
+    VALUES (
+        'movimentacao_item',
+        'INSERT',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"id_movimentacoes":', NEW.id_movimentacoes, ', ',
+            '"id_produtos":', NEW.id_produtos, ', ',
+            '"quantidade":', NEW.quantidade, ', ',
+            '"valor":', NEW.valor, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_adiciona_historico_atualiza_quantidade_produto`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_adiciona_historico_atualiza_quantidade_produto` AFTER UPDATE ON `movimentacao_item` FOR EACH ROW BEGIN
     DECLARE nova_quantidade INT;
     DECLARE tipo_movimentacao INT;
     DECLARE quantidade_anterior INT;
@@ -6179,513 +6456,302 @@ BEGIN
     UPDATE `produto`
     SET `quantidade` = nova_quantidade
     WHERE `id` = NEW.`id_produtos`;
-END$$
-
+END
+$$
 DELIMITER ;
-
---- logs 
-DELIMITER //
-
-CREATE TRIGGER tg_insert_log_info_cargo
-AFTER INSERT ON `cargo`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
-    VALUES (
-        'cargo',
-        'INSERT',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
-        CONCAT('{"id":', NEW.id, ', "nome":"', NEW.nome, '", "statusRegistro":', NEW.statusRegistro, '}')
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_cargo
-AFTER UPDATE ON `cargo`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
-    VALUES (
-        'cargo',
-        'UPDATE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
-        CONCAT('{"id":', OLD.id, ', "nome":"', OLD.nome, '", "statusRegistro":', OLD.statusRegistro, '}'),
-        CONCAT('{"id":', NEW.id, ', "nome":"', NEW.nome, '", "statusRegistro":', NEW.statusRegistro, '}')
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_delete_log_info_cargo
-AFTER DELETE ON `cargo`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'cargo',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Se você estiver usando uma variável de sessão ou contexto para o usuário
-        CONCAT('{"id":', OLD.id, ', "nome":"', OLD.nome, '", "statusRegistro":', OLD.statusRegistro, '}')
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_insert_log_info_fornecedor
-AFTER INSERT ON `fornecedor`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
-    VALUES (
-        'fornecedor',
-        'INSERT',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"nome":"', NEW.nome, '", ',
-            '"cnpj":"', NEW.cnpj, '", ',
-            '"endereco":"', NEW.endereco, '", ',
-            '"cidade":', NEW.cidade, ', ',
-            '"estado":', NEW.estado, ', ',
-            '"bairro":"', NEW.bairro, '", ',
-            '"numero":"', NEW.numero, '", ',
-            '"telefone":"', NEW.telefone, '", ',
-            '"statusRegistro":', NEW.statusRegistro, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_fornecedor
-AFTER UPDATE ON `fornecedor`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
-    VALUES (
-        'fornecedor',
-        'UPDATE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"nome":"', OLD.nome, '", ',
-            '"cnpj":"', OLD.cnpj, '", ',
-            '"endereco":"', OLD.endereco, '", ',
-            '"cidade":', OLD.cidade, ', ',
-            '"estado":', OLD.estado, ', ',
-            '"bairro":"', OLD.bairro, '", ',
-            '"numero":"', OLD.numero, '", ',
-            '"telefone":"', OLD.telefone, '", ',
-            '"statusRegistro":', OLD.statusRegistro, '}'
-        ),
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"nome":"', NEW.nome, '", ',
-            '"cnpj":"', NEW.cnpj, '", ',
-            '"endereco":"', NEW.endereco, '", ',
-            '"cidade":', NEW.cidade, ', ',
-            '"estado":', NEW.estado, ', ',
-            '"bairro":"', NEW.bairro, '", ',
-            '"numero":"', NEW.numero, '", ',
-            '"telefone":"', NEW.telefone, '", ',
-            '"statusRegistro":', NEW.statusRegistro, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-
-DELIMITER //
-
-CREATE TRIGGER tg_delete_log_info_fornecedor
-AFTER DELETE ON `fornecedor`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'fornecedor',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"nome":"', OLD.nome, '", ',
-            '"cnpj":"', OLD.cnpj, '", ',
-            '"endereco":"', OLD.endereco, '", ',
-            '"cidade":', OLD.cidade, ', ',
-            '"estado":', OLD.estado, ', ',
-            '"bairro":"', OLD.bairro, '", ',
-            '"numero":"', OLD.numero, '", ',
-            '"telefone":"', OLD.telefone, '", ',
-            '"statusRegistro":', OLD.statusRegistro, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_insert_log_info_funcionario
-AFTER INSERT ON `funcionario`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
-    VALUES (
-        'funcionario',
-        'INSERT',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"nome":"', NEW.nome, '", ',
-            '"cpf":"', NEW.cpf, '", ',
-            '"telefone":"', NEW.telefone, '", ',
-            '"setor":', NEW.setor, ', ',
-            '"salario":', NEW.salario, ', ',
-            '"statusRegistro":', NEW.statusRegistro, ', ',
-            '"cargo":', NEW.cargo, ', ',
-            '"imagem":"', NEW.imagem, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_funcionario
-AFTER UPDATE ON `funcionario`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
-    VALUES (
-        'funcionario',
-        'UPDATE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"nome":"', OLD.nome, '", ',
-            '"cpf":"', OLD.cpf, '", ',
-            '"telefone":"', OLD.telefone, '", ',
-            '"setor":', OLD.setor, ', ',
-            '"salario":', OLD.salario, ', ',
-            '"statusRegistro":', OLD.statusRegistro, ', ',
-            '"cargo":', OLD.cargo, ', ',
-            '"imagem":"', OLD.imagem, '"}'
-        ),
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"nome":"', NEW.nome, '", ',
-            '"cpf":"', NEW.cpf, '", ',
-            '"telefone":"', NEW.telefone, '", ',
-            '"setor":', NEW.setor, ', ',
-            '"salario":', NEW.salario, ', ',
-            '"statusRegistro":', NEW.statusRegistro, ', ',
-            '"cargo":', NEW.cargo, ', ',
-            '"imagem":"', NEW.imagem, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-
-DELIMITER //
-
-CREATE TRIGGER tg_delete_log_info_funcionario
-AFTER DELETE ON `funcionario`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'funcionario',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"nome":"', OLD.nome, '", ',
-            '"cpf":"', OLD.cpf, '", ',
-            '"telefone":"', OLD.telefone, '", ',
-            '"setor":', OLD.setor, ', ',
-            '"salario":', OLD.salario, ', ',
-            '"statusRegistro":', OLD.statusRegistro, ', ',
-            '"cargo":', OLD.cargo, ', ',
-            '"imagem":"', OLD.imagem, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_insert_log_info_movimentacao
-AFTER INSERT ON `movimentacao`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
-    VALUES (
-        'movimentacao',
-        'INSERT',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"id_setor":', NEW.id_setor, ', ',
-            '"id_fornecedor":', NEW.id_fornecedor, ', ',
-            '"statusRegistro":', NEW.statusRegistro, ', ',
-            '"tipo":', NEW.tipo, ', ',
-            '"motivo":"', NEW.motivo, '", ',
-            '"data_pedido":"', NEW.data_pedido, '", ',
-            '"data_chegada":"', NEW.data_chegada, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_movimentacao
-AFTER UPDATE ON `movimentacao`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
-    VALUES (
-        'movimentacao',
-        'UPDATE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"id_setor":', OLD.id_setor, ', ',
-            '"id_fornecedor":', OLD.id_fornecedor, ', ',
-            '"statusRegistro":', OLD.statusRegistro, ', ',
-            '"tipo":', OLD.tipo, ', ',
-            '"motivo":"', OLD.motivo, '", ',
-            '"data_pedido":"', OLD.data_pedido, '", ',
-            '"data_chegada":"', OLD.data_chegada, '"}'
-        ),
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"id_setor":', NEW.id_setor, ', ',
-            '"id_fornecedor":', NEW.id_fornecedor, ', ',
-            '"statusRegistro":', NEW.statusRegistro, ', ',
-            '"tipo":', NEW.tipo, ', ',
-            '"motivo":"', NEW.motivo, '", ',
-            '"data_pedido":"', NEW.data_pedido, '", ',
-            '"data_chegada":"', NEW.data_chegada, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-
-DELIMITER //
-
-CREATE TRIGGER tg_delete_log_info_movimentacao
-AFTER DELETE ON `movimentacao`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'movimentacao',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"id_setor":', OLD.id_setor, ', ',
-            '"id_fornecedor":', OLD.id_fornecedor, ', ',
-            '"statusRegistro":', OLD.statusRegistro, ', ',
-            '"tipo":', OLD.tipo, ', ',
-            '"motivo":"', OLD.motivo, '", ',
-            '"data_pedido":"', OLD.data_pedido, '", ',
-            '"data_chegada":"', OLD.data_chegada, '"}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_insert_log_info_movimentacao_item
-AFTER INSERT ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
-    VALUES (
-        'movimentacao_item',
-        'INSERT',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"id_movimentacoes":', NEW.id_movimentacoes, ', ',
-            '"id_produtos":', NEW.id_produtos, ', ',
-            '"quantidade":', NEW.quantidade, ', ',
-            '"valor":', NEW.valor, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_movimentacao_item
-AFTER UPDATE ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
-    VALUES (
-        'movimentacao_item',
-        'UPDATE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"id_movimentacoes":', OLD.id_movimentacoes, ', ',
-            '"id_produtos":', OLD.id_produtos, ', ',
-            '"quantidade":', OLD.quantidade, ', ',
-            '"valor":', OLD.valor, '}'
-        ),
-        CONCAT(
-            '{"id":', NEW.id, ', ',
-            '"id_movimentacoes":', NEW.id_movimentacoes, ', ',
-            '"id_produtos":', NEW.id_produtos, ', ',
-            '"quantidade":', NEW.quantidade, ', ',
-            '"valor":', NEW.valor, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
-
-DELIMITER //
-
-CREATE TRIGGER tg_delete_log_info_movimentacao_item
-AFTER DELETE ON `movimentacao_item`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'movimentacao_item',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"id_movimentacoes":', OLD.id_movimentacoes, ', ',
-            '"id_produtos":', OLD.id_produtos, ', ',
-            '"quantidade":', OLD.quantidade, ', ',
-            '"valor":', OLD.valor, '}'
-        )
-    );
-END//
-
-DELIMITER ;
-
+DROP TRIGGER IF EXISTS `tg_update_log_info_movimentacao_item`;
 DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_movimentacao_item` AFTER UPDATE ON `movimentacao_item` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
+    VALUES (
+        'movimentacao_item',
+        'UPDATE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"id_movimentacoes":', OLD.id_movimentacoes, ', ',
+            '"id_produtos":', OLD.id_produtos, ', ',
+            '"quantidade":', OLD.quantidade, ', ',
+            '"valor":', OLD.valor, '}'
+        ),
+        CONCAT(
+            '{"id":', NEW.id, ', ',
+            '"id_movimentacoes":', NEW.id_movimentacoes, ', ',
+            '"id_produtos":', NEW.id_produtos, ', ',
+            '"quantidade":', NEW.quantidade, ', ',
+            '"valor":', NEW.valor, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
 
-CREATE TRIGGER `tg_after_insert_produto` 
-AFTER INSERT ON `produto`
-FOR EACH ROW 
-BEGIN
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `ordens_servico`
+--
+
+DROP TABLE IF EXISTS `ordens_servico`;
+CREATE TABLE IF NOT EXISTS `ordens_servico` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `cliente_nome` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `telefone_cliente` varchar(20) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `modelo_dispositivo` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `imei_dispositivo` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci DEFAULT NULL,
+  `descricao_servico` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `tipo_servico` enum('Reparo','Troca de Peça','Atualização','Outros') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `problema_reportado` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  `data_abertura` date NOT NULL,
+  `data_fechamento` date DEFAULT NULL,
+  `status` enum('Aberto','Em Andamento','Aguardando Peças','Concluído','Cancelado') CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `observacoes` text CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci,
+  PRIMARY KEY (`id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `ordens_servico_pecas`
+--
+
+DROP TABLE IF EXISTS `ordens_servico_pecas`;
+CREATE TABLE IF NOT EXISTS `ordens_servico_pecas` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `id_ordem_servico` int NOT NULL,
+  `id_peca` int NOT NULL,
+  `quantidade` int DEFAULT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fk_ordem_servico` (`id_ordem_servico`),
+  KEY `fk_id_peca` (`id_peca`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Acionadores `ordens_servico_pecas`
+--
+DROP TRIGGER IF EXISTS `tg_after_ordens_servico_pecas_delete`;
+DELIMITER $$
+CREATE TRIGGER `tg_after_ordens_servico_pecas_delete` AFTER DELETE ON `ordens_servico_pecas` FOR EACH ROW BEGIN
+    DECLARE quantidade_anterior INT;
+    
+    -- Recupera a quantidade anterior do produto
+    SELECT quantidade INTO quantidade_anterior FROM produto WHERE id = OLD.id_peca;
+    
+    -- Atualiza a quantidade do produto na tabela produto
+    IF OLD.quantidade > 0 THEN
+        UPDATE produto 
+        SET quantidade = quantidade + OLD.quantidade 
+        WHERE id = OLD.id_peca;
+    END IF;
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_after_ordens_servico_pecas_insert_update`;
+DELIMITER $$
+CREATE TRIGGER `tg_after_ordens_servico_pecas_insert_update` AFTER INSERT ON `ordens_servico_pecas` FOR EACH ROW BEGIN
+    DECLARE quantidade_anterior INT;
+    
+    -- Recupera a quantidade anterior do produto
+    SELECT quantidade INTO quantidade_anterior FROM produto WHERE id = NEW.id_peca;
+    
+    -- Atualiza a quantidade do produto na tabela produto
+    IF NEW.quantidade > 0 THEN
+        UPDATE produto 
+        SET quantidade = quantidade - NEW.quantidade 
+        WHERE id = NEW.id_peca;
+    END IF;
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_after_ordens_servico_pecas_update`;
+DELIMITER $$
+CREATE TRIGGER `tg_after_ordens_servico_pecas_update` AFTER UPDATE ON `ordens_servico_pecas` FOR EACH ROW BEGIN
+    DECLARE quantidade_anterior INT;
+
+    -- Recupera a quantidade atual do produto em estoque
+    SELECT quantidade INTO quantidade_anterior FROM produto WHERE id = NEW.id_peca;
+
+    -- Se a nova quantidade for maior que a antiga, subtrai a diferença do estoque
+    IF NEW.quantidade > OLD.quantidade THEN
+        UPDATE produto 
+        SET quantidade = quantidade - (NEW.quantidade - OLD.quantidade)
+        WHERE id = NEW.id_peca;
+    -- Se a nova quantidade for menor que a antiga, adiciona a diferença ao estoque
+    ELSEIF NEW.quantidade < OLD.quantidade THEN
+        UPDATE produto 
+        SET quantidade = quantidade + (OLD.quantidade - NEW.quantidade)
+        WHERE id = NEW.id_peca;
+    END IF;
+END
+$$
+DELIMITER ;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `produto`
+--
+
+DROP TABLE IF EXISTS `produto`;
+CREATE TABLE IF NOT EXISTS `produto` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `descricao` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `quantidade` int DEFAULT NULL,
+  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
+  `condicao` int DEFAULT '1' COMMENT '1=Novo; 2=Usado',
+  `dataMod` timestamp NULL DEFAULT NULL,
+  `nome` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
+  `fornecedor` int DEFAULT NULL,
+  `tipo_produto` int NOT NULL,
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `fk_itens_fornecedor` (`fornecedor`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
+
+--
+-- Despejando dados para a tabela `produto`
+--
+
+INSERT INTO `produto` (`id`, `descricao`, `quantidade`, `statusRegistro`, `condicao`, `dataMod`, `nome`, `fornecedor`, `tipo_produto`) VALUES
+(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-10-18 20:34:31', 'Fonte de alimentação 600W', 1, 0),
+(4, '<p>asds</p>', 0, 1, 1, '2024-10-18 20:33:35', 'Gabinete gamer', 1, 0),
+(5, '<p>Testando</p>', 0, 1, 1, '2024-10-18 20:33:50', 'Mouse gamer', 1, 0);
+
+--
+-- Acionadores `produto`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_infoproduto`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_infoproduto` AFTER DELETE ON `produto` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_antigos`)
+    VALUES ('produto', 'DELETE', @current_user, CONCAT('ID: ', OLD.id, ', Nome: ', OLD.nome, ', Descrição: ', OLD.descricao, ', Quantidade: ', OLD.quantidade, ', Fornecedor: ', OLD.fornecedor));
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_produto`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_produto` AFTER INSERT ON `produto` FOR EACH ROW BEGIN
     INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
     VALUES ('produto', 'INSERT', @current_user, CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Descrição: ', NEW.descricao, ', Quantidade: ', NEW.quantidade, ', Fornecedor: ', NEW.fornecedor));
-END $$
-
+END
+$$
 DELIMITER ;
-
+DROP TRIGGER IF EXISTS `tg_update_log_info_produto`;
 DELIMITER $$
-
-CREATE TRIGGER `tg_after_update_produto` 
-AFTER UPDATE ON `produto`
-FOR EACH ROW 
-BEGIN
+CREATE TRIGGER `tg_update_log_info_produto` AFTER UPDATE ON `produto` FOR EACH ROW BEGIN
     INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_antigos`, `dados_novos`)
     VALUES ('produto', 'UPDATE', @current_user, CONCAT('ID: ', OLD.id, ', Nome: ', OLD.nome, ', Descrição: ', OLD.descricao, ', Quantidade: ', OLD.quantidade, ', Fornecedor: ', OLD.fornecedor),
             CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Descrição: ', NEW.descricao, ', Quantidade: ', NEW.quantidade, ', Fornecedor: ', NEW.fornecedor));
-END $$
-
+END
+$$
 DELIMITER ;
 
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `setor`
+--
+
+DROP TABLE IF EXISTS `setor`;
+CREATE TABLE IF NOT EXISTS `setor` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nome` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `responsavel` int DEFAULT '0',
+  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `responsavel_setor` (`responsavel`) USING BTREE
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `setor`
+--
+
+INSERT INTO `setor` (`id`, `nome`, `responsavel`, `statusRegistro`) VALUES
+(1, 'Departamento de informáticaaaaa', 1, 1);
+
+--
+-- Acionadores `setor`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_info_setor`;
 DELIMITER $$
-
-CREATE TRIGGER `tg_after_delete_produto` 
-AFTER DELETE ON `produto`
-FOR EACH ROW 
-BEGIN
-    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_antigos`)
-    VALUES ('produto', 'DELETE', @current_user, CONCAT('ID: ', OLD.id, ', Nome: ', OLD.nome, ', Descrição: ', OLD.descricao, ', Quantidade: ', OLD.quantidade, ', Fornecedor: ', OLD.fornecedor));
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER `tg_insert_log_info_setor` 
-AFTER INSERT ON `setor`
-FOR EACH ROW 
-BEGIN
-    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
-    VALUES ('setor', 'INSERT', @current_user, CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Responsável: ', NEW.responsavel, ', Status do Registro: ', NEW.statusRegistro));
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER `tg_update_log_info_setor` 
-AFTER UPDATE ON `setor`
-FOR EACH ROW 
-BEGIN
-    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
-    VALUES ('setor', 'UPDATE', @current_user, CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Responsável: ', NEW.responsavel, ', Status do Registro: ', NEW.statusRegistro));
-END $$
-
-DELIMITER ;
-
-DELIMITER $$
-
-CREATE TRIGGER `tg_delete_log_info_setor` 
-AFTER DELETE ON `setor`
-FOR EACH ROW 
-BEGIN
+CREATE TRIGGER `tg_delete_log_info_setor` AFTER DELETE ON `setor` FOR EACH ROW BEGIN
     INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
     VALUES ('setor', 'DELETE', @current_user, CONCAT('ID: ', OLD.id, ', Nome: ', OLD.nome, ', Responsável: ', OLD.responsavel, ', Status do Registro: ', OLD.statusRegistro));
-END $$
-
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_setor`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_setor` AFTER INSERT ON `setor` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
+    VALUES ('setor', 'INSERT', @current_user, CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Responsável: ', NEW.responsavel, ', Status do Registro: ', NEW.statusRegistro));
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_update_log_info_setor`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_setor` AFTER UPDATE ON `setor` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (`tabela`, `acao`, `usuario`, `dados_novos`)
+    VALUES ('setor', 'UPDATE', @current_user, CONCAT('ID: ', NEW.id, ', Nome: ', NEW.nome, ', Responsável: ', NEW.responsavel, ', Status do Registro: ', NEW.statusRegistro));
+END
+$$
 DELIMITER ;
 
-DELIMITER //
+-- --------------------------------------------------------
 
-CREATE TRIGGER tg_insert_log_info_usuario
-AFTER INSERT ON `usuario`
-FOR EACH ROW
-BEGIN
+--
+-- Estrutura para tabela `usuario`
+--
+
+DROP TABLE IF EXISTS `usuario`;
+CREATE TABLE IF NOT EXISTS `usuario` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `nivel` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `statusRegistro` int NOT NULL,
+  `nome` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `senha` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `email` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `primeiroLogin` int DEFAULT '1',
+  `id_funcionario` int DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_funcionario` (`id_funcionario`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `usuario`
+--
+
+INSERT INTO `usuario` (`id`, `nivel`, `statusRegistro`, `nome`, `senha`, `email`, `primeiroLogin`, `id_funcionario`) VALUES
+(2, '1', 1, 'administrador', '$2y$10$2s5welXX5rmMykJ3GTSZHO1NrOnObYZS1vqSVzVih5U48WSSD7gKe', 'administrador@gmail.com', 1, 1);
+
+--
+-- Acionadores `usuario`
+--
+DROP TRIGGER IF EXISTS `tg_delete_log_info_usuario`;
+DELIMITER $$
+CREATE TRIGGER `tg_delete_log_info_usuario` AFTER DELETE ON `usuario` FOR EACH ROW BEGIN
+    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
+    VALUES (
+        'usuario',
+        'DELETE',
+        CURRENT_TIMESTAMP,
+        @current_user, -- Substitua com a lógica para obter o usuário atual
+        CONCAT(
+            '{"id":', OLD.id, ', ',
+            '"nivel":"', OLD.nivel, '", ',
+            '"statusRegistro":', OLD.statusRegistro, ', ',
+            '"nome":"', OLD.nome, '", ',
+            '"email":"', OLD.email, '", ',
+            '"primeiroLogin":', OLD.primeiroLogin, ', ',
+            '"id_funcionario":', OLD.id_funcionario, '}'
+        )
+    );
+END
+$$
+DELIMITER ;
+DROP TRIGGER IF EXISTS `tg_insert_log_info_usuario`;
+DELIMITER $$
+CREATE TRIGGER `tg_insert_log_info_usuario` AFTER INSERT ON `usuario` FOR EACH ROW BEGIN
     INSERT INTO `logs` (tabela, acao, data, usuario, dados_novos)
     VALUES (
         'usuario',
@@ -6697,21 +6763,18 @@ BEGIN
             '"nivel":"', NEW.nivel, '", ',
             '"statusRegistro":', NEW.statusRegistro, ', ',
             '"nome":"', NEW.nome, '", ',
+            '"senha":"', NEW.senha, '", ',
             '"email":"', NEW.email, '", ',
             '"primeiroLogin":', NEW.primeiroLogin, ', ',
             '"id_funcionario":', NEW.id_funcionario, '}'
         )
     );
-END//
-
+END
+$$
 DELIMITER ;
-
-DELIMITER //
-
-CREATE TRIGGER tg_update_log_info_usuario
-AFTER UPDATE ON `usuario`
-FOR EACH ROW
-BEGIN
+DROP TRIGGER IF EXISTS `tg_update_log_info_usuario`;
+DELIMITER $$
+CREATE TRIGGER `tg_update_log_info_usuario` AFTER UPDATE ON `usuario` FOR EACH ROW BEGIN
     INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos, dados_novos)
     VALUES (
         'usuario',
@@ -6737,36 +6800,26 @@ BEGIN
             '"id_funcionario":', NEW.id_funcionario, '}'
         )
     );
-END//
-
+END
+$$
 DELIMITER ;
 
+-- --------------------------------------------------------
 
-DELIMITER //
+--
+-- Estrutura para tabela `usuariorecuperasenha`
+--
 
-CREATE TRIGGER tg_delete_log_info_usuario
-AFTER DELETE ON `usuario`
-FOR EACH ROW
-BEGIN
-    INSERT INTO `logs` (tabela, acao, data, usuario, dados_antigos)
-    VALUES (
-        'usuario',
-        'DELETE',
-        CURRENT_TIMESTAMP,
-        @current_user, -- Substitua com a lógica para obter o usuário atual
-        CONCAT(
-            '{"id":', OLD.id, ', ',
-            '"nivel":"', OLD.nivel, '", ',
-            '"statusRegistro":', OLD.statusRegistro, ', ',
-            '"nome":"', OLD.nome, '", ',
-            '"email":"', OLD.email, '", ',
-            '"primeiroLogin":', OLD.primeiroLogin, ', ',
-            '"id_funcionario":', OLD.id_funcionario, '}'
-        )
-    );
-END//
-
-DELIMITER ;
+DROP TABLE IF EXISTS `usuariorecuperasenha`;
+CREATE TABLE IF NOT EXISTS `usuariorecuperasenha` (
+  `id` int NOT NULL AUTO_INCREMENT,
+  `usuario_id` int NOT NULL,
+  `chave` varchar(250) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL,
+  `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1=Ativo;2=Inativo',
+  `created_at` datetime NOT NULL DEFAULT (concat(curdate(),_utf8mb4' ',curtime())),
+  PRIMARY KEY (`id`) USING BTREE,
+  KEY `FK1_usuariorecuperacaosenha` (`usuario_id`) USING BTREE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Restrições para tabelas despejadas
@@ -6776,48 +6829,54 @@ DELIMITER ;
 -- Restrições para tabelas `cidade`
 --
 ALTER TABLE `cidade`
-  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `fornecedor`
 --
 ALTER TABLE `fornecedor`
-  ADD CONSTRAINT `cidade` FOREIGN KEY (`cidade`) REFERENCES `cidade` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `cidade` FOREIGN KEY (`cidade`) REFERENCES `cidade` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `estado` FOREIGN KEY (`estado`) REFERENCES `estado` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `funcionario`
 --
 ALTER TABLE `funcionario`
-  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_cargo` FOREIGN KEY (`cargo`) REFERENCES `cargo` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `id_setor` FOREIGN KEY (`setor`) REFERENCES `setor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `historico_produto`
 --
 ALTER TABLE `historico_produto`
-  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_produto` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `movimentacao`
 --
-
 ALTER TABLE `movimentacao`
-  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_fornecedor` FOREIGN KEY (`id_fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_id_setor` FOREIGN KEY (`id_setor`) REFERENCES `setor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `movimentacao_item`
 --
 ALTER TABLE `movimentacao_item`
-  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `fk_id_movimentacoes` FOREIGN KEY (`id_movimentacoes`) REFERENCES `movimentacao` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT,
+  ADD CONSTRAINT `fk_id_produtos` FOREIGN KEY (`id_produtos`) REFERENCES `produto` (`id`) ON DELETE CASCADE ON UPDATE RESTRICT;
+
+--
+-- Restrições para tabelas `ordens_servico_pecas`
+--
+ALTER TABLE `ordens_servico_pecas`
+  ADD CONSTRAINT `fk_id_peca` FOREIGN KEY (`id_peca`) REFERENCES `produto` (`id`),
+  ADD CONSTRAINT `fk_ordem_servico` FOREIGN KEY (`id_ordem_servico`) REFERENCES `ordens_servico` (`id`);
 
 --
 -- Restrições para tabelas `produto`
 --
 ALTER TABLE `produto`
-  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+  ADD CONSTRAINT `id_fornecedor` FOREIGN KEY (`fornecedor`) REFERENCES `fornecedor` (`id`) ON DELETE RESTRICT ON UPDATE RESTRICT;
 
 --
 -- Restrições para tabelas `usuario`
@@ -6832,7 +6891,6 @@ ALTER TABLE `usuariorecuperasenha`
   ADD CONSTRAINT `FK1_usuariorecuperacaosenha` FOREIGN KEY (`usuario_id`) REFERENCES `usuario` (`id`);
 COMMIT;
 
-SET FOREIGN_KEY_CHECKS = 1;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;

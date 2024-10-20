@@ -6,9 +6,7 @@
 
 <div class="container">
     
-    <div class="container" style="margin-top: 100px;">
-        <?= exibeTitulo("Produto", ['acao' => $action]) ?>
-    </div>
+    <?= exibeTitulo("Produto", ['acao' => $action]) ?>
 
     <?php
 

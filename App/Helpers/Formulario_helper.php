@@ -34,10 +34,7 @@
                     <section>
                         <div class="blog-banner">
                             <div class="row">
-                                <div class="col-10 mt-5 mb-5 text-left">
-                                    <h1 style="color: #384aeb;">' . $subTitulo . '</h1>
-                                </div>
-                                <div class="col-2 mt-5 mb-5 text-right">
+                                <div class="col-2 mb-5 text-right" style="margin-left: 85%; margin-top: 8%;">
                                     <a href="' .  base_url() . $parametro['controller'] . $link . '" class="btn btn-secondary btn-sm btn-icons-crud" title="Novo"><i class="fa fa-' . $icone .'" aria-hidden="true"></i></a>    
                                 </div>
                             </div>

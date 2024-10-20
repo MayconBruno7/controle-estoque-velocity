@@ -11,12 +11,8 @@
 
 <main class="container mt-5">
 
-    <div class="row">
-        <div class="col-10" style="margin-top: 100px;">
-            <?= exibeTitulo("Funcionario", ['acao' => $action]) ?>
-        </div>
-    </div>
-
+    <?= exibeTitulo("Funcionario", ['acao' => $action]) ?>
+  
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <?= form_open(base_url() . 'Funcionario/' . ($action == "delete" ? "delete" : "store")) ?>
 

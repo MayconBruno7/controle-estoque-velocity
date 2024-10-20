@@ -4,10 +4,7 @@
 
 <main class="container mt-5">
 
-
-    <div class="container" style="margin-top: 100px;">
-        <?= exibeTitulo("Setor", ['acao' => $action]) ?>
-    </div>
+    <?= exibeTitulo("Setor", ['acao' => $action]) ?>
 
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <?= form_open(base_url() . 'Setor/' . ($action == "delete" ? "delete" : "store")) ?>

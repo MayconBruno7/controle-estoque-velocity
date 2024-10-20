@@ -27,6 +27,11 @@ class Usuario extends BaseController
         $this->model = new UsuarioModel(); // Inicializa o modelo de usuário
         $this->FuncionarioModel = new FuncionarioModel();
         $this->CargoModel = new CargoModel();
+
+        // Verifica se o usuário é administrador antes de permitir o acesso
+        if (!$this->getAdministrador()) {
+            return redirect()->to(site_url("Home"));
+        }
    
     }
 

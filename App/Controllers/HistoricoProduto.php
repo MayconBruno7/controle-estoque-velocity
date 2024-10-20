@@ -14,7 +14,7 @@ class HistoricoProduto extends BaseController
         $this->historicoProdutoModel = new HistoricoProdutoModel();
 
         // Só acessa se estiver logado
-        if (!$this->getAdministrador()) {
+        if (!$this->getUsuario()) {
             return redirect()->to(base_url('home'));
         }
     }

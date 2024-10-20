@@ -11,9 +11,7 @@
 
 <div class="container">
 
-    <div class="container" style="margin-top: 100px;">
-        <?= exibeTitulo("Fornecedor", ['acao' => $action]) ?>
-    </div>
+    <?= exibeTitulo("Fornecedor", ['acao' => $action]) ?>
 
     <?= form_open(base_url() . 'Fornecedor/' . ($action == "delete" ? "delete" : "store")) ?>
 

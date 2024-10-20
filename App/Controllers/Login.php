@@ -39,7 +39,8 @@ class Login extends BaseController
         $usuario = $this->usuarioModel->getUserEmail($post['email']);
 
         if ($usuario) {
-
+            // var_dump($post, $post["senha"], $usuario['senha']);
+            // exit;
             // Validar a senha
             if (!password_verify(trim($post["senha"]), $usuario['senha'])) {
                 return redirect()->to(base_url('Home/login'))->with('msgError', 'Usuário ou senha inválidos.');
@@ -47,9 +48,10 @@ class Login extends BaseController
         
             // Validar status do usuário
             if ($usuario['statusRegistro'] == 2) {
-                return redirect()->to(base_url('Home/login'))->with('msgError', 'Usuário inativo.');
+                return redirect()->
+                to(base_url('Home/login'))->with('msgError', 'Usuário inativo.');
             }   
-       
+
             // Definir sessão do usuário logado
             session()->set([
                 'usuarioId'    => $usuario['id'],
@@ -82,9 +84,6 @@ class Login extends BaseController
                 setcookie('password', $post["senha"], time() + (86400 * 30), "/");
             }
 
-            // // Definir o @current_user no MySQL
-            // $this->setCurrentUser($usuario['id']);
-
             $redirectUrl = '';
 
             if (session()->get('usuarioNivel') == 1) {
@@ -99,32 +98,7 @@ class Login extends BaseController
         }
     }
 
-    // private function setCurrentUser($userId)
-    // {
-        
-    //     // Conectar ao banco de dados
-    //     $db = db_connect();
-
-    //     // Definir a variável de sessão @current_user no MySQL
-    //     $db->query("SET @current_user = ?", [$userId]);
-
-    //     // Verificar se foi definida corretamente
-    //     $result = $db->query("SELECT @current_user")->getRowArray();
-    //     // var_dump($result); // Para verificar se o valor está correto
-
-    //     if ($result) {
-    //         session()->set(['@current_user' => $userId]);
-    //         log_message('info', 'Usuário atual definido como: ' . $result['@current_user']);
-    //     } else {
-    //         log_message('error', 'Erro ao definir a variável @current_user');
-    //     }
-
-    //     // Fechar a conexão após o uso
-    //     $db->close();
-    // }
-
-    
-    public function signOut(): RedirectResponse
+    public function signOut()
     {
         session()->destroy();
         return redirect()->to(base_url('Home/home'));
@@ -135,7 +109,7 @@ class Login extends BaseController
         return view('usuario/formSolicitaRecuperacaoSenha');
     }
 
-    public function gerarLinkRecuperaSenha(): RedirectResponse
+    public function gerarLinkRecuperaSenha()
     {
         $post = $this->request->getPost();
         $usuario = $this->usuarioModel->getUserEmail($post['email']);
@@ -180,7 +154,7 @@ class Login extends BaseController
         return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Chave inválida ou expirada.');
     }
 
-    public function atualizaRecuperaSenha(): RedirectResponse
+    public function atualizaRecuperaSenha()
     {
         $post = $this->request->getPost();
 
@@ -199,7 +173,7 @@ class Login extends BaseController
         return redirect()->back()->with('msgError', 'Falha ao atualizar senha.');
     }
 
-    public function novaContaVisitante(): RedirectResponse
+    public function novaContaVisitante()
     {
         $post = $this->request->getPost();
 

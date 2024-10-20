@@ -2,9 +2,7 @@
 
 <?= $this->section('conteudo') ?>
 
-<div class="container" style="margin-top: 100px;">
-    <?= exibeTitulo("Cargo", ['acao' => $action]) ?>
-</div>
+<?= exibeTitulo("Cargo", ['acao' => $action]) ?>
 
 <main class="container mt-5">
     <?= form_open(base_url() . 'Cargo/' . ($action == "delete" ? "delete" : "store")) ?>

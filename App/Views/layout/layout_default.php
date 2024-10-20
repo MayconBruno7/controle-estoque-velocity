@@ -349,7 +349,7 @@
         </aside>
     </div>
 
-    <script>
+    <!-- <script>
         $(document).ready(function() {
 
             // abre a barra de configurações do aplicativo
@@ -383,13 +383,13 @@
                 }
             });
         });
-    </script>
+    </script> -->
 
-        <main class="container">
-            <section>
-                <?= $this->renderSection('conteudo') ?>
-            </section>
-        </main>
+
+        <section>
+            <?= $this->renderSection('conteudo') ?>
+        </section>
+ 
         
         <!-- General JS Scripts -->
         <script src="<?= base_url("assets/js/app.min.js") ?>"></script>

@@ -49,6 +49,14 @@ $routes->group('Relatorio', function($routes) {
     $routes->get("/", 'Relatorio::index');
     $routes->get("relatorioMovimentacoes", 'Relatorio::relatorioMovimentacoes');
     $routes->get("relatorioItensPorFornecedor", 'Relatorio::relatorioItensPorFornecedor');
+    // $routes->get("getDados", 'Relatorio::getDados/$1');
+
+    $routes->get('getDados/(:any)/(:any)/(:any)/(:any)', 'Relatorio::getDados/$1/$2/$3');
+
+    // rota da home para os relatorios do gráfico
+    $routes->get('getDados/(:any)/(:any)/(:any)', 'Relatorio::getDados/$1/$2/$3');
+
+
 });
 
 $routes->group('Log', function($routes) {
@@ -71,7 +79,6 @@ $routes->group('Produto', function($routes) {
     $routes->get('index/(:segment)/(:num)/(:num)/(:num)/(:num)', 'Produto::index/$1/$2/$3/$4/$5');
 
 });
-
 
 // $routes->group('HistoricoProdutoMovimentacao', function($routes) {
 $routes->get("HistoricoProdutoMovimentacao/index/(:num)/(:segment)", 'HistoricoProdutoMovimentacao::index/$1/$2');
@@ -121,6 +128,7 @@ $routes->group('Movimentacao', function($routes) {
     // rota para o update da movimentação
     $routes->post("update", 'Movimentacao::update');
 
+    $routes->get('form/(:segment)/(:num)/home', 'Movimentacao::form/$1/$2');
 
     $routes->post("store", 'Movimentacao::store');
     $routes->post('delete', "Movimentacao::delete");

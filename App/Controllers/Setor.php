@@ -18,7 +18,7 @@ class Setor extends BaseController
         $this->funcionarioModel = new FuncionarioModel();
 
         // Só acessa se tiver logado
-        if (!$this->getAdministrador()) {
+        if (!$this->getUsuario()) {
             return redirect()->to('/home');
         }
     }

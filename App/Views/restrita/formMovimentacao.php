@@ -5,27 +5,12 @@
     $this->section('conteudo'); 
 
     // Verificar se há uma sessão de movimentação
-    if (!session()->get('movimentacao')) {
+    if (!session()->has('movimentacao')) {
         session()->get('movimentacao');
     }
 
-    // Verificar se há uma sessão de produtos
-    // if (!session()->get('produtos')) {
-    //     session()->get('produtos');
-    // }
-
-    // session()->destroy('movimentacao');
-    // session()->destroy('produtos');
-
     $dadosMovimentacao = session()->get('movimentacao');
-    // var_dump($dadosMovimentacao['produtos']);
-    // var_dump($action);
-    // exit;
-    // foreach ($dadosMovimentacao['produtos'] as $produto) {
-    //     echo $produto['id_produto'];
-    // }
 
-    // exit;
     $total = 0;
 
 ?>
@@ -71,10 +56,8 @@
         </div>
     </div>
 
-    <div class="container" style="margin-top: 200px;">
-        <?= exibeTitulo('Movimentacao', ['acao' => $action]); ?>
-    </div>
-
+    <?= exibeTitulo('Movimentacao', ['acao' => $action]); ?>
+ 
     <div class="row justify-content-center">
        <!-- Mensagens de erro ou sucesso -->
     </div>

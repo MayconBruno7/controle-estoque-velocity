@@ -67,6 +67,9 @@ Class RelatorioModel extends CustomModel
 
     public function RelatorioAno($ano = null)
     {
+        // var_dump($ano);
+        // exit;
+
         if ($ano === null) {
             $ano = date('Y');
         }

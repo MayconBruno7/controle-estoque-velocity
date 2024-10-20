@@ -34,12 +34,13 @@ class MovimentacaoModel extends CustomModel
             m.id AS id_movimentacao,
             f.nome AS nome_fornecedor,
             m.tipo AS tipo_movimentacao,
+            m.id_fornecedor,
+            m.id_setor,
+            m.motivo,
             m.data_pedido,
-            m.data_chegada')
-        // ->distinct() // Adiciona DISTINCT à consulta
-        ->join('fornecedor f', 'f.id = m.id_fornecedor', 'left') // Join com a tabela fornecedor
-        ->join('movimentacao_item mi', 'mi.id_movimentacoes = m.id', 'left') // Join com a tabela movimentacao_item
-        ->join('produto p', 'p.id = mi.id_produtos', 'left'); // Join com a tabela produto
+            m.data_chegada,
+            m.statusRegistro')
+        ->join('fornecedor f', 'f.id = m.id_fornecedor', 'left');
 
         // Filtra resultados com base no nível do usuário
         if (session()->get('usuarioNivel') != 1) {
@@ -105,8 +106,6 @@ class MovimentacaoModel extends CustomModel
      */
     public function updateMovimentacao(int $idMovimentacao, $movimentacao, $prod_info_mov_atualizado): bool
     {
-
-    
         // Verifica se a movimentação é válida
         if ($idMovimentacao) {
             // Debug: Verifica se $movimentacao contém dados
@@ -126,13 +125,10 @@ class MovimentacaoModel extends CustomModel
     
             // Se as informações do produto foram atualizadas, faça a limpeza da sessão
             if ($prod_info_mov_atualizado) {
-                if (isset($_SESSION['produto_mov_atualizado'])) { // Verifica se a variável existe
-                    unset($_SESSION['produto_mov_atualizado']);
+                if (session()->has('prod_mov_atualizado')) { // Verifica se a variável existe
+                    session()->set('prod_mov_atualizado', false);
                 }
-                // var_dump($idMovimentacao);
-                // var_dump($movimentacao);
-                // var_dump($updated);
-                // exit;
+  
                 return true; // Retorna verdadeiro se tudo ocorreu bem
             }
         }
@@ -153,13 +149,12 @@ class MovimentacaoModel extends CustomModel
      */
     public function updateInformacoesProdutoMovimentacao(int $id_movimentacao, array $aProdutos, array $acao, int $quantidade_produto, int $quantidade_movimentacao = null): bool
     {
+
         $id_produto = $aProdutos[0]['id_produtos'] ?? '';
 
-        // var_dump($id_movimentacao, $aProdutos, $acao, $quantidade_produto, $quantidade_movimentacao);
-        // exit;
-      
         if ($id_movimentacao && !empty($id_produto)) {
             foreach ($aProdutos as $item) {
+
                 
                 if ($acao['acaoProduto'] == 'update') {
                     $item['quantidade'] = $quantidade_movimentacao;
@@ -171,7 +166,9 @@ class MovimentacaoModel extends CustomModel
                     );
 
                     if($produto_atualizado){
-                        session()->set('produto_mov_atualizado');
+                        session()->set('prod_mov_atualizado', true);
+                    //     var_dump(session()->get('prod_mov_atualizado'));
+                    // exit('model');
                         return true;
                     } else {
                         return false;
@@ -180,11 +177,12 @@ class MovimentacaoModel extends CustomModel
                 } elseif ($acao['acaoProduto'] == 'new') {
                     $item['id_movimentacoes'] = $id_movimentacao;
                     $item['quantidade'] = $quantidade_movimentacao;
+
                     // Inserir o item de produto na tabela movimentacao_item usando o método insertMovimentacaoItem do CustomModel
                     $produto_inserido = $this->insertMovimentacaoItem($item);
 
                     if($produto_inserido){
-                        session()->set('produto_mov_atualizado');
+                        session()->set('prod_mov_atualizado', true);
                         return true;
                     } else {
                         return false;
