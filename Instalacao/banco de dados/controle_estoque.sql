@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 20/10/2024 às 19:08
+-- Tempo de geração: 20/10/2024 às 21:25
 -- Versão do servidor: 8.3.0
 -- Versão do PHP: 8.3.6
 
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS `cargo` (
 --
 
 INSERT INTO `cargo` (`id`, `nome`, `statusRegistro`) VALUES
-(1, 'Atendentesda', 1);
+(1, 'Atendente', 1);
 
 --
 -- Acionadores `cargo`
@@ -5932,14 +5932,15 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `setor_funcionarios` (`setor`) USING BTREE,
   KEY `cargo` (`cargo`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `funcionario`
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`, `imagem`) VALUES
-(1, 'Weberty', '49498498498', '32984927895', 1, 1.000000, 1, 1, NULL);
+(1, 'Weberty', '49498498498', '32984927895', 1, 1.000000, 1, 1, 'aaa.png'),
+(2, 'Maycon Bruno', '09068884689', '3298492407', 1, 1540.000000, 1, 1, NULL);
 
 --
 -- Acionadores `funcionario`
@@ -6048,14 +6049,7 @@ CREATE TABLE IF NOT EXISTS `historico_produto` (
   PRIMARY KEY (`id`),
   KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE,
   KEY `fornecedor_id` (`fornecedor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Despejando dados para a tabela `historico_produto`
---
-
-INSERT INTO `historico_produto` (`id`, `id_produtos`, `fornecedor_id`, `nome_produtos`, `descricao_anterior`, `quantidade_anterior`, `status_anterior`, `statusItem_anterior`, `dataMod`) VALUES
-(1, 4, 1, 'Gabinete gamer', '<p>asds</p>', 0, 1, 1, '2024-10-20 18:37:19');
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -6073,15 +6067,7 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `dados_antigos` text,
   `dados_novos` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Despejando dados para a tabela `logs`
---
-
-INSERT INTO `logs` (`id`, `tabela`, `acao`, `data`, `usuario`, `dados_antigos`, `dados_novos`) VALUES
-(3, 'funcionario', 'DELETE', '2024-10-20 19:07:38', '1', NULL, NULL),
-(4, 'fornecedor', 'DELETE', '2024-10-20 19:07:48', '1', '{\"id\":5, \"nome\":\"WEG\", \"cnpj\":\"84429695000111\", \"endereco\":\"AVENIDA PREFEITO WALDEMAR GRUBBA\", \"cidade\":24, \"estado\":2, \"bairro\":\"VILA LALAU\", \"numero\":\"3300\", \"telefone\":\"4732764000\", \"statusRegistro\":1}', NULL);
+) ENGINE=InnoDB AUTO_INCREMENT=144 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -6112,12 +6098,30 @@ DROP TRIGGER IF EXISTS `tg_before_delete_movimentacao`;
 DELIMITER $$
 CREATE TRIGGER `tg_before_delete_movimentacao` BEFORE DELETE ON `movimentacao` FOR EACH ROW BEGIN
     DECLARE v_tipo INT;
+    DECLARE v_estoque_atual INT;
 
     -- Verifica se o tipo da movimentação excluída era 1 (Entrada) ou 2 (Saída)
     SET v_tipo = OLD.tipo;
 
+    -- Verifica a quantidade total de produtos associados à movimentação que está sendo excluída
+    IF v_tipo IN (1, 2) THEN
+        SELECT SUM(mi.quantidade) INTO v_estoque_atual
+        FROM movimentacao_item mi
+        WHERE mi.id_movimentacoes = OLD.id;
+
+        -- Para cada produto associado, verifica a quantidade atual em estoque
+        IF EXISTS (
+            SELECT 1
+            FROM movimentacao_item mi
+            JOIN produto p ON p.id = mi.id_produtos
+            WHERE mi.id_movimentacoes = OLD.id
+            AND (p.quantidade - v_estoque_atual) < 0
+        ) THEN
+            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Não é permitido excluir esta movimentação: Estoque ficará negativo.';
+        END IF;
+    END IF;
+
     -- Atualiza a quantidade de produtos na tabela produto
-    -- Para cada item associado à movimentação excluída
     UPDATE produto p
     JOIN movimentacao_item mi ON p.id = mi.id_produtos
     SET p.quantidade = CASE
@@ -6125,7 +6129,7 @@ CREATE TRIGGER `tg_before_delete_movimentacao` BEFORE DELETE ON `movimentacao` F
         WHEN v_tipo = 2 THEN p.quantidade + mi.quantidade
     END
     WHERE mi.id_movimentacoes = OLD.id;
-    
+
 END
 $$
 DELIMITER ;
@@ -6135,7 +6139,7 @@ CREATE TRIGGER `tg_delete_bloqueia_movimentacao_final_semana` BEFORE DELETE ON `
    DECLARE dia_semana INT;
    SET dia_semana = DAYOFWEEK(CURDATE());
 
-   IF dia_semana NOT IN (1, 7) THEN
+   IF dia_semana IN (1, 7) THEN
       SIGNAL SQLSTATE '45000' 
       SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
    END IF;
@@ -6264,7 +6268,7 @@ CREATE TABLE IF NOT EXISTS `movimentacao_item` (
   PRIMARY KEY (`id`),
   KEY `id_movimentacoes` (`id_movimentacoes`) USING BTREE,
   KEY `id_produtos` (`id_produtos`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=18 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Acionadores `movimentacao_item`
@@ -6606,16 +6610,14 @@ CREATE TABLE IF NOT EXISTS `produto` (
   `tipo_produto` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE,
   KEY `fk_itens_fornecedor` (`fornecedor`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1 COMMENT='Itens - Estoque';
 
 --
 -- Despejando dados para a tabela `produto`
 --
 
 INSERT INTO `produto` (`id`, `descricao`, `quantidade`, `statusRegistro`, `condicao`, `dataMod`, `nome`, `fornecedor`, `tipo_produto`) VALUES
-(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-10-18 20:34:31', 'Fonte de alimentação 600W', 1, 0),
-(4, '<p>asds</p>', 0, 1, 1, '2024-10-18 20:33:35', 'Gabinete gamer', 1, 0),
-(5, '<p>Testando</p>', 0, 1, 1, '2024-10-18 20:33:50', 'Mouse gamer', 1, 0);
+(1, '<p>Fonte de alimentação de 450W</p>', 0, 1, 1, '2024-10-18 20:34:31', 'Fonte de alimentação 600W', 1, 0);
 
 --
 -- Acionadores `produto`
@@ -6660,7 +6662,7 @@ CREATE TABLE IF NOT EXISTS `setor` (
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `responsavel_setor` (`responsavel`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `setor`
@@ -6715,14 +6717,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
   `id_funcionario` int DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `id_funcionario` (`id_funcionario`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
-
---
--- Despejando dados para a tabela `usuario`
---
-
-INSERT INTO `usuario` (`id`, `nivel`, `statusRegistro`, `nome`, `senha`, `email`, `primeiroLogin`, `id_funcionario`) VALUES
-(2, '1', 1, 'administrador', '$2y$10$2s5welXX5rmMykJ3GTSZHO1NrOnObYZS1vqSVzVih5U48WSSD7gKe', 'administrador@gmail.com', 1, 1);
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Acionadores `usuario`
