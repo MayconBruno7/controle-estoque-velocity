@@ -15,17 +15,6 @@ BEGIN
         SELECT SUM(mi.quantidade) INTO v_estoque_atual
         FROM movimentacao_item mi
         WHERE mi.id_movimentacoes = OLD.id;
-
-        -- Para cada produto associado, verifica a quantidade atual em estoque
-        IF EXISTS (
-            SELECT 1
-            FROM movimentacao_item mi
-            JOIN produto p ON p.id = mi.id_produtos
-            WHERE mi.id_movimentacoes = OLD.id
-            AND (p.quantidade - v_estoque_atual) < 0
-        ) THEN
-            SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Não é permitido excluir esta movimentação: Estoque ficará negativo.';
-        END IF;
     END IF;
 
     -- Atualiza a quantidade de produtos na tabela produto
