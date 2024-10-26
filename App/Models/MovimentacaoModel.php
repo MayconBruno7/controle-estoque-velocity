@@ -51,12 +51,48 @@ class MovimentacaoModel extends CustomModel
         return $builder->orderBy($orderBy, 'DESC')->get()->getResultArray();
     }
 
+    public function getMovimentacaoDetalhada(int $id_movimentacao): array
+    {
+        // Inicializa o Query Builder
+        $builder = $this->db->table('movimentacao m')
+            ->select('
+                m.id AS id_movimentacao,
+                m.tipo AS tipo_movimentacao,
+                m.id_fornecedor,
+                m.id_setor,
+                m.motivo,
+                m.data_pedido,
+                m.data_chegada,
+                m.statusRegistro,
+                f.nome AS nome_fornecedor,
+                mi.id AS id_movimentacao_item,
+                mi.id_produtos,
+                mi.quantidade,
+                mi.valor,
+                p.nome AS produto_nome,
+                p.descricao AS produto_descricao
+            ')
+            ->join('fornecedor f', 'f.id = m.id_fornecedor', 'left')
+            ->join('movimentacao_item mi', 'mi.id_movimentacoes = m.id', 'inner')
+            ->join('produto p', 'p.id = mi.id_produtos', 'inner')
+            ->where('m.id', $id_movimentacao);
+        
+        // Filtra resultados com base no nível do usuário, se necessário
+        if (session()->get('usuarioNivel') != 1) {
+            $builder->where('m.statusRegistro', 1);
+        }
+
+        // Executa a consulta e retorna o resultado
+        return $builder->get()->getResultArray();
+    }
+
+
     /**
      * Retorna o ID da última movimentação
      *
      * @return array
      */
-    public function idUltimaMovimentacao(): array
+    public function idUltimaMovimentacao()
     {
         return $this->selectMax('id', 'ultimo_id')->findAll();
     }

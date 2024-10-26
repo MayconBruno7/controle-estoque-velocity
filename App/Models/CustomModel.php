@@ -10,30 +10,32 @@ class CustomModel extends Model
 
     public function __construct()
     {
-        
         parent::__construct();
         $this->currentUser = session()->has('current_user') ? session()->get('current_user') : null;
-  
+        // // Verificação de depuração
+        // if ($this->currentUser === null) {
+        //     throw new \Exception('Current user is not set in the session.');
+        // }
     }
 
+    // metodos especificos para as ações das tabelas movimentação e movimentação item
     public function inserirMovimentacao($row = null, bool $returnID = true)
     {
+        
+        // Define a variável de usuário atual na sessão
+        $currentUser = $this->currentUser;
+
+        // Define a variável no MySQL
+        $this->db->query("SET @current_user = '{$currentUser}'");
+
+        // Tenta inserir os dados
         try {
-            $currentUser = $this->currentUser;
-            $this->db->query("SET @current_user = '{$currentUser}'");
-            
-            // Executa a inserção e verifica se foi bem-sucedida
-            if ($this->db->table('movimentacao')->insert($row, $returnID) === false) {
-                throw new \Exception($this->db->error()['message']);
-            }
-            
-            return $this->db->insertID(); // Retorna o ID inserido, caso o $returnID seja verdadeiro
+            return $this->db->table('movimentacao')->insert($row, $returnID);
         } catch (\Exception $e) {
-            log_message('error', 'Erro ao inserir movimentação: ' . $e->getMessage());
-            return false; // Ou, você pode retornar uma resposta mais descritiva
+            // Captura a mensagem de erro da trigger 
+            throw new \Exception($e->getMessage());
         }
     }
-
 
     public function insertMovimentacaoItem($row = null)
     {
