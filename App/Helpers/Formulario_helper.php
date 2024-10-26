@@ -55,7 +55,7 @@
      */
     function mensagemSucesso()
     {
-        $msgSucess = session()->getFlashData('msgSucess');
+        $msgSucess = session()->getFlashData('msgSuccess');
         $texto = '';
 
         if (isset($msgSucess)) {

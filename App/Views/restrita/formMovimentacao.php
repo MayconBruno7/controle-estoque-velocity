@@ -40,11 +40,11 @@
                         </div>
                         <div class="mb-3">
                             <label for="quantidade" class="form-label">Quantidade</label>
-                            <input type="number" class="form-control" id="quantidade" name="quantidade" required>
+                            <input type="number" class="form-control" id="quantidade" name="quantidade" min="0" required>
                         </div>
                         <div class="mb-3">
                             <label for="valor" class="form-label">Valor Unitário</label>
-                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" required>
+                            <input type="number" step="0.01" class="form-control" id="valor" name="valor" min="0" required>
                         </div>
 
                         <input type="hidden" name="id_movimentacao" value="<?= setValor('id', $data) ?>">
@@ -229,7 +229,7 @@
                         <td><?= $produto['id_produto'] ?></td>
                         <td><?= $produto['nome_produto'] ?></td>
                         <td><?= number_format($produto['valor'], 2, ",", ".") ?></td>
-                        <td><?= $produto['quantidade'] ?></td>
+                        <td><?= number_format($produto['quantidade'], 2, ",", ".") ?></td>
                         <td><?= number_format(($produto['quantidade'] * $produto['valor']), 2, ",", ".") ?></td>
                         <td>
                             <?php if($action != 'delete' &&$action != 'view') : ?>
@@ -263,7 +263,7 @@
                         <td><?= $row['id_prod_mov_itens'] ?></td>
                         <td><?= $row['nome'] ?></td>
                         <td><?= number_format($row['valor'], 2, ",", ".")  ?> </td>
-                        <td><?= $row['mov_itens_quantidade'] ?></td>
+                        <td><?= number_format($row['mov_itens_quantidade'], 2, ",", ".") ?></>
                         <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                         <td>
                         <?php if($action != 'delete' && $action != 'view') : ?>

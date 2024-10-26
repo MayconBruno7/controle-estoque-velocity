@@ -58,7 +58,7 @@
                                     <tr role="row" class="odd">
                                         <td class="sorting_1"><?= $value['id'] ?></td>
                                         <td><?= $value['nome'] ?></td>
-                                        <td><?= !empty($value['quantidade']) ? $value['quantidade'] : 'Não encontrado' ?></td>
+                                        <td><?= !empty($value['quantidade']) ? number_format($value['quantidade'], 2, ",", ".") : '0,00' ?></td>
                                         <?php if (isset($action) && $action !== null) : ?>
                                             <td>
                                                 <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Não encontrado" ?>

@@ -35,7 +35,7 @@ class ProdutoModel extends CustomModel
                     ->where('quantidade >', 0);
         }
 
-        return $builder->orderBy($orderBy)->get()->getResultArray();
+        return $builder->orderBy($orderBy, 'DESC')->get()->getResultArray();
     }
 
     /**

@@ -2,18 +2,6 @@
 
 <?= $this->section('conteudo') ?>
 
-<?php 
-
-    // foreach($aFuncionario as $funcionario) {
-    //     // echo $funcionario['id'];
-    //     // echo $funcionario['nome'];
-    //     $teste = setValor('funcionarios', $data) == $funcionario['id']; 
-    // };
-
-    // var_dump(session()->get('@current_user'));
-    // exit;
-?>
-
 <script type="text/javascript" src="<?= base_url(); ?>assets/js/usuario.js"></script>
 
 <div class="container" style="margin-top: 130px;">

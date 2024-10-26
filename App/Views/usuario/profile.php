@@ -6,17 +6,6 @@
 
     $nomeCargo = 'Nenhum cargo encontrado'; // Valor padrão
 
-    foreach ($dados['aFuncionario'] as $indice => $funcionario) {
-        $nomeCargo = 'Nenhum cargo encontrado'; // Valor padrão
-
-        foreach ($dados['aCargo'] as $indice => $cargo) {
-            if ($funcionario['cargo'] == $cargo['id']) {
-                $nomeCargo = $cargo['nome']; // Atualiza o nome do cargo encontrado
-                break; // Sai do loop assim que o cargo correspondente é encontrado
-            }
-        }
-    }
-
 ?>
 
 <div class="container">
@@ -26,17 +15,17 @@
                 <div class="card-body">
                     <div class="author-box-center">
                         <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
-                            <img alt="image" src="<?= baseUrl() ?>uploads/funcionarios/<?= session()->get('usuarioImagem') ?>" width="200px" height="200px" class="rounded-circle">
+                            <img alt="image" src="<?= base_url() ?>uploads/funcionarios/<?= session()->get('usuarioImagem') ?>" width="200px" height="200px" class="rounded-circle">
                         <?php else : ?>
-                            <img alt="image" class="rounded-circle" src="<?= baseUrl() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
+                            <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                         <?php endif; ?>
                         
                         <div class="clearfix"></div>
                         <div class="author-box-name">
-                            <a href="#"><?= $dados['aFuncionario'][0]['nome'] ?></a>
+                            <a href="#"><?= $aFuncionario['nome'] ?></a>
                         </div>
                         <div class="author-box-job">
-                            <?= $nomeCargo ?>
+                            <?= $aFuncionario['nome_cargo'] ?>
                         </div>
                     </div>
                 </div>
@@ -52,7 +41,7 @@
                                 <i class="far fa-address-card"> CPF</i>
                             </span>
                             <span class="float-right text-muted">
-                                <?= formatarCPF($dados['aFuncionario'][0]['cpf']) ?>
+                                <?= formatarCPF($aFuncionario['cpf']) ?>
                             </span>
                         </p>
                         <p class="clearfix">
@@ -60,7 +49,7 @@
                                 <i class="fas fa-phone-volume"> Telefone</i>
                             </span>
                             <span class="float-right text-muted">
-                                <?= formatarTelefone($dados['aFuncionario'][0]['telefone']) ?>
+                                <?= formatarTelefone($aFuncionario['telefone']) ?>
                             </span>
                         </p>
                         <p class="clearfix">
@@ -68,7 +57,7 @@
                                 <i class="far fa-envelope"> E-mail</i>
                             </span>
                             <span class="float-right text-muted">
-                                <?= setValor('email') ?>
+                                <?= $aUsuario[0]['email'] ?>
                             </span>
                         </p>
                         <p class="clearfix">
@@ -76,7 +65,7 @@
                                 <i class="far fa-money-bill-alt"> Salário</i>
                             </span>
                             <span class="float-right text-muted">
-                                R$ <?= number_format($dados['aFuncionario'][0]['salario'], 2, ',', '.') ?>
+                                R$ <?= number_format($aFuncionario['salario'], 2, ',', '.') ?>
                             </span> 			
                         </p>
                     </div>

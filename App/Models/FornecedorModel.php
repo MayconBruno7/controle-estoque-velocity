@@ -32,10 +32,10 @@ class FornecedorModel extends CustomModel
         $session = Services::session();
 
         if ($session->get('usuarioNivel') == 1) {
-            return $this->orderBy($orderBy)->findAll(); // Retorna todos os fornecedores
+            return $this->orderBy($orderBy, 'DESC')->findAll(); // Retorna todos os fornecedores
         } else {
             return $this->where('statusRegistro', 1) // Retorna apenas os fornecedores ativos
-                        ->orderBy($orderBy)
+                        ->orderBy($orderBy, 'DESC')
                         ->findAll();
         }
     }

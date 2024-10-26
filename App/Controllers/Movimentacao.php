@@ -217,17 +217,17 @@ class Movimentacao extends BaseController
 
                 if($inserir) {
                     // Limpa a sessão e redireciona
-                    session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', true) : "";
-                    session()->has('movimentacao') ? session()->destroy('movimentacao') : "";
-                    session()->has('produtos') ? session()->destroy('produtos') : "";
-                    return redirect()->to("Movimentacao")->with('msgSuccess', 'Movimentação adicionada com sucesso.');
+                    session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', false) : "";
+                    session()->has('movimentacao') ? session()->remove('movimentacao') : "";
+                    session()->has('produtos') ? session()->remove('produtos') : "";
+                    return redirect()->to("/Movimentacao")->with('msgSuccess', 'Movimentação adicionada com sucesso.');
 
                 }
             } else {
-                return redirect()->to("Movimentacao/form/new/0")->with('msgError', 'Quantidade da movimentação de saída maior que a do produto em estoque.');
+                return redirect()->to("/Movimentacao/form/new/0")->with('msgError', 'Quantidade da movimentação de saída maior que a do produto em estoque.');
             }
         } else {
-            return redirect()->to("Movimentacao/form/new/0")->with('msgError', 'Dados do formulário insuficientes.');
+            return redirect()->to("/Movimentacao/form/new/0")->with('msgError', 'Dados do formulário insuficientes.');
         }
     }
 
@@ -300,9 +300,8 @@ class Movimentacao extends BaseController
         $movimentacaoAtual['produtos'] = $produtos; // Atualiza apenas a parte dos produtos
 
         session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
-        return redirect()->to('Movimentacao/form/new/0')->with('msgSuccess', 'Produto adicionado à movimentação.');
+        return redirect()->to('/Movimentacao/form/new/0')->with('msgSuccess', 'Produto adicionado à movimentação.');
 
-        
     }
 
     /**
@@ -341,7 +340,7 @@ class Movimentacao extends BaseController
                 if ($produto_sessao['id_produto'] == $id_produto) {
                     // Verifica se a quantidade a ser removida é válida
                     if ($quantidadeRemover <= 0) {
-                        return redirect()->to('Movimentacao/form/new/0')->with('msgError', "Quantidade a ser removida deve ser maior que zero.");
+                        return redirect()->to('/Movimentacao/form/new/0')->with('msgError', "Quantidade a ser removida deve ser maior que zero.");
                     }
     
                     // Atualiza a quantidade do produto na sessão
@@ -367,7 +366,7 @@ class Movimentacao extends BaseController
                 session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
                 session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', true) : "";
     
-                return redirect()->to('Movimentacao/form/new/0')->with('msgSuccess', "Produto excluído da movimentação.");
+                return redirect()->to('/Movimentacao/form/new/0')->with('msgSuccess', "Produto excluído da movimentação.");
             }
         }
     
@@ -379,11 +378,11 @@ class Movimentacao extends BaseController
     
             if ($deletaProduto) {
                 session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', true) : "";
-                return redirect()->to('Movimentacao/form/update/' . $id_movimentacao)->with('msgSuccess', "Item deletado da movimentação.");
+                return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with('msgSuccess', "Item deletado da movimentação.");
             }
         }
     
-        return redirect()->to(base_url('Movimentacao/form/new/0'));
+        return redirect()->to('/Movimentacao/form/new/0');
     }
     
 
@@ -441,7 +440,6 @@ class Movimentacao extends BaseController
                 $dadosAtuais[0]['data_chegada'] === $data_chegada &&
                 $dadosAtuais[0]['motivo'] === $motivo && session()->get('prod_mov_atualizado') !== false) {
 
-        
                 // Retornar mensagem de "nada alterado"
                 return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgError", "Nenhuma alteração detectada.");
             } else {
@@ -506,8 +504,8 @@ class Movimentacao extends BaseController
                     
                     if ($atualizandoMovimentacaoEProdutos) {
                         session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', false) : "";
-                        session()->has('movimentacao') ? session()->destroy('movimentacao') : '';
-                        session()->has('movimentacao') ? session()->destroy('produtos') : '';
+                        session()->has('movimentacao') ? session()->remove('movimentacao') : '';
+                        session()->has('movimentacao') ? session()->remove('produtos') : '';
 
                         return redirect()->to('/Movimentacao')->with("msgSuccess", "Movimentação alterada com sucesso.");
 
@@ -535,8 +533,8 @@ class Movimentacao extends BaseController
 
                         if ($atualizandoInfoProdutoMovimentacao) {
                             session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', true) : "";
-                            session()->has('movimentacao') ? session()->destroy('movimentacao') : "";
-                            session()->has('produtos') ? session()->destroy('produtos') : "";
+                            session()->has('movimentacao') ? session()->remove('movimentacao') : "";
+                            session()->has('produtos') ? session()->remove('produtos') : "";
                             
                             return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgSuccess", "Movimentação alterada com sucesso.");
 

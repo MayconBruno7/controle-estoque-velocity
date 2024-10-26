@@ -34,14 +34,12 @@ class SetorModel extends CustomModel
             $builder->where('s.statusRegistro', 1);
         }
 
-        // Valida o campo de ordenação
-        if (!in_array($orderBy, ['id', 'nomeResponsavel', 'outra_coluna_valida'])) {
-            $orderBy = 'id'; // ou alguma coluna padrão
-        }
+        // Altera para ordem decrescente
+        $builder->orderBy($orderBy, 'DESC'); // Adiciona 'DESC' para ordem decrescente
 
-        $builder->orderBy($orderBy);
         return $builder->get()->getResultArray();
     }
+
 
     /**
      * getProdutoCombobox

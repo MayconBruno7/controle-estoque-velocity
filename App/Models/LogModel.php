@@ -21,7 +21,7 @@ class LogModel extends CustomModel
     public function lista(string $orderBy = 'id'): array
     {
         // Verifica o nível do usuário
-        $query = $this->orderBy($orderBy);
+        $query = $this->orderBy($orderBy, 'DESC');
 
         // Recupera todos os registros
         return $query->findAll();

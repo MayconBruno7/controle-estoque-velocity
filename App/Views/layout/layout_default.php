@@ -1,20 +1,3 @@
-<?php 
-
-    // $this->load->library('session');
-
-    // session()->remove('username');
-
-    // Remover a variável 'exibirModalEstoque' da sessão
-    // session()->remove('exibirModalEstoque');
-
-
-    // session()->destroy();
-
-    // session()->get
-
-    // var_dump(base_url("assets/css/app.min.css")) ;
-?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -111,7 +94,7 @@
         <div class=" fade show active">
             <div class="setting-panel-header">Painel de configurações
             </div>
-            <div class="p-15 border-bottom">
+            <!-- <div class="p-15 border-bottom">
                 <h6 class="font-medium m-b-10">Selecionar aparência</h6>
                 <div class="selectgroup layout-color w-50">
                     <label class="selectgroup-item">
@@ -138,37 +121,8 @@
                               data-original-title="Dark Sidebar"><i class="fas fa-moon"></i></span>
                     </label>
                 </div>
-            </div>
-
-            <!-- <div class="p-15 border-bottom">
-                <h6 class="font-medium m-b-10">Tema cores</h6>
-                <div class="theme-setting-options">
-                    <ul class="choose-theme list-unstyled mb-0">
-                        <li title="white" class="active">
-                            <div class="white"></div>
-                        </li>
-                        <li title="cyan">
-                            <div class="cyan"></div>
-                        </li>
-                        <li title="black">
-                            <div class="black"></div>
-                        </li>
-                        <li title="purple">
-                            <div class="purple"></div>
-                        </li>
-                        <li title="orange">
-                            <div class="orange"></div>
-                        </li>
-                        <li title="green">
-                            <div class="green"></div>
-                        </li>
-                        <li title="red">
-                            <div class="red"></div>
-                        </li>
-                    </ul>
-                </div>
             </div> -->
-            
+
             <div class="p-15 border-bottom">
                 <div class="theme-setting-options">
                     <label class="m-b-0">
@@ -179,7 +133,7 @@
                     </label>
                 </div>
             </div>
-            <div class="p-15 border-bottom">
+            <!-- <div class="p-15 border-bottom">
                 <div class="theme-setting-options">
                     <label class="m-b-0">
                         <input type="checkbox" name="custom-switch-checkbox" class="custom-switch-input"
@@ -188,7 +142,7 @@
                         <span class="control-label p-l-10">Cabeçalho adesivo</span>
                     </label>
                 </div>
-            </div>
+            </div> -->
             <div class="mt-4 mb-4 p-3 align-center rt-sidebar-last-ele">
                 <a href="#" class="btn btn-icon icon-left btn-primary btn-restore-theme">
                     <i class="fas fa-undo"></i> Restaurar padrão
@@ -207,64 +161,11 @@
                 <ul class="navbar-nav mr-3">
                     <li><a href="#" data-toggle="sidebar" class="nav-link nav-link-lg
 									collapse-btn"> <i data-feather="align-justify"></i></a></li>
-                    <!-- <li><a href="#" class="nav-link nav-link-lg fullscreen-btn">
-                        <i data-feather="maximize"></i>
-                      </a></li>
-                    <li> -->
-                    <!-- <form class="form-inline mr-auto">
-                      <div class="search-element">
-                        <input class="form-control" type="search" placeholder="Buscar" aria-label="Buscar" data-width="200">
-                        <button class="btn" type="submit">
-                          <i class="fas fa-search"></i>
-                        </button>
-                      </div>
-                    </form> -->
                     </li>
                 </ul>
             </div>
 
             <ul class="navbar-nav navbar-right">
-                <!-- <li class="dropdown dropdown-list-toggle"><a href="#" data-toggle="dropdown" class="nav-link notification-toggle nav-link-lg"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bell bell"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
-                    </a>
-                    <div class="dropdown-menu dropdown-list dropdown-menu-right pullDown">
-                        <div class="dropdown-header">
-                            Notificações
-                            <div class="float-right">
-                                <a href="#">Marcar todas como lidas</a>
-                            </div>
-                        </div>
-                        <div class="dropdown-list-content dropdown-list-icons">
-                            <a href="#" class="dropdown-item dropdown-item-unread"> <span
-                                        class="dropdown-item-icon bg-primary text-white"> <i class="fas
-												fa-code"></i>
-                                  </span> <span class="dropdown-item-desc"> Atualização do template disponível agora! <span class="time">2 Minutos Atrás</span>
-                                  </span>
-                            </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-icon bg-info text-white"> <i class="far
-												fa-user"></i>
-                                  </span> <span class="dropdown-item-desc"> <b>Você</b> e <b>Dedik
-                                      Sugiharto</b> agora são amigos <span class="time">10 Horas Atrás</span>
-                                  </span>
-                            </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-icon bg-success text-white"> <i
-                                          class="fas
-												fa-check"></i>
-                                  </span> <span class="dropdown-item-desc"> <b>Kusnaedi</b> moveu a tarefa <b>Corrigir bug no cabeçalho</b> para <b>Concluído</b> <span class="time">12 Horas Atrás</span>
-                                  </span>
-                            </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-icon bg-danger text-white"> <i
-                                          class="fas fa-exclamation-triangle"></i>
-                                  </span> <span class="dropdown-item-desc"> Espaço em disco baixo. Vamos limpar! <span class="time">17 Horas Atrás</span>
-                                  </span>
-                            </a> <a href="#" class="dropdown-item"> <span class="dropdown-item-icon bg-info text-white"> <i class="fas
-												fa-bell"></i>
-                                  </span> <span class="dropdown-item-desc"> Bem-vindo ao template Otika! <span class="time">Ontem</span>
-                                  </span>
-                            </a>
-                        </div>
-                        <div class="dropdown-footer text-center">
-                            <a href="#">Ver todos <i class="fas fa-chevron-right"></i></a>
-                        </div>
-                    </div>
-                </li> -->
-
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                         <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
@@ -349,7 +250,7 @@
         </aside>
     </div>
 
-    <!-- <script>
+    <script>
         $(document).ready(function() {
 
             // abre a barra de configurações do aplicativo
@@ -362,28 +263,8 @@
                     settingSidebar.classList.toggle('showSettingPanel'); // Toggle a classe para mostrar/ocultar a barra lateral
                 });
             }
-
-            // Verificar o tema salvo no localStorage
-            if (localStorage.getItem('theme') === 'dark') {
-                $("body").addClass("dark dark-sidebar theme-black");
-                $(".selectgroup-input[value='2']").prop("checked", true);
-            } else {
-                $("body").addClass("light light-sidebar theme-white");
-                $(".selectgroup-input[value='1']").prop("checked", true);
-            }
-
-            // Alterar tema e salvar a preferência no localStorage
-            $(".layout-color input:radio").change(function () {
-                if ($(this).val() == "1") {
-                    $("body").removeClass().addClass("light light-sidebar theme-white");
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    $("body").removeClass().addClass("dark dark-sidebar theme-black");
-                    localStorage.setItem('theme', 'dark');
-                }
-            });
         });
-    </script> -->
+    </script>
 
 
         <section>
@@ -408,7 +289,7 @@
         <script src="<?= base_url("assets/bundles/jquery-ui/jquery-ui.min.js") ?>"></script>
         <script src="<?= base_url("assets/js/page/datatables.js") ?>"></script>
 
-        <!-- verifica a quantidade limite do estoque para alerta disparado por email
+        <!-- verifica a quantidade limite do estoque para alerta disparado por email -->
         <script>
             // Verificar a cada 24 horas (86400000 ms)
             // Verificar a cada 3 minutos (180000)
@@ -491,7 +372,7 @@
                 $('#modalGlobal').modal('show');
             }
 
-        </script> -->
+        </script>
 
         <style>
             footer {

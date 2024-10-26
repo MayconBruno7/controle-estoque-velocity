@@ -35,7 +35,7 @@ class Log extends BaseController
         $dados = [
             'aFuncionario' => $this->funcionarioModel->findAll(),
             'aUsuario' => $this->usuarioModel->findAll(),
-            'aLog' => $this->logModel->findAll()
+            'aLog' => $this->logModel->lista()
         ];
 
         return view('restrita/log', $dados);

@@ -59,11 +59,11 @@ class FuncionarioModel extends CustomModel
         if (session()->get('usuarioNivel') == 1) {
             return $this->select('funcionario.*, setor.nome AS nome_do_setor')
                 ->join('setor', 'funcionario.setor = setor.id', 'left')
-                ->orderBy($orderBy)
+                ->orderBy($orderBy, 'DESC')
                 ->findAll();
         } else {
             return $this->where('statusRegistro', 1)
-                ->orderBy($orderBy)
+                ->orderBy($orderBy, 'DESC')
                 ->findAll();
         }
     }
@@ -77,8 +77,9 @@ class FuncionarioModel extends CustomModel
     public function recuperaFuncionario($id)
     {
         if (session()->get('usuarioNivel') == 1) {
-            return $this->select('funcionario.*, setor.nome AS nome_do_setor')
+            return $this->select('funcionario.*, setor.nome AS nome_do_setor, cargo.nome AS nome_cargo')
                 ->join('setor', 'funcionario.setor = setor.id', 'left')
+                ->join('cargo', 'funcionario.cargo = cargo.id', 'left')
                 ->where('funcionario.id', $id)
                 ->first();
         } else {

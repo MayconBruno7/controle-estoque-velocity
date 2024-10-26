@@ -34,9 +34,20 @@
 
             <div class="col-4">
                 <label for="quantidade" class="form-label">Quantidade</label>
-                <!--  verifica se a quantidade está no banco de dados e retorna essa quantidade -->
-                <input type="number" class="form-control" name="qtd_item" id="quantidade" min="1" max="100" value="<?= setValor('quantidade', $data) ?>" disabled >
-                <input type="hidden" name="quantidade" id="hidden" value="<?= setValor('quantidade') ?>" >
+                <?php 
+                // Recupera a quantidade
+                $quantidade = setValor('quantidade', $data);
+                
+                // Formata o número para exibir como 159.521,00
+                // Usar number_format com "." como separador de milhar e "," como separador decimal
+                $quantidadeFormatada = is_numeric($quantidade) ? number_format($quantidade, 2, ",", ".") : '0,00'; // Formatação correta
+                ?>
+                
+                <!-- Usar um campo de texto para exibir o número formatado -->
+                <input type="text" class="form-control" name="qtd_item" id="quantidade" value="<?= $quantidadeFormatada ?>" disabled>
+                
+                <input type="hidden" name="quantidade" id="hidden" value="<?= $quantidade ?>">
+                
                 <?= setaMsgErrorCampo('quantidade', $errors) ?>
             </div>
 

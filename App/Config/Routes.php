@@ -26,6 +26,10 @@ $routes->group('Usuario', function($routes) {
     $routes->get("form/(:segment)/(:num)", 'Usuario::form/$1/$2');
     $routes->post("store", 'Usuario::store');
     $routes->post('delete', "Usuario::delete");
+
+    // profile
+    $routes->get("profile/view/(:num)", 'Usuario::profile/view/$1');
+
 });
 
 $routes->group('Funcionario', function($routes) {

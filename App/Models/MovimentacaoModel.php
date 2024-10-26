@@ -48,7 +48,7 @@ class MovimentacaoModel extends CustomModel
         }
 
         // Retorna os resultados
-        return $builder->orderBy($orderBy)->get()->getResultArray();
+        return $builder->orderBy($orderBy, 'DESC')->get()->getResultArray();
     }
 
     /**

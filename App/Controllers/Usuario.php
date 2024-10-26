@@ -106,11 +106,9 @@ class Usuario extends BaseController
     public function profile()
     {
         $data = [];
-
-        if ($this->request->getMethod() === 'post') {
-            // buscar o usuário pelo $id no banco de dados
-            $data = $this->model->find($this->request->getPost('id'));
-        }
+   
+        // buscar o usuário pelo $id no banco de dados
+        $data['aUsuario'] = $this->model->find($this->request->getPost('id'));
 
         $data['aFuncionario'] = $this->FuncionarioModel->recuperaFuncionario(session()->get('id_funcionario'));
 

@@ -32,10 +32,10 @@ class CargoModel extends CustomModel
         $session = \Config\Services::session();
         
         if ($session->get('usuarioNivel') == 1) {
-            return $this->orderBy($orderBy)->findAll();
+            return $this->orderBy($orderBy, 'DESC')->findAll();
         } else {
             return $this->where('statusRegistro', 1)
-                        ->orderBy($orderBy)
+                        ->orderBy($orderBy, 'DESC')
                         ->findAll();
         }
     }

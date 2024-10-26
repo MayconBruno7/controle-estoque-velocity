@@ -50,7 +50,7 @@ class UsuarioModel extends CustomModel
      * @param string $email
      * @return array|null
      */
-    public function getUserEmail($email)
+    public function getByEmail($email)
     {
         return $this->where('email', $email)->first();
     }
@@ -60,7 +60,7 @@ class UsuarioModel extends CustomModel
      * 
      * @return int
      */
-    public function criaSuperUser()
+    public function insertDadosSuperUser()
     {
      
         $qtd = $this->countAllResults();
