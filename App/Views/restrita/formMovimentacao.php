@@ -307,19 +307,29 @@
 
         <?php if ($action != "view"): ?>
             <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
-            <a href="<?= base_url() ?>/Movimentacao" class="btn btn-secondary">Voltar</a>
         <?php endif; ?>
+
         </div>
     </div>
     <?= form_close() ?>
 
-    <!-- <button onclick="capturarValores()">Salvar na Sessão</button> -->
-    <!-- <a href="<?= base_url() ?>Movimentacao/getProdutoComboBox?termo=a">teste</a> -->
+    <div class="row justify-content-center">
+        <div class="col-6 d-flex justify-content-center">
+            <?php if ($action == "view"): ?>
+            <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+            <?php endif; ?>
+        </div>
+    </div>
+
     </main>
 
     <script src="https://cdn.ckeditor.com/ckeditor5/36.0.1/classic/ckeditor.js"></script>
 
     <script>
+
+        function goBack() {
+            window.history.go(-1);
+        }
 
         campo_produto = document.getElementById('id_produto_value');
         console.log(campo_produto)
@@ -333,7 +343,7 @@
                     $('.carregando').show();
 
                     
-                    $.getJSON('<?= base_url() ?>Movimentacao/getProdutoComboBox?termo=' + termo, 
+                    $.getJSON('<?= base_url() ?>Movimentacao/getProdutoComboBox/' + termo, 
                     function(data) {
                         console.log(data);
                         var options = '<option value="" selected disabled>Escolha o produto</option>';

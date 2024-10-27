@@ -4,7 +4,7 @@
 
     $this->section('conteudo');
 
-    $nomeCargo = 'Nenhum cargo encontrado'; // Valor padrão
+    $nomeCargo = 'Nenhum cargo encontrado'; 
 
 ?>
 
@@ -15,7 +15,7 @@
                 <div class="card-body">
                     <div class="author-box-center">
                         <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
-                            <img alt="image" src="<?= base_url() ?>uploads/funcionarios/<?= session()->get('usuarioImagem') ?>" width="200px" height="200px" class="rounded-circle">
+                            <img alt="image" src="<?= base_url('writable/uploads/funcionarios/' . session()->get('usuarioImagem')) ?>" width="200px" height="200px" class="rounded-circle">
                         <?php else : ?>
                             <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                         <?php endif; ?>

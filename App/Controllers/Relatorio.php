@@ -30,7 +30,7 @@ class Relatorio extends BaseController
 
     public function relatorioMovimentacoes()
     {
-        return view('restrita/formRelatorio');
+        return view('restrita/formRelatorio', ['request' => $this->request]);
     }
 
     public function relatorioItensPorFornecedor()

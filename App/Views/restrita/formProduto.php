@@ -21,7 +21,7 @@
         }
     ?>
 
-<?= form_open(base_url() . 'Produto/' . ($action == "delete" ? "delete" : "store")) ?>
+    <?= form_open(base_url() . 'Produto/' . ($action == "delete" ? "delete" : "store")) ?>
 
         <div class="row">
 
@@ -127,6 +127,9 @@
 
         <?= form_close() ?>
 
+
+        <a href="http://"></a>
+
 </div>
 
 
@@ -165,7 +168,7 @@
             if (termo.length > 0) {
                 $('.carregando').show();
 
-                $.getJSON('/HistoricoProduto/getHistoricoProduto?dataMod=' + termo, function(data) {
+                $.getJSON('/HistoricoProduto/getHistoricoProduto/' + termo, function(data) {
                     console.log(data);
                     var options = '<option value="" selected disabled>Escolha a data</option>';
                     if (data.length > 0) {

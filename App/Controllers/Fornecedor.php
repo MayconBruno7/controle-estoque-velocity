@@ -120,7 +120,13 @@ class Fornecedor extends BaseController
     public function requireAPI()
     {
 
-        $cnpj = $this->request->getVar('cnpj'); 
+        $segmentos = $this->request->getURI()->getSegments(3);
+
+        // Acessando o primeiro segmento
+        $cnpj = $segmentos[2] ?? null;
+
+        // var_dump($cnpj);
+        // exit;
 
         if ($cnpj) {
             $data = $this->fornecedorModel->requireAPI($cnpj);
@@ -139,14 +145,15 @@ class Fornecedor extends BaseController
     public function getCidadeComboBox()
     {
 
-        // Recupera o ID do estado da URL
-        $estadoId = $this->request->getVar('estadoId'); // Supondo que você está passando o parâmetro como "estadoId"
+        $segmentos = $this->request->getURI()->getSegments(3);
+
+        // Acessando o primeiro segmento
+        $estadoId = $segmentos[2] ?? null;
 
         $cidadeModel = new CidadeModel();
 
         $dados = $cidadeModel->where('estado', $estadoId)->findAll();
-        // var_dump($dados);
-        // exit;
+   
         if (empty($dados)) {
             $dados[] = ['id' => ''];
         }

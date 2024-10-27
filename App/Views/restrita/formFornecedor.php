@@ -123,6 +123,8 @@
     
     </form>
 
+    <a href="<?= base_url() ?>Fornecedor/requireAPI/33.592.510/0001-54">testar</a>
+
 </div>
 
 <script>
@@ -202,7 +204,7 @@
         let cnpjParaAPI = campoCNPJ.value.replace(/\D/g, '');
 
         if (cnpjParaAPI.length === 14) {
-            fetch('<?= base_url() ?>Fornecedor/requireAPI?cnpj=' + cnpjParaAPI)
+            fetch('<?= base_url() ?>Fornecedor/requireAPI/' + cnpjParaAPI)
                 .then(response => response.json())
                 .then(data => {
                     if (data.error) {
@@ -238,7 +240,7 @@
                 $('#cidade').hide();
                 $('.carregando').show();
 
-                $.getJSON('/Fornecedor/getCidadeComboBox?estadoId=' + $(this).val(), 
+                $.getJSON('/Fornecedor/getCidadeComboBox/' + $(this).val(), 
                     function(data) {
                         var options = '<option value="" selected disabled>Escolha uma cidade</option>';
                         for (var i = 0; i < data.length; i++) {

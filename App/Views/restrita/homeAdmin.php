@@ -8,7 +8,6 @@
         <!-- Mensagens de erro -->
     </div>
 
-    <!-- <a href="<?= base_url() ?>Relatorio/getDados?tipo=dia&dataInicio=2024-10-18">Testar</a> -->
     <section class="section">
         <div class="row ">
             <div class="col-xl-3 col-lg-6 col-md-6 col-sm-6 col-xs-12">
@@ -299,7 +298,7 @@
               html += `<td>${data.valores[i]}</td>`;
               html += `<td>${data.entradas[i]}</td>`;
               html += `<td>${data.saidas[i]}</td>`;
-              html += `<td><a href="<?= base_url(); ?>Movimentacao/form/view/${data.id_movimentacao[i]}/home" class="btn btn-outline-primary">Detalhes da movimentação</a></td>`;
+              html += `<td><a href="<?= base_url(); ?>Movimentacao/form/view/${data.id_movimentacao[i]}/Home" class="btn btn-outline-primary">Detalhes da movimentação</a></td>`;
               html += '</tr>';
           }
 

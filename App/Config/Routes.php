@@ -32,12 +32,16 @@ $routes->group('Usuario', function($routes) {
 
 });
 
+// rota para a imagem do funcionario
+$routes->get('writable/uploads/funcionarios/(:any)', 'FileController::show/$1');
+
 $routes->group('Funcionario', function($routes) {
     $routes->get("/", 'Funcionario::index');
     $routes->get("lista", 'Funcionario::index');
     $routes->get("form/(:segment)/(:num)", 'Funcionario::form/$1/$2');
     $routes->post("store", 'Funcionario::store');
     $routes->post('delete', "Funcionario::delete");
+
 });
 
 $routes->group('Cargo', function($routes) {
@@ -86,7 +90,7 @@ $routes->group('Produto', function($routes) {
 
 // $routes->group('HistoricoProdutoMovimentacao', function($routes) {
 $routes->get("HistoricoProdutoMovimentacao/index/(:num)/(:segment)", 'HistoricoProdutoMovimentacao::index/$1/$2');
-$routes->get("HistoricoProduto/getHistoricoProduto", 'HistoricoProduto::getHistoricoProduto');
+$routes->get("HistoricoProduto/getHistoricoProduto/(:any)", 'HistoricoProduto::getHistoricoProduto/$1');
 
 
 $routes->group('Setor', function($routes) {
@@ -104,8 +108,8 @@ $routes->group('Fornecedor', function($routes) {
     $routes->post("store", 'Fornecedor::store');
     $routes->post('delete', "Fornecedor::delete");
 
-    $routes->get("getCidadeComboBox", 'Fornecedor::getCidadeComboBox');
-    $routes->get("requireAPI", 'Fornecedor::requireAPI');
+    $routes->get("getCidadeComboBox(:any)", 'Fornecedor::getCidadeComboBox/$1');
+    $routes->get("requireAPI/(:any)", 'Fornecedor::requireAPI/$1');
 });
 
 $routes->group('Movimentacao', function($routes) {
@@ -120,7 +124,7 @@ $routes->group('Movimentacao', function($routes) {
     $routes->post("deleteProdutoMovimentacao/(:segment)", 'Movimentacao::deleteProdutoMovimentacao/$1');
 
     // recupera o produto no modal
-    $routes->get("getProdutoComboBox", 'Movimentacao::getProdutoComboBox');
+    $routes->get("getProdutoComboBox/(:any)", 'Movimentacao::getProdutoComboBox/$1');
 
     // adiciona produtos a movimentação no insert
     $routes->post("newProdutoMovimentacao/(:segment)", 'Movimentacao::newProdutoMovimentacao/$1');
@@ -132,7 +136,7 @@ $routes->group('Movimentacao', function($routes) {
     // rota para o update da movimentação
     $routes->post("update", 'Movimentacao::update');
 
-    $routes->get('form/(:segment)/(:num)/home', 'Movimentacao::form/$1/$2');
+    $routes->get('form/(:segment)/(:num)/Home', 'Movimentacao::form/$1/$2');
 
     $routes->post("store", 'Movimentacao::store');
     $routes->post('delete', "Movimentacao::delete");
@@ -140,6 +144,9 @@ $routes->group('Movimentacao', function($routes) {
 
 $routes->group('FaleConosco', function($routes) {
     $routes->get("formularioEmail", 'FaleConosco::formularioEmail');
+
+    $routes->get('verificaEstoque', 'FaleConosco::verificaEstoque');
+
 
 });
 

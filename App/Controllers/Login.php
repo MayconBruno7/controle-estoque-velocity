@@ -77,11 +77,11 @@ class Login extends BaseController
                     $funcionario = $this->funcionarioModel->recuperaFuncionario($dadosUsuario['id_funcionario']);
 
                     // Verifica se $funcionario é um array e não está vazio
-                    if (!empty($funcionario) && isset($funcionario[0]['imagem'])) {
-                        session()->set('usuarioImagem', $funcionario[0]['imagem']);
+                    if (!empty($funcionario) && isset($funcionario['imagem'])) {
+                        session()->set('usuarioImagem', $funcionario['imagem']);
                     } else {
                         // Trate o caso em que não há funcionário ou imagem disponível
-                        session()->set('usuarioImagem', 'default_image_path'); // Substitua pelo caminho da imagem padrão, se necessário
+                        session()->set('usuarioImagem', 'person.svg'); // Substitua pelo caminho da imagem padrão, se necessário
                     }
         
                     // Gerenciamento de cookies

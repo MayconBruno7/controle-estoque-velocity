@@ -438,6 +438,7 @@ class Movimentacao extends BaseController
                 // Retornar mensagem de "nada alterado"
                 return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgError", "Nenhuma alteração detectada.");
             } else {
+                
                 $produtoMovAtualizado = session()->get('prod_mov_atualizado') ?? [];
                 $dadosItensMovimentacao =  $this->movimentacaoItemModel->listaProdutos($id_movimentacao);
 
@@ -633,7 +634,11 @@ class Movimentacao extends BaseController
     public function getProdutoComboBox()
     {
 
-        $termo = $this->request->getVar('termo');
+        // Recuperando todos os segmentos da URL
+        $segmentos = $this->request->getURI()->getSegments(3);
+
+        // Acessando o primeiro segmento
+        $termo = $segmentos[2] ?? null;
 
         $dados = $this->model->getProdutoCombobox($termo);
 

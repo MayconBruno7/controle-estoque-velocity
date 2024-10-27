@@ -1,20 +1,13 @@
-<?php 
-    // var_dump($data);
-    // exit;
-?>
-
 <?= $this->extend('layout/layout_default') ?>
 
 <?= $this->section('conteudo') ?>
-
-
 
 <main class="container mt-5">
 
     <?= exibeTitulo("Funcionario", ['acao' => $action]) ?>
   
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
-    <?= form_open(base_url() . 'Funcionario/' . ($action == "delete" ? "delete" : "store")) ?>
+    <?= form_open(base_url() . 'Funcionario/' . ($action == "delete" ? "delete" : "store"), ['enctype' => 'multipart/form-data']) ?>
 
         <div class="row">
 
@@ -89,7 +82,7 @@
 
         <?php if (in_array($action, ['insert', 'update'])): ?>
 
-            <div class="col-12 mb-3">
+            <div class="col-12 mb-3 mt-3">
                 <label for="anexos" class="form-label">Imagem</label>
                 <input class="form-control" type="file" id="imagem" name="imagem">
             </div>
@@ -100,7 +93,7 @@
 
             <div class="mb-3 col-12">
                 <h5>Imagem</h5>
-                <img src="<?= base_url() ?>uploads/funcionarios/<?= setValor('imagem', $data) ?>" class="img-thumbnail" height="120" width="120"/>
+                <img src="<?= base_url('writable/uploads/funcionarios/' . rawurlencode(setValor('imagem', $data))) ?>" class="img-thumbnail" height="150" width="140"/>
             </div>
 
         <?php endif; ?>
@@ -116,6 +109,7 @@
             <?php endif; ?>
         </div>
     <?= form_close() ?>
+
 </main>
 
 <script>

@@ -11,7 +11,8 @@
                 <!-- mensagens de erro ou sucesso -->
             </div>
 
-            <div class="container mb-3">
+            <div class="container mb-5 text-center">
+                <h1>Histórico - <?= $produto['nome'] ?></h1>
             </div>
 
             <div class="card">
@@ -44,7 +45,7 @@
                                                     <td> <?= isset($row['nome_fornecedor']) ? $row['nome_fornecedor'] : 'Nenhum fornecedor encontrado' ?> </td>
                                                     <td> <?= isset($row['tipo']) ? getTipoMovimentacao($row['tipo']) : 'Nenhum tipo de movimentação' ?></td>
                                                     <td> <?= isset($row['data_pedido']) ? date('d/m/Y', strtotime($row['data_pedido'])) : 'Nenhuma data de pedido encontrada' ?> </td>
-                                                    <td> <?= isset($row['data_chegada']) ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
+                                                    <td> <?= isset($row['data_chegada']) && $row['data_chegada'] != '0000-00-00' ? date('d/m/Y', strtotime($row['data_chegada'])) : 'Nenhuma data de chegada encontrada' ?> </td>
                                                     <td> <?= isset($row['Quantidade']) ? $row['Quantidade'] : 'Nenhuma '?> </td>
                                                     <td> <?= isset($row['Valor']) ? number_format($row['Valor'], 2, ",", "."): 'Nenhuma '?> </td>
                                                     <td>
