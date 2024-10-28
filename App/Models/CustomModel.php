@@ -50,19 +50,20 @@ class CustomModel extends Model
     }
 
     // Atualiza a quantidade de itens na movimentação
-    public function updateMovimentacaoQuantidade($id_movimentacao, $id_produto, $novaQuantidade)
+    public function updateMovimentacaoQuantidade($id_movimentacao, $id_produto, $novaQuantidade, $valor)
     {
         // Define a variável de usuário atual no MySQL
         $this->db->query("SET @current_user = '{$this->currentUser}'");
 
         // Executa a atualização da quantidade
-        return $this->db->table('movimentacao_item')->update(
-            ['quantidade' => $novaQuantidade],
-            [
-                'id_movimentacoes' => $id_movimentacao,
-                'id_produtos' => $id_produto
-            ]
-        );
+        return $this->db->table('movimentacao_item')->where([
+            'id_movimentacoes' => $id_movimentacao,
+            'id_produtos' => $id_produto
+        ])->set([
+            'quantidade' => $novaQuantidade,
+            'valor' => $valor
+        ])->update();
+        
     }
 
     // Deleta itens da movimentação com quantidade igual a zero

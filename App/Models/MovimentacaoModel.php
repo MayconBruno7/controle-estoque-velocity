@@ -7,16 +7,16 @@ use CodeIgniter\Session\Session;
 
 class MovimentacaoModel extends CustomModel
 {
-    protected $table = 'movimentacao'; // Define a tabela do banco de dados
-    protected $primaryKey = 'id'; // Define a chave primária
-    protected $allowedFields = ['id_fornecedor', 'tipo', 'statusRegistro', 'id_setor', 'data_pedido', 'data_chegada', 'motivo'];
-    protected $validationRules = [
-        'setor_id' => 'required|integer',
-        'fornecedor_id' => 'required|integer',
-        'tipo' => 'required|integer',
-        'motivo' => 'required',
-        'data_pedido' => 'required|valid_date',
-        'statusRegistro' => 'required|integer',
+    protected $table            = 'movimentacao'; // Define a tabela do banco de dados
+    protected $primaryKey       = 'id'; // Define a chave primária
+    protected $allowedFields    = ['id_fornecedor', 'tipo', 'statusRegistro', 'id_setor', 'data_pedido', 'data_chegada', 'motivo'];
+    protected $validationRules  = [
+        'setor_id'          => 'required|integer',
+        'fornecedor_id'     => 'required|integer',
+        'tipo'              => 'required|integer',
+        'motivo'            => 'required',
+        'data_pedido'       => 'required|valid_date',
+        'statusRegistro'    => 'required|integer',
     ];
 
     /**
@@ -183,28 +183,27 @@ class MovimentacaoModel extends CustomModel
      * @param int|null $quantidade_movimentacao
      * @return bool
      */
-    public function updateInformacoesProdutoMovimentacao(int $id_movimentacao, array $aProdutos, array $acao, int $quantidade_produto, int $quantidade_movimentacao = null): bool
+    public function updateInformacoesProdutoMovimentacao(int $id_movimentacao, array $aProdutos, array $acao, int $quantidade_produto, int $quantidade_movimentacao = null)
     {
 
         $id_produto = $aProdutos[0]['id_produtos'] ?? '';
+        $valor      = $aProdutos[0]['valor'] ?? '';
 
         if ($id_movimentacao && !empty($id_produto)) {
             foreach ($aProdutos as $item) {
-
-                
                 if ($acao['acaoProduto'] == 'update') {
                     $item['quantidade'] = $quantidade_movimentacao;
+                    $item['valor']      = $valor;
 
                     $produto_atualizado = $this->updateMovimentacaoQuantidade(
                         $id_movimentacao,
                         $id_produto,
-                        $item['quantidade']
+                        $item['quantidade'],
+                        $item['valor']
                     );
 
                     if($produto_atualizado){
                         session()->set('prod_mov_atualizado', true);
-                    //     var_dump(session()->get('prod_mov_atualizado'));
-                    // exit('model');
                         return true;
                     } else {
                         return false;
@@ -241,6 +240,7 @@ class MovimentacaoModel extends CustomModel
      */
     public function deleteInfoProdutoMovimentacao(int $id_movimentacao, array $aProdutos, int $tipo_movimentacao, int $quantidadeRemover)
     {
+
         $item_movimentacao = $this->db->table('movimentacao_item')->where([
             'id_movimentacoes' => $id_movimentacao,
             'id_produtos' => $aProdutos['id']
@@ -253,7 +253,7 @@ class MovimentacaoModel extends CustomModel
                 $novaQuantidadeMovimentacao = $quantidadeAtual - $quantidadeRemover;
 
                 // Atualiza a quantidade usando o CustomModel
-                $this->updateMovimentacaoQuantidade($id_movimentacao, $item_movimentacao['id_produtos'], $novaQuantidadeMovimentacao);
+                $this->updateMovimentacaoQuantidade($id_movimentacao, $item_movimentacao['id_produtos'], $novaQuantidadeMovimentacao, $aProdutos['valor']);
 
                 // Remove produtos com quantidade igual a zero usando o CustomModel
                 $this->deleteMovimentacaoItemComQuantidadeZero($id_movimentacao, $item_movimentacao['id_produtos']);

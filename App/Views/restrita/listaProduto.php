@@ -9,15 +9,13 @@
         $segmentos = service('request')->getURI()->getSegments();
 
         // Acessando o terceiro segmento (index 2, já que começa em 0)
-        $action = $segmentos[2] ?? null; 
-        $id_produto = $segmentos[3] ?? null; 
-        $quantidade_atual = $segmentos[4] ?? null; 
-        $tipo = $segmentos[5] ?? null; 
-        $id_movimentacao = $segmentos[6] ?? null; 
+        $action             = $segmentos[2] ?? null; 
+        $id_produto         = $segmentos[3] ?? null; 
+        $quantidade_atual   = $segmentos[4] ?? null; 
+        $tipo               = $segmentos[5] ?? null; 
+        $id_movimentacao    = $segmentos[6] ?? null; 
+        $valor              = $segmentos[7] ?? null; 
     }
-
-    // var_dump($action, $id_produto, $quantidade_atual, $tipo, $id_movimentacao);
-    // exit;
 
 ?>
 
@@ -26,9 +24,6 @@
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
-            <div class="row">
-                <!-- Mensagens de erro ou sucesso -->
-            </div>
             <div class="container mb-3">
                 <?= exibeTitulo('Produto'); ?>
             </div>
@@ -76,6 +71,7 @@
                                                 <input type="hidden" name="id_produto" value="<?= $id_produto ?>">
                                                 <input type="hidden" name="id_movimentacao" value="<?= $id_movimentacao ?>">
                                                 <input type="hidden" name="tipo" value="<?= $tipo ?>">
+                                                <input type="hidden" name="valor" value="<?= $valor ?>">
                                                 <button type="submit" class="btn btn-primary btn-sm mt-2">Remover</button>
                                             </form>
                                         <?php endif; ?>
@@ -98,4 +94,5 @@
         <?= getDataTables("tbListaProduto"); ?>
     </div>
 </div>
+
 <?= $this->endSection() ?>

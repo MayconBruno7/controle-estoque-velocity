@@ -6,10 +6,10 @@ use CodeIgniter\Model;
 
 class HistoricoProdutoMovimentacaoModel extends CustomModel
 {
-    protected $table = 'movimentacao_item'; // Define a tabela do banco de dados
-    protected $primaryKey = 'id'; // Define a chave primária
-    protected $returnType = 'array'; // Define o tipo de retorno
-    protected $allowedFields = [
+    protected $table            = 'movimentacao_item'; // Define a tabela do banco de dados
+    protected $primaryKey       = 'id'; // Define a chave primária
+    protected $returnType       = 'array'; // Define o tipo de retorno
+    protected $allowedFields    = [
         'id_movimentacoes',
         'id_produtos',
         'quantidade',

@@ -16,9 +16,9 @@ class Funcionario extends BaseController
 
     public function __construct()
     {
-        $this->model = new FuncionarioModel(); // Inicializa o modelo de funcionário
-        $this->setorModel = new SetorModel();
-        $this->cargoModel = new CargoModel();
+        $this->model        = new FuncionarioModel(); // Inicializa o modelo de funcionário
+        $this->setorModel   = new SetorModel();
+        $this->cargoModel   = new CargoModel();
 
         // Somente pode ser acessado por usuários administradores
         if (!$this->getAdministrador()) {
@@ -45,7 +45,7 @@ class Funcionario extends BaseController
     public function form($action = null, $id = null)
     {
         $data['action'] = $action;
-        $data['data'] = null;
+        $data['data']   = null;
         $data['errors'] = [];
         
         // Carregando as listas de setores e cargos
@@ -70,27 +70,16 @@ class Funcionario extends BaseController
     {
         $post = $this->request->getPost();
 
-        // var_dump($_FILES);
-        // var_dump($post);
-        // exit;
-
         if (!empty($_FILES['imagem']['name'])) {
-
-            // Faz uploado da imagem
             $nomeRetornado = UploadImages::upload($_FILES, 'funcionarios');
 
-            // // se for boolean, significa que o upload falhou
-            // if (is_bool($nomeRetornado)) {
-            //     session()->( 'inputs' , $post );
-            //     return Redirect::page("Funcionario/form/update/" . $post['id']);
-            // }
-
+            if ($post['nomeImagem']) {
+                UploadImages::delete($post['nomeImagem'], 'funcionarios');
+            }
+            
         } else {
             $nomeRetornado = $post['nomeImagem'];
         }
-
-        // var_dump($nomeRetornado);
-        // exit;
 
         if ($this->model->save([
             'id'                => ($post['id'] == "" ? null : $post['id']),
@@ -101,18 +90,19 @@ class Funcionario extends BaseController
             'cargo'             => $post['cargo'],
             'salario'           => preg_replace("/[^0-9,]/", "", $post['salario']),
             'statusRegistro'    => $post['statusRegistro'],
-            "imagem"            => $nomeRetornado  
+            'imagem'            => $nomeRetornado  
         ])) {
-            UploadImages::delete($post['nomeImagem'], 'funcionarios');
+
             return redirect()->to("/Funcionario")->with('msgSuccess', "Funcionário inserido com sucesso!");
+
         } else {
 
             return view("restrita/formFuncionario", [
-                'action' => $post['action'],
-                'data' => $post,
-                'aSetor' => $this->setorModel->getLista(),
-                'aCargo' => $this->cargoModel->getLista(),
-                'errors' => $this->model->errors()
+                'action'    => $post['action'],
+                'data'      => $post,
+                'aSetor'    => $this->setorModel->getLista(),
+                'aCargo'    => $this->cargoModel->getLista(),
+                'errors'    => $this->model->errors()
             ]);
         }
     }

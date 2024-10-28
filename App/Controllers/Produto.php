@@ -16,9 +16,9 @@ class Produto extends BaseController
     public function __construct()
     {
         // Carregando os modelos
-        $this->model = new ProdutoModel();
-        $this->historicoProdutoModel = new HistoricoProdutoModel();
-        $this->fornecedorModel = new FornecedorModel();
+        $this->model                    = new ProdutoModel();
+        $this->historicoProdutoModel    = new HistoricoProdutoModel();
+        $this->fornecedorModel          = new FornecedorModel();
 
         // Verifica se o usuário está logado
         if (!$this->getUsuario()) {
@@ -38,7 +38,7 @@ class Produto extends BaseController
             $segmentos = service('request')->getURI()->getSegments();
     
             // Acessando o terceiro segmento (index 2, já que começa em 0)
-            $action = $segmentos[2] ?? null;
+            $action     = $segmentos[2] ?? null;
             $id_produto = $segmentos[3] ?? null;            
         }
         
@@ -59,11 +59,11 @@ class Produto extends BaseController
     public function form($action = null, $id = null)
     {
         $data['action'] = $action;
-        $data['data'] = null;
+        $data['data']   = null;
         $data['errors'] = [];
 
-        $data['aFornecedor'] = $this->fornecedorModel->findAll();
-        $data['aHistoricoProduto'] = $this->historicoProdutoModel->historicoProduto($id, 'id');
+        $data['aFornecedor']        = $this->fornecedorModel->findAll();
+        $data['aHistoricoProduto']  = $this->historicoProdutoModel->historicoProduto($id, 'id');
 
         if ($action != "new" && $id !== null) {
             $data['data'] = $this->model->find($id);
@@ -82,21 +82,21 @@ class Produto extends BaseController
         $post = $this->request->getPost();
 
         if ($this->model->save([
-            'id' => ($post['id'] == "" ? null : $post['id']),
-            "nome" => $post['nome'],
-            "quantidade" => $post['quantidade'],
-            "fornecedor" => $post['fornecedor_id'],
-            "statusRegistro" => $post['statusRegistro'],
-            "condicao" => $post['condicao'],
-            "descricao" => $post['descricao'],
-            "dataMod" => date('Y-m-d H:i:s')  
+            'id'                => ($post['id'] == "" ? null : $post['id']),
+            "nome"              => $post['nome'],
+            "quantidade"        => $post['quantidade'],
+            "fornecedor"        => $post['fornecedor_id'],
+            "statusRegistro"    => $post['statusRegistro'],
+            "condicao"          => $post['condicao'],
+            "descricao"         => $post['descricao'],
+            "dataMod"           => date('Y-m-d H:i:s')  
         ])) {
             return redirect()->to("/Produto")->with('msgSuccess', "Dado inserido com sucesso!");
         } else {
             return view("restrita/formProduto", [
-                'action' => $post['action'],
-                'data' => $post,
-                'errors' => $this->model->errors()
+                'action'    => $post['action'],
+                'data'      => $post,
+                'errors'    => $this->model->errors()
             ]);
         }
 

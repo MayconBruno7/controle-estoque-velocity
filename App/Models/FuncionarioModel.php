@@ -6,9 +6,9 @@ use CodeIgniter\Model;
 
 class FuncionarioModel extends CustomModel
 {
-    protected $table = 'funcionario'; // Define a tabela do banco de dados
-    protected $primaryKey = 'id'; // Define a chave primária
-    protected $returnType = 'array'; // Define o tipo de retorno
+    protected $table        = 'funcionario'; // Define a tabela do banco de dados
+    protected $primaryKey   = 'id'; // Define a chave primária
+    protected $returnType   = 'array'; // Define o tipo de retorno
     // protected $useSoftDeletes = false; // Defina como true se você usar Soft Deletes
 
     protected $allowedFields = [
@@ -83,9 +83,12 @@ class FuncionarioModel extends CustomModel
                 ->where('funcionario.id', $id)
                 ->first();
         } else {
-            return $this->where('statusRegistro', 1)
-                ->where('funcionario.id', $id)
-                ->first();
+            return $this->select('funcionario.*, setor.nome AS nome_do_setor, cargo.nome AS nome_cargo')
+                        ->join('setor', 'funcionario.setor = setor.id', 'left')
+                        ->join('cargo', 'funcionario.cargo = cargo.id', 'left')
+                        ->where('funcionario.statusRegistro', 1)
+                        ->where('funcionario.id', $id)
+                        ->first();
         }
     }
 }

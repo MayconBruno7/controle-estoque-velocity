@@ -7,10 +7,10 @@ use Config\Services; // Para acessar o serviço de sessão
 
 class EstadoModel extends CustomModel
 {
-    protected $table = 'estado'; // Usar 'protected' para que seja acessível em subclasses
-    protected $primaryKey = 'id'; // Defina a chave primária
-    protected $allowedFields = ['nome', 'sigla', 'statusRegistro']; // Adicione os campos permitidos
-    protected $returnType = 'array'; // Tipo de retorno das operações do modelo
+    protected $table            = 'estado'; // Usar 'protected' para que seja acessível em subclasses
+    protected $primaryKey       = 'id'; // Defina a chave primária
+    protected $allowedFields    = ['nome', 'sigla', 'statusRegistro']; // Adicione os campos permitidos
+    protected $returnType       = 'array'; // Tipo de retorno das operações do modelo
 
     /**
      * Lista estados

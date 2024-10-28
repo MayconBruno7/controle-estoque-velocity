@@ -57,10 +57,6 @@
     </div>
 
     <?= exibeTitulo('Movimentacao', ['acao' => $action]); ?>
- 
-    <div class="row justify-content-center">
-       <!-- Mensagens de erro ou sucesso -->
-    </div>
 
     <?= form_open(base_url() . 'Movimentacao/' . ($action), ['method' => 'post']) ?>
 
@@ -267,7 +263,7 @@
                         <td><?= number_format(($row["mov_itens_quantidade"] * $row["valor"]), 2, ",", ".") ?></td>
                         <td>
                         <?php if($action != 'delete' && $action != 'view') : ?>
-                            <a href="<?= base_url() ?>Produto/index/delete/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo', $data) ?>/<?= setValor('id', $data) ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
+                            <a href="<?= base_url() ?>Produto/index/delete/<?= $row['id_prod_mov_itens'] ?>/<?= $row['mov_itens_quantidade'] ?>/<?= setValor('tipo', $data) ?>/<?= setValor('id', $data) ?>/<?= $row['valor'] ?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp;
                             <!-- <a href="viewEstoque.php?acao=delete&id=<?= $row['id'] ?>&id_movimentacoes=<?= $row['id_movimentacoes'] ?>&qtd_produto=<?= $row['mov_itens_quantidade'] ?>&tipo=<?= isset($dados->tipo) ? $dados->tipo : ""?>" class="btn btn-outline-danger btn-sm" title="Exclusão">Excluir</a>&nbsp; -->
                         <?php endif; ?>
                             <a href="<?= base_url() ?>Produto/form/view/<?= $row['id_prod_mov_itens'] ?>" class="btn btn-outline-secondary btn-sm" title="Visualização">Visualizar</a>
@@ -332,7 +328,6 @@
         }
 
         campo_produto = document.getElementById('id_produto_value');
-        console.log(campo_produto)
 
         $(function() {
             $('#search_produto').keyup(function() {

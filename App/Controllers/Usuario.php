@@ -24,9 +24,9 @@ class Usuario extends BaseController
 
     public function __construct()
     {
-        $this->model = new UsuarioModel(); // Inicializa o modelo de usuário
+        $this->model            = new UsuarioModel(); // Inicializa o modelo de usuário
         $this->FuncionarioModel = new FuncionarioModel();
-        $this->CargoModel = new CargoModel();
+        $this->CargoModel       = new CargoModel();
 
         // Verifica se o usuário é administrador antes de permitir o acesso
         if (!$this->getAdministrador()) {
@@ -85,13 +85,13 @@ class Usuario extends BaseController
         $post = $this->request->getPost();
 
         if ($this->model->save([
-            'id'       => ($post['id'] == "" ? null : $post['id']),
-            "nivel" => $post['nivel'],
-            "statusRegistro" => $post['statusRegistro'],
-            "nome" => $post['nome'],
-            "senha" => password_hash($post['senha'], PASSWORD_DEFAULT),
-            "email" => $post['email'],
-            "id_funcionario" => ($post['funcionarios'] == "" ? null : $post['funcionarios'])
+            'id'                => ($post['id'] == "" ? null : $post['id']),
+            "nivel"             => $post['nivel'],
+            "statusRegistro"    => $post['statusRegistro'],
+            "nome"              => $post['nome'],
+            "senha"             => password_hash($post['senha'], PASSWORD_DEFAULT),
+            "email"             => $post['email'],
+            "id_funcionario"    => ($post['funcionarios'] == "" ? null : $post['funcionarios'])
         ])) { 
             return redirect()->to("/Usuario")->with('msgSucess', "Dados inseridos com sucesso!");
         } else {
@@ -108,11 +108,11 @@ class Usuario extends BaseController
         $data = [];
    
         // buscar o usuário pelo $id no banco de dados
-        $data['aUsuario'] = $this->model->find($this->request->getPost('id'));
+        $data['aUsuario']       = $this->model->find($this->request->getPost('id'));
 
-        $data['aFuncionario'] = $this->FuncionarioModel->recuperaFuncionario(session()->get('id_funcionario'));
+        $data['aFuncionario']   = $this->FuncionarioModel->recuperaFuncionario(session()->get('id_funcionario'));
 
-        $data['aCargo'] = $this->CargoModel->getLista();
+        $data['aCargo']         = $this->CargoModel->getLista();
 
         return view('usuario/profile', $data);
     }

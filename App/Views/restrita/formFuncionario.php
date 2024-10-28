@@ -80,7 +80,7 @@
             </div>
         </div>
 
-        <?php if (in_array($action, ['insert', 'update'])): ?>
+        <?php if (in_array($action, ['new', 'update', 'view'])): ?>
 
             <div class="col-12 mb-3 mt-3">
                 <label for="anexos" class="form-label">Imagem</label>

@@ -27,13 +27,11 @@ class HistoricoProduto extends BaseController
      */
     public function getHistoricoProduto()
     {
-
-        // $dataMod = $this->request->getVar('dataMod');
         // Recuperando todos os segmentos da URL
-        $segmentos = $this->request->getURI()->getSegments(3);
+        $segmentos  = $this->request->getURI()->getSegments(3);
 
         // Acessando o primeiro segmento
-        $dataMod = $segmentos[2] ?? null;
+        $dataMod    = $segmentos[2] ?? null;
 
         if ($dataMod) {
             $dados = $this->historicoProdutoModel->getHistoricoProduto($dataMod);

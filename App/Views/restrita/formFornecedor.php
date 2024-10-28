@@ -123,29 +123,27 @@
     
     </form>
 
-    <a href="<?= base_url() ?>Fornecedor/requireAPI/33.592.510/0001-54">testar</a>
-
 </div>
 
 <script>
     function formatarCNPJ(campo) {
-    // Remove qualquer caracter especial, exceto números
-    let cnpj = campo.value.replace(/[^\d]/g, '');
+        // Remove qualquer caracter especial, exceto números
+        let cnpj = campo.value.replace(/[^\d]/g, '');
 
-    // Formata o CNPJ (XX.XXX.XXX/XXXX-XX)
-    if (cnpj.length > 2 && cnpj.length <= 5) {
-        cnpj = cnpj.replace(/(\d{2})(\d)/, "$1.$2");
-    } else if (cnpj.length > 5 && cnpj.length <= 8) {
-        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d)/, "$1.$2.$3");
-    } else if (cnpj.length > 8 && cnpj.length <= 12) {
-        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d)/, "$1.$2.$3/$4");
-    } else if (cnpj.length > 12 && cnpj.length <= 14) {
-        cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, "$1.$2.$3/$4-$5");
-    } else if (cnpj.length > 14) {
-        cnpj = cnpj.substring(0, 14);
-    }
+        // Formata o CNPJ (XX.XXX.XXX/XXXX-XX)
+        if (cnpj.length > 2 && cnpj.length <= 5) {
+            cnpj = cnpj.replace(/(\d{2})(\d)/, "$1.$2");
+        } else if (cnpj.length > 5 && cnpj.length <= 8) {
+            cnpj = cnpj.replace(/(\d{2})(\d{3})(\d)/, "$1.$2.$3");
+        } else if (cnpj.length > 8 && cnpj.length <= 12) {
+            cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d)/, "$1.$2.$3/$4");
+        } else if (cnpj.length > 12 && cnpj.length <= 14) {
+            cnpj = cnpj.replace(/(\d{2})(\d{3})(\d{3})(\d{4})(\d)/, "$1.$2.$3/$4-$5");
+        } else if (cnpj.length > 14) {
+            cnpj = cnpj.substring(0, 14);
+        }
 
-    campo.value = cnpj;
+        campo.value = cnpj;
     }
 
     function formatarCNPJinput(cnpjInput) {
@@ -183,16 +181,16 @@
     }
 
     function pegaPrimeiroTelefone(phoneString) {
-            // Expressão regular para encontrar o primeiro número de telefone
-            const regex = /\(\d{2}\) \d{4,5}-\d{4}/;
-            const match = phoneString.match(regex);
+        // Expressão regular para encontrar o primeiro número de telefone
+        const regex = /\(\d{2}\) \d{4,5}-\d{4}/;
+        const match = phoneString.match(regex);
 
-            if (match) {
-                return match[0];
-            } else {
-                return '';
-            }
+        if (match) {
+            return match[0];
+        } else {
+            return '';
         }
+    }
 
     document.getElementById('cnpj').addEventListener('input', function() {
         let campoCNPJ = document.getElementById('cnpj');
@@ -257,5 +255,7 @@
             }
         });
     });
+
 </script>
+
 <?= $this->endSection() ?>

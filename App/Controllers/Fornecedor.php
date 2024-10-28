@@ -32,7 +32,7 @@ class Fornecedor extends BaseController
      */
     public function index()
     {
-        $data['fornecedores'] = $this->fornecedorModel->orderBy('id', 'ASC')->findAll();
+        $data['fornecedores'] = $this->fornecedorModel->getLista();
         return view('restrita/listaFornecedor', $data);
     }
 
@@ -45,16 +45,16 @@ class Fornecedor extends BaseController
      */
     public function form(string $action = null, int $id = null)
     {
-        $data['action'] = $action;
-        $data['data']   = null;
-        $data['errors'] = [];
+        $data['action']     = $action;
+        $data['data']       = null;
+        $data['errors']     = [];
 
-        $data['aEstado'] = $this->estadoModel->orderBy('id', 'ASC')->findAll();
+        $data['aEstado']    = $this->estadoModel->orderBy('id', 'ASC')->findAll();
 
-        $data['aCidade'] = $this->cidadeModel->orderBy('id', 'ASC')->findAll();
+        $data['aCidade']    = $this->cidadeModel->orderBy('id', 'ASC')->findAll();
 
         if ($action !== 'insert') {
-            $data['data'] = $this->fornecedorModel->find($id);
+            $data['data']   = $this->fornecedorModel->find($id);
         }
 
         return view('restrita/formFornecedor', $data);
@@ -70,16 +70,16 @@ class Fornecedor extends BaseController
         $post = $this->request->getPost();
 
         if ($this->fornecedorModel->save([
-            'id' => ($post['id'] == "" ? null : $post['id']),
-            'nome' => $post['nome'],
-            'cnpj' => preg_replace('/[^0-9]/', '', $post['cnpj']),
-            'endereco' => $post['endereco'],
-            'cidade' => $post['cidade'],
-            'estado' => $post['estado'],
-            'bairro' => $post['bairro'],
-            'numero' => $post['numero'],
-            'telefone' => preg_replace('/[^0-9]/', '', $post['telefone']),
-            'statusRegistro' => $post['statusRegistro']
+            'id'                => ($post['id'] == "" ? null : $post['id']),
+            'nome'              => $post['nome'],
+            'cnpj'              => preg_replace('/[^0-9]/', '', $post['cnpj']),
+            'endereco'          => $post['endereco'],
+            'cidade'            => $post['cidade'],
+            'estado'            => $post['estado'],
+            'bairro'            => $post['bairro'],
+            'numero'            => $post['numero'],
+            'telefone'          => preg_replace('/[^0-9]/', '', $post['telefone']),
+            'statusRegistro'    => $post['statusRegistro']
         ])) {
             return redirect()->to("/Fornecedor")->with('msgSucess', "Dados atualizados com sucesso.");
         }else {

@@ -6,7 +6,7 @@
 
     <?= exibeTitulo("Setor", ['acao' => $action]) ?>
 
-    <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
+    <!-- pega se é new, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <?= form_open(base_url() . 'Setor/' . ($action == "delete" ? "delete" : "store")) ?>
 
         <div class="row">
@@ -14,13 +14,13 @@
             <div class="col-8">
                 <label for="nome" class="form-label mt-3">Nome</label>
                 <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do setor" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action != 'insert' && $action != 'update' ? 'disabled' : '' ?>>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do setor" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action != 'new' && $action != 'update' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('nome', $errors) ?>
             </div>
 
             <div class="col-4">
                 <label for="statusRegistro" class="form-label mt-3">Status</label>
-                <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= $action != 'insert' && $action != 'update' ? 'disabled' : '' ?>>
+                <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= $action != 'new' && $action != 'update' ? 'disabled' : '' ?>>
                     <!--  verifica se o statusRegistro está no banco de dados e retorna esse statusRegistro -->
                     <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
                     <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
@@ -33,7 +33,7 @@
             <div class="col-4 mt-3">
                 <label for="funcionarios" class="form-label">Responsavel pelo setor</label>
                 <select name="funcionarios" id="funcionarios" class="form-control" 
-                <?= $action != 'insert' && $action != 'update' ? 'disabled' : '' ?>
+                <?= $action != 'new' && $action != 'update' ? 'disabled' : '' ?>
                 <?= !empty($aFuncionario) ? 'required' : '' ?>   
                 >
                     <option value="">...</option> <!-- Opção padrão -->

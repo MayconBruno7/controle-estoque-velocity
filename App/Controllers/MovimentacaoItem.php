@@ -16,9 +16,9 @@ class MovimentacaoItem extends BaseController
     public function __construct()
     {
         // Carregando os modelos
-        $this->movimentacaoItemModel = new MovimentacaoItemModel();
-        $this->setorModel = new SetorModel();
-        $this->fornecedorModel = new FornecedorModel();
+        $this->movimentacaoItemModel    = new MovimentacaoItemModel();
+        $this->setorModel               = new SetorModel();
+        $this->fornecedorModel          = new FornecedorModel();
     }
 
     /**
@@ -34,9 +34,9 @@ class MovimentacaoItem extends BaseController
             $dados = $this->movimentacaoItemModel->find($id);
         }
 
-        $dados['aItemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
-        $dados['aSetorMovimentacao'] = $this->setorModel->findAll();
-        $dados['aFornecedorMovimentacao'] = $this->fornecedorModel->findAll();
+        $dados['aItemMovimentacao']         = $this->movimentacaoItemModel->listaProdutos($id);
+        $dados['aSetorMovimentacao']        = $this->setorModel->findAll();
+        $dados['aFornecedorMovimentacao']   = $this->fornecedorModel->findAll();
 
         return view("restrita/formMovimentacao", $dados);
     }
@@ -48,8 +48,8 @@ class MovimentacaoItem extends BaseController
      */
     public function update()
     {
-        $request = \Config\Services::request();
-        $post = $request->getPost();
+        $request    = \Config\Services::request();
+        $post       = $request->getPost();
 
         if (!$this->validate($this->movimentacaoItemModel->validationRules)) {
             // Redireciona com erro de validação

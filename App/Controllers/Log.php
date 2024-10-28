@@ -16,8 +16,8 @@ class Log extends BaseController
     public function __construct()
     {
         $this->funcionarioModel = new FuncionarioModel();
-        $this->usuarioModel = new UsuarioModel();
-        $this->logModel = new LogModel();
+        $this->usuarioModel     = new UsuarioModel();
+        $this->logModel         = new LogModel();
 
         // Somente pode ser acessado por usuários administradores
         if (!$this->getAdministrador()) {
@@ -33,9 +33,9 @@ class Log extends BaseController
     public function index()
     {
         $dados = [
-            'aFuncionario' => $this->funcionarioModel->findAll(),
-            'aUsuario' => $this->usuarioModel->findAll(),
-            'aLog' => $this->logModel->lista()
+            'aFuncionario'  => $this->funcionarioModel->findAll(),
+            'aUsuario'      => $this->usuarioModel->findAll(),
+            'aLog'          => $this->logModel->lista()
         ];
 
         return view('restrita/log', $dados);
@@ -56,13 +56,13 @@ class Log extends BaseController
         $logId = $segmentos[3] ?? null; 
 
         $dados = [
-            'aFuncionario' => $this->funcionarioModel->findAll(),
-            'aUsuario' => $this->usuarioModel->findAll(),
+            'aFuncionario'  => $this->funcionarioModel->findAll(),
+            'aUsuario'      => $this->usuarioModel->findAll(),
         ];
 
   
         if ($logId !== null) {
-            $registro = $this->logModel->find($logId);
+            $registro       = $this->logModel->find($logId);
             $dados['dados'] = array_merge($dados, $registro);
         }
 

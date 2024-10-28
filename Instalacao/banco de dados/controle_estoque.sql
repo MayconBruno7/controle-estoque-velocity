@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Tempo de geração: 26/10/2024 às 18:55
+-- Tempo de geração: 28/10/2024 às 17:58
 -- Versão do servidor: 8.3.0
 -- Versão do PHP: 8.3.6
 
@@ -35,14 +35,15 @@ CREATE TABLE IF NOT EXISTS `cargo` (
   `nome` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL DEFAULT '',
   `statusRegistro` int DEFAULT '1' COMMENT '1 - Ativo    2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `cargo`
 --
 
 INSERT INTO `cargo` (`id`, `nome`, `statusRegistro`) VALUES
-(1, 'Atendentesda', 1);
+(1, 'Atendente', 1),
+(2, 'Diretor de informática ', 1);
 
 --
 -- Acionadores `cargo`
@@ -5811,14 +5812,15 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `cidade` (`cidade`),
   KEY `estado` (`estado`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `fornecedor`
 --
 
 INSERT INTO `fornecedor` (`id`, `nome`, `cnpj`, `endereco`, `cidade`, `estado`, `bairro`, `numero`, `telefone`, `statusRegistro`) VALUES
-(1, 'WEG', '44556350000104', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '4732764000', 1);
+(1, 'WEG', '44556350000104', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '4732764000', 1),
+(2, 'VALE S.A.', '33592510000154', 'PR BOTAFOGO', 2196, 13, 'BOTAFOGO', '00186', '2134856600', 1);
 
 --
 -- Acionadores `fornecedor`
@@ -5931,15 +5933,16 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
   PRIMARY KEY (`id`) USING BTREE,
   KEY `setor_funcionarios` (`setor`) USING BTREE,
   KEY `cargo` (`cargo`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `funcionario`
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`, `imagem`) VALUES
-(1, 'Weberty', '49498498498', '32984927895', 1, 1.000000, 1, 1, 'aaa.png'),
-(2, 'Maycon Bruno', '09068884689', '3298492407', 1, 1540.000000, 1, 1, NULL);
+(1, 'Joao', '49498498498', '32984927895', 1, 1.000000, 1, 1, '1642867724_Photo-2.jpg'),
+(2, 'Maycon Bruno', '09068884689', '3298492407', 1, 1540.000000, 1, 1, '1991515327_Photo-2.jpg'),
+(3, 'Maria VItoria ', '12345678954', '32989879845', 1, 10000.000000, 1, 1, '728994375_Imagem do WhatsApp de 2024-08-27 à(s) 11.08.16_8ae2b753.jpg');
 
 --
 -- Acionadores `funcionario`
@@ -6048,7 +6051,7 @@ CREATE TABLE IF NOT EXISTS `historico_produto` (
   PRIMARY KEY (`id`),
   KEY `fk_historico_itens_itens` (`id_produtos`) USING BTREE,
   KEY `fornecedor_id` (`fornecedor_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=32 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=59 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 -- --------------------------------------------------------
 
@@ -6066,7 +6069,16 @@ CREATE TABLE IF NOT EXISTS `logs` (
   `dados_antigos` text,
   `dados_novos` text,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=261 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=465 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Despejando dados para a tabela `logs`
+--
+
+INSERT INTO `logs` (`id`, `tabela`, `acao`, `data`, `usuario`, `dados_antigos`, `dados_novos`) VALUES
+(462, 'produto', 'UPDATE', '2024-10-28 17:56:57', '1', 'ID: 1, Nome: Fonte de alimentação 600W, Descrição: <p>Fonte de alimentação de 450W</p>, Quantidade: 0, Fornecedor: 1', 'ID: 1, Nome: Fonte de alimentação 600W, Descrição: <p>Fonte de alimentação de 450W</p>, Quantidade: 100, Fornecedor: 1'),
+(463, 'movimentacao', 'DELETE', '2024-10-28 17:56:57', '1', '{\"id\":14, \"id_setor\":1, \"id_fornecedor\":1, \"statusRegistro\":1, \"tipo\":2, \"motivo\":\"Ut magna vel asperna\", \"data_pedido\":\"1970-11-20\", \"data_chegada\":\"2001-01-27\"}', NULL),
+(464, 'produto', 'UPDATE', '2024-10-28 17:57:33', '1', 'ID: 1, Nome: Fonte de alimentação 600W, Descrição: <p>Fonte de alimentação de 450W</p>, Quantidade: 100, Fornecedor: 1', 'ID: 1, Nome: Fonte de alimentação 600W, Descrição: <p>Fonte de alimentação de 450W</p>, Quantidade: 0, Fornecedor: 1');
 
 -- --------------------------------------------------------
 
@@ -6126,32 +6138,21 @@ DELIMITER $$
 CREATE TRIGGER `tg_before_update_movimentacao` BEFORE UPDATE ON `movimentacao` FOR EACH ROW BEGIN
     DECLARE v_tipo INT;
 
-    -- Verifica se o tipo da movimentação excluída era 1 (Entrada) ou 2 (Saída)
-    SET v_tipo = OLD.tipo;
+    -- Verifica se o tipo da movimentação foi alterado
+    IF OLD.tipo != NEW.tipo THEN
+        SET v_tipo = OLD.tipo;
 
-    -- Atualiza a quantidade de produtos na tabela produto
-    -- Para cada item associado à movimentação excluída
-    UPDATE produto p
-    JOIN movimentacao_item mi ON p.id = mi.id_produtos
-    SET p.quantidade = CASE
-        WHEN v_tipo = 1 THEN p.quantidade - mi.quantidade
-        WHEN v_tipo = 2 THEN p.quantidade + mi.quantidade
-    END
-    WHERE mi.id_movimentacoes = OLD.id;
-    
-END
-$$
-DELIMITER ;
-DROP TRIGGER IF EXISTS `tg_delete_bloqueia_movimentacao_final_semana`;
-DELIMITER $$
-CREATE TRIGGER `tg_delete_bloqueia_movimentacao_final_semana` BEFORE DELETE ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
+        -- Atualiza a quantidade de produtos na tabela produto
+        -- Para cada item associado à movimentação excluída
+        UPDATE produto p
+        JOIN movimentacao_item mi ON p.id = mi.id_produtos
+        SET p.quantidade = CASE
+            WHEN v_tipo = 1 THEN p.quantidade - mi.quantidade -- Entrada: subtrai a quantidade
+            WHEN v_tipo = 2 THEN p.quantidade + mi.quantidade -- Saída: adiciona a quantidade
+        END
+        WHERE mi.id_movimentacoes = OLD.id;
+    END IF;
 
-   IF dia_semana NOT IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
 END
 $$
 DELIMITER ;
@@ -6178,19 +6179,6 @@ CREATE TRIGGER `tg_delete_log_info_movimentacao` AFTER DELETE ON `movimentacao` 
 END
 $$
 DELIMITER ;
-DROP TRIGGER IF EXISTS `tg_insert_bloqueia_movimentacao_final_semana`;
-DELIMITER $$
-CREATE TRIGGER `tg_insert_bloqueia_movimentacao_final_semana` BEFORE INSERT ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
-
-   IF dia_semana NOT IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
-END
-$$
-DELIMITER ;
 DROP TRIGGER IF EXISTS `tg_insert_log_info_movimentacao`;
 DELIMITER $$
 CREATE TRIGGER `tg_insert_log_info_movimentacao` AFTER INSERT ON `movimentacao` FOR EACH ROW BEGIN
@@ -6211,19 +6199,6 @@ CREATE TRIGGER `tg_insert_log_info_movimentacao` AFTER INSERT ON `movimentacao` 
             '"data_chegada":"', NEW.data_chegada, '"}'
         )
     );
-END
-$$
-DELIMITER ;
-DROP TRIGGER IF EXISTS `tg_update_bloqueia_movimentacao_final_semana`;
-DELIMITER $$
-CREATE TRIGGER `tg_update_bloqueia_movimentacao_final_semana` BEFORE UPDATE ON `movimentacao` FOR EACH ROW BEGIN
-   DECLARE dia_semana INT;
-   SET dia_semana = DAYOFWEEK(CURDATE());
-
-   IF dia_semana NOT IN (1, 7) THEN
-      SIGNAL SQLSTATE '45000' 
-      SET MESSAGE_TEXT = 'Operações não são permitidas no final de semana';
-   END IF;
 END
 $$
 DELIMITER ;
@@ -6672,14 +6647,14 @@ CREATE TABLE IF NOT EXISTS `setor` (
   `statusRegistro` int NOT NULL DEFAULT '1' COMMENT '1 - Ativo      2 - Inativo',
   PRIMARY KEY (`id`) USING BTREE,
   KEY `responsavel_setor` (`responsavel`) USING BTREE
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 
 --
 -- Despejando dados para a tabela `setor`
 --
 
 INSERT INTO `setor` (`id`, `nome`, `responsavel`, `statusRegistro`) VALUES
-(1, 'Departamento de informáticaaaaa', 1, 1);
+(1, 'Departamento de informática', 1, 1);
 
 --
 -- Acionadores `setor`
@@ -6734,7 +6709,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `nivel`, `statusRegistro`, `nome`, `senha`, `email`, `primeiroLogin`, `id_funcionario`) VALUES
-(1, '1', 1, 'administrador', '$2y$10$827IZPn1zgBAhnVZjxST4uXKdJu0NsBk2r8l/biW5E0dsfx5Ub9Di', 'administrador@gmail.com', 1, NULL);
+(1, '1', 1, 'administrador', '$2y$10$2GdO/nzqD0i5.urrgASF/.NOQ0UYjKz6m4ABPsve4uBaMGrrBF0S6', 'mayconbruno519@gmail.com', 1, 2);
 
 --
 -- Acionadores `usuario`

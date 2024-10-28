@@ -1,4 +1,5 @@
 <?php
+
     $this->extend('layout/layout_default');
 
     $this->section('conteudo');
@@ -10,11 +11,19 @@
     $page = $segmentos[1] ?? null;;
 
     $tituloPage = isset($page) && $page == 'relatorioMovimentacoes' ? 'Relatorio de Movimentações' : 'Relatório de itens por fornecedor';
+
 ?>
 
 <main class="container" style="margin-top: 100px;">
-    <div class="row">
-        <!-- mensagens de sucesso ou erro -->
+    
+    <div class="row text-center">
+        <div class="col-12">
+            <?= mensagemError() ?>
+        </div>
+
+        <div class="col-12 mt-3">
+            <?= mensagemSucesso() ?>
+        </div>
     </div>
 
     <div class="card">

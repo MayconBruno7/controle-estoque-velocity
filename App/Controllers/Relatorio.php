@@ -14,8 +14,8 @@ class Relatorio extends BaseController
     public function __construct()
     {
         // Instancia o modelo de fornecedor
-        $this->fornecedorModel = new FornecedorModel();
-        $this->model = new RelatorioModel();
+        $this->fornecedorModel  = new FornecedorModel();
+        $this->model            = new RelatorioModel();
 
         // Só acessa se tiver logado
         if (!$this->getAdministrador()) {
@@ -35,19 +35,19 @@ class Relatorio extends BaseController
 
     public function relatorioItensPorFornecedor()
     {
-        $dados = $this->fornecedorModel->lista('id');
+        $dados = $this->fornecedorModel->getLista('id');
         return view('restrita/formRelatorio', ['fornecedores' => $dados, 'request' => $this->request]);
     }
 
     public function getDados()
     {
 
-        $segmentos = $this->request->getURI()->getSegments(3);
+        $segmentos      = $this->request->getURI()->getSegments(3);
 
-        $tipo = $segmentos[2]  ?? null;
-        $dataInicio = $segmentos[3]  ?? null;
-        $dataFinal = $segmentos[4]  ?? null;
-        $id_fornecedor = $segmentos[5]  ?? null;
+        $tipo           = $segmentos[2]  ?? null;
+        $dataInicio     = $segmentos[3]  ?? null;
+        $dataFinal      = $segmentos[4]  ?? null;
+        $id_fornecedor  = $segmentos[5]  ?? null;
 
         $dados = [];
 
@@ -94,35 +94,35 @@ class Relatorio extends BaseController
     private function formatarDadosParaGrafico($dados)
     {
         
-        $id_movimentacao = [];
-        $entradas = [];
-        $saidas = [];
-        $labels = [];
-        $descricoes = [];
-        $valores = [];
+        $id_movimentacao    = [];
+        $entradas           = [];
+        $saidas             = [];
+        $labels             = [];
+        $descricoes         = [];
+        $valores            = [];
 
         foreach ($dados as $dado) {
-            $labels[] = formatarDataBrasileira($dado['data_pedido']);
-            $descricoes[] = $dado['descricao'];
-            $valores[] = number_format($dado['valor'], 2, ",", ".");
-            $id_movimentacao[] = $dado['id_movimentacoes'] ?? $dado['id'];
+            $labels[]           = formatarDataBrasileira($dado['data_pedido']);
+            $descricoes[]       = $dado['descricao'];
+            $valores[]          = number_format($dado['valor'], 2, ",", ".");
+            $id_movimentacao[]  = $dado['id_movimentacoes'] ?? $dado['id'];
             
             if ($dado['tipo'] == 1) { // Entrada
                 $entradas[] = $dado['quantidade'];
-                $saidas[] = 0;
+                $saidas[]   = 0;
             } else { // Saída
                 $entradas[] = 0;
-                $saidas[] = $dado['quantidade'];
+                $saidas[]   = $dado['quantidade'];
             }
         }
 
         return [
-            'labels' => $labels,
-            'descricoes' => $descricoes,
-            'valores' => $valores,
-            'entradas' => $entradas,
-            'saidas' => $saidas,
-            'id_movimentacao' => $id_movimentacao
+            'labels'            => $labels,
+            'descricoes'        => $descricoes,
+            'valores'           => $valores,
+            'entradas'          => $entradas,
+            'saidas'            => $saidas,
+            'id_movimentacao'   => $id_movimentacao
         ];
     }
 }

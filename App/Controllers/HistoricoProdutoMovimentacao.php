@@ -12,8 +12,8 @@ class HistoricoProdutoMovimentacao extends BaseController
 
     public function __construct()
     {
-        $this->historicoProdutoMovimentacaoModel = new HistoricoProdutoMovimentacaoModel();
-        $this->produtoModel = new ProdutoModel();
+        $this->historicoProdutoMovimentacaoModel    = new HistoricoProdutoMovimentacaoModel();
+        $this->produtoModel                         = new ProdutoModel();
 
         // Só acessa se estiver logado
         if (!$this->getUsuario()) {
@@ -34,11 +34,13 @@ class HistoricoProdutoMovimentacao extends BaseController
             if (!is_array($produtoId)) {
                 $produto = $this->produtoModel->recuperaProduto($produtoId);
                 $dados = $this->historicoProdutoMovimentacaoModel->historicoProdutoMovimentacao((int)$produtoId);
-                return view('restrita/HistoricoProdutoMovimentacao', [
-                    'dados' => $dados,
-                    'produto' => $produto,
-                    'action' => $action
-                ]);
+                return view('restrita/HistoricoProdutoMovimentacao', 
+                    [
+                        'dados'     => $dados,
+                        'produto'   => $produto,
+                        'action'    => $action
+                    ]
+                );
             } else {
                 return redirect()->to(base_url('home'))->with('msgError', 'ID do produto é inválido.');
             }

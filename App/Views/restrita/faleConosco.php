@@ -57,9 +57,9 @@
                 <button type="submit" class="btn btn-primary btn-sm">Enviar</button>
             </div>
         </div>
-
     </form>
 </main>
+
 <?= $this->endSection() ?>
 
 <script src="<?= base_url() ?>assets/ckeditor5/ckeditor.js"></script>

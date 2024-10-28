@@ -7,9 +7,6 @@
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
-            <div class="row">
-                <!-- Mensagens de erro ou sucesso -->
-            </div>
             <div class="container mb-3">
                 <?= exibeTitulo('Movimentacao'); ?>
             </div>
@@ -41,12 +38,6 @@
                                         <td><?= formatarDataBrasileira($row['data_pedido']) ?></td>
                                         <td><?= $row['data_chegada'] != '0000-00-00' ? formatarDataBrasileira($row['data_chegada']) : 'Nenhuma data encontrada' ?></td>
                                         <td><?= getStatusDescricao($row['statusRegistro']) ?></td>
-                                        <!-- <td>
-                                            <a href="/Movimentacao/form/view/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Visualizar"><i class="fa fa-eye" aria-hidden="true"></i></a>    
-                                            <a href="/Movimentacao/form/update/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Alterar"><i class="fa fa-file" aria-hidden="true"></i></a>    
-                                            <a href="/Movimentacao/form/delete/<?= $row['id_movimentacao'] ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="Excluir"><i class="fa fa-trash" aria-hidden="true"></i></a>   
-                                        </td> -->
-
                                         <td class="text-center">
                                             <div class="dropdown dropdown-action p-0">
                                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="false">

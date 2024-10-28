@@ -35,7 +35,7 @@
             <div class="author-box-center text-center">
                 <div class="mb-5">
                     <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
-                        <img src="<?= base_url() ?>uploads/funcionarios/<?= $nomeImagem ?>" alt="Imagem do Funcionário" class="rounded-circle" width="70" height="70">
+                        <img src="<?= base_url('writable/uploads/funcionarios/' . $nomeImagem ) ?>" alt="Imagem do Funcionário" class="rounded-circle" width="70" height="70">
                     <?php else : ?>
                         <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                     <?php endif; ?>

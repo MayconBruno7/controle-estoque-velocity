@@ -14,7 +14,7 @@ class Setor extends BaseController
 
     public function __construct()
     {
-        $this->model = new SetorModel();
+        $this->model            = new SetorModel();
         $this->funcionarioModel = new FuncionarioModel();
 
         // Só acessa se tiver logado
@@ -31,7 +31,7 @@ class Setor extends BaseController
 
     public function form($action = null, $id = null)
     {
-        $data['data'] = null;
+        $data['data']   = null;
         $data['errors'] = [];
         $data['action'] = $action;
         
@@ -55,18 +55,18 @@ class Setor extends BaseController
         $post = $this->request->getPost();
 
         if ($this->model->save([
-            'id' => ($post['id'] == "" ? null : $post['id']),
-            "nome" => $post['nome'],
-            "responsavel" => $post['funcionarios'],
-            "statusRegistro" => $post['statusRegistro']
+            'id'                => ($post['id'] == "" ? null : $post['id']),
+            "nome"              => $post['nome'],
+            "responsavel"       => $post['funcionarios'],
+            "statusRegistro"    => $post['statusRegistro']
         ])) {
             return redirect()->to("/Setor")->with('msgSuccess', "Funcionário inserido com sucesso!");
         } else {
             return view("restrita/formSetor", [
-                'action' => $post['action'],
-                'data' => $post,
-                'aFuncioanrio' => $this->funcionarioModel->getLista(),
-                'errors' => $this->model->errors()
+                'action'        => $post['action'],
+                'data'          => $post,
+                'aFuncioanrio'  => $this->funcionarioModel->getLista(),
+                'errors'        => $this->model->errors()
             ]);
         }
 

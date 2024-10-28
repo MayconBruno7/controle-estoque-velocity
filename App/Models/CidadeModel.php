@@ -7,10 +7,10 @@ use Config\Services; // Para acessar o serviço de sessão
 
 class CidadeModel extends CustomModel
 {
-    protected $table = 'cidade'; // Usar 'protected' para que seja acessível em subclasses
-    protected $primaryKey = 'id'; // Defina a chave primária
-    protected $allowedFields = ['nome', 'estado', 'statusRegistro']; // Adicione os campos permitidos
-    protected $returnType = 'array'; // Tipo de retorno das operações do modelo
+    protected $table            = 'cidade'; // Usar 'protected' para que seja acessível em subclasses
+    protected $primaryKey       = 'id'; // Defina a chave primária
+    protected $allowedFields    = ['nome', 'estado', 'statusRegistro']; // Adicione os campos permitidos
+    protected $returnType       = 'array'; // Tipo de retorno das operações do modelo
 
     /**
      * Lista cidades

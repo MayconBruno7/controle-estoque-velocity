@@ -21,11 +21,11 @@ class Movimentacao extends BaseController
     public function __construct()
     {
         // Injeção de dependência dos modelos
-        $this->model = new MovimentacaoModel();
-        $this->movimentacaoItemModel = new MovimentacaoItemModel();
-        $this->setorModel = new SetorModel();
-        $this->fornecedorModel = new FornecedorModel();
-        $this->produtoModel = new ProdutoModel();
+        $this->model                    = new MovimentacaoModel();
+        $this->movimentacaoItemModel    = new MovimentacaoItemModel();
+        $this->setorModel               = new SetorModel();
+        $this->fornecedorModel          = new FornecedorModel();
+        $this->produtoModel             = new ProdutoModel();
 
         // Redirecionar se o usuário não estiver logado
         if (!$this->getUsuario()) {
@@ -42,12 +42,12 @@ class Movimentacao extends BaseController
     public function form($action, $id = null)
     {
         $data['action'] = $action;
-        $data['data'] = null;
+        $data['data']   = null;
         $data['errors'] = [];
 
         if ($action != "new" && $id !== null) {
-            $data['aItemMovimentacao'] = $this->movimentacaoItemModel->listaProdutos($id);
-            $data['data'] = $this->model->find($id);
+            $data['aItemMovimentacao']  = $this->movimentacaoItemModel->listaProdutos($id);
+            $data['data']               = $this->model->find($id);
         }
 
         $data['aSetor'] = $this->setorModel->findAll();
@@ -72,28 +72,28 @@ class Movimentacao extends BaseController
         if ($movimentacao) {
 
             session()->set('movimentacao', [
-                'fornecedor_id' => $movimentacao->fornecedor_id,
+                'fornecedor_id'     => $movimentacao->fornecedor_id,
                 'tipo_movimentacao' => $movimentacao->tipo_movimentacao,
-                'statusRegistro' => $movimentacao->statusRegistro,
-                'setor_id' => $movimentacao->setor_id,
-                'data_pedido' => $movimentacao->data_pedido,
-                'data_chegada' => $movimentacao->data_chegada,
-                'motivo' => $movimentacao->motivo,
-                'produtos' => $movimentacao->produtos // Atualiza apenas a parte dos produtos
+                'statusRegistro'    => $movimentacao->statusRegistro,
+                'setor_id'          => $movimentacao->setor_id,
+                'data_pedido'       => $movimentacao->data_pedido,
+                'data_chegada'      => $movimentacao->data_chegada,
+                'motivo'            => $movimentacao->motivo,
+                'produtos'          => $movimentacao->produtos // Atualiza apenas a parte dos produtos
             ]);
 
             // Retornar uma resposta JSON de sucesso
             return $this->response->setJSON([
                 // Salva os dados na sessão
-                'status' => 'success',
-                'message' => 'Movimentação salva com sucesso'
+                'status'    => 'success',
+                'message'   => 'Movimentação salva com sucesso'
             ]);
 
         } else {
             // Caso os dados não tenham sido enviados corretamente, retorna um erro
             return $this->response->setJSON([
-                'status' => 'error',
-                'message' => 'Dados inválidos ou não enviados corretamente'
+                'status'    => 'error',
+                'message'   => 'Dados inválidos ou não enviados corretamente'
             ]);
         }
     }
@@ -117,28 +117,28 @@ class Movimentacao extends BaseController
         {
 
             // Dados da movimentação
-            $fornecedor_id = (int)$post['fornecedor_id'];
-            $setor_id = (int)$post['setor_id'];
-            $data_pedido = $post['data_pedido'];
-            $data_chegada = $post['data_chegada'];
-            $motivo = $post['motivo'];
-            $statusRegistro = (int)$post['statusRegistro'];
-            $tipo_movimentacao = (int)$post['tipo'];
+            $fornecedor_id      = (int)$post['fornecedor_id'];
+            $setor_id           = (int)$post['setor_id'];
+            $data_pedido        = $post['data_pedido'];
+            $data_chegada       = $post['data_chegada'];
+            $motivo             = $post['motivo'];
+            $statusRegistro     = (int)$post['statusRegistro'];
+            $tipo_movimentacao  = (int)$post['tipo'];
 
             // Dados do produto
-            $quantidade = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
-            $id_produto = isset($post['id_produto']) ? (int)$post['id_produto'] : '';
-            $valor_produto = isset($post['valor']) ? (float)$post['valor'] : '';
+            $quantidade     = isset($post['quantidade']) ? (int)$post['quantidade'] : '';
+            $id_produto     = isset($post['id_produto']) ? (int)$post['id_produto'] : '';
+            $valor_produto  = isset($post['valor']) ? (float)$post['valor'] : '';
 
             // Carregar o model de Produto
-            $ProdutoModel = new ProdutoModel(); // Não precisamos mais de `loadModel()`
-            $dadosProduto = $ProdutoModel->recuperaProduto($id_produto);
+            $ProdutoModel   = new ProdutoModel(); // Não precisamos mais de `loadModel()`
+            $dadosProduto   = $ProdutoModel->recuperaProduto($id_produto);
 
             // Recuperando todos os segmentos da URL
-            $segmentos = $this->request->getURI()->getSegments(3);
+            $segmentos      = $this->request->getURI()->getSegments(3);
 
             // Acessando o primeiro segmento
-            $action = $segmentos[1] ?? null;
+            $action         = $segmentos[1] ?? null;
 
             // Se estamos em modo de atualização
             if ($action == 'update') {
@@ -156,7 +156,8 @@ class Movimentacao extends BaseController
                 foreach ($produtos as &$produto_sessao) {
                     if ($produto_sessao['id_produto'] == $id_produto) {
                         // Atualiza a quantidade do produto na sessão
-                        $produto_sessao['quantidade'] += $quantidade;
+                        $produto_sessao['quantidade']   += $quantidade;
+                        $produto_sessao['valor']        = $valor_produto;
                         $produtoEncontrado = true;
                         break;
                     }
@@ -192,6 +193,20 @@ class Movimentacao extends BaseController
 
             // Se a verificação de estoque for bem-sucedida
             if (!$estoqueNegativo) {
+
+                // Inicializar um array para armazenar os produtos formatados
+                $produtosArray = [];
+
+                // Verificar se há produtos na movimentação e iterar sobre eles
+                if ( session()->has('movimentacao') && is_array(session()->get('movimentacao'))) {
+                    foreach (session()->get('movimentacao')['produtos'] as $produto) {
+                        $produtosArray[] = [
+                            'id_produtos' => $produto['id_produto'],
+                            'quantidade'  => $produto['quantidade'],
+                            'valor'       => $produto['valor']
+                        ];
+                    }
+                }
                 
                 // Inserir movimentação e produtos
                 $inserir = $this->model->insertMovimentacao([
@@ -202,14 +217,10 @@ class Movimentacao extends BaseController
                     'data_pedido'      => $data_pedido,
                     'data_chegada'     => $data_chegada,
                     'motivo'           => $motivo
-                ], [
-                    [
-                        'id_produtos'      => $id_produto,
-                        'quantidade'       => $quantidade,
-                        'valor'            => $valor_produto
-                    ]
-                ]);
-
+                ], 
+                    $produtosArray
+                );
+                
                 if($inserir) {
                     // Limpa a sessão e redireciona
                     session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', false) : "";
@@ -236,12 +247,12 @@ class Movimentacao extends BaseController
         $post = $this->request->getPost();
 
         // Obtenha os dados do produto do POST
-        $id_movimentacao = isset($post['id_movimentacoes']) ? (int)$post['id_movimentacoes'] : "";
-        $quantidade = (int)$post['quantidade'];
-        $id_produto = (int)$post['id_produto'];
-        $valor_produto = (float)$post['valor'];
+        $id_movimentacao    = isset($post['id_movimentacoes']) ? (int)$post['id_movimentacoes'] : "";
+        $quantidade         = (int)$post['quantidade'];
+        $id_produto         = (int)$post['id_produto'];
+        $valor_produto      = (float)$post['valor'];
 
-        $produtoEncontrado = false;
+        $produtoEncontrado  = false;
 
         // Recuperar produto e garantir que o resultado seja um array
         $dadosProduto['aProduto'] = (array) $this->produtoModel->recuperaProduto($id_produto);
@@ -269,11 +280,12 @@ class Movimentacao extends BaseController
                 $produtoEncontrado = true;
 
                 // Converter a quantidade para um inteiro para evitar problemas com strings
-                $quantidadeAtual = (int)$produto_sessao['quantidade'];
-                $quantidadeNova = $quantidadeAtual + $quantidade;
+                $quantidadeAtual    = (int)$produto_sessao['quantidade'];
+                $quantidadeNova     = $quantidadeAtual + $quantidade;
 
                 // Atualizar a quantidade do produto na sessão
-                $produto_sessao['quantidade'] = $quantidadeNova;
+                $produto_sessao['quantidade']   = $quantidadeNova;
+                $produto_sessao['valor']        = $valor_produto;
 
                 break; // Saia do loop se o produto foi encontrado e atualizado
             }
@@ -307,15 +319,16 @@ class Movimentacao extends BaseController
     public function deleteProdutoMovimentacao()
     {
         $post = $this->request->getPost();
-    
-        $id_movimentacao = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : "";
-        $quantidadeRemover = (int)$post['quantidadeRemover'];
-        $id_produto = (int)$post['id_produto'];
-        $tipo_movimentacao = (int)$post['tipo'];
+
+        $id_movimentacao    = isset($post['id_movimentacao']) ? (int)$post['id_movimentacao'] : "";
+        $quantidadeRemover  = (int)$post['quantidadeRemover'];
+        $id_produto         = (int)$post['id_produto'];
+        $tipo_movimentacao  = (int)$post['tipo'];
+        $valor              = (int)$post['valor'];
     
         // Recuperando todos os segmentos da URL
-        $segmentos = service('request')->getURI()->getSegments();
-        $action = $segmentos[2] ?? null;
+        $segmentos  = service('request')->getURI()->getSegments();
+        $action     = $segmentos[2] ?? null;
     
         $produtoEncontrado = false;
      
@@ -355,8 +368,8 @@ class Movimentacao extends BaseController
             // Se o produto foi encontrado e atualizado na lista de produtos
             if ($produtoEncontrado) {
                 // Atualiza a sessão mantendo todas as informações da movimentação
-                $movimentacaoAtual = session()->get('movimentacao');
-                $movimentacaoAtual['produtos'] = $produtosSessao; // Atualiza a lista de produtos completa
+                $movimentacaoAtual              = session()->get('movimentacao');
+                $movimentacaoAtual['produtos']  = $produtosSessao; // Atualiza a lista de produtos completa
     
                 session()->set('movimentacao', $movimentacaoAtual); // Atualiza a sessão com todas as informações
                 session()->has('prod_mov_atualizado') ? session()->set('prod_mov_atualizado', true) : "";
@@ -367,7 +380,9 @@ class Movimentacao extends BaseController
     
         // Caso o produto não seja encontrado na sessão, verifique no banco de dados
         if (!session()->has('movimentacao') && $action == 'delete') {
-            $dadosProduto =  (array)$this->produtoModel->recuperaProduto($id_produto);
+            $dadosProduto = (array)$this->produtoModel->recuperaProduto($id_produto);
+
+            $dadosProduto['valor'] = $valor; 
     
             $deletaProduto = $this->model->deleteInfoProdutoMovimentacao($id_movimentacao, $dadosProduto, $tipo_movimentacao, $quantidadeRemover);
     
@@ -403,27 +418,28 @@ class Movimentacao extends BaseController
             isset($post['data_chegada']) ||
             isset($post['motivo'])
         ) {
+
             // Recuperando todos os segmentos da URL
-            $segmentos = service('request')->getURI()->getSegments();
-            $action = $segmentos[2] ?? null;
+            $segmentos  = service('request')->getURI()->getSegments();
+            $action     = $segmentos[2] ?? null;
 
             // Dados da movimentação
-            $id_movimentacao = $post['id'] ?? $post['id_movimentacao'] ?? "";
-            $fornecedor_id = (int)($post['fornecedor_id'] ?? '');
-            $setor_id = (int)($post['setor_id'] ?? '');
-            $data_pedido = $post['data_pedido'] ?? '';
-            $data_chegada = $post['data_chegada'] ?? '';
-            $motivo = $post['motivo'] ?? '';
-            $statusRegistro = (int)($post['statusRegistro'] ?? '');
-            $tipo_movimentacao = (int)($post['tipo'] ?? '');
+            $id_movimentacao    = $post['id'] ?? $post['id_movimentacao'] ?? "";
+            $fornecedor_id      = (int)($post['fornecedor_id'] ?? '');
+            $setor_id           = (int)($post['setor_id'] ?? '');
+            $data_pedido        = $post['data_pedido'] ?? '';
+            $data_chegada       = $post['data_chegada'] ?? '';
+            $motivo             = $post['motivo'] ?? '';
+            $statusRegistro     = (int)($post['statusRegistro'] ?? '');
+            $tipo_movimentacao  = (int)($post['tipo'] ?? '');
 
             // Dados do produto
-            $id_produto = $post['id_produto'] ?? '';
-            $quantidade = (int)($post['quantidade'] ?? 0);
-            $valores_produtos = $post['valor'] ?? '';
+            $id_produto         = $post['id_produto'] ?? '';
+            $quantidade         = (int)($post['quantidade'] ?? 0);
+            $valores_produtos   = $post['valor'] ?? '';
 
             // Recupera os dados atuais da movimentação
-            $dadosAtuais = $this->model->getLista(); // Supondo que você tenha um método para isso
+            $dadosAtuais        = $this->model->getLista(); // Supondo que você tenha um método para isso
 
             // Verifica se os dados atuais são iguais aos dados enviados
             if ($dadosAtuais && 
@@ -439,11 +455,11 @@ class Movimentacao extends BaseController
                 return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgError", "Nenhuma alteração detectada.");
             } else {
                 
-                $produtoMovAtualizado = session()->get('prod_mov_atualizado') ?? [];
-                $dadosItensMovimentacao =  $this->movimentacaoItemModel->listaProdutos($id_movimentacao);
+                $produtoMovAtualizado       = session()->get('prod_mov_atualizado') ?? [];
+                $dadosItensMovimentacao     =  $this->movimentacaoItemModel->listaProdutos($id_movimentacao);
 
-                $quantidade_movimentacao = 0;
-                $found = false;
+                $quantidade_movimentacao    = 0;
+                $found                      = false;
 
                 foreach ($dadosItensMovimentacao as $item) {
                     if ($id_produto == $item['id_prod_mov_itens'] && $id_movimentacao == $item['id_movimentacoes']) {
@@ -504,25 +520,28 @@ class Movimentacao extends BaseController
                         $produtos = implode(', ', $produtos_negativos);
                         return redirect()->to('/Movimentacao')->with('msgError', 'Não é permitido alterar esta movimentação: Estoque ficará negativo para os produtos: ' . $produtos);
                     } else {
+
+                        // tirar os 100 e diminuir mais 100
+                        
                         // Atualiza a movimentação e produtos
                         $atualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
                             $id_movimentacao,
                             [
-                                "id_fornecedor" => $fornecedor_id,
-                                "tipo" => $tipo_movimentacao,
-                                "statusRegistro" => $statusRegistro,
-                                "id_setor" => $setor_id,
-                                "data_pedido" => $data_pedido,
-                                "data_chegada" => $data_chegada,
-                                "motivo" => $motivo
+                                "id_fornecedor"     => $fornecedor_id,
+                                "tipo"              => $tipo_movimentacao,
+                                "statusRegistro"    => $statusRegistro,
+                                "id_setor"          => $setor_id,
+                                "data_pedido"       => $data_pedido,
+                                "data_chegada"      => $data_chegada,
+                                "motivo"            => $motivo
                             ],
                             $produtoMovAtualizado
                         );
 
                         if ($atualizandoMovimentacaoEProdutos) {
                             session()->remove('prod_mov_atualizado'); // Remover a sessão se existir
-                            session()->remove('movimentacao');
-                            session()->remove('produtos');
+                            // session()->remove('movimentacao');
+                            // session()->remove('produtos');
 
                             return redirect()->to('/Movimentacao')->with("msgSuccess", "Movimentação alterada com sucesso.");
                         } else {
@@ -535,8 +554,8 @@ class Movimentacao extends BaseController
                             $id_movimentacao,
                             [
                                 [
-                                    "id_produtos" => $id_produto,
-                                    "valor" => $valores_produtos
+                                    "id_produtos"   => $id_produto,
+                                    "valor"         => $valores_produtos
                                 ]
                             ],
                             [
@@ -548,8 +567,8 @@ class Movimentacao extends BaseController
 
                         if ($atualizandoInfoProdutoMovimentacao) {
                             session()->set('prod_mov_atualizado', true);
-                            session()->remove('movimentacao');
-                            session()->remove('produtos');
+                            // session()->remove('movimentacao');
+                            // session()->remove('produtos');
 
                             return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgSuccess", "Movimentação alterada com sucesso.");
                         }
@@ -576,7 +595,7 @@ class Movimentacao extends BaseController
         $movimentacao = $this->model->getMovimentacaoDetalhada($post['id']);
 
         // Variáveis para armazenar a quantidade e tipo de movimentação
-        $quantidade_nova = 0;
+        $quantidade_nova    = 0;
         $produtos_negativos = []; // Array para armazenar os nomes dos produtos que ficarão negativos
 
         // Verifica se a movimentação existe
@@ -585,9 +604,9 @@ class Movimentacao extends BaseController
         }
 
         foreach ($movimentacao as $item) {
-            $tipo_movimentacao = $item['tipo_movimentacao'];
-            $quantidade_produto_movimentacao = $item['quantidade'];
-            $id_produto_movimentacao = $item['id_produtos'];
+            $tipo_movimentacao                  = $item['tipo_movimentacao'];
+            $quantidade_produto_movimentacao    = $item['quantidade'];
+            $id_produto_movimentacao            = $item['id_produtos'];
 
             // Recupera a quantidade atual do produto e o nome do produto
             $quantidade_produto_atual = $this->produtoModel->recuperaProduto($id_produto_movimentacao);
@@ -595,7 +614,7 @@ class Movimentacao extends BaseController
             // Verifica se o produto foi encontrado e obtém a quantidade e nome
             if (isset($quantidade_produto_atual['quantidade']) && isset($quantidade_produto_atual['nome'])) {
                 $quantidade_produto_atual_valor = $quantidade_produto_atual['quantidade']; // Quantidade atual
-                $nome_produto = $quantidade_produto_atual['nome']; // Nome do produto
+                $nome_produto                   = $quantidade_produto_atual['nome']; // Nome do produto
 
                 // Ajusta a quantidade nova com base no tipo de movimentação
                 if ($tipo_movimentacao == '1') {
@@ -635,12 +654,12 @@ class Movimentacao extends BaseController
     {
 
         // Recuperando todos os segmentos da URL
-        $segmentos = $this->request->getURI()->getSegments(3);
+        $segmentos  = $this->request->getURI()->getSegments(3);
 
         // Acessando o primeiro segmento
-        $termo = $segmentos[2] ?? null;
+        $termo      = $segmentos[2] ?? null;
 
-        $dados = $this->model->getProdutoCombobox($termo);
+        $dados      = $this->model->getProdutoCombobox($termo);
 
         echo json_encode($dados);
 

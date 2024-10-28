@@ -145,125 +145,124 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
+    </section>
 </div>
 
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Obter a data atual
-            var today = new Date();
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obter a data atual
+        var today = new Date();
 
-            // Formatar a data como 'YYYY-MM-DD'
-            var day = today.getDate().toString().padStart(2, '0');  // Adiciona zero à esquerda se necessário
-            var month = (today.getMonth() + 1).toString().padStart(2, '0');  // Adiciona zero à esquerda se necessário
-            var year = today.getFullYear();
+        // Formatar a data como 'YYYY-MM-DD'
+        var day = today.getDate().toString().padStart(2, '0');  // Adiciona zero à esquerda se necessário
+        var month = (today.getMonth() + 1).toString().padStart(2, '0');  // Adiciona zero à esquerda se necessário
+        var year = today.getFullYear();
 
-            var formattedDate = year + '-' + month + '-' + day;
+        var formattedDate = year + '-' + month + '-' + day;
 
-            var url = '<?= base_url() ?>Relatorio/getDados/dia/' + formattedDate;
-            // Adiciona um valor padrão para 'fim' se necessário
-            var fim = 'default_value';
-            url += '/' + fim;
+        var url = '<?= base_url() ?>Relatorio/getDados/dia/' + formattedDate;
+        // Adiciona um valor padrão para 'fim' se necessário
+        var fim = 'default_value';
+        url += '/' + fim;
 
-            fetch(url)
-                .then(response => response.json())
-                .then(data => {
-                    // console.log(data);
-                    // Transformação para um array de objetos
-                    let fetchedData = [];
+        fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                // console.log(data);
+                // Transformação para um array de objetos
+                let fetchedData = [];
 
-                    for (let i = 0; i < data.labels.length; i++) {
-                        fetchedData.push({
-                            Data: data.labels[i],
-                            Descricao: data.descricoes[i],
-                            Valor: data.valores[i],
-                            Entrada: data.entradas[i],
-                            Saida: data.saidas[i],
-                            movimentacao: data.id_movimentacao[i]
-                        });
-                    }
+                for (let i = 0; i < data.labels.length; i++) {
+                    fetchedData.push({
+                        Data: data.labels[i],
+                        Descricao: data.descricoes[i],
+                        Valor: data.valores[i],
+                        Entrada: data.entradas[i],
+                        Saida: data.saidas[i],
+                        movimentacao: data.id_movimentacao[i]
+                    });
+                }
 
-                    // console.log(fetchedData);
+                // console.log(fetchedData);
 
-                    var ctx = document.getElementById('graficoRelatorio').getContext('2d');
+                var ctx = document.getElementById('graficoRelatorio').getContext('2d');
 
-                    // Se existir um gráfico, destruí-lo antes de criar um novo
-                    if (window.chart) {
-                        window.chart.destroy();
-                    }
+                // Se existir um gráfico, destruí-lo antes de criar um novo
+                if (window.chart) {
+                    window.chart.destroy();
+                }
 
-                    window.chart = new Chart(ctx, {
-                        type: 'bar', // ou 'line', 'pie', etc.
-                        data: {
-                            labels: data.labels,
-                            datasets: [{
-                                label: 'Entradas',
-                                data: data.entradas,
-                                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                                borderColor: 'rgba(75, 192, 192, 1)',
-                                borderWidth: 1
-                            },
-                            {
-                                label: 'Saídas',
-                                data: data.saidas,
-                                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                                borderColor: 'rgba(255, 99, 132, 1)',
-                                borderWidth: 1
-                            }]
+                window.chart = new Chart(ctx, {
+                    type: 'bar', // ou 'line', 'pie', etc.
+                    data: {
+                        labels: data.labels,
+                        datasets: [{
+                            label: 'Entradas',
+                            data: data.entradas,
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            borderWidth: 1
                         },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                x: {
-                                    ticks: {
-                                        font: {
-                                            size: 10, // Tamanho da fonte dos rótulos do eixo x
-                                        },
-                                        align: 'center', // Alinhar centralizado
-                                    }
-                                },
-                                y: {
-                                    beginAtZero: true,
-                                    ticks: {
-                                        font: {
-                                            size: 10, // Tamanho da fonte dos rótulos do eixo y
-                                        },
-                                        align: 'center', // Alinhar centralizado
-                                    }
+                        {
+                            label: 'Saídas',
+                            data: data.saidas,
+                            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+                            borderColor: 'rgba(255, 99, 132, 1)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            x: {
+                                ticks: {
+                                    font: {
+                                        size: 10, // Tamanho da fonte dos rótulos do eixo x
+                                    },
+                                    align: 'center', // Alinhar centralizado
                                 }
                             },
-                            plugins: {
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(tooltipItem) {
-                                            let index = tooltipItem.dataIndex;
-                                            let entrada = data.entradas[index];
-                                            let saida = data.saidas[index];
-                                            let descricao = data.descricoes[index];
-                                            let valor = data.valores[index];
-                                            return `Data: ${tooltipItem.label}\nProduto: ${descricao}\nValor: ${valor}\nEntradas: ${entrada}\nSaídas: ${saida}`;
-                                        }
+                            y: {
+                                beginAtZero: true,
+                                ticks: {
+                                    font: {
+                                        size: 10, // Tamanho da fonte dos rótulos do eixo y
                                     },
-                                    displayColors: false, // Oculta a exibição das cores
-                                    backgroundColor: 'rgba(0, 0, 0, 0.8)', // Cor de fundo do tooltip
-                                    bodyFontColor: '#fff', // Cor do texto dentro do tooltip
-                                    titleFontColor: '#fff', // Cor do título do tooltip
-                                    bodyFontSize: 12, // Tamanho da fonte do texto dentro do tooltip
-                                    bodySpacing: 8, // Espaçamento entre linhas dentro do tooltip
-                                    cornerRadius: 8, // Raio do canto do tooltip
-                                    caretPadding: 10, // Espaçamento entre a borda do tooltip e a "caret"
-                                    borderWidth: 1, // Largura da borda do tooltip
-                                    borderColor: '#ccc' // Cor da borda do tooltip
+                                    align: 'center', // Alinhar centralizado
                                 }
                             }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        let index = tooltipItem.dataIndex;
+                                        let entrada = data.entradas[index];
+                                        let saida = data.saidas[index];
+                                        let descricao = data.descricoes[index];
+                                        let valor = data.valores[index];
+                                        return `Data: ${tooltipItem.label}\nProduto: ${descricao}\nValor: ${valor}\nEntradas: ${entrada}\nSaídas: ${saida}`;
+                                    }
+                                },
+                                displayColors: false, // Oculta a exibição das cores
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)', // Cor de fundo do tooltip
+                                bodyFontColor: '#fff', // Cor do texto dentro do tooltip
+                                titleFontColor: '#fff', // Cor do título do tooltip
+                                bodyFontSize: 12, // Tamanho da fonte do texto dentro do tooltip
+                                bodySpacing: 8, // Espaçamento entre linhas dentro do tooltip
+                                cornerRadius: 8, // Raio do canto do tooltip
+                                caretPadding: 10, // Espaçamento entre a borda do tooltip e a "caret"
+                                borderWidth: 1, // Largura da borda do tooltip
+                                borderColor: '#ccc' // Cor da borda do tooltip
+                            }
                         }
-                    });
-                    renderRelatorioHtml(data);
+                    }
                 });
+                renderRelatorioHtml(data);
+            });
         });
 
         function renderRelatorioHtml(data) {

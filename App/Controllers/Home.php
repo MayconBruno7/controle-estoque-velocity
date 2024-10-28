@@ -16,8 +16,8 @@ class Home extends BaseController
      */
     public function __construct()
     {
-        $this->UsuarioModel = new UsuarioModel();
-        $this->RelatorioModel = new RelatorioModel();
+        $this->UsuarioModel     = new UsuarioModel();
+        $this->RelatorioModel   = new RelatorioModel();
     }
 
     /**
@@ -29,8 +29,7 @@ class Home extends BaseController
     {
 
         $dados['dados'] = $this->UsuarioModel->findAll();
-                            // ->orderBy("descricao")
-                            // ->findAll();
+
         return view("usuario/login", $dados);
 
     }
@@ -52,17 +51,13 @@ class Home extends BaseController
      */
     public function homeAdmin()
     {
-        // Somente pode ser acessado por usuários adminsitradores
-        if (!$this->getAdministrador()) {
-            return redirect("Home");
-        }
-
+        
         $DbDados = [];
 
-        $DbDados['aRelatorioDia'] = $this->RelatorioModel->RelatorioDia();
-        $DbDados['aRelatorioSemana'] = $this->RelatorioModel->RelatorioSemana();
-        $DbDados['aRelatorioMes'] = $this->RelatorioModel->RelatorioMes();
-        $DbDados['aRelatorioAno'] = $this->RelatorioModel->RelatorioAno();
+        $DbDados['aRelatorioDia']       = $this->RelatorioModel->RelatorioDia();
+        $DbDados['aRelatorioSemana']    = $this->RelatorioModel->RelatorioSemana();
+        $DbDados['aRelatorioMes']       = $this->RelatorioModel->RelatorioMes();
+        $DbDados['aRelatorioAno']       = $this->RelatorioModel->RelatorioAno();
 
         return view(
             "restrita/homeAdmin",
@@ -80,10 +75,7 @@ class Home extends BaseController
     public function home()
     {
 
-        // Só acessa se tiver logado
-        if (!$this->getUsuario()) {
-            return redirect("Home");
-        }
+
        
         return view("restrita/home");
     }

@@ -6,10 +6,6 @@
     <div class="main-wrapper main-wrapper-1">
         <!-- Navbar, Sidebar e Conteúdo aqui -->
         <main class="container mt-5">
-            <div class="row">
-                <!-- mensagem de erro ou sucesso -->
-                <!--  -->
-            </div>
             <div class="container mb-3">
                 <?= exibeTitulo('Funcionario'); ?>
             </div>

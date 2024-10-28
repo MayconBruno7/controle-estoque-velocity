@@ -6,10 +6,10 @@ use CodeIgniter\Model;
 
 class HistoricoProdutoModel extends CustomModel
 {
-    protected $table = 'historico_produto'; // Define a tabela do banco de dados
-    protected $primaryKey = 'id'; // Define a chave primária
-    protected $returnType = 'array'; // Define o tipo de retorno
-    protected $allowedFields = [
+    protected $table            = 'historico_produto'; // Define a tabela do banco de dados
+    protected $primaryKey       = 'id'; // Define a chave primária
+    protected $returnType       = 'array'; // Define o tipo de retorno
+    protected $allowedFields    = [
         'id_produtos',
         'fornecedor_id',
         'nome_produtos',

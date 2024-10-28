@@ -9,7 +9,7 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 
 $routes->group('Home', function($routes) {
-    $routes->get('home', 'Home::index');
+    $routes->get('index', 'Home::index');
     $routes->get('login', 'Home::login');
     $routes->get('homeAdmin', 'Home::homeAdmin');
     $routes->get('home', 'Home::home');
@@ -84,7 +84,7 @@ $routes->group('Produto', function($routes) {
     $routes->get("index/(:segment)/(:num)/(:num)", 'Produto::index/$1/$2/$3');
 
     // exclui o produto da movimentação na parte de update 
-    $routes->get('index/(:segment)/(:num)/(:num)/(:num)/(:num)', 'Produto::index/$1/$2/$3/$4/$5');
+    $routes->get('index/(:segment)/(:num)/(:num)/(:num)/(:num)/(:any)', 'Produto::index/$1/$2/$3/$4/$5/$6');
 
 });
 

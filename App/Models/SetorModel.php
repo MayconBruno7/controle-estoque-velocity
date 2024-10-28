@@ -6,14 +6,14 @@ use CodeIgniter\Model;
 
 class SetorModel extends CustomModel
 {
-    protected $table = 'setor';
-    protected $primaryKey = 'id';
+    protected $table        = 'setor';
+    protected $primaryKey   = 'id';
 
     protected $allowedFields = ['nome', 'statusRegistro', 'responsavel']; // Adicione os campos permitidos para inserção/atualização
 
     protected $validationRules = [
-        'nome' => 'required|min_length[3]|max_length[100]',
-        'statusRegistro' => 'required|integer'
+        'nome'              => 'required|min_length[3]|max_length[100]',
+        'statusRegistro'    => 'required|integer'
     ];
 
     /**

@@ -7,8 +7,8 @@ use Config\Services;
 
 class FornecedorModel extends CustomModel
 {
-    protected $table = 'fornecedor';
-    protected $primaryKey = 'id';
+    protected $table        = 'fornecedor';
+    protected $primaryKey   = 'id';
     
     protected $allowedFields = ['cnpj', 'nome', 'telefone', 'statusRegistro', 'estado', 'cidade', 'bairro', 'endereco', 'numero', 'telefone']; 
     
@@ -27,7 +27,7 @@ class FornecedorModel extends CustomModel
         ]
     ];
 
-    public function lista($orderBy = 'id')
+    public function getLista($orderBy = 'id')
     {
         $session = Services::session();
 
@@ -52,8 +52,8 @@ class FornecedorModel extends CustomModel
             ],
         ];
 
-        $context = stream_context_create($options);
-        $response = @file_get_contents($url, false, $context); // O @ para silenciar erros
+        $context    = stream_context_create($options);
+        $response   = @file_get_contents($url, false, $context); // O @ para silenciar erros
 
         if ($response !== false) {
             $data = json_decode($response, true);

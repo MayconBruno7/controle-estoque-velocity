@@ -16,9 +16,9 @@ class Login extends BaseController
 
     public function __construct()
     {
-        $this->usuarioModel = new UsuarioModel();
-        $this->usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
-        $this->funcionarioModel = new FuncionarioModel();
+        $this->usuarioModel                 = new UsuarioModel();
+        $this->usuarioRecuperaSenhaModel    = new UsuarioRecuperaSenhaModel();
+        $this->funcionarioModel             = new FuncionarioModel();
     }
 
     public function signIn() 
@@ -55,7 +55,6 @@ class Login extends BaseController
 				//	Verifica a senha do usuário
 				if (password_verify(trim($password), $dadosUsuario['senha'])) {
 
-                   
 					// Sessões de controle do usuário
 					if (isset($post['remember'])) {
 						$tempoPdraoLogin = 864000;	// 10 Dias
@@ -63,13 +62,13 @@ class Login extends BaseController
 						$tempoPdraoLogin = 3600;	// 1 Hora
 					}
 
-					session()->setTempdata('isLoggedIn'		, true						, $tempoPdraoLogin);
-					session()->setTempdata('usuarioId'			, $dadosUsuario['id']		, $tempoPdraoLogin);
-					session()->setTempdata('usuarioLogin'		, $dadosUsuario['nome']		, $tempoPdraoLogin);
-					session()->setTempdata('usuarioEmail'		, $dadosUsuario['email']	, $tempoPdraoLogin);
-					session()->setTempdata('usuarioNivel'		, $dadosUsuario['nivel']	, $tempoPdraoLogin);
-					session()->setTempdata('id_funcionario'	, $dadosUsuario['id_funcionario'], $tempoPdraoLogin);
-					session()->setTempdata('current_user'	, $dadosUsuario['id'], $tempoPdraoLogin);
+					session()->setTempdata('isLoggedIn', true, $tempoPdraoLogin);
+					session()->setTempdata('usuarioId', $dadosUsuario['id'], $tempoPdraoLogin);
+					session()->setTempdata('usuarioLogin', $dadosUsuario['nome'], $tempoPdraoLogin);
+					session()->setTempdata('usuarioEmail', $dadosUsuario['email'], $tempoPdraoLogin);
+					session()->setTempdata('usuarioNivel', $dadosUsuario['nivel'], $tempoPdraoLogin);
+					session()->setTempdata('id_funcionario', $dadosUsuario['id_funcionario'], $tempoPdraoLogin);
+					session()->setTempdata('current_user', $dadosUsuario['id'], $tempoPdraoLogin);
 
 					// 
 
@@ -91,20 +90,24 @@ class Login extends BaseController
                     }
         
                     if (isset($post['remember'])) {
+                        // Se "Lembrar-me" estiver marcado, cria os cookies com duração de 30 dias
                         setcookie('username', $post["email"], time() + (86400 * 30), "/");
                         setcookie('password', $post["senha"], time() + (86400 * 30), "/");
+                    } else {
+                        // Se "Lembrar-me" não estiver marcado, expira os cookies definindo tempo no passado
+                        setcookie('username', '', time() - 3600, "/");
+                        setcookie('password', '', time() - 3600, "/");
                     }
-        
-                    $redirectUrl = '';
-        
+                    
                     if (session()->get('usuarioNivel') == 1) {
                         $redirectUrl = 'Home/homeAdmin';
                     } elseif (session()->get('usuarioNivel') == 11) {
                         $redirectUrl = 'Home/home';
                     } 
-        
-                    return redirect()->to(base_url($redirectUrl));
 
+                    // var_dump(session()->get('usuarioNivel'));
+                    // exit;
+                    return redirect()->to(base_url($redirectUrl));
 					//
 					
 				} else {

@@ -6,9 +6,9 @@ use CodeIgniter\Model;
 
 class UsuarioModel extends CustomModel
 {
-    protected $table = 'usuario';
-    protected $primaryKey = 'id';
-    protected $allowedFields = ['nome', 'statusRegistro', 'email', 'nivel', 'senha', 'id_funcionario'];
+    protected $table            = 'usuario';
+    protected $primaryKey       = 'id';
+    protected $allowedFields    = ['nome', 'statusRegistro', 'email', 'nivel', 'senha', 'id_funcionario'];
     
     // Ativa timestamps para created_at e updated_at
     // protected $useTimestamps = true;
