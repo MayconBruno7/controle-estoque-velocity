@@ -1,11 +1,18 @@
-<?php
+<?= $this->extend('layout/layout_default') ?>
 
-use App\Library\Formulario;
-use App\Library\Session;
-
-?>
+<?= $this->section('conteudo') ?>
 
 <div class="container" style="margin-top: 80px;">
+    <div class="row text-center align-itens-center">
+        <div class="col-12">
+            <?= mensagemError() ?>
+        </div>
+
+        <div class="col-12 mt-3">
+            <?= mensagemSucesso() ?>
+        </div>
+    </div>
+
     <main>
         <div class="jumbotron text-center my-5">
             <h1 class="display-4">Bem-vindo ao Sistema de Controle de Estoque</h1>
@@ -55,3 +62,4 @@ use App\Library\Session;
     }
 
 </style>
+<?= $this->endSection() ?>

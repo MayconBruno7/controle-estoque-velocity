@@ -92,7 +92,6 @@ $routes->group('Produto', function($routes) {
 $routes->get("HistoricoProdutoMovimentacao/index/(:num)/(:segment)", 'HistoricoProdutoMovimentacao::index/$1/$2');
 $routes->get("HistoricoProduto/getHistoricoProduto/(:any)", 'HistoricoProduto::getHistoricoProduto/$1');
 
-
 $routes->group('Setor', function($routes) {
     $routes->get("/", 'Setor::index');
     $routes->get("lista", 'Setor::index');
@@ -144,6 +143,7 @@ $routes->group('Movimentacao', function($routes) {
 
 $routes->group('FaleConosco', function($routes) {
     $routes->get("formularioEmail", 'FaleConosco::formularioEmail');
+    $routes->post("enviarEmail", 'FaleConosco::enviarEmail');
 
     $routes->get('verificaEstoque', 'FaleConosco::verificaEstoque');
 

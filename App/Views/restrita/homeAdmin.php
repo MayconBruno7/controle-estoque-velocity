@@ -4,8 +4,14 @@
 
 <!-- Main Content -->
 <div class="main-content">
-    <div class="row mb-2">
-        <!-- Mensagens de erro -->
+    <div class="row text-center">
+        <div class="col-12">
+            <?= mensagemError() ?>
+        </div>
+
+        <div class="col-12 mt-3">
+            <?= mensagemSucesso() ?>
+        </div>
     </div>
 
     <section class="section">

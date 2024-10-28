@@ -3,17 +3,22 @@
 <?= $this->section('conteudo') ?>
 
 <div class="row mt-5">
-    <div class="col-12 mt-5">
-        <h2 class="text-center">Fale Conosco</h2>
+    <div class="col-12 mt-5 text-center">
+        <h2 class="">Fale Conosco</h2>
+    </div>
+</div>
+
+<div class="row text-center align-itens-center">
+    <div class="col-12">
+        <?= mensagemError() ?>
+    </div>
+
+    <div class="col-12 mt-3">
+        <?= mensagemSucesso() ?>
     </div>
 </div>
 
 <main class="container mt-5 d-flex justify-content-center align-items-center">
-
-    <div class="row">
-        <!-- mensagens de sucesso ou erro  -->
-    </div>
-
     <form class="g-3" action="<?= base_url() ?>FaleConosco/enviarEmail" method="POST">
 
         <div class="row">

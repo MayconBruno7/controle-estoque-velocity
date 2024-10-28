@@ -129,48 +129,54 @@ class FaleConosco extends BaseController
        return '';
    }
 
-//    /**
-//     * Envia um e-mail via formulário de Fale Conosco.
-//     *
-//     * @return RedirectResponse
-//     */
-//     public function enviarEmail()
-//     {
-//         if ($this->request->getMethod() === 'post') {
-//             $emailRemetente = $this->request->getPost('email', FILTER_VALIDATE_EMAIL);
-//             // $nomeRemetente = $this->request->getPost('nome');
-//             $assunto = $this->request->getPost('assunto');
-//             $telefone = $this->request->getPost('telefone');
-//             $mensagem = $this->request->getPost('mensagem');
+   /**
+    * Envia um e-mail via formulário de Fale Conosco.
+    *
+    * @return RedirectResponse
+    */
+    public function enviarEmail()
+    {
 
-//             if (!$emailRemetente) {
-//                 session()->setFlashdata('msgError', 'Email inválido!');
-//                 return redirect()->to('FaleConosco/formularioEmail');
-//             }
+        $post = $this->request->getPost();
 
-//             $corpoEmail = "{$mensagem}<br><br> Para mais informações, ligue pelo telefone: {$telefone} ou envie um email: {$emailRemetente}";
+        if ($post) {
+            $emailRemetente = $this->request->getPost('email', FILTER_VALIDATE_EMAIL);
+            $nomeRemetente = $this->request->getPost('nome');
+            $assunto = $this->request->getPost('assunto');
+            $telefone = $this->request->getPost('telefone');
+            $mensagem = $this->request->getPost('mensagem');
 
-//             // Cria uma nova instância da classe Email
-//             $email = new Email();
+            if (!$emailRemetente) {
+                session()->setFlashdata('msgError', 'Email inválido!');
+                return redirect()->to('FaleConosco/formularioEmail');
+            }
 
-//             // Configura o remetente
-//             $email->setFrom(EmailConfig::$fromEmail, EmailConfig::$fromName);
+            $corpoEmail = "{$mensagem}<br><br> Para mais informações, ligue pelo telefone: {$telefone} ou envie um email: {$emailRemetente}";
+
+            // Cria uma nova instância da classe Email
+            $email = new Email();
+                
+            // Cria uma nova instância da classe EmailConfig
+            $emailConfig = new EmailConfig();
+
+            // Inicializa com as configurações
+            $email->initialize($emailConfig);
             
-//             // Configura o destinatário
-//             $email->setTo('maycon7ads@gmail.com');
+            // Configura o destinatário
+            $email->setTo('maycon7ads@gmail.com');
 
-//             // Configura o assunto e a mensagem
-//             $email->setSubject($assunto);
-//             $email->setMessage($corpoEmail);
+            // Configura o assunto e a mensagem
+            $email->setSubject($assunto);
+            $email->setMessage($corpoEmail);
 
-//             // Envia o e-mail e verifica se foi enviado com sucesso
-//             if ($email->send()) {
-//                 session()->setFlashdata('msgSuccess', 'Email enviado com sucesso.');
-//             } else {
-//                 session()->setFlashdata('msgError', 'Falha ao tentar enviar o email: ' . $email->printDebugger(['headers']));
-//             }
+            // Envia o e-mail e verifica se foi enviado com sucesso
+            if ($email->send()) {
+                session()->setFlashdata('msgSuccess', 'Email enviado com sucesso.');
+            } else {
+                session()->setFlashdata('msgError', 'Falha ao tentar enviar o email: ' . $email->printDebugger(['headers']));
+            }
 
-//             return redirect()->to('FaleConosco/formularioEmail');
-//         }
-//     }
+            return redirect()->to('FaleConosco/formularioEmail');
+        }
+    }
 }
