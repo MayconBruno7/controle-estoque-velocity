@@ -105,8 +105,6 @@ class Login extends BaseController
                         $redirectUrl = 'Home/home';
                     } 
 
-                    // var_dump(session()->get('usuarioNivel'));
-                    // exit;
                     return redirect()->to(base_url($redirectUrl));
 					//
 					

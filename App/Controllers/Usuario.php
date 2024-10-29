@@ -84,6 +84,9 @@ class Usuario extends BaseController
 
         $post = $this->request->getPost();
 
+        var_dump(password_hash($post['senha'], PASSWORD_DEFAULT));
+        exit;
+
         if ($this->model->save([
             'id'                => ($post['id'] == "" ? null : $post['id']),
             "nivel"             => $post['nivel'],

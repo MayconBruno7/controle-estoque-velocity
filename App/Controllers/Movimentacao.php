@@ -494,7 +494,23 @@ class Movimentacao extends BaseController
                 if ($action != 'updateProdutoMovimentacao') {
                     // Variáveis para armazenar a quantidade e tipo de movimentação
                     $produtos_negativos = [];
+                    $produto_encontrado_outra_movimentacao = false;
 
+                    $movimentacoes = $this->model->getLista();
+
+                    // lista as movimentações no banco de dados
+                    foreach ($movimentacoes as $movimentacao) {
+                        $dadosItensMovimentacao     =  $this->movimentacaoItemModel->listaProdutos($movimentacao['id_movimentacao']);
+
+                        foreach ($dadosItensMovimentacao as $item_movimentacao) {
+                            if($item_movimentacao['id_prod_mov_itens'] == $id_produto) {
+                                $produto_encontrado_outra_movimentacao = true;
+                            }
+                        }
+  
+                    }
+
+                    // lista os produtos da movimentação que está sendo alterada
                     foreach ($dadosItensMovimentacao as $item) {
                         $quantidade_produto_movimentacao = $item['mov_itens_quantidade'];
 
@@ -522,32 +538,36 @@ class Movimentacao extends BaseController
                     } else {
 
                         // tirar os 100 e diminuir mais 100
-                        
-                        // Atualiza a movimentação e produtos
-                        $atualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
-                            $id_movimentacao,
-                            [
-                                "id_fornecedor"     => $fornecedor_id,
-                                "tipo"              => $tipo_movimentacao,
-                                "statusRegistro"    => $statusRegistro,
-                                "id_setor"          => $setor_id,
-                                "data_pedido"       => $data_pedido,
-                                "data_chegada"      => $data_chegada,
-                                "motivo"            => $motivo
-                            ],
-                            $produtoMovAtualizado
-                        );
-
-                        if ($atualizandoMovimentacaoEProdutos) {
-                            session()->remove('prod_mov_atualizado'); // Remover a sessão se existir
-                            // session()->remove('movimentacao');
-                            // session()->remove('produtos');
-
-                            return redirect()->to('/Movimentacao')->with("msgSuccess", "Movimentação alterada com sucesso.");
+                        if ($tipo_movimentacao == '2' && !$id_produto_movimentacao) {
+                            return redirect()->to('/Movimentacao')->with('msgError', 'Não é permitido alterar esta movimentação: Estoque ficará negativo para os produtos: ' . $produtos);
                         } else {
-                            return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgError", "Falha ao tentar alterar a movimentação.");
+                            // Atualiza a movimentação e produtos
+                            $atualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(
+                                $id_movimentacao,
+                                [
+                                    "id_fornecedor"     => $fornecedor_id,
+                                    "tipo"              => $tipo_movimentacao,
+                                    "statusRegistro"    => $statusRegistro,
+                                    "id_setor"          => $setor_id,
+                                    "data_pedido"       => $data_pedido,
+                                    "data_chegada"      => $data_chegada,
+                                    "motivo"            => $motivo
+                                ],
+                                $produtoMovAtualizado
+                            );
+
+                            if ($atualizandoMovimentacaoEProdutos) {
+                                session()->remove('prod_mov_atualizado'); // Remover a sessão se existir
+                                // session()->remove('movimentacao');
+                                // session()->remove('produtos');
+
+                                return redirect()->to('/Movimentacao')->with("msgSuccess", "Movimentação alterada com sucesso.");
+                            } else {
+                                return redirect()->to('/Movimentacao/form/update/' . $id_movimentacao)->with("msgError", "Falha ao tentar alterar a movimentação.");
+                            }
                         }
                     }
+      
                 } elseif ($action == 'updateProdutoMovimentacao') {
                     if (!$estoqueNegativo) {
                         $atualizandoInfoProdutoMovimentacao = $this->model->updateInformacoesProdutoMovimentacao(
