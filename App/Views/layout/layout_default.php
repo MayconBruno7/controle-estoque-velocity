@@ -173,7 +173,7 @@
                 <li class="dropdown">
                     <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle nav-link-lg nav-link-user">
                         <?php if ((session()->get('id_funcionario')) && (session()->get('usuarioImagem'))) : ?>
-                            <img alt="image" class="rounded-circle" src="<?= base_url('writable/uploads/funcionarios/' . session()->get('usuarioImagem')) ?> " width="40px" height="40px">
+                            <img alt="image" class="rounded-circle" src="<?= session()->get('usuarioImagem') != 'person.svg' ? base_url('writable/uploads/funcionarios/' . session()->get('usuarioImagem')) : base_url() . 'assets/img/users/person.svg' ?> " width="40px" height="40px">
                         <?php else : ?>
                             <img alt="image" class="rounded-circle" src="<?= base_url() . 'assets/img/users/person.svg' ?>" width="40px" height="40px">
                         <?php endif; ?>

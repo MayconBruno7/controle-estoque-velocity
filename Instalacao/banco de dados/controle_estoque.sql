@@ -5940,9 +5940,9 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`, `imagem`) VALUES
-(1, 'Joao', '49498498498', '32984927895', 1, 1.000000, 1, 1, '1642867724_Photo-2.jpg'),
-(2, 'Maycon Bruno', '09068884689', '3298492407', 1, 1540.000000, 1, 1, '1991515327_Photo-2.jpg'),
-(3, 'Maria VItoria ', '12345678954', '32989879845', 1, 10000.000000, 1, 1, '728994375_Imagem do WhatsApp de 2024-08-27 à(s) 11.08.16_8ae2b753.jpg');
+(1, 'Joao', '49498498498', '32984927895', 1, 1.000000, 1, 1, ''),
+(2, 'Maycon Bruno', '0906888884', '3298492407', 1, 1540.000000, 1, 1, ''),
+(3, 'Maria VItoria ', '12345678954', '32989879845', 1, 10000.000000, 1, 1, '');
 
 --
 -- Acionadores `funcionario`
@@ -6709,7 +6709,7 @@ CREATE TABLE IF NOT EXISTS `usuario` (
 --
 
 INSERT INTO `usuario` (`id`, `nivel`, `statusRegistro`, `nome`, `senha`, `email`, `primeiroLogin`, `id_funcionario`) VALUES
-(1, '1', 1, 'administrador', '$2y$10$2GdO/nzqD0i5.urrgASF/.NOQ0UYjKz6m4ABPsve4uBaMGrrBF0S6', 'mayconbruno519@gmail.com', 1, 2);
+(1, '1', 1, 'administrador', '$2y$10$2GdO/nzqD0i5.urrgASF/.NOQ0UYjKz6m4ABPsve4uBaMGrrBF0S6', 'administrador@gmail.com', 1, 2);
 
 --
 -- Acionadores `usuario`

@@ -66,8 +66,8 @@
             <div class="form-group col-12 col-md-6 mt-3">
                 <label for="senha" class="form-label">Senha</label>
                 <input type="password" name="senha" id="senha" class="form-control" maxlength="250" 
-                       value="<?= setValor('senha', $data) ?>" 
-                       required placeholder="Informe uma senha"
+                       value="" 
+                    placeholder="Informe uma nova senha caso deseje alterar"
                        onkeyup="checa_segur_senha('senha', 'msgSenha', 'btGravar');">
                 <div id="msgSenha" class="msgNivel_senha"></div>
                 <?= setaMsgErrorCampo('senha', $errors) ?>
@@ -76,8 +76,8 @@
             <div class="form-group col-12 col-md-6 mt-3">
                 <label for="confSenha" class="form-label">Confere a senha</label>
                 <input type="password" name="confSenha" id="confSenha" class="form-control" maxlength="250" 
-                       value="<?= setValor('senha', $data) ?>" 
-                       required placeholder="Confirme a senha"
+                       value="" 
+                       placeholder="Confirme a senha digitada"
                        onkeyup="checa_segur_senha('confSenha', 'msgConfSenha', 'btGravar');">
                 <div id="msgConfSenha" class="msgNivel_senha"></div>
                 <?= setaMsgErrorCampo('confSenha', $errors) ?>

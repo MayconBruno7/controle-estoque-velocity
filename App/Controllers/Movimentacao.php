@@ -492,24 +492,7 @@ class Movimentacao extends BaseController
                 }
 
                 if ($action != 'updateProdutoMovimentacao') {
-                    // Variáveis para armazenar a quantidade e tipo de movimentação
-                    $produtos_negativos = [];
-                    $produto_encontrado_outra_movimentacao = false;
-
-                    $movimentacoes = $this->model->getLista();
-
-                    // lista as movimentações no banco de dados
-                    foreach ($movimentacoes as $movimentacao) {
-                        $dadosItensMovimentacao     =  $this->movimentacaoItemModel->listaProdutos($movimentacao['id_movimentacao']);
-
-                        foreach ($dadosItensMovimentacao as $item_movimentacao) {
-                            if($item_movimentacao['id_prod_mov_itens'] == $id_produto) {
-                                $produto_encontrado_outra_movimentacao = true;
-                            }
-                        }
-  
-                    }
-
+                   
                     // lista os produtos da movimentação que está sendo alterada
                     foreach ($dadosItensMovimentacao as $item) {
                         $quantidade_produto_movimentacao = $item['mov_itens_quantidade'];
@@ -537,9 +520,51 @@ class Movimentacao extends BaseController
                         return redirect()->to('/Movimentacao')->with('msgError', 'Não é permitido alterar esta movimentação: Estoque ficará negativo para os produtos: ' . $produtos);
                     } else {
 
-                        // tirar os 100 e diminuir mais 100
-                        if ($tipo_movimentacao == '2' && !$id_produto_movimentacao) {
-                            return redirect()->to('/Movimentacao')->with('msgError', 'Não é permitido alterar esta movimentação: Estoque ficará negativo para os produtos: ' . $produtos);
+                        // Variáveis para armazenar a quantidade e tipo de movimentação
+                        $produtos_negativos = [];
+                        $mov_saida_prod_qtd_negativa = false;
+
+                        $movimentacoes = $this->model->getLista();
+
+                        // Variáveis para armazenar o status e tipo de movimentação
+                        $produto_encontrado_outra_movimentacao = false;
+                        $quantidade_total = isset($dadosProduto['quantidade']) ? $dadosProduto['quantidade']: ""; // Inicia com a quantidade do produto atual
+
+                        // Lista as movimentações no banco de dados
+                        foreach ($movimentacoes as $movimentacao) {
+                            $dadosItensMovimentacao = $this->movimentacaoItemModel->listaProdutos($movimentacao['id_movimentacao']);
+
+                            foreach ($dadosItensMovimentacao as $item_movimentacao) {
+                                if ($tipo_movimentacao == '2') { // Verifica se é uma movimentação de saída
+
+                                    // Confirma se o item da movimentação é o produto desejado e não é a mesma movimentação atual
+                                    if ($item_movimentacao['id_prod_mov_itens'] == $id_produto && $item_movimentacao['id_movimentacoes'] != $id_movimentacao) {
+                                        $produto_encontrado_outra_movimentacao = true;
+                                    }
+
+                                    // Verifica se a movimentação é a atual e calcula a quantidade
+                                    if ($item_movimentacao['id_movimentacoes'] == $id_movimentacao) {
+                                        // Atualiza a quantidade subtraindo o item da movimentação
+                                        $quantidade_total -= (2 * $item_movimentacao['mov_itens_quantidade']);
+
+                                        // Se a quantidade total ficar negativa, sinaliza e interrompe o loop
+                                        if ($quantidade_total < 0) {
+                                            
+                                            // Adiciona o nome do produto ao array
+                                            $produtos_negativos[] = $item_movimentacao['nome'];
+                                            $mov_saida_prod_qtd_negativa = true;
+                                            break 2; // Sai dos loops aninhados se encontrar quantidade negativa
+                                        }
+                                    }
+                                }
+                            }
+                        }
+
+                        // Verifica se há produtos com quantidade negativa e monta a mensagem
+                        if ($tipo_movimentacao == '2' && !$produto_encontrado_outra_movimentacao && $mov_saida_prod_qtd_negativa) {
+                            // Concatena os nomes dos produtos com quantidade negativa em uma string
+                            $produtos = implode(', ', $produtos_negativos);
+                            return redirect()->to('/Movimentacao')->with('msgError', 'Não é permitido alterar esta movimentação para saída de itens: Estoque ficará negativo para os produtos: ' . $produtos);
                         } else {
                             // Atualiza a movimentação e produtos
                             $atualizandoMovimentacaoEProdutos = $this->model->updateMovimentacao(

@@ -6,17 +6,14 @@
 
 <main class="container">
 
-    <div style="margin-top: 100px; margin-bottom: 50px;">
-        <?= exibeTitulo('Criar conta'); ?>
-    </div>
-
-    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2">
+    <div class="col-12 col-sm-10 offset-sm-1 col-md-8 offset-md-2 col-lg-8 offset-lg-2 col-xl-8 offset-xl-2" style="margin-top: 100px; margin-bottom: 50px;">
+        <?= mensagemSucesso() . mensagemError()?>
         <div class="card card-primary">
             <div class="card-header">
-            <h4>Cadastrar-se</h4>
+                <h4>Cadastrar-se</h4>
             </div>
             <div class="card-body">
-            <form method="POST" action="<?= base_url() ?>Login/novaContaVisitante">
+            <form method="POST" action="<?= base_url() ?>Home/gravarNovaConta">
                 <div class="row">
                     <div class="form-group col-12">
                         <label for="nome">Nome</label>
@@ -62,7 +59,7 @@
             </form>
             </div>
             <div class="mb-4 text-muted text-center">
-            Já tem conta? <a href="<?= base_url() ?>Login/signIn">Login</a>
+            Já tem conta? <a href="<?= base_url() ?>">Login</a>
             </div>
         </div>
         </div>

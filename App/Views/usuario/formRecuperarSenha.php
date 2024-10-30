@@ -27,11 +27,11 @@
                     <form method="POST" id="recuperaSenhaform" class="form-horizontal" role="form" 
                         action="<?= base_url() ?>Login/atualizaRecuperaSenha">
 
-                        <input type="hidden" name="id" id="id" value="<?= $dados['id'] ?>">
-                        <input type="hidden" name="usuariorecuperasenha_id" id="usuariorecuperasenha_id" value="<?= $dados['usuariorecuperasenha_id'] ?>">
+                        <input type="hidden" name="id" id="id" value="<?= $usuario['id'] ?>">
+                        <input type="hidden" name="usuariorecuperasenha_id" id="usuariorecuperasenha_id" value="<?= $usuario['usuariorecuperasenha_id'] ?>">
                         
                         <div style="margin-bottom: 25px" class="input-group">
-                            <label class="ml-1">Olá <b><?= $dados['nome'] ?></b>! Para prosseguir com a recuperação da senha basta digitar a senha nos campos abaixo e clicar em atualizar.</label>                            
+                            <label class="ml-1">Olá <b><?= $usuario['nome'] ?></b>! Para prosseguir com a recuperação da senha basta digitar a senha nos campos abaixo e clicar em atualizar.</label>                            
                         </div>
 
                         <div style="margin-bottom: 25px" class="control-group">

@@ -80,14 +80,71 @@ class Home extends BaseController
         return view("restrita/home");
     }
 
-
     /**
-     * criarConta
-     *
-     * @return void
-     */
-    public function criarNovaConta(): string
-    {
-        return view("criarNovaConta");
-    }
+	 * Carrega a view Criar nova Conta
+	 *
+	 * @return void
+	 */
+	public function criarNovaConta()
+	{
+		return view("usuario/formCriarConta");
+	}
+
+	/**
+	 * gravarNovaConta
+	 *
+	 * @return void
+	 */
+	public function gravarNovaConta()
+	{
+		$UsuarioModel = new UsuarioModel();
+
+		$post = $this->request->getPost();
+
+        // var_dump($post);
+        // exit("Tamo ai");
+		
+		// verificar se usuário já tem conta
+		$temUsuario = $UsuarioModel->where("email", $post['email'])->first();
+
+		if (is_null($temUsuario)) {
+
+			if (trim($post['senha']) == trim($post['confSenha'])) {
+
+				$created_at = date("Y-m-d H:i:s");
+				
+				$aUsuario = [
+					"nome"				=> $post['nome'],
+					"nivel"				=> 11,                   // 11 = Cliente
+					"statusRegistro"	=> 2,
+					"email"				=> $post['email'],
+					"senha"				=> password_hash(trim($post['senha']), PASSWORD_DEFAULT),
+				];
+		
+				if ($this->UsuarioModel->insert($aUsuario) > 0) {
+					return redirect("Home/criarNovaConta")->with("msgSucess", "Conta Criada com sucesso");
+				} else {
+	
+					session()->set("msgError", $UsuarioModel->errors());
+	
+					return view('usuario/formCriarConta', [
+						'data'		=> $post,
+						'errors' 	=> $UsuarioModel->errors()
+					]);
+				}
+	
+			} else {
+				session()->setFlashdata("msgError", "Senhas não conferem.");
+			} 
+			
+		} else {
+			session()->setFlashdata("msgError", "Usuário já existe na plataforma.");
+		}
+
+		return view('usuario/formCriarConta', [
+				'data'		=> $post,
+				'errors' 	=> []
+			]);
+
+	}
 }

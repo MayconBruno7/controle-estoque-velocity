@@ -8,6 +8,9 @@ use App\Models\UsuarioRecuperaSenhaModel;
 
 use CodeIgniter\HTTP\RedirectResponse;
 
+use CodeIgniter\Email\Email; 
+use Config\Email as EmailConfig; 
+
 class Login extends BaseController 
 {
     protected $usuarioModel;
@@ -128,88 +131,93 @@ class Login extends BaseController
         return redirect()->to(base_url());
     }
 
-    // public function solicitaRecuperacaoSenha()
-    // {
-    //     return view('usuario/formSolicitaRecuperacaoSenha');
-    // }
+    public function solicitaRecuperacaoSenha()
+    {
+        return view('usuario/formSolicitaRecuperacaoSenha');
+    }
 
-    // public function gerarLinkRecuperaSenha()
-    // {
-    //     $post = $this->request->getPost();
-    //     $usuario = $this->usuarioModel->getUserEmail($post['email']);
+    public function gerarLinkRecuperaSenha()
+    {
+        $post = $this->request->getPost();
+        $usuario = $this->usuarioModel->getByEmail($post['email']);
 
-    //     if (!$usuario) {
-    //         return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'E-mail não encontrado.');
-    //     }
+        if (!$usuario) {
+            return redirect()->to(base_url('Login/solicitaRecuperacaoSenha'))->with('msgError', 'E-mail não encontrado.');
+        }
 
-    //     $created_at = date('Y-m-d H:i:s');
-    //     $chave = sha1($usuario['id'] . $usuario['senha'] . date('YmdHis', strtotime($created_at)));
-    //     $link = base_url('login/recuperarSenha/' . $chave);
+        $created_at = date('Y-m-d H:i:s');
+        $chave = sha1($usuario['id'] . $usuario['senha'] . date('YmdHis', strtotime($created_at)));
+        $link = base_url('Login/recuperarSenha/' . $chave);
 
-    //     $corpoEmail = 'Clique no link para recuperar sua senha: <a href="'. $link .'">Recuperar a senha</a>';
-    //     // $enviado = Email::enviaEmail('noreply@exemplo.com', 'Recuperação de Senha', 'Recuperação de Senha', $corpoEmail, $usuario['email']);
+        $corpoEmail = 'Clique no link para recuperar sua senha: <a href="'. $link .'">Recuperar a senha</a>';
 
-    //     // if ($enviado) {
-    //     //     $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
-    //     //     $usuarioRecuperaSenhaModel->desativaChaveAntigas($usuario['id']);
-    //     //     $usuarioRecuperaSenhaModel->insert(['usuario_id' => $usuario['id'], 'chave' => $chave, 'created_at' => $created_at]);
+        // Cria uma nova instância da classe Email
+        $email          = new Email();
+    
+        // Cria uma nova instância da classe EmailConfig
+        $emailConfig    = new EmailConfig();
+    
+        // Inicializa com as configurações
+        $email->initialize($emailConfig);
+    
+        // Configura o remetente
+        $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
+    
+        // Configura o destinatário
+        $email->setTo($usuario['email']); // Enviar para o email do administrador
+    
+        // Configura o assunto e a mensagem
+        $email->setSubject('Recuperação de Senha');
+        $email->setMessage($corpoEmail);
 
-    //     //     return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Link de recuperação enviado!');
-    //     // }
+        // $enviado = Email::enviaEmail('noreply@exemplo.com', 'Recuperação de Senha', 'Recuperação de Senha', $corpoEmail, $usuario['email']);
 
-    //     return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Falha ao enviar o e-mail.');
-    // }
+        if ($email->send()) {
+            $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+            $usuarioRecuperaSenhaModel->desativaChaveAntigas($usuario['id']);
+            $usuarioRecuperaSenhaModel->insert(['usuario_id' => $usuario['id'], 'chave' => $chave, 'created_at' => $created_at]);
 
-    // public function recuperarSenha($chave)
-    // {
-    //     $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
-    //     $userChave = $usuarioRecuperaSenhaModel->getRecuperaSenhaChave($chave);
+            return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Link de recuperação enviado!');
+        }
 
-    //     if ($userChave) {
-    //         $validade = strtotime("+1 hour", strtotime($userChave['created_at']));
-    //         if (time() <= $validade) {
-    //             $usuario = $this->usuarioModel->find($userChave['usuario_id']);
-    //             if ($usuario && sha1($userChave['usuario_id'] . $usuario['senha'] . date('YmdHis', strtotime($userChave['created_at']))) === $chave) {
-    //                 session()->set('recuperaSenha', ['usuario_id' => $usuario['id'], 'recupera_id' => $userChave['id']]);
-    //                 return view('usuario/formRecuperarSenha', ['usuario' => $usuario]);
-    //             }
-    //         }
-    //     }
-    //     return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Chave inválida ou expirada.');
-    // }
+        return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Falha ao enviar o e-mail.');
+    }
 
-    // public function atualizaRecuperaSenha()
-    // {
-    //     $post = $this->request->getPost();
+    public function recuperarSenha($chave)
+    {
+        $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        $userChave = $usuarioRecuperaSenhaModel->getRecuperaSenhaChave($chave);
 
-    //     if ($post['NovaSenha'] !== $post['NovaSenha2']) {
-    //         return redirect()->back()->with('msgError', 'Senhas não conferem.');
-    //     }
+        if ($userChave) {
+            $validade = strtotime("+1 hour", strtotime($userChave['created_at']));
+            if (time() <= $validade) {
+                $usuario = $this->usuarioModel->find($userChave['usuario_id']);
+                if ($usuario && sha1($userChave['usuario_id'] . $usuario['senha'] . date('YmdHis', strtotime($userChave['created_at']))) === $chave) {
+                    // session()->set('recuperaSenha', ['usuario_id' => $usuario['id']]);
+                    $usuario['usuariorecuperasenha_id'] = $userChave['id'];
+                    return view('usuario/formRecuperarSenha', ['usuario' => $usuario]);
+                }
+            }
+        }
+        return redirect()->to(base_url('login/solicitaRecuperacaoSenha'))->with('msgError', 'Chave inválida ou expirada.');
+    }
 
-    //     $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
-    //     $usuario = $this->usuarioModel->find($post['id']);
-    //     if ($usuario) {
-    //         $usuarioRecuperaSenhaModel->update($post['usuariorecuperasenha_id'], ['statusRegistro' => 2]);
-    //         $this->usuarioModel->update($usuario['id'], ['senha' => password_hash($post['NovaSenha'], PASSWORD_DEFAULT)]);
-    //         return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Senha alterada com sucesso!');
-    //     }
+    public function atualizaRecuperaSenha()
+    {
+        $post = $this->request->getPost();
 
-    //     return redirect()->back()->with('msgError', 'Falha ao atualizar senha.');
-    // }
+        if ($post['NovaSenha'] !== $post['NovaSenha2']) {
+            return redirect()->back()->with('msgError', 'Senhas não conferem.');
+        }
 
-    // public function novaContaVisitante()
-    // {
-    //     $post = $this->request->getPost();
+        $usuarioRecuperaSenhaModel = new UsuarioRecuperaSenhaModel();
+        $usuario = $this->usuarioModel->find($post['id']);
+        if ($usuario) {
+            $usuarioRecuperaSenhaModel->update($post['usuariorecuperasenha_id'], ['statusRegistro' => 2]);
+            $this->usuarioModel->update($usuario['id'], ['senha' => password_hash($post['NovaSenha'], PASSWORD_DEFAULT)]);
+            return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Senha alterada com sucesso!');
+        }
 
-    //     if (!$this->validate($this->usuarioModel->validationRules)) {
-    //         return redirect()->to(base_url('Home/criarConta'))->with('msgError', 'Dados inválidos.');
-    //     }
-
-    //     $post['senha'] = password_hash($post['senha'], PASSWORD_DEFAULT);
-    //     if ($this->usuarioModel->insert($post)) {
-    //         return redirect()->to(base_url('Home/login'))->with('msgSuccess', 'Usuário criado com sucesso!');
-    //     }
-
-    //     return redirect()->to(base_url('Home/criarConta'))->with('msgError', 'Falha ao criar usuário.');
-    // }
+        return redirect()->back()->with('msgError', 'Falha ao atualizar senha.');
+    }
 }

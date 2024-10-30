@@ -13,11 +13,18 @@ $routes->group('Home', function($routes) {
     $routes->get('login', 'Home::login');
     $routes->get('homeAdmin', 'Home::homeAdmin');
     $routes->get('home', 'Home::home');
+
+    $routes->get('criarConta', 'Home::criarNovaConta');
+    $routes->post('gravarNovaConta', 'Home::gravarNovaConta');
 });
 
 $routes->group('Login', function($routes) {
     $routes->post('signIn', 'Login::signIn');    
     $routes->get('signOut', 'Login::signOut');
+    $routes->get('solicitaRecuperacaoSenha', 'Login::solicitaRecuperacaoSenha');
+    $routes->post('gerarLinkRecuperaSenha', 'Login::gerarLinkRecuperaSenha');
+    $routes->get('recuperarSenha/(:segment)', 'Login::recuperarSenha/$1');
+    $routes->post('atualizaRecuperaSenha', 'Login::atualizaRecuperaSenha');
 });
 
 $routes->group('Usuario', function($routes) {

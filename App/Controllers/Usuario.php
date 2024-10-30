@@ -84,15 +84,27 @@ class Usuario extends BaseController
 
         $post = $this->request->getPost();
 
-        var_dump(password_hash($post['senha'], PASSWORD_DEFAULT));
-        exit;
+        $senha = isset($post['senha']) ? $post['senha'] : '';
+
+        // Se a senha estiver vazia, mantenha a senha atual
+        if (empty($senha)) {
+            // Obtenha a senha atual do banco
+            if (isset($post['id'])) {
+                $usuario = $this->model->find($post['id']);
+                $senhaCriptografada = $usuario['senha'];
+            }
+            
+        } else {
+            // Criptografe a nova senha
+            $senhaCriptografada = password_hash($senha, PASSWORD_DEFAULT);
+        }
 
         if ($this->model->save([
             'id'                => ($post['id'] == "" ? null : $post['id']),
             "nivel"             => $post['nivel'],
             "statusRegistro"    => $post['statusRegistro'],
             "nome"              => $post['nome'],
-            "senha"             => password_hash($post['senha'], PASSWORD_DEFAULT),
+            "senha"             => $senhaCriptografada,
             "email"             => $post['email'],
             "id_funcionario"    => ($post['funcionarios'] == "" ? null : $post['funcionarios'])
         ])) { 
