@@ -6,17 +6,20 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
-$routes->get('/', 'Home::index');
+//  $routes->setDefaultController('Home');
+//  $routes->setDefaultMethod('index');
 
-$routes->group('Home', function($routes) {
-    $routes->get('index', 'Home::index');
-    $routes->get('login', 'Home::login');
-    $routes->get('homeAdmin', 'Home::homeAdmin');
-    $routes->get('home', 'Home::home');
-
-    $routes->get('criarConta', 'Home::criarNovaConta');
-    $routes->post('gravarNovaConta', 'Home::gravarNovaConta');
-});
+ $routes->get('/', 'Home::index');
+ 
+ $routes->group('Home', function($routes) {
+     $routes->get('index', 'Home::index');
+     $routes->get('login', 'Home::login');
+     $routes->get('homeAdmin', 'Home::homeAdmin');
+     $routes->get('home', 'Home::home');
+ 
+     $routes->get('criarConta', 'Home::criarNovaConta');
+     $routes->post('gravarNovaConta', 'Home::gravarNovaConta');
+ });
 
 $routes->group('Login', function($routes) {
     $routes->post('signIn', 'Login::signIn');    
@@ -156,4 +159,3 @@ $routes->group('FaleConosco', function($routes) {
 
 
 });
-
