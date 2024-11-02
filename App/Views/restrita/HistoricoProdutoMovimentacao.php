@@ -65,6 +65,22 @@
             </div>
         </main>
 
+        <div class="row justify-content-center">
+            <div class="col-6 d-flex justify-content-center">
+                <?php if ($action == "view"): ?>
+                    <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+                <?php endif; ?>
+            </div>
+        </div>
+
+        <script>
+
+            function goBack() {
+                window.history.go(-1);
+            }
+
+        </script>
+
 <?= getDataTables("listaProdutos"); ?>
 
 <?= $this->endSection() ?>

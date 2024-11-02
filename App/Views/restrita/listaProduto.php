@@ -39,10 +39,7 @@
                                     <th class="sorting_asc" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 113.297px;" aria-sort="ascending" aria-label="ID: activate to sort column descending">ID</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Nome Produto</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 175.656px;" aria-label="Usuario: activate to sort column ascending">Quantidade</th>
-                                    <?php if (isset($action) && $action !== null) : ?>
-                                        <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Valor</th>
-
-                                    <?php endif; ?>
+                                    <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Valor</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Estado do produto</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.5938px;" aria-label="Status do Usuario: activate to sort column ascending">Status do produto</th>
                                     <th class="sorting" tabindex="0" aria-controls="tbListaProduto" rowspan="1" colspan="1" style="width: 79.875px;" aria-label="Opções: activate to sort column ascending">Opções</th>
@@ -54,11 +51,7 @@
                                         <td class="sorting_1"><?= $value['id'] ?></td>
                                         <td><?= $value['nome'] ?></td>
                                         <td><?= !empty($value['quantidade']) ? number_format($value['quantidade'], 2, ",", ".") : '0,00' ?></td>
-                                        <?php if (isset($action) && $action !== null) : ?>
-                                            <td>
-                                                <?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Não encontrado" ?>
-                                            </td>
-                                        <?php endif; ?>
+                                        <td><?= !empty($value['valor']) ? number_format($value['valor'], 2, ",", ".") : "Não encontrado" ?></td>
                                         <td><?= getCondicao($value['condicao']) ?></td>
                                         <td><?= getStatusDescricao($value['statusRegistro']) ?></td>
                                         <td>

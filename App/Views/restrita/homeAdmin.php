@@ -134,17 +134,37 @@
    
         <div class="row">
             <div class="col-12 col-sm-12 col-lg-12">
-                <div class="card ">
+                <div class="card">
                     <div class="card-header">
-                        <h4>Grafico de entradas e saidas hoje</h4>
+                        <h4>Gráfico de entradas e saídas hoje</h4>
                     </div>
                     <div class="card-body">
-                        <canvas id="graficoRelatorio" width="400" height="130"></canvas>
+                        <canvas id="graficoRelatorio" style="width: 100%; height: 300px;"></canvas> <!-- Tamanho responsivo -->
                         <div id="relatorioHtml" class="mt-4"></div> 
                     </div>
                 </div>
             </div>
         </div>
+
+        <style>
+            /* CSS para garantir que o canvas seja responsivo */
+            @media (max-width: 576px) { /* Dispositivos menores */
+                #graficoRelatorio {
+                    height: 400px; /* Aumente a altura em dispositivos pequenos */
+                }
+            }
+            @media (min-width: 576px) and (max-width: 768px) { /* Dispositivos médios */
+                #graficoRelatorio {
+                    height: 350px; /* Altura moderada em dispositivos médios */
+                }
+            }
+            @media (min-width: 768px) { /* Dispositivos maiores */
+                #graficoRelatorio {
+                    height: 300px; /* Altura padrão em dispositivos grandes */
+                }
+            }
+        </style>
+
     </section>
 </div>
 

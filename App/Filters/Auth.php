@@ -10,6 +10,7 @@ class Auth implements FilterInterface
 {
     public function before(RequestInterface $request, $arguments = null)
     {
+
         if ((bool)session()->getTempData("isLoggedIn") != true) {
             return redirect()->to('/Home/index')->with("msgError", "Você não está logado");
         }

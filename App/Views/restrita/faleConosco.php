@@ -23,19 +23,19 @@
 
         <div class="row">
 
-            <div class="col-12 mt-3">
+            <div class="col-12 col-md-12 mt-3">
                 <label for="nome" class="form-label">Nome</label>
                 <input type="text" class="form-control" name="nome" id="nome"
                        placeholder="Seu nome" required autofocus>
             </div>
 
-            <div class="col-9 mt-3">
+            <div class="col-12 col-md-9 mt-3">
                 <label for="email" class="form-label">E-mail</label>
                 <input type="text" class="form-control" name="email" id="email" 
                        placeholder="Seu e-mail" required>
             </div>
 
-            <div class="col-3 mt-3">
+            <div class="col-12 col-md-3 mt-3">
                 <label for="telefone" class="form-label">Telefone</label>
                 <input type="text" class="form-control" name="telefone" id="telefone" 
                        placeholder="Seu telefone" required>

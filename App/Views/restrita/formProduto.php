@@ -6,7 +6,9 @@
 
 <div class="container">
     
-    <?= exibeTitulo("Produto", ['acao' => $action]) ?>
+    <div class="container" style="margin-top: 130px;">
+        <?= exibeTitulo("Produto", ['acao' => $action]) ?>
+    </div>
 
     <?php
 
@@ -23,112 +25,98 @@
 
     <?= form_open(base_url() . 'Produto/' . ($action == "delete" ? "delete" : "store")) ?>
 
-        <div class="row">
+    <div class="row">
 
-            <div class="col-8">
-                <label for="nome" class="form-label">Nome</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                <?= setaMsgErrorCampo('nome', $errors) ?>
-            </div>
-
-            <div class="col-4">
-                <label for="quantidade" class="form-label">Quantidade</label>
-                <?php 
-                // Recupera a quantidade
-                $quantidade = setValor('quantidade', $data);
-                
-                // Formata o número para exibir como 159.521,00
-                // Usar number_format com "." como separador de milhar e "," como separador decimal
-                $quantidadeFormatada = is_numeric($quantidade) ? number_format($quantidade, 2, ",", ".") : '0,00'; // Formatação correta
-                ?>
-                
-                <!-- Usar um campo de texto para exibir o número formatado -->
-                <input type="text" class="form-control" name="qtd_item" id="quantidade" value="<?= $quantidadeFormatada ?>" disabled>
-                
-                <input type="hidden" name="quantidade" id="hidden" value="<?= $quantidade ?>">
-                
-                <?= setaMsgErrorCampo('quantidade', $errors) ?>
-            </div>
-
-            <div class="mt-3 mb-3 col-6">
-                <label for="fornecedor_id" class="form-label">Fornecedor</label>
-                <select class="form-control" name="fornecedor_id" id="fornecedor_id"  
-                <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>
-                <?= !empty($aFornecedor) ? 'required' : '' ?>                
-                >
-                    <option value="" <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
-                    <?php foreach ($aFornecedor as $value) : ?>
-                        <option value="<?= $value['id'] ?>" <?= setValor('fornecedor', $data) == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <?= setaMsgErrorCampo('fornecedor_id', $errors) ?>
-            </div>
-
-            <div class="col-3 mt-3">
-                <label for="statusRegistro" class="form-label">Status</label>
-                <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
-                    <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
-                    <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
-                </select>
-                <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
-            </div>
-
-            <div class="col-3 mt-3">
-                <label for="condicao" class="form-label">Estado do item</label>
-                <select name="condicao" id="condicao" class="form-control" required <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>><?= setValor('condicao', $data) ?>>
-                    <!--  verifica se o statusItem está no banco de dados e retorna esse status -->
-                    <option value=""  <?= setValor('condicao', $data) == "" ? "selected" : ""  ?>>...</option>
-                    <option value="1" <?= setValor('condicao', $data) == 1  ? "selected" : ""  ?>>Novo</option>
-                    <option value="2" <?= setValor('condicao', $data) == 2  ? "selected" : ""  ?>>Usado</option>
-                </select>
-                <?= setaMsgErrorCampo('condicao', $errors) ?>
-            </div>
-
-            <div class="col-12 mt-3">
-                <label for="descricao" class="form-label">Descrição</label>
-                <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>><?= setValor('descricao', $data) ?></textarea>
-                <?= setaMsgErrorCampo('descricao', $errors) ?>
-            </div>
-
-            <!-- se a ação for view não aparece a hora formatada no formprodutos -->
-            <?php  if ($action == 'view' || $action == 'delete' || $action == 'update') { ?>
-            <div class="col-6 mt-3">
-                <label for="dataMod" class="form-label">Data da ultima modificação</label>
-                <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>" disabled>
-
-                <input type="hidden" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>">
-            </div>
-            <?php 
-            } 
-            ?>
-
-            <?php if ($action != 'insert' && $action != 'delete' && $action != 'view') : ?>
-            <div class="col-6 mt-3">
-                <label for="historico" class="form-label">Histórico de Alterações</label>
-                <input type="date" class="form-control" name="historico" id="search_historico" placeholder="Data do histórico" autofocus value="" max="<?= date('Y-m-d') ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                <select id="id_produto" class="form-control" style="display:none;">
-                    <option value="" selected disabled>Escolha a data</option>
-                </select>
-            </div>
-            <?php endif; ?>
-
-            <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
-
-            <div class="form-group col-12 mt-5">
-                <?php if ($action != "view"): ?>
-                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
-                <?php endif; ?>
-                <a href="<?= base_url() ?>/Produto" class="btn btn-secondary">Voltar</a>
-            </div>
-            
+        <div class="col-12 col-md-8">
+            <label for="nome" class="form-label">Nome</label>
+            <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do item" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <?= setaMsgErrorCampo('nome', $errors) ?>
         </div>
 
-        <?= form_close() ?>
+        <div class="col-12 col-md-4">
+            <label for="quantidade" class="form-label">Quantidade</label>
+            <?php 
+            $quantidade = setValor('quantidade', $data);
+            $quantidadeFormatada = is_numeric($quantidade) ? number_format($quantidade, 2, ",", ".") : '0,00'; // Formatação correta
+            ?>
+            <input type="text" class="form-control" name="qtd_item" id="quantidade" value="<?= $quantidadeFormatada ?>" disabled>
+            <input type="hidden" name="quantidade" id="hidden" value="<?= $quantidade ?>">
+            <?= setaMsgErrorCampo('quantidade', $errors) ?>
+        </div>
 
+        <div class="col-12 col-md-6 mt-3">
+            <label for="fornecedor_id" class="form-label">Fornecedor</label>
+            <select class="form-control" name="fornecedor_id" id="fornecedor_id"  
+            <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>
+            <?= !empty($aFornecedor) ? 'required' : '' ?>>                
+                <option value="" <?= setValor('fornecedor') == ""  ? "SELECTED": "" ?>>...</option>
+                <?php foreach ($aFornecedor as $value) : ?>
+                    <option value="<?= $value['id'] ?>" <?= setValor('fornecedor', $data) == $value['id'] ? "SELECTED": "" ?>><?= $value['nome'] ?></option>
+                <?php endforeach; ?>
+            </select>
+            <?= setaMsgErrorCampo('fornecedor_id', $errors) ?>
+        </div>
 
-        <a href="http://"></a>
+        <div class="col-12 col-md-3 mt-3">
+            <label for="statusRegistro" class="form-label">Status</label>
+            <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
+                <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
+                <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
+            </select>
+            <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
+        </div>
+
+        <div class="col-12 col-md-3 mt-3">
+            <label for="condicao" class="form-label">Estado do item</label>
+            <select name="condicao" id="condicao" class="form-control" required <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>>
+                <option value=""  <?= setValor('condicao', $data) == "" ? "selected" : ""  ?>>...</option>
+                <option value="1" <?= setValor('condicao', $data) == 1  ? "selected" : ""  ?>>Novo</option>
+                <option value="2" <?= setValor('condicao', $data) == 2  ? "selected" : ""  ?>>Usado</option>
+            </select>
+            <?= setaMsgErrorCampo('condicao', $errors) ?>
+        </div>
+
+        <div class="col-12 mt-3">
+            <label for="descricao" class="form-label">Descrição</label>
+            <textarea class="form-control" name="descricao" id="descricao" placeholder="Descrição do item" <?= $action == 'delete' || $action == 'view' ? 'disabled' : '' ?>><?= setValor('descricao', $data) ?></textarea>
+            <?= setaMsgErrorCampo('descricao', $errors) ?>
+        </div>
+
+        <?php if ($action == 'view' || $action == 'delete' || $action == 'update') { ?>
+        <div class="col-12 col-md-6 mt-3">
+            <label for="dataMod" class="form-label">Data da última modificação</label>
+            <input type="text" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>" disabled>
+            <input type="hidden" class="form-control" name="dataMod" id="dataMod" value="<?= setValor('dataMod', $data) ?>">
+        </div>
+        <?php } ?>
+
+        <?php if ($action != 'insert' && $action != 'delete' && $action != 'view') : ?>
+        <div class="col-12 col-md-6 mt-3">
+            <label for="historico" class="form-label">Histórico de Alterações</label>
+            <input type="date" class="form-control" name="historico" id="search_historico" placeholder="Data do histórico" autofocus value="" max="<?= date('Y-m-d') ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <select id="id_produto" class="form-control" style="display:none;">
+                <option value="" selected disabled>Escolha a data</option>
+            </select>
+        </div>
+        <?php endif; ?>
+
+        <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
+
+        <div class="form-group col-12 mt-5">
+            <?php if ($action != "view"): ?>
+                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+            <?php endif; ?>
+        </div>
+        
+    </div>
+
+    <?= form_close() ?>
+
+    <?php if ($action == "view"): ?>
+        <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+    <?php endif; ?>
+
 
 </div>
 
@@ -136,6 +124,10 @@
 <script src="<?= base_url() ?>assets/ckeditor5/ckeditor.js"></script>
 
 <script type="text/javascript">
+
+    function goBack() {
+        window.history.go(-1);
+    }
 
     document.addEventListener("DOMContentLoaded", function() {
         ClassicEditor

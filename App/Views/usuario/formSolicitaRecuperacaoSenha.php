@@ -5,7 +5,7 @@
 <section>
     <div class="container">
         <div class="blog-banner">
-            <div class="mt-5 mb-5 text-left">
+            <div class="mt-5 mb-5 text-center">
                 <h1 style="color: #384aeb;">Solicita Recuperação de Senha</h1>
             </div>
         </div>
@@ -13,12 +13,10 @@
 </section>
 
 <section class="section-margin section-login">
-    
-    <div class="container mt-5">
-        
-        <div class="row">
-            <div class="col-lg-4">
-                <form class="form-contact contact_form" action="<?= base_url() . "Login/gerarLinkRecuperaSenha" ?>" method="POST" id="contactForm" novalidate="novalidate">
+
+    <div class="mt-5 col-12" style="display: flex; justify-content: space-around; align-items: center;">
+        <div class="">
+            <form class="form-contact contact_form" action="<?= base_url() . "Login/gerarLinkRecuperaSenha" ?>" method="POST" id="contactForm" novalidate="novalidate">
                 <div class="row">
 
                     <div class="col-sm-12 header-login mb-4">
@@ -35,30 +33,26 @@
                     </div>
                 </div>
 
-            <?php
+                <?php
 
-            if (session()->get('msgError')) {
-                ?>
-                <div class="row mt-2">
-                    <div class="col-12">
-                        <div class="alert alert-danger" role="alert">
-                            <?= session()->destroy('msgError') ?>
+                if (session()->get('msgError')) {
+                    ?>
+                    <div class="row mt-2">
+                        <div class="col-12">
+                            <div class="alert alert-danger" role="alert">
+                                <?= session()->destroy('msgError') ?>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <?php
-            }
-            ?>
+                    <?php
+                }
+                ?>
 
-            <div class="form-group mt-3 controls">
+                <div class="form-group mt-3 controls">
                     <button type="submit" class="btn btn-outline-primary btnCustomAzul">Enviar</button>
                 </div>
-            </div>
-
-        </form>
-
+            </form>
         </div>
-
     </div>
 </section>
 <?= $this->endSection() ?>

@@ -41,6 +41,8 @@ class UsuarioRecuperaSenha extends Migration
         $this->forge->addForeignKey('usuario_id', 'usuario', 'id', 'NO ACTION', 'NO ACTION');
         
         $this->forge->createTable('usuariorecuperasenha', true, ['ENGINE' => 'InnoDB']);
+
+        $this->db->query("ALTER TABLE usuariorecuperasenha MODIFY created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP");
     }
 
     public function down()

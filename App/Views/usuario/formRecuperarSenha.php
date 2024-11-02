@@ -7,7 +7,7 @@
 <section>
     <div class="container">
         <div class="blog-banner">
-            <div class="mt-5 mb-5 text-left">
+            <div class="mt-5 mb-5 text-center">
                 <h1 style="color: #384aeb;">Recuperação de Senha</h1>
             </div>
         </div>
@@ -18,7 +18,7 @@
 
     <div class="row">
 
-        <div class="mainbox col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 div_login">                    
+        <div class="mainbox div_login">                    
 
             <div class="card">
 

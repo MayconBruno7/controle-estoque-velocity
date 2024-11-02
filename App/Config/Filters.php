@@ -62,41 +62,45 @@ class Filters extends BaseFilters
         ],
     ];
 
-    /**
-     * List of filter aliases that are always
-     * applied before and after every request.
-     *
-     * @var array<string, array<string, array<string, string>>>|array<string, list<string>>
-     */
-    public array $globals = [
-        'before' => [
-            'auth' => [
-				'except' => 
-                [
-                    'Home/index', 
-                    'Home/login', 
-                    'Home/home', 
-                    'Home/homeAdmin',
-                    'Home/criarConta', 
-                    'Home/gravarNovaConta',
-                    'Login/signIn',
-                    'Login/signOut',
-                    'Login/solicitaRecuperacaoSenha',
-                    'Login/gerarLinkRecuperaSenha',
-                    'Login/recuperarSenha',
-                    'Login/atualizaRecuperaSenha',
-                    'FaleConosco/verificaEstoque',
-				]
-			]
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
-        ],
-        'after' => [
-            // 'honeypot',
-            // 'secureheaders',
-        ],
-    ];
+
+    public array $globals;
+
+    public function __construct()
+    {
+        // Defina a lista de exceções com '/index.php/'
+        $excludedPaths = [
+            '/index.php/',
+            'Home/index',
+            'Home/login',
+            'Home/criarConta',
+            'Home/gravarNovaConta',
+            'Login/signIn',
+            'Login/signOut',
+            'Login/solicitaRecuperacaoSenha',
+            'Login/gerarLinkRecuperaSenha',
+            'Login/recuperarSenha/*',
+            'Login/atualizaRecuperaSenha',
+            'FaleConosco/verificaEstoque',
+        ];
+
+        // Remova '/index.php/' dos caminhos
+        $excludedPaths = array_map(function ($path) {
+            return str_replace('/index.php/', '', $path);
+        }, $excludedPaths);
+
+        // Defina $globals
+        $this->globals = [
+            'before' => [
+                'auth' => [
+                    'except' => $excludedPaths,
+                ],
+            ],
+            'after' => [
+                // 'honeypot',
+                // 'secureheaders',
+            ],
+        ];
+    }
 
     /**
      * List of filter aliases that works on a

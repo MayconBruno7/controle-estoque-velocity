@@ -44,6 +44,7 @@ class Funcionario extends Migration
                 'type' => 'INT',
                 'constraint' => 10,
                 'default' => 1,
+                'comment' => '1 - Ativo    2 - Inativo',
             ],
             'cargo' => [
                 'type' => 'INT',

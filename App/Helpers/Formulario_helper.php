@@ -8,45 +8,67 @@
      * @return string
      */
     function exibeTitulo($titulo, $parametro = ['acao' => 'lista'])
-    {
-        if (!isset($parametro['controller'])) {
-            $parametro['controller'] = $titulo;
-        }
-
-        $subTitulo  = $titulo;
-        $link       = '/lista';
-        $icone      = 'list';
-
-        if ($parametro['acao'] == 'new') {
-            $subTitulo .= ' - Novo';
-        } else  if ($parametro['acao'] == 'update') {
-            $subTitulo .= ' - Alteração';
-        } else  if ($parametro['acao'] == 'delete') {
-            $subTitulo .= ' - Exclusão';
-        } else  if ($parametro['acao'] == 'view') {
-            $subTitulo .= ' - Visualização';
-        } else  if ($parametro['acao'] == 'lista') {
-            $link       = '/form/new/0';
-            $icone      = 'plus';
-        }
-
-        $texto = '
-                    <section>
-                        <div class="blog-banner">
-                            <div class="row">
-                                <div class="col-2 mb-5 text-right" style="margin-left: 85%; margin-top: 8%;">
-                                    <a href="' .  base_url() . $parametro['controller'] . $link . '" class="btn btn-secondary btn-sm btn-icons-crud" title="Novo"><i class="fa fa-' . $icone .'" aria-hidden="true"></i></a>    
-                                </div>
-                            </div>
-                        </div>
-                    </section>
-        ';
-
-        $texto .= mensagemSucesso();
-        $texto .= mensagemError();
-
-        return $texto;
+{
+    if (!isset($parametro['controller'])) {
+        $parametro['controller'] = $titulo;
     }
+
+    $subTitulo = $titulo;
+    $link = '/lista';
+    $icone = 'list';
+
+    switch ($parametro['acao']) {
+        case 'new':
+            $subTitulo .= ' - Novo';
+            break;
+        case 'update':
+            $subTitulo .= ' - Alteração';
+            break;
+        case 'delete':
+            $subTitulo .= ' - Exclusão';
+            break;
+        case 'view':
+            $subTitulo .= ' - Visualização';
+            break;
+        case 'lista':
+            $link = '/form/new/0';
+            $icone = 'plus';
+            break;
+    }
+
+    // var_dump($parametro['acao']);
+    // exit;
+
+    ob_start(); // Inicia o buffer de saída
+    ?>
+    <section>
+        <div class="blog-banner">
+            <div class="row">
+                <?php if (isset($parametro['acao']) && $parametro['acao'] != 'lista') : ?>
+                    <div class="col-10 text-left">
+                        <h1 style="color: #384aeb;"><?php echo $subTitulo; ?></h1>
+                    </div>
+                <?php endif; ?>
+                <div class="col-2 mb-5 text-right" <?= isset($parametro['acao']) && $parametro['acao'] == 'lista' ? 'style="margin-left: 85%; margin-top: 8%;"' : '' ?>>
+                    <?php if ($parametro['acao'] != 'view') : ?>
+                    <a href="<?php echo base_url() . $parametro['controller'] . $link; ?>" class="btn btn-secondary btn-sm btn-icons-crud" title="<?= $parametro['acao'] == 'lista' ? 'Novo' : 'Voltar' ?>">
+                        <i class="fa fa-<?php echo $icone; ?>" aria-hidden="true"></i>
+                    </a>
+                    <?php endif; ?>
+                </div>
+            </div>
+        </div>
+    </section>
+    <?php
+
+    $texto = ob_get_clean(); // Captura o buffer e limpa
+
+    $texto .= mensagemSucesso();
+    $texto .= mensagemError();
+
+    return $texto;
+}
+
 
     /**
      * mensagemSucesso

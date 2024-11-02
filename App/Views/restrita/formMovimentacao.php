@@ -56,7 +56,9 @@
         </div>
     </div>
 
-    <?= exibeTitulo('Movimentacao', ['acao' => $action]); ?>
+    <div class="container" style="margin-top: 130px;">
+        <?= exibeTitulo("Movimentacao", ['acao' => $action]) ?>
+    </div>
 
     <?= form_open(base_url() . 'Movimentacao/' . ($action), ['method' => 'post']) ?>
 
@@ -65,7 +67,7 @@
 
     <?php if ($action == 'new') : ?>
     <div class="row justify-content-center">
-        <div class="col-6 mt-3">
+        <div class="col-12 col-md-6 mt-3">
             <label for="fornecedor_id" class="form-label">Fornecedor</label>
             <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?= $action != 'new' && $action != 'update' ? 'disabled' : ''?>>
                 <option value="">...</option>
@@ -77,7 +79,7 @@
             </select>
         </div>
 
-        <div class="col-3 mt-3">
+        <div class="col-12 col-md-6 mt-3">
             <label for="tipo" class="form-label">Tipo de Movimentação</label>
             <select name="tipo" id="tipo" class="form-control" required <?= $action != 'new' && $action != 'update' ? 'disabled' : ''?>>
                 <option value="">...</option>
@@ -86,7 +88,7 @@
             </select>
         </div>
 
-        <div class="col-3 mt-3">
+        <div class="col-12 col-md-3 mt-3">
             <label for="statusRegistro" class="form-label">Status da Movimentação</label>
             <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= $action != 'new' && $action != 'update' ? 'disabled' : ''?>>
                 <option value="">...</option>
@@ -95,7 +97,7 @@
             </select>
         </div>
 
-        <div class="col-8 mt-3">
+        <div class="col-12 col-md-8 mt-3">
             <label for="setor_id" class="form-label">Setor</label>
             <select name="setor_id" id="setor_id" class="form-control" required <?= $action != 'new' && $action != 'update' ? 'disabled' : '' ?>>
                 <option value="">...</option>
@@ -107,13 +109,13 @@
             </select>
         </div>
 
-        <div class="col-2 mt-3">
+        <div class="col-12 col-md-2 mt-3">
             <label for="data_pedido" class="form-label">Data do Pedido</label>
             <!--  verifica se a nome está no banco de dados e retorna essa nome -->
             <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= isset($dadosMovimentacao['data_pedido']) ? $dadosMovimentacao['data_pedido'] : "" ?>" max="<?= date('Y-m-d') ?>" <?= $action && ($action == 'delete' || $action == 'view') ? 'disabled' : '' ?>>
         </div>
 
-        <div class="col-2 mt-3">
+        <div class="col-12 col-md-2 mt-3">
             <label for="data_chegada" class="form-label">Data de Chegada</label>
             <!-- verifica se a data_chegada está no banco de dados e retorna essa data -->
             <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= isset($dadosMovimentacao['data_chegada']) ? $dadosMovimentacao['data_chegada'] : "" ?>" max="<?= date('Y-m-d') ?>" min="<?= setValor('data_pedido', $data) ?>" <?=$action && ($action == 'delete' || $action == 'view') ? 'disabled' : '' ?>>
@@ -128,7 +130,7 @@
         
     <?php if ($action != 'new') : ?>
     <div class="row justify-content-center">
-        <div class="col-6 mt-3">
+        <div class="col-12 col-md-6 mt-3">
             <label for="fornecedor_id" class="form-label">Fornecedor</label>
             <select name="fornecedor_id" id="fornecedor_id" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
@@ -140,7 +142,7 @@
             </select>
         </div>
 
-        <div class="col-3 mt-3">
+        <div class="col-12 col-md-3 mt-3">
             <label for="tipo" class="form-label">Tipo de Movimentação</label>
             <select name="tipo" id="tipo" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
@@ -149,7 +151,7 @@
             </select>
         </div>
 
-        <div class="col-3 mt-3">
+        <div class="col-12 col-md-3 mt-3">
             <label for="statusRegistro" class="form-label">Status da Movimentação</label>
             <select name="statusRegistro" id="statusRegistro" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
@@ -158,7 +160,7 @@
             </select>
         </div>
 
-        <div class="col-8 mt-3">
+        <div class="col-12 col-md-8 mt-3">
             <label for="setor_id" class="form-label">Setor</label>
             <select name="setor_id" id="setor_id" class="form-control" required <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
                 <option value="">...</option>
@@ -170,13 +172,13 @@
             </select>
         </div>
 
-        <div class="col-2 mt-3">
+        <div class="col-12 col-md-2 mt-3">
             <label for="data_pedido" class="form-label">Data do Pedido</label>
             <!--  verifica se a nome está no banco de dados e retorna essa nome -->
             <input type="date" class="form-control" name="data_pedido" id="data_pedido" placeholder="data_pedido do item" required autofocus value="<?= setValor('data_pedido', $data) ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
         </div>
 
-        <div class="col-2 mt-3">
+        <div class="col-12 col-md-2 mt-3">
             <label for="data_chegada" class="form-label">Data de Chegada</label>
             <!--  verifica se a nome está no banco de dados e retorna essa nome -->
             <input type="date" class="form-control" name="data_chegada" id="data_chegada" placeholder="data_chegada do item" value="<?= setValor('data_chegada', $data) ?>" min="<?= setValor('data_pedido', $data) ?>" max="<?= date('Y-m-d') ?>" <?=$action == 'view' ||$action == 'delete' ? 'disabled' : '' ?>>
@@ -312,7 +314,7 @@
     <div class="row justify-content-center">
         <div class="col-6 d-flex justify-content-center">
             <?php if ($action == "view"): ?>
-            <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+                <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
             <?php endif; ?>
         </div>
     </div>

@@ -11,121 +11,132 @@
 
 <div class="container">
 
-    <?= exibeTitulo("Fornecedor", ['acao' => $action]) ?>
+    <div class="container" style="margin-top: 130px;">
+        <?= exibeTitulo("Fornecedor", ['acao' => $action]) ?>
+    </div>
 
     <?= form_open(base_url() . 'Fornecedor/' . ($action == "delete" ? "delete" : "store")) ?>
 
-        <div class="row">
+        <div class="container">
+            <div class="row">
 
-            <div class="mb-3 col-4">
-                <label for="cnpj" class="form-label">CNPJ</label>
-                <input type="text" class="form-control" name="cnpj" id="cnpj" 
-                    maxlength="18" oninput="formatarCNPJ(this)" placeholder="Informe o cnpj"
-                    value="<?= formatarCNPJInput(setValor('cnpj', $data)) ?>"
-                    autofocus <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('cnpj', $errors) ?>
-            </div>
+                <div class="mb-3 col-12 col-md-4">
+                    <label for="cnpj" class="form-label">CNPJ</label>
+                    <input type="text" class="form-control" name="cnpj" id="cnpj" 
+                        maxlength="18" oninput="formatarCNPJ(this)" placeholder="Informe o CNPJ"
+                        value="<?= formatarCNPJInput(setValor('cnpj', $data)) ?>"
+                        autofocus <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('cnpj', $errors) ?>
+                </div>
 
-            <div class="mb-3 col-4">
-                <label for="nome" class="form-label">Nome</label>
-                <input type="text" class="form-control" name="nome" id="nome" 
-                    maxlength="50" placeholder="Informe nome do fornecedor"
-                    value="<?= setValor('nome', $data) ?>"
-                    <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('nome', $errors) ?>
-            </div>
+                <div class="mb-3 col-12 col-md-4">
+                    <label for="nome" class="form-label">Nome</label>
+                    <input type="text" class="form-control" name="nome" id="nome" 
+                        maxlength="50" placeholder="Informe nome do fornecedor"
+                        value="<?= setValor('nome', $data) ?>"
+                        <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('nome', $errors) ?>
+                </div>
 
-            <div class="mb-3 col-4">
-                <label for="statusRegistro" class="form-label">Status</label>
-                <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
-                    <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
-                    <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
-                </select>
-                <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
-            </div>
+                <div class="mb-3 col-12 col-md-4">
+                    <label for="statusRegistro" class="form-label">Status</label>
+                    <select class="form-control" name="statusRegistro" id="statusRegistro" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
+                        <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
+                        <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
+                    </select>
+                    <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
+                </div>
 
-            <div class="col-6 mb-3">
-                <label for="estado" class="form-label">Estado</label>
-                <select class="form-control" name="estado" id="estado" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <option value="" selected >...</option>
-                    <?php foreach ($aEstado as $value): ?>
-                        <option value="<?= $value['id'] ?>" <?= $estadoSelecionado == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
-                    <?php endforeach; ?>
-                </select>
-                <?= setaMsgErrorCampo('estado', $errors) ?>
-            </div>
+                <div class="mb-3 col-12 col-md-6">
+                    <label for="estado" class="form-label">Estado</label>
+                    <select class="form-control" name="estado" id="estado" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <option value="" selected >...</option>
+                        <?php foreach ($aEstado as $value): ?>
+                            <option value="<?= $value['id'] ?>" <?= $estadoSelecionado == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
+                        <?php endforeach; ?>
+                    </select>
+                    <?= setaMsgErrorCampo('estado', $errors) ?>
+                </div>
 
-            <div class="col-6 mb-3">
-                <label for="cidade" class="form-label">Cidade</label>
-                <select class="form-control" name="cidade" id="cidade" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?php if (empty($cidadeSelecionada)) : ?>
-                        <option value="" selected disabled>Escolha um estado</option>
+                <div class="mb-3 col-12 col-md-6">
+                    <label for="cidade" class="form-label">Cidade</label>
+                    <select class="form-control" name="cidade" id="cidade" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?php if (empty($cidadeSelecionada)) : ?>
+                            <option value="" selected disabled>Escolha um estado</option>
+                        <?php endif; ?>
+
+                        <?php if (!empty($cidadeSelecionada)) : ?>
+                            <?php foreach ($aCidade as $value): ?>
+                            <option value="<?= $value['id'] ?>" <?= $cidadeSelecionada == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
+                        <?php endforeach; ?>
+                        <?php endif; ?>
+                    </select>
+                    <?= setaMsgErrorCampo('cidade', $errors) ?>
+                </div>
+
+                <div class="mb-3 col-12 col-md-5">
+                    <label for="bairro" class="form-label">Bairro</label>
+                    <input type="text" class="form-control" name="bairro" id="bairro" 
+                        maxlength="50" placeholder="Informe o bairro"
+                        value="<?= setValor('bairro', $data) ?>"
+                        <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('bairro', $errors) ?>
+                </div>
+
+                <div class="mb-3 col-12 col-md-3">
+                    <label for="endereco" class="form-label">Endereço</label>
+                    <input type="text" class="form-control" name="endereco" id="endereco" 
+                        maxlength="50" placeholder="Informe o endereço"
+                        value="<?= setValor('endereco', $data) ?>"
+                        <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('endereco', $errors) ?>
+                </div>
+
+                <div class="mb-3 col-12 col-md-2">
+                    <label for="numero" class="form-label">Número</label>
+                    <input type="text" class="form-control" name="numero" id="numero" 
+                        maxlength="50" placeholder="Informe o número"
+                        value="<?= setValor('numero', $data) ?>"
+                        <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('numero', $errors) ?>
+                </div>
+
+                <div class="mb-3 col-12 col-md-2">
+                    <label for="telefone" class="form-label">Telefone</label>
+                    <input type="text" class="form-control" name="telefone" id="telefone" 
+                        maxlength="50" placeholder="Informe o telefone"
+                        value="<?= formatarTelefone(setValor('telefone', $data)) ?>"
+                        oninput="formatarTelefone(this)"
+                        <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+                        <?= setaMsgErrorCampo('telefone', $errors) ?>
+                </div>
+
+                <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
+                <input type="hidden" name="action" id="action" value="<?= setValor($action) ?>">
+
+                <div class="form-group col-12 mt-5">
+                    <?php if ($action != "view"): ?>
+                        <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
                     <?php endif; ?>
-
-                    <?php if (!empty($cidadeSelecionada)) : ?>
-                        <?php foreach ($aCidade as $value): ?>
-                        <option value="<?= $value['id'] ?>" <?= $cidadeSelecionada == $value['id'] ? "selected" : "" ?>><?= $value['nome'] ?></option>
-                    <?php endforeach; ?>
-                    <?php endif; ?>
-                </select>
-                <?= setaMsgErrorCampo('cidade', $errors) ?>
-            </div>
-
-            <div class="mb-3 col-5">
-                <label for="bairro" class="form-label">Bairro</label>
-                <input type="text" class="form-control" name="bairro" id="bairro" 
-                    maxlength="50" placeholder="Informe o bairro"
-                    value="<?= setValor('bairro', $data) ?>"
-                    <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('bairro', $errors) ?>
-            </div>
-
-            <div class="mb-3 col-3">
-                <label for="endereco" class="form-label">Endereco</label>
-                <input type="text" class="form-control" name="endereco" id="endereco" 
-                    maxlength="50" placeholder="Informe o endereco"
-                    value="<?= setValor('endereco', $data) ?>"
-                    <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('endereco', $errors) ?>
-            </div>
-
-            <div class="mb-3 col-2">
-                <label for="numero" class="form-label">Numero</label>
-                <input type="text" class="form-control" name="numero" id="numero" 
-                    maxlength="50" placeholder="Informe o numero"
-                    value="<?= setValor('numero', $data) ?>"
-                    <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('numero', $errors) ?>
-            </div>
-
-            <div class="mb-3 col-2">
-                <label for="telefone" class="form-label">Telefone</label>
-                <input type="text" class="form-control" name="telefone" id="telefone" 
-                    maxlength="50" placeholder="Informe o telefone"
-                    value="<?= formatarTelefone(setValor('telefone', $data)) ?>"
-                    oninput="formatarTelefone(this)"
-                    <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <?= setaMsgErrorCampo('telefone', $errors) ?>
-            </div>
-
-            <input type="hidden" name="id" id="id" value="<?= setValor('id', $data) ?>">
-            <input type="hidden" name="action" id="id" value="<?= setValor($action) ?>">
-
-            <div class="form-group col-12 mt-5">
-                <?php if ($action != "view"): ?>
-                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
-                <?php endif; ?>
-                <a href="<?= base_url() ?>/Fornecedor" class="btn btn-secondary">Voltar</a>
-
+                </div>
             </div>
         </div>
-    
-    </form>
+
+    <?= form_close() ?>
+
+    <?php if ($action == "view"): ?>
+        <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+    <?php endif; ?>
 
 </div>
 
 <script>
+
+    function goBack() {
+        window.history.go(-1);
+    }
+
     function formatarCNPJ(campo) {
         // Remove qualquer caracter especial, exceto números
         let cnpj = campo.value.replace(/[^\d]/g, '');

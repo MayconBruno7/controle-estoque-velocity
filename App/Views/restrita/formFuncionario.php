@@ -4,115 +4,110 @@
 
 <main class="container mt-5">
 
-    <?= exibeTitulo("Funcionario", ['acao' => $action]) ?>
-  
+
+    <div class="container" style="margin-top: 130px;">
+        <?= exibeTitulo("Funcionario", ['acao' => $action]) ?>
+    </div>
+
     <!-- pega se é insert, delete ou update a partir do metodo get assim mandando para a página correspondente -->
     <?= form_open(base_url() . 'Funcionario/' . ($action == "delete" ? "delete" : "store"), ['enctype' => 'multipart/form-data']) ?>
 
         <div class="row">
 
-            <div class="col-4">
-                <label for="nome" class="form-label mt-3">Nome</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do funcionario" required autofocus value="<?= setValor('nome', $data) ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <div class="col-12 col-md-6 form-group">
+                <label for="nome" class="form-label">Nome</label>
+                <input type="text" class="form-control" name="nome" id="nome" placeholder="Nome do funcionario" required value="<?= setValor('nome', $data) ?>" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('nome', $errors) ?>
             </div>
 
-            <div class="col-4">
-                <label for="cpf" class="form-label mt-3">CPF</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required autofocus value="<?= formatarCPF(setValor('cpf', $data)) ?>" oninput="formatarCPF(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <div class="col-12 col-md-6 form-group">
+                <label for="cpf" class="form-label">CPF</label>
+                <input type="text" class="form-control" name="cpf" id="cpf" placeholder="Cpf do funcionario" maxlength="14" required value="<?= formatarCPF(setValor('cpf', $data)) ?>" oninput="formatarCPF(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('cpf', $errors) ?>
             </div>
 
-            <div class="col-4">
-                <label for="statusRegistro" class="form-label mt-3">Estado do registro</label>
+            <div class="col-12 col-md-6 form-group">
+                <label for="statusRegistro" class="form-label">Estado do registro</label>
                 <select name="statusRegistro" id="statusRegistro" class="form-control" required <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
-                    <option value=""  <?= setValor('statusRegistro', $data) == ""  ? "SELECTED": "" ?>>...</option>
-                    <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED": "" ?>>Ativo</option>
-                    <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED": "" ?>>Inativo</option>
+                    <option value="" <?= setValor('statusRegistro', $data) == "" ? "SELECTED" : "" ?>>...</option>
+                    <option value="1" <?= setValor('statusRegistro', $data) == "1" ? "SELECTED" : "" ?>>Ativo</option>
+                    <option value="2" <?= setValor('statusRegistro', $data) == "2" ? "SELECTED" : "" ?>>Inativo</option>
                 </select>
                 <?= setaMsgErrorCampo('statusRegistro', $errors) ?>
             </div>
 
-            <div class="col-4">
-                <label for="telefone" class="form-label mt-3">Telefone</label>
-                <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required autofocus value="<?= formatarTelefone(setValor('telefone', $data)) ?>" oninput="formatarTelefone(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <div class="col-12 col-md-6 form-group">
+                <label for="telefone" class="form-label">Telefone</label>
+                <input type="text" class="form-control" name="telefone" id="telefone" placeholder="Telefone" maxlength="14" required value="<?= formatarTelefone(setValor('telefone', $data)) ?>" oninput="formatarTelefone(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('telefone', $errors) ?>
             </div>
 
-            <div class="col-3 mt-3">
+            <div class="col-12 col-md-4 form-group">
                 <label for="setor" class="form-label">Setor</label>
-                <select name="setor" id="setor" class="form-control" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>
-                <?= !empty($aSetor) ? 'required' : '' ?>  
-                >
-                <option value="">...</option> <!-- Opção padrão -->
-                <?php foreach ($aSetor as $setor): ?>
-                        <option value="<?= $setor['id'] ?>" <?= setValor('setor', $data) == $setor['id'] ? 'selected' : '' ?>>
-                            <?= $setor['nome'] ?>
-                        </option>
+                <select name="setor" id="setor" class="form-control" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?> <?= !empty($aSetor) ? 'required' : '' ?>>
+                    <option value="">...</option>
+                    <?php foreach ($aSetor as $setor): ?>
+                        <option value="<?= $setor['id'] ?>" <?= setValor('setor', $data) == $setor['id'] ? 'selected' : '' ?>><?= $setor['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?= setaMsgErrorCampo('setor', $errors) ?>
             </div>
 
-            <div class="col-3 mt-3">
+            <div class="col-12 col-md-4 form-group">
                 <label for="cargo" class="form-label">Cargo</label>
-                <select name="cargo" id="cargo" class="form-control" 
-                <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>
-                <?= !empty($aCargo) ? 'required' : '' ?>   
-                >
-                <option value="">...</option> <!-- Opção padrão -->
-                <?php foreach ($aCargo as $cargo): ?>
-                        <option value="<?= $cargo['id'] ?>" <?= setValor('cargo', $data) == $cargo['id'] ? 'selected' : '' ?>>
-                            <?= $cargo['nome'] ?>
-                        </option>
+                <select name="cargo" id="cargo" class="form-control" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?> <?= !empty($aCargo) ? 'required' : '' ?>>
+                    <option value="">...</option>
+                    <?php foreach ($aCargo as $cargo): ?>
+                        <option value="<?= $cargo['id'] ?>" <?= setValor('cargo', $data) == $cargo['id'] ? 'selected' : '' ?>><?= $cargo['nome'] ?></option>
                     <?php endforeach; ?>
                 </select>
                 <?= setaMsgErrorCampo('cargo', $errors) ?>
             </div>
 
-            <div class="col-2">
-                <label for="salario" class="form-label mt-3">Salário</label>
-                <!--  verifica se a nome está no banco de dados e retorna essa nome -->
-                <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required autofocus value="<?= formatarSalario(setValor('salario', $data)) ?>" oninput="formatarSalario(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
+            <div class="col-12 col-md-4 form-group">
+                <label for="salario" class="form-label">Salário</label>
+                <input type="text" class="form-control" name="salario" id="salario" placeholder="Salário R$" required value="<?= formatarSalario(setValor('salario', $data)) ?>" oninput="formatarSalario(this)" <?= $action == 'view' || $action == 'delete' ? 'disabled' : '' ?>>
                 <?= setaMsgErrorCampo('salario', $errors) ?>
             </div>
-        </div>
-
-        <?php if (in_array($action, ['new', 'update', 'view'])): ?>
 
             <div class="col-12 mb-3 mt-3">
                 <label for="anexos" class="form-label">Imagem</label>
                 <input class="form-control" type="file" id="imagem" name="imagem">
             </div>
 
-            <?php endif; ?>
-
             <?php if (!empty(setValor('imagem', $data))): ?>
-
             <div class="mb-3 col-12">
                 <h5>Imagem</h5>
                 <img src="<?= base_url('writable/uploads/funcionarios/' . rawurlencode(setValor('imagem', $data))) ?>" class="img-thumbnail" height="150" width="140"/>
             </div>
-
-        <?php endif; ?>
-
-        <input type="hidden" name="id" value="<?= setValor('id', $data) ?>">
-        <input type="hidden" name="action" value="<?= $action ?>">
-        <input type="hidden" name="nomeImagem" value="<?= setValor('imagem', $data) ?>">
-
-        <div class="form-group col-12 mt-5">
-            <!-- botão de voltar -->
-            <?php if ($action != "view"): ?>
-                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
             <?php endif; ?>
+
+            <input type="hidden" name="id" value="<?= setValor('id', $data) ?>">
+            <input type="hidden" name="action" value="<?= $action ?>">
+            <input type="hidden" name="nomeImagem" value="<?= setValor('imagem', $data) ?>">
+
+            <div class="form-group col-12 mt-5">
+                <?php if ($action != "view"): ?>
+                    <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+                <?php endif; ?>
+            </div>
+
         </div>
     <?= form_close() ?>
+
+    <?php if ($action == "view"): ?>
+        <button onclick="goBack()" class="btn btn-secondary">Voltar</button>
+    <?php endif; ?>
+
 
 </main>
 
 <script>
+
+    function goBack() {
+        window.history.go(-1);
+    }
+
     function formatarCPF(campo) {
         // Remove todos os caracteres que não são números
         var cpf = campo.value.replace(/\D/g, '');

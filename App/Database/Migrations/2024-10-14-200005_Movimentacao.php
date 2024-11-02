@@ -28,10 +28,12 @@ class Movimentacao extends Migration
             'statusRegistro' => [
                 'type' => 'INT',
                 'constraint' => 10,
+                'comment' => '1 - Ativo, 2 - Inativo',
             ],
             'tipo' => [
                 'type' => 'INT',
                 'constraint' => 10,
+                'comment' => '1 - Entrada, 2 - Saída',
             ],
             'motivo' => [
                 'type' => 'VARCHAR',
