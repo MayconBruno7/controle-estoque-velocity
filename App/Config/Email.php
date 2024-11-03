@@ -7,7 +7,7 @@ use CodeIgniter\Config\BaseConfig;
 class Email extends BaseConfig
 {
     public string $fromEmail  = 'Administrador';
-    public string $fromName   = 'no-reply - controleestoque@gmail.com';
+    public string $fromName   = 'no-reply-estoque';
     public string $recipients = 'controleestoque@gmail.com';
 
     /**

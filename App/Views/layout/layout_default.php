@@ -19,11 +19,11 @@
     <link rel="stylesheet" href="<?= base_url("assets/css/app.min.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/style.css") ?>">
     <link rel="stylesheet" href="<?= base_url("assets/css/components.css") ?>">
-    <!-- <link rel="stylesheet" href="<?= base_url("assets/css/custom.css") ?>"> -->
+    <link rel="stylesheet" href="<?= base_url("assets/css/custom.css") ?>">
 
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
     <script src="<?= base_url("assets/js/jquery-3.3.1.js") ?>"></script>
-    <!-- <script src="<?= base_url("assets/bootstrap/js/bootstrap.min.js") ?>"></script> -->
+    <script src="<?= base_url("assets/bootstrap/js/bootstrap.min.js") ?>"></script>
 
 </head>
 
@@ -67,6 +67,21 @@
     <?php session()->remove("exibeModalNotificacaoEstoque"); // Limpa a variável de sessão após o uso ?>
 <?php endif; ?>
 
+<?php if (session()->get("sucessoUsuarioAdm") || session()->get("erroUsuarioAdm")): ?>
+    <script>
+        let mensagemModal = `<?php
+            echo session()->getFlashdata('sucessoUsuarioAdm') ?: session()->getFlashdata('erroUsuarioAdm');
+        ?>`;
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            if (mensagemModal) {
+                exibirModal("Alteração do email de administrador", mensagemModal);
+            }
+        });
+    </script>
+    <?php session()->remove("sucessoUsuarioAdm"); // Limpa a variável de sessão após o uso ?>
+    <?php session()->remove("erroUsuarioAdm"); // Limpa a variável de sessão após o uso ?>
+<?php endif; ?>
 
 <div class="modal fade" id="modalGlobal" tabindex="-1">
     <div class="modal-dialog">
@@ -98,6 +113,75 @@
             <div class="setting-panel-header">
                 Painel de configurações
             </div>
+
+            <?php if (session()->get('usuarioNivel') == 1): ?>
+            <!-- Formulário -->
+            <?= form_open(base_url() . 'Configuracoes/store') ?>
+            <div class="container">
+                <div class="row">
+                    <div class="mt-3 col-12">
+                        <label for="email" class="form-label">
+                            Email administrador 
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" title="Notificações de estoque são enviadas para esse e-mail.">
+                                <i class="fa fa-question-circle"></i>
+                            </span>
+                        </label>
+                        <input type="text" class="form-control" name="email" id="email" maxlength="50" placeholder="Informe o email do administrador" value="">
+                    </div>
+                    <input type="hidden" name="id" id="id" value="">
+                    <input type="hidden" name="chave" id="chave" value="">
+                    <input type="hidden" name="descricao" id="descricao" value="">
+                </div>
+            </div>
+
+            <div class="form-group col-12 mt-2">
+                <button type="submit" value="submit" id="btGravar" class="btn btn-primary btn-sm">Gravar</button>
+            </div>
+            <?= form_close() ?>
+
+            <script>
+               document.addEventListener('DOMContentLoaded', function() {
+                    // Seleciona a div específica que será observada
+                    const settingSidebar = document.getElementById('settingSidebar');
+
+                    if (settingSidebar) {
+                        // Cria um observador de mudanças de atributos
+                        const observer = new MutationObserver((mutationsList) => {
+                            for (let mutation of mutationsList) {
+                                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                                    // Verifica se a classe 'showSettingPanel' foi adicionada
+                                    if (settingSidebar.classList.contains('showSettingPanel')) {
+                                        console.log('A classe showSettingPanel foi adicionada!');
+
+                                        // Faz a requisição AJAX para buscar o emailAdm
+                                        fetch('<?= base_url('Configuracoes/getInfoEmailAdm') ?>', {
+                                            method: 'GET' // Ajuste conforme necessário
+                                        })
+                                        .then(response => response.json())
+                                        .then(data => {
+                                            console.log(data);
+                                            // Atualiza o campo de email no formulário
+                                            document.getElementById('id').value = data[0].id;
+                                            document.getElementById('email').value = data[0].valor;
+                                            document.getElementById('chave').value = data[0].chave;
+                                            document.getElementById('descricao').value = data[0].descricao;
+                                        })
+                                        .catch(error => {
+                                            console.error('Erro ao recuperar email:', error);
+                                        });
+                                    }
+                                }
+                            }
+                        });
+
+                        // Configura o observador para monitorar mudanças de atributos
+                        observer.observe(settingSidebar, { attributes: true });
+                    }
+                });
+
+            </script>
+            <?php endif; ?>
+
             <!-- <div class="p-15 border-bottom">
                 <h6 class="font-medium m-b-10">Selecionar aparência</h6>
                 <div class="selectgroup layout-color w-50">
@@ -299,7 +383,7 @@
         // Verificar a cada 3 minutos (180000)
         // Verificar a cada 1 minuto (60000)
         // Verificar a cada 24 horas (86400000 ms)
-        const intervalo = 86400000; // 1 minuto em milissegundos
+        const intervalo = 60000; // 1 minuto em milissegundos
         const ultimaVerificacao = localStorage.getItem('ultimaVerificacao');
 
         function verificarEstoque() {

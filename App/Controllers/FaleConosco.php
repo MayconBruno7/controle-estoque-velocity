@@ -5,7 +5,7 @@ namespace App\Controllers;
 use CodeIgniter\Controller;
 use App\Models\FornecedorModel;
 use App\Models\ProdutoModel;
-use App\Models\UsuarioModel;
+use App\Models\ConfiguracoesModel;
 use CodeIgniter\HTTP\RedirectResponse;
 
 use CodeIgniter\Email\Email; // Importa a classe de Email
@@ -13,6 +13,21 @@ use Config\Email as EmailConfig; // Corrigido para importar a configuração de 
 
 class FaleConosco extends BaseController 
 {
+
+    public $fornecedorModel;
+    public $produtoModel;
+    public $configuracoesModel;
+
+    /**
+     * construct
+     */
+    public function __construct()
+    {
+        $this->configuracoesModel   = new ConfiguracoesModel();
+        $this->fornecedorModel      = new FornecedorModel();
+        $this->produtoModel         = new ProdutoModel();
+    }
+
     /**
      * Exibe o formulário de Fale Conosco.
      *
@@ -30,11 +45,9 @@ class FaleConosco extends BaseController
      */
     public function verificaEstoque()
     {
-        $fornecedorModel = new FornecedorModel();
-        $produtoModel    = new ProdutoModel();
 
-        $dados['aFornecedor'] = $fornecedorModel->findAll();
-        $dados['aProduto'] = $produtoModel->findAll();
+        $dados['aFornecedor'] = $this->fornecedorModel->findAll();
+        $dados['aProduto'] = $this->produtoModel->findAll();
         
         $assunto                    = 'Alerta de estoque';
         $message                    = "Os seguintes produtos estão com o estoque abaixo do limite de alerta:<br><br>";
@@ -64,13 +77,13 @@ class FaleConosco extends BaseController
      * @param string $nomeRemetente
      * @param string $assunto
      * @param string $mensagem
-     * @return void
-     */
-    private function enviaNotificacaoEstoque(string $assunto, string $mensagem): void
+     * 
+    */
+    private function enviaNotificacaoEstoque(string $assunto, string $mensagem)
     {
-        $usuarioModel               = new UsuarioModel();
-        $usuarioAdministradorEmail  = $usuarioModel->getUserEmailAdm(1);
-    
+
+        $usuarioAdministradorEmail  = $this->configuracoesModel->where('chave', 'emailAdm')->first();
+
         $imagemBase64 = 'imagemempresa';
 
         // Adiciona a imagem base64 ao corpo do e-mail
@@ -92,7 +105,7 @@ class FaleConosco extends BaseController
         $email->setFrom($emailConfig->fromEmail, $emailConfig->fromName);
     
         // Configura o destinatário
-        $email->setTo($usuarioAdministradorEmail['email']); // Enviar para o email do administrador
+        $email->setTo($usuarioAdministradorEmail['valor']); // Enviar para o email do administrador
     
         // Configura o assunto e a mensagem
         $email->setSubject($assunto);
@@ -100,11 +113,11 @@ class FaleConosco extends BaseController
     
         // Envia o e-mail e verifica se foi enviado com sucesso
         if ($email->send()) {
-            session()->setFlashdata('msgSuccess', 'Email enviado com sucesso!');
+        session()->setFlashdata('msgSuccess', 'Email enviado com sucesso!');
         } else {
             session()->setFlashdata('msgError', 'Erro ao enviar email: ' . $email->printDebugger(['headers']));
         }
-    
+
         session()->setFlashdata("exibirModalEstoque", true); // Exibir modal, se necessário
     }
     

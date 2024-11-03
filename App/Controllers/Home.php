@@ -28,9 +28,20 @@ class Home extends BaseController
     public function index()
     {
 
-        $dados['dados'] = $this->UsuarioModel->findAll();
+        // var_dump(session()->get('usuarioNivel'));
+        // exit;
 
-        return view("usuario/login", $dados);
+        if (!session()->has('usuarioId')) {
+            $dados['dados'] = $this->UsuarioModel->findAll();
+
+            return view("usuario/login", $dados);
+        } else {
+            if (session()->get('usuarioNivel') == 1) {
+                return redirect("Home/homeAdmin");
+            } else if(session()->get('usuarioNivel') == 11) {
+                return redirect("Home/home");
+            }
+        }
 
     }
 
@@ -62,9 +73,7 @@ class Home extends BaseController
         return view(
             "restrita/homeAdmin",
             $DbDados
-            
         );
-        
     }
 
       /**
@@ -74,9 +83,6 @@ class Home extends BaseController
      */
     public function home()
     {
-
-
-       
         return view("restrita/home");
     }
 

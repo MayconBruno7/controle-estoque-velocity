@@ -9,7 +9,10 @@ use CodeIgniter\Router\RouteCollection;
 //  $routes->setDefaultController('Home');
 //  $routes->setDefaultMethod('index');
 
- $routes->get('/', 'Home::index');
+$routes->get('/', 'Home::index');
+$routes->get('Configuracoes/getInfoEmailAdm', 'Configuracoes::getInfoEmailAdm');
+$routes->post('Configuracoes/store', 'Configuracoes::store');
+
  
  $routes->group('Home', function($routes) {
      $routes->get('index', 'Home::index');
