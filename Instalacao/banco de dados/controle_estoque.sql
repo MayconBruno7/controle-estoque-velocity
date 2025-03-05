@@ -5773,7 +5773,7 @@ CREATE TABLE IF NOT EXISTS `fornecedor` (
 --
 
 INSERT INTO `fornecedor` (`id`, `nome`, `cnpj`, `endereco`, `cidade`, `estado`, `bairro`, `numero`, `telefone`, `statusRegistro`) VALUES
-(1, 'MD COPIADORA LTDA', '44556350000104', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '3299197525', 1);
+(1, 'MD COPIADO45645RA LTDA', '6456456456', 'RUA MARCIANO PINTO', 1959, 13, 'SANTA EFIGENIA', '855', '3299197525', 1);
 
 --
 -- Estrutura para tabela `funcionario`
@@ -5802,7 +5802,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`) VALUES
-(1, 'Maycon Bruno', '09068888867', '32984924071', 1, 1412.000000, 1, 1);
+(1, 'Maycon Bruno', '1568498496846', '64185418964161', 1, 1412.000000, 1, 1);
 
 --
 -- Estrutura para tabela `historico_produto`
