@@ -5939,7 +5939,7 @@ CREATE TABLE IF NOT EXISTS `funcionario` (
 --
 
 INSERT INTO `funcionario` (`id`, `nome`, `cpf`, `telefone`, `setor`, `salario`, `statusRegistro`, `cargo`) VALUES
-(1, 'Maycon Bruno', '09068888867', '32984924071', 1, 1412.000000, 1, 1);
+(1, 'Maycon Bruno', '4564', '6456456456', 1, 1412.000000, 1, 1);
 
 --
 -- Acionadores `funcionario`
