@@ -130,7 +130,7 @@ class Login extends ControllerMain
             ';
 
             $lRetMail = Email::enviaEmail(
-                'maycon7ads@gmail.com',                                             /* Email do Remetente*/
+                'teste.com',                                             /* Email do Remetente*/
                 'Controle estoque - Contato',                                       /* Nome do Remetente */
                 'Controle estoque - Solicitação de recuperação de senha.',          /* Assunto do e-mail */
                 $corpoEmail,                                                        /* Corpo do E-mail */
